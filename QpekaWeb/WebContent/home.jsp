@@ -21,7 +21,8 @@
     </style>
     <script src="bootstrap/js/jquery.js"></script>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
+	<script src="bootstrap/js/home/home.js"></script>
+	
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -36,7 +37,7 @@
  </head>
  
 
-  <body>
+  <body onload="init();">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -136,27 +137,10 @@
          		<div class="span8">
          		<div class="thumbnail">
          			<br>
-	         		<div id="myCarousel" class="carousel slide">
+	         		<div id="workofDay" class="carousel slide">
 						<div class="carousel-inner">
-						      <div class="item active">
-						          <div class="row-fluid">
-						          		<div class="row-fluid">	          		
-											<div class="span3">
-												<img src="assets/img/testimg2.jpg" style="height: 200px;width: 120px;"  class="img-polaroid"><br><br>
-	<!-- 											<button class="btn btn-small btn-primary" type="button" >Start reading</button> -->
-											</div>
-											
-											<div class="span9">
-												 <blockquote>
-													 <h4>Adventures of Sherlock Holmes</h4>
-													 <small>Sir. Arthur Conan Doyle</small>
-												 </blockquote>
-												 <small class="text-info">Rating: 3.92/5 &nbsp;&nbsp; 3200 Ratings &nbsp;&nbsp; 890 Reviews</small><br><br>
-												 <small>The Adventures of Sherlock Holmes is a collection of twelve stories by 
-												 Arthur Conan Doyle, featuring his famous detective and illustrated by Sidney Paget.</small>					 
-											</div>
-										</div>
-						          </div>		
+						      <div id="bod" class="item active">
+						         	
 						          <div class="container">					        
 						            <div class="span6 carousel-caption">				     			          
 						              	<p class="pull-right"> Book of the Day</p>		             
@@ -164,34 +148,25 @@
 						          
 						 		  </div>			         						          
 						      </div>
-						      <div class="item ">
-						         <div class="row-fluid">
-						          		<div class="row-fluid">			          		
-											<div class="span3">
-												<img src="assets/img/testimg4.jpg" style="height: 200px;width: 120px;"  class="img-polaroid"><br><br>
-	<!-- 											<button class="btn btn-small btn-primary" type="button" >Start reading</button> -->
-											</div>
-											
-											<div class="span9">
-												 <blockquote>
-													 <h4>Adventures of Sherlock Holmes</h4>
-													 <small>Sir. Arthur Conan Doyle</small>
-												 </blockquote>
-												 <small class="text-info">Rating: 3.92/5 &nbsp;&nbsp; 3200 Ratings &nbsp;&nbsp; 890 Reviews</small><br><br>
-												 <small>The Adventures of Sherlock Holmes is a collection <br>of twelve stories by 
-												 Arthur Conan Doyle, featuring his famous <br> detective and illustrated by Sidney Paget.</small>					 
-											</div>
-										</div>
-						         </div>	
+						      <div id="ssod" class="item">
+						         
 						         <div class="container">
 							            <div class="span6 carousel-caption">				     			          
-							              	<p class="pull-right"> Article of the Day</p>		             
+							              	<p class="pull-right"> Short Story of the Day</p>		             
+							            </div>
+						 		 </div>			         
+						      </div>
+						      <div id="pod" class="item">
+						         
+						         <div class="container">
+							            <div class="span6 carousel-caption">				     			          
+							              	<p class="pull-right"> Poem of the Day</p>		             
 							            </div>
 						 		 </div>			         
 						      </div>
 						 </div>					
-						 <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-						 <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
+						 <a class="left carousel-control" href="#workofDay" data-slide="prev">&lsaquo;</a>
+						 <a class="right carousel-control" href="#workofDay" data-slide="next">&rsaquo;</a>
 					</div><!-- /.carousel -->
 					</div>
 					</div>
@@ -216,192 +191,8 @@
 				    <li><a href="#tab3" data-toggle="tab">Poems</a></li>
 				    <li><a href="#tab4" data-toggle="tab">Articles</a></li>
 				  </ul>
-				  <div class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
-				    <div class="tab-pane active" id="tab1">
-				      	<div id="myCarousel" class="carousel slide">
-					      <div class="carousel-inner">
-					      <div class="item active">
-					          <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg2.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>					          									          
-					      </div>
-					      <div class="item ">
-					         <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg3.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg5.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>				         
-					       </div>
-					      </div>
-					      <div class="container">
-					            <div class="span6 carousel-caption">				     			          
-					              	<p class="pull-right"> Popular Books...</p>		             
-					            </div>
-					      </div>
-					      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-					      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
-					    </div><!-- /.carousel -->
-
-				    </div>
-				    <div class="tab-pane" id="tab2">
-				      <div id="myCarousel" class="carousel slide">
-					      <div class="carousel-inner">
-					      <div class="item active">
-					          <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg2.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>					          									          
-					      </div>
-					      <div class="item ">
-					         <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg3.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg5.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>				         
-					       </div>
-					      </div>
-					      <div class="container">
-					            <div class="span6 carousel-caption">				     			          
-					              	<p class="pull-right"> Popular Short Stories...</p>		             
-					            </div>
-					      </div>
-					      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-					      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
-					    </div><!-- /.carousel -->
-
-				    </div>
-				    <div class="tab-pane" id="tab3">
-				      <div id="myCarousel" class="carousel slide">
-					      <div class="carousel-inner">
-					      <div class="item active">
-					          <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg2.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>					          									          
-					      </div>
-					      <div class="item ">
-					         <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg3.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg5.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>				         
-					       </div>
-					      </div>
-					      <div class="container">
-					            <div class="span6 carousel-caption">				     			          
-					              	<p class="pull-right"> Popular Poems...</p>		             
-					            </div>
-					      </div>
-					      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-					      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
-					    </div><!-- /.carousel -->
-
-				    </div>
-				    <div class="tab-pane" id="tab4">
-				     <div id="myCarousel" class="carousel slide">
-					      <div class="carousel-inner">
-					      <div class="item active">
-					          <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg2.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg1.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>					          									          
-					      </div>
-					      <div class="item ">
-					         <div class="row-fluid">
-					          	<div class="span3">
-					          		<img src="assets/img/testimg3.jpg" style="height: 150px;width: 100px;" class="img-polaroid">					      
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg5.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          	<div class="span3">
-					          		<img src="assets/img/testimg4.jpg" style="height: 150px;width: 100px;" class="img-polaroid">
-					          	</div>
-					          </div>				         
-					       </div>
-					      </div>
-					      <div class="container">
-					            <div class="span6 carousel-caption">				     			          
-					              	<p class="pull-right"> Popular Articles...</p>		             
-					            </div>
-					      </div>
-					      <a class="left carousel-control" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-					      <a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>
-					    </div><!-- /.carousel -->
-
-				    </div>
-				    
+				  <div id="popularcontent" class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
+				   						  				  
 				  </div>
 				</div> <!-- /tabbable -->
 				
