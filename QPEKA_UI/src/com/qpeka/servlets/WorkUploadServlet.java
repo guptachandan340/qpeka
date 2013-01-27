@@ -60,7 +60,7 @@ public class WorkUploadServlet extends HttpServlet {
 	    String filePath = "";
 	    String title = "";
 	    String bookDesc =  "";
-	    CATEGORY bookCategory = CATEGORY.Children;
+	    CATEGORY bookCategory = CATEGORY.CHILDREN;
 	    TYPE type = TYPE.BOOK;
 	    String fileName = "";
 	    LANGUAGES language = LANGUAGES.English;
