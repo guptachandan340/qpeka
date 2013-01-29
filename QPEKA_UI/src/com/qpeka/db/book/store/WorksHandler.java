@@ -167,6 +167,37 @@ public class WorksHandler {
 
 	}
 	
+	
+	public List<Work> getWorksByTypeCategory(TYPE type, CATEGORY cat)
+	{
+		List<Work> listToReturn = new ArrayList<Work>();
+		
+		BasicDBObject q = new BasicDBObject();
+		q.put(Work.TYPE, type.toString());
+		q.put(Work.CATEGORY, cat.toString());
+		
+		DBCursor cursor = works.find(q);
+		
+        try 
+        {
+        	 while(cursor.hasNext()) 
+             {
+                 BasicDBObject dObj = (BasicDBObject)cursor.next();
+                 Work book = Work.getBookfromDBObject(dObj);
+                 listToReturn.add(book);
+             }
+             return listToReturn;
+        } 
+        catch (Exception e)
+        {
+			e.printStackTrace();
+			return listToReturn;
+		}
+        finally {
+            cursor.close();
+        }
+
+	}
 	public Work getWorkOfTheDayByType(TYPE type)
 	{
 		

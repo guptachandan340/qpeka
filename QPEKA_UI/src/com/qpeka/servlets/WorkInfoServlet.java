@@ -14,6 +14,8 @@ import org.json.JSONObject;
 
 import com.qpeka.db.book.store.AuthorHandler;
 import com.qpeka.db.book.store.WorksHandler;
+import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
+import com.qpeka.db.book.store.tuples.Constants.SECTION;
 import com.qpeka.db.book.store.tuples.Constants.TYPE;
 import com.qpeka.db.book.store.tuples.Work;
 
@@ -87,6 +89,41 @@ public class WorkInfoServlet extends HttpServlet {
 				{
 					try {
 						arr.put(new JSONObject(work.toDBObject(false).toString()));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				response.getWriter().write(arr.toString());
+			}
+			else
+				response.getWriter().write("{\"error\":\"No work found\"}");
+		}
+		else if(actiontype.equalsIgnoreCase("getLibraryContent"))
+		{
+			JSONArray arr = new JSONArray();
+			TYPE type = TYPE.valueOf(request.getParameter("type"));
+			CATEGORY category = CATEGORY.valueOf(request.getParameter("category"));
+			SECTION section = SECTION.valueOf(request.getParameter("section"));
+			List<Work> lst = null;
+			if(category == CATEGORY.ALL)
+			{
+				lst = WorksHandler.getInstance().getWorksByType(type);
+			}
+			else
+			{
+				lst = WorksHandler.getInstance().getWorksByTypeCategory(type, category);
+			}
+			
+			if(lst != null && lst.size() > 0)
+			{
+				for(Work work : lst)
+				{
+					try {
+						
+						JSONObject jsonResp = new JSONObject(work.toDBObject(false).toString());
+						jsonResp.put("authorDetails", AuthorHandler.getInstance().getAuthor(jsonResp.getJSONObject("authorId").getString("$oid")).toDBObject(false).toString());
+						arr.put(jsonResp);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

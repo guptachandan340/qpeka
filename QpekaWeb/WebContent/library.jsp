@@ -20,7 +20,12 @@
       }
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
+	<script src="bootstrap/js/library/library.js"></script>
+	<script src="bootstrap/js/jquery.js"></script>
+    <script type="text/javascript">
+    var libType = <%=request.getParameter("type")%>
+    </script>
+    
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -34,7 +39,7 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
 
-  <body>
+  <body onload="createLibContent('<%=request.getParameter("type")%>', 'ALL', 'POPULAR');return false;">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -145,107 +150,8 @@
 		  <div class="tab-content">
 		    <div class="tab-pane active" id="tab1">
 		    <div class="thumbnail">
-		    <div class="row-fluid">
-		    <ul class="thumbnails">
-		    		      
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg1.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-              
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg2.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-              
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg3.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-              
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg4.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-            </ul>
-            <ul class="thumbnails">
-		    		      
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg1.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-              
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg2.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-              
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg3.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-              
-              <li class="span3">
-                <div class="thumbnail">
-                  <img src="assets/img/testimg4.jpg" style="height: 120px;width: 120px;" class="img-polaroid">	
-                  <div class="caption">               
-                    <b>Adventures of Sherlock Holmes</b><br>
-					<small>Sir. Arthur Conan Doyle</small>							
-					
-                    <p><a href="#"><small><b>more</b></small></a></p>
-                  </div>
-                </div>
-              </li>
-            </ul>
+		    <div id="libcontent" class="row-fluid">
+		    
 		    </div>
 		    </div>
 		    </div>
@@ -306,7 +212,6 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
     <script src="bootstrap/js/bootstrap-transition.js"></script>
     <script src="bootstrap/js/bootstrap-alert.js"></script>
     <script src="bootstrap/js/bootstrap-modal.js"></script>
