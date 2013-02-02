@@ -13,7 +13,7 @@
 		</description>
 		<display-name>UploadHandlerServlet</display-name>
 		<servlet-name>UploadHandlerServlet</servlet-name>
-		<servlet-class>com.qpeka.servlets.UploadHandlerServlet</servlet-class>
+		<servlet-class>com.qpeka.servlets.WorkUploadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AuthServlet</servlet-name>
@@ -21,7 +21,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>UploadHandlerServlet</servlet-name>
-		<url-pattern>/UploadHandlerServlet</url-pattern>
+		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<description>

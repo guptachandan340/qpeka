@@ -18,16 +18,24 @@
       .sidebar-nav {
         padding: 9px 0;
       }
+     .label.valid {
+   		width: 24px;
+   		height: 24px;
+   		background: url(assets/img/valid.png) center center no-repeat;
+   		display: inline-block;
+   		text-indent: -9999px;
+   	  }
+   	 .label.error {
+   		font-weight: bold;
+  		color: red;
+  		padding: 2px 8px;
+  		margin-top: 2px;
+  	  }
     </style>
-    <script>
-	    function popoverfun() {
-		        
-	     $('#test-pop').popover('show');
-	 	}
-	</script>
-								  
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
+	<script src="bootstrap/js/uploadWork/uploadWork.js"></script>
+	<script src="bootstrap/js/bootstrap-tooltip.js"></script>
+    <script src="bootstrap/js/bootstrap-popover.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -41,8 +49,7 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
 
-  <body>
-
+  <body >
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -236,19 +243,14 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
      		<div class="span12">
 	     			 <div style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
 						
-					    <div class="tab-pane active" id="tab1">
-					      	
-					      	<form class="form-horizontal">
-					      	<div class="control-group">
-							    <label class="control-label" for="fname"><h4>Upload Work</h4></label>							 
-							</div>
-
-							  <div class="control-group">
+					 <div class="tab-pane active" id="tab1">
+					 <form action="http://localhost:8080/QPEKA/upload" method="post" enctype="multipart/form-data" id="contact-form" class="form-horizontal">
+					  <fieldset>
+					    <legend>Upload Work</legend>
+					    <div class="control-group">
 							    <label class="control-label" for="title">Title</label>
 							    <div class="controls">
-							      <input type="text" id="title" placeholder="Title">		
-							       <a href="#" id="test-pop" rel="popover" onClick="popoverfun(); return true;" data-content="The title is the name with which the book was published " data-original-title="Title"><span class="badge badge-info">?</span>
-								    </a>		      	
+							      <input type="text" name="title" id="title" placeholder="Title">		
 							    </div>
 							     
 							  </div>
@@ -256,25 +258,26 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							  <div class="control-group">
 							    <label class="control-label" for="aName">Author Name</label>
 							    <div class="controls">
-							      <input type="text" id="aName" placeholder="Author Name">
+							      <input type="text" name="aName" id="aName" placeholder="Author Name">
+							      <input type="hidden" name="authorId" id="authorId" value="<%=request.getParameter("aid")%>">
 							    </div>
 							  </div>
 							  <div class="control-group">
 							    <label class="control-label" for="pName">Pen Name</label>
 							    <div class="controls">
-							      <input type="text" id="pName" placeholder="Pen Name">
+							      <input type="text" name="pName" id="pName" placeholder="Pen Name">
 							    </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="desc">Description</label>
+							    <label class="control-label" for="description">Description</label>
 							     <div class="controls">
-								  <textarea rows="5" cols="20" id="desc" class="span4" placeholder="Description"></textarea>
+								  <textarea rows="5" cols="20" name="description" id="description" class="span4" placeholder="Description"></textarea>
 								 </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="lang">Language</label>
+							    <label class="control-label" for="language">Language</label>
 							     <div class="controls">
-								    <select id="lang">
+								    <select id="language" name="language">
 										  <option value="hindi">Hindi</option>
 										  <option value="eng">English</option>
 										 
@@ -284,7 +287,7 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							  <div class="control-group">
 							    <label class="control-label" for="type">Type of Work</label>
 							     <div class="controls">
-								    <select id="type">
+								    <select id="type" name="type">
 										  <option value="book">Book</option>
 										  <option value="ss">Short Story</option>
 										  <option value="poem">Poem</option>
@@ -293,9 +296,9 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 								 </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="genre">Genre</label>
+							    <label class="control-label" for="category">Genre</label>
 							     <div class="controls">
-								    <select id="genre">
+								    <select id="category" name="category">
 										  <option value="comedy">Comedy</option>
 										  <option value="fiction">Fiction</option>
 										  <option value="horror">Horror</option>
@@ -306,51 +309,51 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							  <div class="control-group">
 							    <label class="control-label" for="award">Award</label>
 							    <div class="controls">
-							      <input type="text" id="award" placeholder="Award">
+							      <input type="text" id="award" name="award" placeholder="Award">
 							    </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="loc">Location</label>
+							    <label class="control-label" for="location">Location</label>
 							    <div class="controls">
-							      <input type="text" id="loc" placeholder="Location">
+							      <input type="text" id="location" name="location" placeholder="Location">
 							    </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="char">Characters</label>
+							    <label class="control-label" for="characters">Characters</label>
 							     <div class="controls">
-								  <textarea rows="5" cols="20" id="char" class="span4" placeholder="Characters"></textarea>
+								  <textarea rows="5" cols="20" id="characters" name="characters" class="span4" placeholder="Characters"></textarea>
 								 </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="publishd">Published?</label>
+							    <label class="control-label" for="ispublished">Published?</label>
 							     <div class="controls">
-								    <select id="publishd">
-										  <option value="yes">Yes</option>
-										  <option value="no">No</option>										 
+								    <select id="ispublished" name="ispublished" onchange="blurFields();retunr false">
+										  <option value="true">Yes</option>
+										  <option value="false">No</option>										 
 								    </select>
 								 </div>
 							  </div>
 
 							  <div class="control-group">
-							    <label class="control-label" for="pub">Publisher</label>
+							    <label class="control-label" for="publisherName">Publisher</label>
 							    <div class="controls">
-							      <input type="text" id="pub" placeholder="Publisher">
+							      <input type="text" id="publisherName" name="publisherName" placeholder="Publisher">
 							    </div>
 							  </div>
 							  <div class="control-group">
 							    <label class="control-label" for="isbn">ISBN</label>
 							    <div class="controls">
-							      <input type="text" id="isbn" placeholder="ISBN">
+							      <input type="text" id="isbn" name="isbn" placeholder="ISBN">
 							    </div>
 							  </div>
 							  <div class="control-group">
 							    <label class="control-label" for="dop">Date of Publication</label>
 							     <div class="controls">
-								     <select name="pyear" class="span2">
+								     <select id="pyear" name="pyear" class="span2">
 										  <option value="2012">2012</option>
 										  <option value="2013">2013</option>								 
 								    </select >
-								    <select name="pmonth" class="span2">
+								    <select id="pmonth" name="pmonth" class="span2">
 										  <option value="jan">January</option>
 										  <option value="feb">February</option>
 										  <option value="mar">March</option>
@@ -364,7 +367,7 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 										  <option value="nov">November</option>
 										  <option value="dec">December</option>								 
 								    </select>
-								    <select name="pday" class="span1">
+								    <select id="pday" name="pday" class="span1">
 										  <option value="1">1</option>
 										  <option value="2">2</option>								 
 								    </select>
@@ -373,25 +376,22 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							  <div class="control-group">
 							    <label class="control-label" for="edition">Edition</label>
 							    <div class="controls">
-							      <input type="text" id="edition" placeholder="Edition">
+							      <input type="text" id="edition" name="edition" placeholder="Edition">
 							    </div>
 							  </div>							  
 							  
 							  <div class="control-group">
 							    <label class="control-label" for="file">Upload File</label>
 							    <div class="controls">
-							      <input type="file" id="file" placeholder="File to Upload">
+							      <input type="file" id="file" name="file" placeholder="File to Upload">
 							    </div>
 							  </div>
-							  
-							  <div class="control-group">
-							    <div class="controls">					     							   
-							      <a href="#tnc" data-toggle="modal" class="btn btn-small btn-primary">Upload</a>
-							    </div>
-							  </div>
-							</form>
-												      	
-					      	
+	              		<div class="form-actions">
+			            	<button type="submit" class="btn btn-primary btn-large">Submit</button>
+	    			     	<button class="btn">Cancel</button>
+	        			</div>
+					  </fieldset>
+					</form>
 					    </div>
 					   				   
 				</div> <!-- /tabbable -->
@@ -412,19 +412,19 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
     <script src="bootstrap/js/bootstrap-transition.js"></script>
     <script src="bootstrap/js/bootstrap-alert.js"></script>
     <script src="bootstrap/js/bootstrap-modal.js"></script>
     <script src="bootstrap/js/bootstrap-dropdown.js"></script>
     <script src="bootstrap/js/bootstrap-scrollspy.js"></script>
     <script src="bootstrap/js/bootstrap-tab.js"></script>
-    <script src="bootstrap/js/bootstrap-tooltip.js"></script>
-    <script src="bootstrap/js/bootstrap-popover.js"></script>
     <script src="bootstrap/js/bootstrap-button.js"></script>
     <script src="bootstrap/js/bootstrap-collapse.js"></script>
     <script src="bootstrap/js/bootstrap-carousel.js"></script>
     <script src="bootstrap/js/bootstrap-typeahead.js"></script>
-
+    <script src="assets/js/jquery-1.7.1.min.js"></script>
+	<script src="assets/js/jquery.validate.min.js"></script>
+	<script src="bootstrap/js/uploadWork/script.js"></script>
+	<script src="bootstrap/js/jquery-form.js"></script>
   </body>
 </html>
