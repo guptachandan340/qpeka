@@ -2,9 +2,12 @@ package com.qpeka.servlets;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,16 +21,16 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.qpeka.db.book.store.UserAuthHandler;
-import com.qpeka.db.book.store.UserHandler;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
 import com.qpeka.db.book.store.tuples.Constants.GENDER;
 import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
 import com.qpeka.db.book.store.tuples.Constants.USERLEVEL;
 import com.qpeka.db.book.store.tuples.Constants.USERTYPE;
+import com.qpeka.db.book.store.tuples.Address;
+import com.qpeka.db.book.store.tuples.Name;
 import com.qpeka.db.book.store.tuples.User;
 import com.qpeka.db.book.store.tuples.UserAuth;
 import com.qpeka.managers.UserManager;
-import com.qpeka.utils.SystemConfigHandler;
 
 /**
  * Servlet implementation class UserRegistrationServlet
@@ -53,19 +56,18 @@ public class UserRegistrationServlet extends HttpServlet {
 			String userName = request.getParameter("uname");
 			String pwd = request.getParameter("pwd");
 			
+		 	Writer wr = response.getWriter();
+        	
 			if(UserAuthHandler.getInstance().getUser(userName) == null)
 			{
-				response.getWriter().write("{status:ok}");
+				wr.write("{\"status\":\"ok\"}");
+				wr.flush();
 				return;
 			}
 			
-			if(!UserAuthHandler.getInstance().getUser(userName,pwd))
-			{
-				response.getWriter().write("{status:ok}");
-				return;
-			}
-			
-			response.getWriter().write("{status:none}");
+			wr.write("{\"status\":\"none\"}");
+			wr.flush();
+        	return;
 		}
 		else if(requestype.equalsIgnoreCase("logout"))
 		{
@@ -75,15 +77,29 @@ public class UserRegistrationServlet extends HttpServlet {
 		}
 		else if(requestype.equalsIgnoreCase("login"))
 		{
-			if(true)
+			Writer wr = response.getWriter();
+        	
+			if(UserAuthHandler.getInstance().getUser(request.getParameter("uid"), request.getParameter("password")))
 			{
-				User u = new User();//add here 
-				UserAuth ua = new UserAuth("", "");
-				request.getSession().setAttribute("uid", "werwer");
-				request.getSession().setAttribute("uname", "23652");
-				
-				request.getRequestDispatcher("/userHome.jsp").forward(request, response);
+				wr.write("{\"status\":\"authenticated\"}");
+				wr.flush();
+				return;
 			}
+			else
+			{
+				wr.write("{\"status\":\"error\"}");
+				wr.flush();
+	        	return;
+			}
+//			if(true)
+//			{
+//				User u = new User();//add here 
+//				UserAuth ua = new UserAuth("", "");
+//				request.getSession().setAttribute("uid", "werwer");
+//				request.getSession().setAttribute("uname", "23652");
+//				
+//				request.getRequestDispatcher("/userHome.jsp").forward(request, response);
+//			}
 		}
 		
 		
@@ -115,6 +131,15 @@ public class UserRegistrationServlet extends HttpServlet {
 		String phone = "";//request.getParameter("phone") == null ? "":request.getParameter("phone");
 		String desc = "";//request.getParameter("desc") == null ? "":request.getParameter("desc");
 		String penName = "";//request.getParameter("penName") == null ? "":request.getParameter("penName");
+		String city = "";
+		String state = "";
+		String addressLine1 = "";
+		String addressLine2 = "";
+		String addressLine3 = "";
+		String pincode = "";
+		USERTYPE userType = USERTYPE.READER;
+		Set<CATEGORY> prefs = new HashSet<CATEGORY>();
+		String nationality = "";
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		String filePath = "";
@@ -151,36 +176,60 @@ public class UserRegistrationServlet extends HttpServlet {
 	                    	
 	                    	String name = item.getFieldName().trim();
 	                    	String value = item.getString().trim();
-	                    	if(name.equalsIgnoreCase("firstName"))
+	                    	if(name.equalsIgnoreCase(Name.FIRSTNAME))
 	                    		firstName = value;
-	                    	if(name.equalsIgnoreCase("username"))
+	                    	if(name.equalsIgnoreCase(User.USERNAME))
 	                    		username = value;
-	                    	if(name.equalsIgnoreCase("lastName"))
+	                    	if(name.equalsIgnoreCase(Name.LASTNAME))
 	                    		lastName = value;
-	                    	if(name.equalsIgnoreCase("middleName"))
+	                    	if(name.equalsIgnoreCase(Name.MIDDLENAME))
 	                    		middleName = value;
-	                    	if(name.equalsIgnoreCase("desc"))
+	                    	if(name.equalsIgnoreCase(User.DESC))
 	                    		desc = value;
-	                    	if(name.equalsIgnoreCase("gender"))
+	                    	if(name.equalsIgnoreCase(User.GENDER))
 	                    		gender = GENDER.valueOf(value);
-	                    	if(name.equalsIgnoreCase("rLang"))//
+	                    	if(name.equalsIgnoreCase(User.RLANG))//
 	                    		rLang = value;
-	                    	if(name.equalsIgnoreCase("wLang"))//
+	                    	if(name.equalsIgnoreCase(User.WLANG))//
 	                    		wLang = value;
-	                    	if(name.equalsIgnoreCase("day"))//
+	                    	if(name.equalsIgnoreCase("dday"))//
 	                    		day = value;
-	                    	if(name.equalsIgnoreCase("month"))//
+	                    	if(name.equalsIgnoreCase("dmonth"))//
 	                    		month = value;
-	                    	if(name.equalsIgnoreCase("year"))//
+	                    	if(name.equalsIgnoreCase("dyear"))//
 	                    		year = value;
-	                    	if(name.equalsIgnoreCase("penName"))
+	                    	if(name.equalsIgnoreCase(User.PENNAME))
 	                    		penName = value;
-	                    	if(name.equalsIgnoreCase("phone"))
+	                    	if(name.equalsIgnoreCase(User.PHONE))
 	                    		phone = value;
-	                    	if(name.equalsIgnoreCase("email"))
+	                    	if(name.equalsIgnoreCase(User.EMAIL))
 	                    		email = value;
 	                    	if(name.equalsIgnoreCase("password"))
 	                    		password = value;
+	                    	if(name.equalsIgnoreCase(Address.CITY))
+	                    		city = value;
+	                    	if(name.equalsIgnoreCase(Address.STATE))
+	                    		state = value;	                    	
+	                    	if(name.equalsIgnoreCase(Address.PINCODE))
+	                    		pincode = value;
+	                    	if(name.equalsIgnoreCase(Address.ADDRESSLINE1))
+	                    		addressLine1 = value;
+	                    	if(name.equalsIgnoreCase(Address.ADDRESSLINE2))
+	                    		addressLine2 = value;
+	                    	if(name.equalsIgnoreCase(Address.ADDRESSLINE3))
+	                    		addressLine3 = value;
+	                    	if(name.equalsIgnoreCase(User.USERTYPE))
+	                    		userType = USERTYPE.valueOf(value);
+	                    	if(name.equalsIgnoreCase(User.NATIONALITY))
+	                    		nationality = value;
+	                    	if(name.equalsIgnoreCase(User.INTERESTS))
+	                    	{
+	                    		String[] interestes = value.split(",");
+	                    		for(String interest : interestes)
+	                    		{
+	                    			prefs.add(CATEGORY.valueOf(interest));
+	                    		}
+	                    	}
 	                    	
 	                    }
                     }
@@ -193,24 +242,62 @@ public class UserRegistrationServlet extends HttpServlet {
                 e.printStackTrace();
             }
 		
-		//UserManager.getInstance().addUser(firstName, middleName, lastName, gender, email, city, state, addressLine1, addressLine2, addressLine3, pincode, userType, preferences, age, dob, nationality, phone, desc, rLang, wLang, level, userName, penName, imageFile)
-		
-		Date dt = new Date(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
-		
-		if(!UserAuthHandler.getInstance().getUser(username, password))
-		{
-			UserAuthHandler.getInstance().addUserAuth(new UserAuth(username, password));
-			String uid = UserManager.getInstance().addUser(firstName, middleName, lastName, gender, email, "", "", "", "", "", "", USERTYPE.READER, new String[]{""}, 12, dt, "", phone, desc, LANGUAGES.valueOf(rLang), LANGUAGES.valueOf(wLang), USERLEVEL.FREE, username, penName, filePath);
-			
-			request.getSession().setAttribute("uid", uid);
-			request.getSession().setAttribute("uname", username);
-			
-			request.getRequestDispatcher("/userHome.jsp?firstTime=true").forward(request, response);
+        Date dt = new Date();
+        try
+        {
+	       	dt.setYear(Integer.parseInt(year));
+	       	dt.setMonth(Integer.parseInt(month));
+	       	dt.setDate(Integer.parseInt(day));
+        }
+        catch (Exception e) {
+			e.printStackTrace();
 		}
-		else
+        
+		if(username == null || username.length() == 0)
 		{
-			//send user already exists
+			if(email != null && email.length() != 0)
+				username = email;
 		}
+       	
+		int age = new Date().getYear() - dt.getYear();
+			
+		UserAuthHandler.getInstance().addUserAuth(new UserAuth(username, password));
+		
+		Set<LANGUAGES> rLangs =  new HashSet<LANGUAGES>();
+		Set<LANGUAGES> wLangs =  new HashSet<LANGUAGES>();
+		
+		
+			for(String r : rLang.split(","))
+			{
+				try
+				{
+					rLangs.add(LANGUAGES.valueOf(r));
+				}
+				catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+		
+		for(String w : wLang.split(","))
+		{
+			try
+			{
+				wLangs.add(LANGUAGES.valueOf(w));
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		
+		String uid = UserManager.getInstance().addUser(firstName, middleName, lastName, gender, email, 
+				city, state, addressLine1, addressLine2, addressLine3, pincode,userType, prefs, 
+				age, dt, nationality, phone, desc, rLangs, wLangs, USERLEVEL.FREE, username, penName, filePath);
+		
+		request.getSession().setAttribute("uid", uid);
+		request.getSession().setAttribute("uname", username);
+		
+		request.getRequestDispatcher("/userHome.jsp?firstTime=true").forward(request, response);
+		
 		
 		
 	}

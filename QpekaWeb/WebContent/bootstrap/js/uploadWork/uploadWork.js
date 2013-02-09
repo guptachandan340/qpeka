@@ -1,5 +1,9 @@
 $(document).ready(function(){
-	alert('xlkdhslkdghf');
+	
+	$('#ispublished').change(function(){
+		  alert("The text has been changed.");
+	});
+	
 	$('#work').validate({
 	    rules: {
 	      title: {
@@ -26,7 +30,8 @@ $(document).ready(function(){
 }); // end document.ready
 
 var blurFields = function() {
-	var pub = $('#publishd').val();
+	var pub = $('#ispublished').val();
+	alert('ENTERED = ' + pub);
 	if(pub == 'false'){
 		$("pub").prop('disabled', true);
 		$("isbn").prop('disabled', true);

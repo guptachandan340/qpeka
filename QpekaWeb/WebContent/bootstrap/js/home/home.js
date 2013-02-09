@@ -143,8 +143,61 @@ var fetchPopularHtml = function() {
 		);
 }
 
+var createPoll = function(){
+	
+	$.get(
+		    "http://localhost:8080/QPEKA/misc?type=poll",
+		    null,
+		    function(data) { 	
+		    	
+		    	var poll = '<small class="muted" >'+data.poll+'</small><br><br>';
+		    	
+		    	var x = 1;
+		    	jQuery.each(data.answers, function(i, val) {
+		    		  poll = poll + '<small class="text-success"><a href="#">'+x+'. '+val+'</a></small><br>';
+		    		  x++;
+		    	});
+		    	
+		    	poll = poll + '<br>';
+		    	
+		    	$('#poll').append(poll);
+		    },
+		    "json"
+		);
+	
+}
+
+var createQuizzes = function(){
+	
+	$.get(
+		    "http://localhost:8080/QPEKA/misc?type=quiz",
+		    null,
+		    function(data) { 	
+		    	
+		    	var quiz = '';
+		    	
+		    	jQuery.each(data, function() {
+		    		var sum = 0;
+		    		
+		    		jQuery.each(this.answers, function(i, val) {
+		    			sum = sum + val.length;
+					});
+		    		
+		    		quiz = quiz + '<a href="#">'+this.quiz+'</a><br>' + '<small class="muted">'+sum+' answers </small><hr>'; //create pop over here
+		    		
+		    	});
+		    	
+		    	$('#quiz').append(quiz);
+		    },
+		    "json"
+		);
+	
+}
+
 var init = function() {
 	
 	fetchWorksOfTheDay();
 	fetchPopularHtml();
+	createPoll();
+	createQuizzes();
 }

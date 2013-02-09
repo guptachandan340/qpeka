@@ -43,21 +43,11 @@ private static UserManager instance = null;
 	}
 	
 	public String addUser(String firstName, String middleName, String lastName, GENDER gender, String email, String city, String state, String addressLine1,
-			String addressLine2, String addressLine3, String pincode , USERTYPE userType, String[] preferences, int age , Date dob, String nationality, String phone,
-			String desc, LANGUAGES rLang, LANGUAGES wLang, USERLEVEL level, String userName, String penName, String imageFile)
+			String addressLine2, String addressLine3, String pincode , USERTYPE userType, Set<CATEGORY> interests, int age , Date dob, String nationality, String phone,
+			String desc, Set<LANGUAGES> rLang, Set<LANGUAGES> wLang, USERLEVEL level, String userName, String penName, String imageFile)
 	{
 		Address addr = new Address(city, state, addressLine1, addressLine2, addressLine3, pincode);
-		Set<CATEGORY> interests = new HashSet<CATEGORY>();
-		for(String cat : preferences)
-		{
-			try
-			{
-				interests.add(CATEGORY.valueOf(cat));
-			}
-			catch (Exception e) {
-				// TODO: handle exception
-			}
-		}
+		
 		
 		User u = new User(userName, "", new Name(firstName, middleName, lastName), gender, email, addr, interests, level, new ArrayList<BookMark>(),
 				age, dob, nationality, imageFile , phone, userType);
@@ -76,7 +66,7 @@ private static UserManager instance = null;
 	
 	public void updateUser(String firstName, String middleName, String lastName, GENDER gender, String email, String city, String state, String addressLine1,
 			String addressLine2, String addressLine3, String pincode , USERTYPE userType, String[] preferences, int age , Date dob, String nationality, String phone,
-			String desc, LANGUAGES rLang, LANGUAGES wLang, USERLEVEL level, String userName, String penName, String imageFile)
+			String desc, Set<LANGUAGES> rLang, Set<LANGUAGES> wLang, USERLEVEL level, String userName, String penName, String imageFile)
 	{
 		Address addr = new Address(city, state, addressLine1, addressLine2, addressLine3, pincode);
 		Set<CATEGORY> interests = new HashSet<CATEGORY>();

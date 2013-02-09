@@ -22,7 +22,7 @@
     <script src="bootstrap/js/jquery.js"></script>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 	<script src="bootstrap/js/home/home.js"></script>
-	
+	<script src="bootstrap/js/util.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -52,8 +52,8 @@
           </a>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
-              <a href="#login" class="navbar-link" data-toggle="modal">Login</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-	 		  <a href="#signup" class="navbar-link" data-toggle="modal">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="" onclick="showModalLogin();" class="navbar-link" data-toggle="modal">Login</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+	 		  <a href="" onclick="showModalSignup();" class="navbar-link" data-toggle="modal">Sign Up</a>&nbsp;&nbsp;|&nbsp;&nbsp;
 	 		  <a href="#" class="navbar-link">FAQ</a>&nbsp;&nbsp;|&nbsp;&nbsp;
 	 		  <a href="#" class="navbar-link">Contact Us</a>&nbsp;&nbsp;|&nbsp;&nbsp;
 	 		  <a href="#" class="navbar-link">About Us</a>
@@ -71,48 +71,7 @@
         </div>
       </div>
     </div>
-    <!-- Button to trigger modal -->
-
-	<!-- Login Modal -->
-	<div id="login" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-			<h3 id="myModalLabel">Login</h3>
-		</div>
-		<div class="modal-body">
-			<form class="form-signin">
-				<input type="text" class="input-block-level" placeholder="Email address">
-				<input type="password" class="input-block-level" placeholder="Password">
-				<label class="checkbox">
-				<input type="checkbox" value="remember-me"> Remember me
-				</label>
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-			    <button class="btn btn-medium btn-primary" type="submit">Login</button>
-				
-			</form>	
-		</div>
-		
-	 </div>
-	
-	<!-- SignUp Modal -->
-	<div id="signup" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-			<h3 id="myModalLabel">Sign Up</h3>
-		</div>
-		<div class="modal-body">
-			<form class="form-signin">
-				<input type="text" class="input-block-level" placeholder="Email address">
-				<input type="text" class="input-block-level" placeholder="Username">
-				<input type="password" class="input-block-level" placeholder="Password">
-				<input type="password" class="input-block-level" placeholder="Confirm">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-				<button class="btn btn-medium btn-primary" type="submit">Sign Up</button>
-			</form>
-		</div>
-		
-	 </div>
-	
+    
     <div class="container-fluid">
       <div class="row-fluid">
       	<div class="span1"></div>
@@ -209,32 +168,13 @@
 		                <br>
 		                <a href="#"><small><b>More about author...</b></small></a>               		                 		          
 					</div>
-					<div class="span4">
+					<div id="poll" class="span4">
 						<h4>Polls/Surveys</h4>
 						
-		            	<small class="muted" >Which of the following is the best work by Agatha Christy?</small><br><br>
-		            	
-		            	<small class="text-success"><a href="#">a. Work A</a></small><br>
-		            	<small class="text-success"><a href="#">b. Work B</a></small><br>
-		            	<small class="text-success"><a href="#">c. Work C</a></small><br>    
-		            	<small class="text-success"><a href="#">d. Work D</a></small><br>    
-		            	<br>
 		            	<a href="#"><small><b>More polls...</b></small></a>
 		            </div>
-					<div class="span4">
-						<h4>Quizzes</h4>
-						<a href="#">Guess the author.</a><br>
-							<small class="muted">12 questions    |    23,908 times taken</small>
-						<hr>
-						
-						<a href="#">The  hunger game quiz.</a><br>
-							<small class="muted">12 questions    |    23,908 times taken</small>
-						<hr>
-						
-						<a href="#">Guess the first sentence.</a><br>
-							<small class="muted">12 questions    |    23,908 times taken</small>
-						<hr>
-												
+					<div id="quiz" class="span4">
+						<h4>Quizzes</h4>															
 						<br>
 		            	<a href="#"><small><b>More quizzes...</b></small></a>
 		                

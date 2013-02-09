@@ -49,7 +49,7 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
 
-  <body >
+  <body>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -278,8 +278,8 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    <label class="control-label" for="language">Language</label>
 							     <div class="controls">
 								    <select id="language" name="language">
-										  <option value="hindi">Hindi</option>
-										  <option value="eng">English</option>
+								    		<option value="HINDI">HINDI</option>
+											<option value="ENGLISH">ENGLISH</option>
 										 
 								    </select>
 								 </div>
@@ -288,10 +288,10 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    <label class="control-label" for="type">Type of Work</label>
 							     <div class="controls">
 								    <select id="type" name="type">
-										  <option value="book">Book</option>
-										  <option value="ss">Short Story</option>
-										  <option value="poem">Poem</option>
-										 
+										  <option value="BOOK">BOOK</option>
+										  <option value="SHORTSTORY">SHORTSTORY</option>
+										  <option value="POEM">POEM</option>
+										  <option value="ARTICLE">ARTICLE</option>
 								    </select>
 								 </div>
 							  </div>
@@ -299,9 +299,9 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    <label class="control-label" for="category">Genre</label>
 							     <div class="controls">
 								    <select id="category" name="category">
-										  <option value="comedy">Comedy</option>
-										  <option value="fiction">Fiction</option>
-										  <option value="horror">Horror</option>
+										  <option value="COMEDY">COMEDY</option>
+										  <option value="FICTION">FICTION</option>
+										  <option value="HORROR">HORROR</option>
 										 
 								    </select>
 								 </div>
@@ -327,7 +327,7 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							  <div class="control-group">
 							    <label class="control-label" for="ispublished">Published?</label>
 							     <div class="controls">
-								    <select id="ispublished" name="ispublished" onchange="blurFields();retunr false">
+								    <select id="ispublished" name="ispublished">
 										  <option value="true">Yes</option>
 										  <option value="false">No</option>										 
 								    </select>
@@ -350,26 +350,28 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    <label class="control-label" for="dop">Date of Publication</label>
 							     <div class="controls">
 								     <select id="pyear" name="pyear" class="span2">
-										  <option value="2012">2012</option>
-										  <option value="2013">2013</option>								 
+								     	  <%for(int i = 0 ; i < 100 ; i++){%>
+										  <option value="<%=1912+i%>"><%=1912+i%></option>								
+										  <%} %>								 
 								    </select >
 								    <select id="pmonth" name="pmonth" class="span2">
-										  <option value="jan">January</option>
-										  <option value="feb">February</option>
-										  <option value="mar">March</option>
-										  <option value="apr">April</option>
-										  <option value="may">May</option>
-										  <option value="jun">June</option>
-										  <option value="jul">July</option>
-										  <option value="aug">August</option>
-										  <option value="sep">September</option>
-										  <option value="oct">October</option>
-										  <option value="nov">November</option>
-										  <option value="dec">December</option>								 
+										  <option value="0">January</option>
+										  <option value="1">February</option>
+										  <option value="2">March</option>
+										  <option value="3">April</option>
+										  <option value="4">May</option>
+										  <option value="5">June</option>
+										  <option value="6">July</option>
+										  <option value="7">August</option>
+										  <option value="8">September</option>
+										  <option value="9">October</option>
+										  <option value="10">November</option>
+										  <option value="11">December</option>								 
 								    </select>
 								    <select id="pday" name="pday" class="span1">
-										  <option value="1">1</option>
-										  <option value="2">2</option>								 
+								    	  <%for(int i = 0 ; i < 30 ; i++){%>
+										  	<option value="<%=i%>"><%=i+1%></option>									 
+										  <%} %>						 
 								    </select>
 								 </div>
 							  </div>
@@ -387,8 +389,7 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    </div>
 							  </div>
 	              		<div class="form-actions">
-			            	<button type="submit" class="btn btn-primary btn-large">Submit</button>
-	    			     	<button class="btn">Cancel</button>
+			            	<button type="submit" class="btn btn-primary btn-small">Submit</button>
 	        			</div>
 					  </fieldset>
 					</form>

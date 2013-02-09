@@ -65,31 +65,40 @@ public class User {
 	public static final String USERTYPE = "type";
 	public static final String USERLEVEL = "level";
 	
-	private String userName = "";
+	private String userName = ""; //*
 	private String _id = "";
-	private Name name = null;
-	private GENDER gender = com.qpeka.db.book.store.tuples.Constants.GENDER.MALE;
-	private Address address;
-	private Set<CATEGORY> interests;
-	private USERLEVEL userlevel;
-	private USERTYPE type;
-	private List<BookMark> bookMarks;
-	private int age;
-	private Date dob;
-	private String nationality;
-	private String imageFile;
-	private String email;
-	private String phone;
-	private String penName;
-	private LANGUAGES rLang;
-	private LANGUAGES wLang;
-	private String desc;
+	private Name name = null; //*
+	private GENDER gender = com.qpeka.db.book.store.tuples.Constants.GENDER.MALE; //*
+	private Address address = new Address("", "", "", "", "", "");
+	private Set<CATEGORY> interests = new HashSet<Constants.CATEGORY>();
+	private USERLEVEL userlevel = com.qpeka.db.book.store.tuples.Constants.USERLEVEL.FREE;
+	private USERTYPE type = com.qpeka.db.book.store.tuples.Constants.USERTYPE.READER;
+	private List<BookMark> bookMarks = new ArrayList<BookMark>();
+	private int age = 0;
+	private Date dob = new Date();
+	private String nationality ="";
+	private String imageFile ="";
+	private String email ="";
+	private String phone ="";
+	private String penName = "";
+	private Set<LANGUAGES> rLang = new HashSet<Constants.LANGUAGES>();
+	private Set<LANGUAGES> wLang = new HashSet<Constants.LANGUAGES>();
+	private String desc = "";
 	
 	public User()
 	{
 		
 	}
 	
+	public User(String userName, Name name,
+			com.qpeka.db.book.store.tuples.Constants.GENDER gender, String email) {
+		super();
+		this.userName = userName;
+		this.name = name;
+		this.gender = gender;
+		this.email = email;
+	}
+
 	public User(String userName, String _id, Name name,
 			com.qpeka.db.book.store.tuples.Constants.GENDER gender,
 			Address address, Set<CATEGORY> interests,
@@ -115,8 +124,8 @@ public class User {
 		this.email = email;
 		this.phone = phone;
 		this.penName = penName;
-		this.rLang = rLang;
-		this.wLang = wLang;
+		this.rLang.add(rLang);
+		this.wLang.add(wLang);
 		this.desc = desc;
 	}
 
@@ -166,8 +175,8 @@ public class User {
 		this.imageFile = imageFile;
 		this.phone = phone;
 		this.type = type;
-		this.rLang  = rLang;
-		this.wLang = wLang;
+		this.rLang.add(rLang);
+		this.wLang.add(wLang);
 		
 	}
 	
@@ -211,16 +220,22 @@ public class User {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	public LANGUAGES getrLang() {
+	public Set<LANGUAGES> getrLang() {
 		return rLang;
 	}
-	public void setrLang(LANGUAGES rLang) {
+	public void addrLang(LANGUAGES rLang) {
+		this.rLang.add(rLang);
+	}
+	public void addwLang(LANGUAGES wLang) {
+		this.wLang.add(wLang);
+	}
+	public void setrLang(Set<LANGUAGES> rLang) {
 		this.rLang = rLang;
 	}
-	public LANGUAGES getwLang() {
+	public Set<LANGUAGES> getwLang() {
 		return wLang;
 	}
-	public void setwLang(LANGUAGES wLang) {
+	public void setwLang(Set<LANGUAGES> wLang) {
 		this.wLang = wLang;
 	}
 	public String getPenName() {
