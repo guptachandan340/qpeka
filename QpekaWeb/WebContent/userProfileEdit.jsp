@@ -19,8 +19,9 @@
         padding: 9px 0;
       }
     </style>
+    <script src="bootstrap/js/jquery.js"></script>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
+    <script src="bootstrap/js/userProfile/userProfile.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -34,7 +35,7 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
 
-  <body>
+  <body onload="loadUser('5119008472d0d2bbd6526d61');">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -116,26 +117,45 @@
      		<div class="span10">
 	     		<div class="tabbable" style="margin-bottom: 18px;">
 					  <ul class="nav nav-tabs">
-					    <li class="active"><a href="#tab1" data-toggle="tab">Personal Information</a></li>
+					    <li class="active"><a href="#tab1" data-toggle="tab1">Personal Information</a></li>
 					    <li><a href="#tab2" data-toggle="tab">Profile picture</a></li>
-					    <li><a href="#tab3" data-toggle="tab">Perferences</a></li>
-					    <li><a href="#tab4" data-toggle="tab">Languages</a></li>
+					    <li><a href="#tab3" data-toggle="tab">Address</a></li>
+					    <li><a href="#tab4" data-toggle="tab">Perferences</a></li>
+					    <li><a href="#tab5" data-toggle="tab">Languages</a></li>
 					  </ul>
 					  <div class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
 					    <!-- Perssonal Information -->
 					    <div class="tab-pane active" id="tab1">
 					      	
 					      	<form class="form-horizontal">
-							  <div class="control-group">
-							    <label class="control-label" for="fname">First Name</label>
+					      	  <div class="control-group">
+							    <label class="control-label" for="userName">User Name</label>
 							    <div class="controls">
-							      <input type="text" id="fname" placeholder="First Name">
+							      <input type="text" id="userName" placeholder="User Name">
 							    </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="lname">Last Name</label>
+							    <label class="control-label" for="email">Email</label>
 							    <div class="controls">
-							      <input type="text" id="lname" placeholder="Last Name">
+							      <input type="text" id="email" placeholder="Email">
+							    </div>
+							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="firstName">First Name</label>
+							    <div class="controls">
+							      <input type="text" id="firstName" placeholder="First Name">
+							    </div>
+							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="middleName">Middle Name</label>
+							    <div class="controls">
+							      <input type="text" id="middleName" placeholder="Middle Name">
+							    </div>
+							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="lastName">Last Name</label>
+							    <div class="controls">
+							      <input type="text" id="lastName" placeholder="Last Name">
 							    </div>
 							  </div>
 							  <div class="control-group">
@@ -174,23 +194,11 @@
 										  <option value="2">2</option>								 
 								    </select>
 								 </div>
-							  </div>
+							  </div>							  
 							  <div class="control-group">
-							    <label class="control-label" for="city">City</label>
+							    <label class="control-label" for="nationality">Nationality</label>
 							     <div class="controls">
-								     <input type="text" id="city" placeholder="City">
-								 </div>
-							  </div>					  
-							  <div class="control-group">
-							    <label class="control-label" for="state">State</label>
-							     <div class="controls">
-								     <input type="text" id="state" placeholder="State">
-								 </div>
-							  </div>
-							  <div class="control-group">
-							    <label class="control-label" for="country">Country</label>
-							     <div class="controls">
-								      <select name="country">
+								      <select name="nationality" id="nationality">
 										  <option value="India">India</option>
 										  <option value="China">China</option>		
 										  <option value="Korea">Korea</option>		
@@ -205,9 +213,9 @@
 								 </div>
 							  </div>
 							  <div class="control-group">
-							    <label class="control-label" for="aboutme">About me</label>
+							    <label class="control-label" for="desc">About me</label>
 							     <div class="controls">
-								  <textarea rows="5" cols="20" id="aboutme" class="span4" placeholder="About me"></textarea>
+								  <textarea rows="5" cols="20" id="desc" class="span4" placeholder="About me"></textarea>
 								 </div>
 							  </div>
 							  
@@ -238,28 +246,126 @@
 						  <br>
 					    </div>
 					    <div class="tab-pane" id="tab3">
+					    	<form class="form-horizontal">				      	
+							  <div class="control-group">
+							    <label class="control-label" for="city">City</label>
+							     <div class="controls">
+								     <input type="text" id="city" placeholder="City">
+								 </div>
+							  </div>					  
+							  <div class="control-group">
+							    <label class="control-label" for="state">State</label>
+							     <div class="controls">
+								     <input type="text" id="state" placeholder="State">
+								 </div>
+							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="addressLine1">AddressLine1</label>
+							     <div class="controls">
+								     <input type="text" id="addressLine1" placeholder="AddressLine1">
+								 </div>
+							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="addressLine2">AddressLine2</label>
+							     <div class="controls">
+								     <input type="text" id="addressLine2" placeholder="AddressLine2">
+								 </div>
+							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="addressLine3">AddressLine3</label>
+							     <div class="controls">
+								     <input type="text" id="addressLine3" placeholder="AddressLine3">
+								 </div>
+							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="pincode">Pincode</label>
+							     <div class="controls">
+								     <input type="text" id="pincode" placeholder="Pincode">
+								 </div>
+							  </div>						 
+							  
+							  <div class="control-group">
+							    <div class="controls">					     
+							      <button onclick="updateAddr();return false;" class="btn">Edit</button>
+							    </div>
+							  </div>
+							</form>
+					    </div>
+					    <div class="tab-pane" id="tab4">
 					      <!-- Genre -->
 					       <div class="row-fluid">
 					      	<div class="span1"></div>				      	
 					      	<div class="span8">	     
 					      	<form class="form-horizontal">							 
 					      	 <div class="control-group">
-							    <label class="control-label" for="aboutme">Preferences</label>
+							    <label class="control-label" for="prefs">Preferences</label>
 							     <div class="controls">
-								 	<div class="thumbnail">
+								 	<div id="prefs" name="prefs" class="thumbnail">
 								     	<span class="label label-info">Info</span>
 								    </div>
 								 </div>
-							  </div>		
+							  </div>	
+							  <div class="control-group">
+							
+							       <select class="control-label" name="genre" id="genre">
+										  <option value="COMEDY">COMEDY</option>
+										  <option value="HORROR">HORROR</option>								 
+								   </select>
+								   <div class="controls">
+								   		<button onclick="addPref();return false;" class="btn">Add</button>
+								   </div>
+							  </div>
+							  	
 							</form>					 				      	 
 					      	</div>
 					      	<div class="span1"></div>
 					       </div>
 					      
 					    </div>
-					    <div class="tab-pane" id="tab4">				 
-	
+					    <div class="tab-pane" id="tab5">	
+					    <div class="row-fluid">
+					      	<div class="span2"></div>
+					      	<div class="span8">		
+						    	 <div class="control-group">
+							    <label class="control-label" for="prefs">Preferences</label>
+							     <div class="controls">
+								 	<div id="prefs" name="prefs" class="thumbnail">
+								     	<span class="label label-info">Info</span>
+								    </div>
+								 </div>
+							  </div>	
+							  <div class="control-group">
+							
+							       <select class="control-label" name="genre" id="genre">
+										  <option value="COMEDY">COMEDY</option>
+										  <option value="HORROR">HORROR</option>								 
+								   </select>
+								   <div class="controls">
+								   		<button onclick="addPref();return false;" class="btn">Add</button>
+								   </div>
+							  </div>
+							    <div class="control-group">
+							    <label class="control-label" for="prefs">Preferences</label>
+							     <div class="controls">
+								 	<div id="prefs" name="prefs" class="thumbnail">
+								     	<span class="label label-info">Info</span>
+								    </div>
+								 </div>
+							  </div>	
+							  <div class="control-group">
+							
+							       <select class="control-label" name="genre" id="genre">
+										  <option value="COMEDY">COMEDY</option>
+										  <option value="HORROR">HORROR</option>								 
+								   </select>
+								   <div class="controls">
+								   		<button onclick="addPref();return false;" class="btn">Add</button>
+								   </div>
+							  </div>
 					    </div>
+					    <div class="span2"></div>
+					    </div>
+					   </div>
 					    
 					  </div>
 				</div> <!-- /tabbable -->
@@ -271,19 +377,7 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
-    <script src="bootstrap/js/bootstrap-transition.js"></script>
-    <script src="bootstrap/js/bootstrap-alert.js"></script>
-    <script src="bootstrap/js/bootstrap-modal.js"></script>
-    <script src="bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="bootstrap/js/bootstrap-scrollspy.js"></script>
-    <script src="bootstrap/js/bootstrap-tab.js"></script>
-    <script src="bootstrap/js/bootstrap-tooltip.js"></script>
-    <script src="bootstrap/js/bootstrap-popover.js"></script>
-    <script src="bootstrap/js/bootstrap-button.js"></script>
-    <script src="bootstrap/js/bootstrap-collapse.js"></script>
-    <script src="bootstrap/js/bootstrap-carousel.js"></script>
-    <script src="bootstrap/js/bootstrap-typeahead.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
 
   </body>
 </html>

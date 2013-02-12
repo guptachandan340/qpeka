@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONObject;
+
 import com.qpeka.db.book.store.UserHandler;
 import com.qpeka.db.book.store.tuples.Address;
 import com.qpeka.db.book.store.tuples.BookMark;
@@ -89,6 +91,11 @@ private static UserManager instance = null;
 		u.setPenName(penName);
 		
 		UserHandler.getInstance().updateUser(u);
+	}
+	
+	public void updateUser(JSONObject jReq)
+	{
+		UserHandler.getInstance().updateUser(jReq);
 	}
 	
 	public String getUser(String id)

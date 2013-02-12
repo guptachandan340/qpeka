@@ -1,9 +1,11 @@
 package com.qpeka.db.book.store;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.json.JSONObject;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -14,8 +16,6 @@ import com.mongodb.WriteResult;
 import com.qpeka.db.book.store.tuples.Author;
 import com.qpeka.db.book.store.tuples.Constants.AUTHORTYPE;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
-import com.qpeka.db.book.store.tuples.Constants.TYPE;
-import com.qpeka.db.book.store.tuples.Constants.USERTYPE;
 import com.qpeka.db.book.store.tuples.User;
 
 public class UserHandler {
@@ -81,6 +81,29 @@ public class UserHandler {
 		q.put(User.ID, new ObjectId(user.get_id()));
 		
 		users.update(q, new BasicDBObject("$set" , user.toDBObject(true)), true, false, WriteConcern.SAFE);
+	}
+	
+	public void updateUser(JSONObject userAttrs)
+	{
+		try
+		{
+			BasicDBObject q = new BasicDBObject();
+			q.put(User.ID, new ObjectId(userAttrs.getString("id")));
+			
+			BasicDBObject bdobj = new BasicDBObject();
+			Iterator<String> i = userAttrs.keys();
+			while(i.hasNext())
+			{
+				String key = i.next();
+				if(!key.equalsIgnoreCase("id"))
+					bdobj.put(key, userAttrs.getString(key));
+			}
+			
+			users.update(q, new BasicDBObject("$set" , bdobj), true, false, WriteConcern.SAFE);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public User getUser(String userId)

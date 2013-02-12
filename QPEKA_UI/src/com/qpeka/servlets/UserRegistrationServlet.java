@@ -69,6 +69,15 @@ public class UserRegistrationServlet extends HttpServlet {
 			wr.flush();
         	return;
 		}
+		else if(requestype.equalsIgnoreCase("getUser"))
+		{
+			String user = UserManager.getInstance().getUser(request.getParameter("uid"));
+			
+			Writer wr = response.getWriter();
+        	wr.write(user);
+			wr.flush();
+        	return;
+		}
 		else if(requestype.equalsIgnoreCase("logout"))
 		{
 			request.getSession().invalidate();

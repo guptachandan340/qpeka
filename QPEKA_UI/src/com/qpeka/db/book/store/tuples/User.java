@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -129,7 +131,35 @@ public class User {
 		this.desc = desc;
 	}
 
-
+	public User(String userName, String _id, Name name,
+			com.qpeka.db.book.store.tuples.Constants.GENDER gender,
+			Address address, Set<CATEGORY> interests,
+			com.qpeka.db.book.store.tuples.Constants.USERLEVEL userlevel,
+			com.qpeka.db.book.store.tuples.Constants.USERTYPE type,
+			List<BookMark> bookMarks, int age, Date dob, String nationality,
+			String imageFile, String email, String phone, String penName,
+			Set<LANGUAGES> rLang, Set<LANGUAGES> wLang, String desc) {
+		super();
+		this.userName = userName;
+		this._id = _id;
+		this.name = name;
+		this.gender = gender;
+		this.address = address;
+		this.interests = interests;
+		this.userlevel = userlevel;
+		this.type = type;
+		this.bookMarks = bookMarks;
+		this.age = age;
+		this.dob = dob;
+		this.nationality = nationality;
+		this.imageFile = imageFile;
+		this.email = email;
+		this.phone = phone;
+		this.penName = penName;
+		this.rLang = rLang;
+		this.wLang = wLang;
+		this.desc = desc;
+	}
 
 	public User(String userName, String _id, Name name,
 			com.qpeka.db.book.store.tuples.Constants.GENDER gender,
@@ -387,10 +417,32 @@ public class User {
 	{
 		//return new User(obj.getString(ID), Name.getNamefromDBObject((BasicDBObject)obj.get(NAME)), com.qpeka.db.book.store.tuples.Constants.GENDER.valueOf(obj.getString(GENDER)), identities, address, interests, type, bookMarks, age, dob, nationality, imageFile)
 		BasicDBObject name = (BasicDBObject)obj.get("name");
+		Set<LANGUAGES> rlang = new HashSet<Constants.LANGUAGES>();
+		Set<LANGUAGES> wlang = new HashSet<Constants.LANGUAGES>();
+		
+		try 
+		{
+			JSONArray ja = new JSONArray(obj.getString(RLANG));
+			for(int i = 0 ; i < ja.length() ; i++)
+			{
+				rlang.add(LANGUAGES.valueOf(ja.getString(i)));
+			}
+			
+			ja = new JSONArray(obj.getString(WLANG));
+			for(int i = 0 ; i < ja.length() ; i++)
+			{
+				wlang.add(LANGUAGES.valueOf(ja.getString(i)));
+			}
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return new User(obj.getString(USERNAME), obj.getString(ID), new Name(name.getString(Name.FIRSTNAME), name.getString(Name.MIDDLENAME), name.getString(Name.LASTNAME)),
 				com.qpeka.db.book.store.tuples.Constants.GENDER.valueOf(obj.getString(GENDER)),new Address("", "", "", "", "", ""), new HashSet<CATEGORY>(), com.qpeka.db.book.store.tuples.Constants.USERLEVEL.valueOf(obj.getString(USERLEVEL)),
 				com.qpeka.db.book.store.tuples.Constants.USERTYPE.valueOf(obj.getString(USERTYPE)),
 				new ArrayList(), obj.getInt(AGE), new Date(obj.getLong(DOB)), obj.getString(NATIONALITY), obj.getString(IMAGEFILE)
-				, obj.getString(EMAIL), obj.getString(PHONE), obj.getString(PENNAME),LANGUAGES.valueOf(obj.getString(RLANG)), LANGUAGES.valueOf(obj.getString(WLANG)), obj.getString(DESC));
+				, obj.getString(EMAIL), obj.getString(PHONE), obj.getString(PENNAME), rlang, wlang, obj.getString(DESC));
 	}
 }
