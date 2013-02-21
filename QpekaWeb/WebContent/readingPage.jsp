@@ -22,8 +22,9 @@
         padding: 9px 0;
       }
     </style>
+    <script src="bootstrap/js/jquery.js"></script>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
+    <script src="bootstrap/js/reading/reader.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -36,13 +37,21 @@
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
     <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
-  <body>
+  <body onload="loadToc('/home/manoj/Sam Williams - Free As In Freedom.epub');">
 	<!-- Text -->
 	<div class="container-fluid">
      <div class="row-fluid">
      <div class="span3">
-     	<img src="assets/img/ad02.jpg" style="height: 230px;width: 280px;" class="img-polaroid"><br><br>
-		<img src="assets/img/ad09.jpg" style="height: 230px;width: 280px;" class="img-polaroid"><br><br>
+<!--      	<img src="assets/img/ad02.jpg" style="height: 230px;width: 280px;" class="img-polaroid"><br><br> -->
+<!-- 		<img src="assets/img/ad09.jpg" style="height: 230px;width: 280px;" class="img-polaroid"><br><br> -->
+		<div class="thumbnail">
+		Table of Contents
+		<small>
+		<ul id="toc">
+		
+		</ul>
+		</small>
+		</div>
 		<div class="thumbnail">
                   <img data-src="holder.js/300x200" alt="">
                   <div class="caption">
@@ -63,14 +72,14 @@
      </div>
      <div class="span7">
 		<div class="main">
-			 <div class="hero-unit">
+			<div style="height:550px;width:700px;overflow:scroll;" >
 			 	<small>
-					<div>
-						<h4>Absinthes to Go Mad Over</h4>
-						ABSINTHE? So devil may care, so deliciously disreputable, so ...  louche. But it&rsquo;s poisonous, no? It eats your brain and drives you crazy!If nothing else, a century of prohibition on absinthe gave it the sort of aura of dissolute glamour tha<span title="Lookup Word" id="nytd_selection_button"> </span>t  would-be brooding artists would drown their agents for. The two faces  of absinthe offered possibilities to idealists the world over,  searching for a muse or testing the limits of their risk-taking.
-						Consider  the cast of mythological absinthe drinkers: the vulnerable painter and  poet, too sensitive for this mean old world; the tormented soul, unable  to snap out of his self-loathing; the rakish hedonist, seeking one big,  lurid rush; the wealthy dilettante, dipping a toe in bohemia; and of  course, all manner of willing women.
-						But now absinthe is legal  again, and the romance of belle &eacute;poque naughtiness must give way to  what&rsquo;s in the glass. Pull over, you disillusioned dreamers: with no  laws to break, no frissons of danger, let the mystification stop right  now.
-						Since absinthe was legalized in the United States in 2007,  it has gone from forbidden fruit to virulent weed. Once smuggled from  Eastern Europe or procured from back-alley producers, absinthe is now  just another bottle on the bar. Yet mystique continues as marketing.
+					<div id="content">
+<!-- 						<h4>Absinthes to Go Mad Over</h4> -->
+<!-- 						ABSINTHE? So devil may care, so deliciously disreputable, so ...  louche. But it&rsquo;s poisonous, no? It eats your brain and drives you crazy!If nothing else, a century of prohibition on absinthe gave it the sort of aura of dissolute glamour tha<span title="Lookup Word" id="nytd_selection_button"> </span>t  would-be brooding artists would drown their agents for. The two faces  of absinthe offered possibilities to idealists the world over,  searching for a muse or testing the limits of their risk-taking. -->
+<!-- 						Consider  the cast of mythological absinthe drinkers: the vulnerable painter and  poet, too sensitive for this mean old world; the tormented soul, unable  to snap out of his self-loathing; the rakish hedonist, seeking one big,  lurid rush; the wealthy dilettante, dipping a toe in bohemia; and of  course, all manner of willing women. -->
+<!-- 						But now absinthe is legal  again, and the romance of belle &eacute;poque naughtiness must give way to  what&rsquo;s in the glass. Pull over, you disillusioned dreamers: with no  laws to break, no frissons of danger, let the mystification stop right  now. -->
+<!-- 						Since absinthe was legalized in the United States in 2007,  it has gone from forbidden fruit to virulent weed. Once smuggled from  Eastern Europe or procured from back-alley producers, absinthe is now  just another bottle on the bar. Yet mystique continues as marketing. -->
 					</div>		
 					
 					<div class="pagination pagination-small pull-right">
@@ -119,7 +128,6 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
     <script src="bootstrap/js/bootstrap-transition.js"></script>
     <script src="bootstrap/js/bootstrap-alert.js"></script>
     <script src="bootstrap/js/bootstrap-modal.js"></script>

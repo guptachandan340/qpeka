@@ -161,9 +161,9 @@
 							  <div class="control-group">
 							    <label class="control-label" for="gender">Gender</label>
 							     <div class="controls">
-								    <select>
-										  <option value="male">Male</option>
-										  <option value="female">Female</option>
+								    <select id="gender" name="gender">
+										  <option value="MALE">Male</option>
+										  <option value="FEMALE">Female</option>
 										 
 								    </select>
 								 </div>
@@ -171,7 +171,7 @@
 							   <div class="control-group">
 							    <label class="control-label" for="dob">Date of Birth</label>
 							     <div class="controls">
-								     <select name="year" class="span2">
+								    <select name="year" class="span2">
 										  <option value="2012">2012</option>
 										  <option value="2013">2013</option>								 
 								    </select >
@@ -221,7 +221,7 @@
 							  
 							  <div class="control-group">
 							    <div class="controls">					     
-							      <button type="submit" class="btn">Edit</button>
+							      <button onclick="updateGeneral();return false;" class="btn">Edit</button>
 							    </div>
 							  </div>
 							</form>

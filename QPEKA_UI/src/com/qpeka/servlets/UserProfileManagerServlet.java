@@ -3,6 +3,7 @@ package com.qpeka.servlets;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,18 +46,23 @@ public class UserProfileManagerServlet extends HttpServlet {
 		if(action.equalsIgnoreCase("update"))
 		{
 			String req = request.getParameter("request");
-//			BufferedReader buff = request.getReader();
-//			
-//			req = buff.readLine();
-//			
-//			while(req != null && req.length() > 0)
-//				req += buff.readLine();
-//			
-//			req = req.trim();
-//			
 			try
 			{
-				UserManager.getInstance().updateUser(new JSONObject(req));
+				JSONObject reqs = new JSONObject(req);
+				if(reqs.has("year") || reqs.has("month")||reqs.has("day"))
+				{
+					Date dt = new Date();
+					if(reqs.has("year"))
+						dt.setYear(reqs.getInt("year"));
+					if(reqs.has("month"))
+						dt.setMonth(reqs.getInt("month"));
+					if(reqs.has("day"))
+						dt.setDate(reqs.getInt("day"));		
+					
+					reqs.put("dob", dt.getTime());
+				}
+				
+				UserManager.getInstance().updateUser(reqs);
 				Writer wr = response.getWriter();
 	        	
 				wr.write("{\"status\":\"success\"}");

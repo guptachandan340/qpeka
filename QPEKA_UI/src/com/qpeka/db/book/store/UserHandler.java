@@ -97,6 +97,20 @@ public class UserHandler {
 				String key = i.next();
 				if(!key.equalsIgnoreCase("id"))
 					bdobj.put(key, userAttrs.getString(key));
+				
+				if(userAttrs.get(key) instanceof JSONObject)
+				{
+					BasicDBObject bsubobj = new BasicDBObject();
+					Iterator<String> j = ((JSONObject)userAttrs.get(key)).keys();
+					
+					while(j.hasNext())
+					{
+						String skey = j.next();					
+						bsubobj.put(skey, ((JSONObject)userAttrs.get(key)).getString(skey));
+					}
+					
+					bdobj.put(key, bsubobj);
+				}
 			}
 			
 			users.update(q, new BasicDBObject("$set" , bdobj), true, false, WriteConcern.SAFE);

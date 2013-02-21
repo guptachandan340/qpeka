@@ -24,6 +24,37 @@ var updateAddr = function() {
 		);
 }
 
+var updateGeneral = function() {
+	
+	var reqBody = {"id":"5119008472d0d2bbd6526d61"};
+	
+	reqBody.name = {};
+	
+	reqBody.userName = $('#userName').val();
+	reqBody.email = $('#email').val();
+	reqBody.name.firstName = $('#firstName').val();
+	reqBody.name.middleName = $('#middleName').val();
+	reqBody.name.lastName = $('#lastName').val();
+	reqBody.gender = $('#gender').val();
+	reqBody.year = $('#year').val();
+	reqBody.month = $('#month').val();
+	reqBody.day = $('#day').val();
+	reqBody.website = $('#website').val();
+	reqBody.desc = $('#desc').val();
+	reqBody.nationality = $('#nationality').val();
+	
+	alert(JSON.stringify(reqBody));
+	
+	$.post(
+		    "http://localhost:8080/QPEKA/profile?rType=update&request="+JSON.stringify(reqBody),
+		    null,
+		    function(data) { 
+		    	alert(JSON.stringify(data));    	
+		    },
+		    "json"
+		);
+}
+
 var addPref = function() {
 	var genre = $('#genre').val();
 	var present = false;
