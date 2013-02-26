@@ -234,7 +234,7 @@
 					      <div class="row-fluid">
 					      	<div class="span1"></div>
 							<div class="span2">
-								<img src="assets/img/ad1.jpg" style="height: 120px;width: 120px;" class="img-polaroid">
+								<img src="http://localhost:8080/QPEKA/image?action=userimg&uid=5119008472d0d2bbd6526d61" style="height: 150px;width: 150px;" class="img-polaroid">
 							</div>
 							<div class="span8">
 							<input type="file" id="website" class="span4"  placeholder="Website">

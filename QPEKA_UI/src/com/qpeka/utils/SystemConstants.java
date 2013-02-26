@@ -4,6 +4,7 @@ public class SystemConstants {
 	
 	public static final String BOOKCONTENTFOLDER = "bookcontentfolder";
 	public static final String BOOKCOVERPAGEFOLDER = "bookcoverpagefolder";
+	public static final String USERIMAGEFOLDER = "useimagefolder";
 	public static final String IMAGESERVERURL = "imageserverurl";
 	public static final String BASETINYURL = "basetinyurl";
 	public static final String SRCBOOKFOLDER = "srcbookfolder";

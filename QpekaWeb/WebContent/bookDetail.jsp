@@ -20,7 +20,7 @@
       }
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
+	<script src="bootstrap/js/bookDetails/bookDetail.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -34,7 +34,7 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
 
-  <body>
+  <body onload="getBook('<%=request.getParameter("id")%>');">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -145,29 +145,25 @@
 			        </div>
 			        <div class="span8">
 			        
-			        	<h3>The First Days</h3>
-			        	<small class="muted" >by Rhiannon Frater</small><br>
-			        	<small class="text-success">Rating: 3.92/5 &nbsp;&nbsp; 3200 Ratings &nbsp;&nbsp; 890 Reviews</small><br><br>
-			        	<p>
+			        	<h3 id="title" ></h3>
+			        	<small id="author" class="muted" ></small><br>
+			        	<small id="ratings" class="text-success">Rating: 3.92/5 &nbsp;&nbsp; 3200 Ratings &nbsp;&nbsp; 890 Reviews</small><br><br>
+			        	<p id="desc">
 			        			
-			        		Katie is driving to work one beautiful day when a dead man jumps into her car and tries to eat her. 
-			        		That same morning, Jenni opens a bedroom door to find her husband devouring their toddler son.
-							Fate puts Jenni and Katie—total strangers—together in a pickup, fleeing the suddenly zombie-filled streets of 
-							the Texas city in which they live. Before the sun has set, they have be...more
-							
+			        		
 			        	</p>
 			        	<hr>
-			        	<small>
-			        		<dl class="dl-horizontal">
-							  <dt>ISBN</dt>
-							  <dd>0765331268 (ISBN13: 9780765331267)</dd>
-							  <dt>Edition language</dt>
-							  <dd>English</dd>
-							  <dt>Date  of publication</dt>
-							  <dd>July 5th 2011</dd>
-							  <dt>Publisher</dt>
-							  <dd>T.M.H</dd>
-							</dl>
+			        	<small id="details">
+<!-- 			        		<dl class="dl-horizontal"> -->
+<!-- 							  <dt>ISBN</dt> -->
+<!-- 							  <dd>0765331268 (ISBN13: 9780765331267)</dd> -->
+<!-- 							  <dt>Edition language</dt> -->
+<!-- 							  <dd>English</dd> -->
+<!-- 							  <dt>Date  of publication</dt> -->
+<!-- 							  <dd>July 5th 2011</dd> -->
+<!-- 							  <dt>Publisher</dt> -->
+<!-- 							  <dd>T.M.H</dd> -->
+<!-- 							</dl> -->
 						</small>
 			        	<hr>		   
 			       				       					       

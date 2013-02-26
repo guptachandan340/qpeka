@@ -122,7 +122,10 @@ public class UserFriendHandler {
 	public static void main(String[] args) {
 		
 		//UserFriendHandler.getInstance().addFriend("1234", "4353");
-		System.err.println(UserFriendHandler.getInstance().getFriends("123"));
+		UserFriendHandler.getInstance().addFriend("5119008472d0d2bbd6526d61", "51285c482c3d773d9757e7f3");
+		UserFriendHandler.getInstance().addFriend("5119008472d0d2bbd6526d61", "51285c952c3d773d9757e7f5");
+		UserFriendHandler.getInstance().addFriend("5119008472d0d2bbd6526d61", "51285cab2c3d773d9757e7f7");
+		UserFriendHandler.getInstance().addFriend("5119008472d0d2bbd6526d61", "51285cc32c3d773d9757e7f9");
 	}
 	
 }

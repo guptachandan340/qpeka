@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mongodb.BasicDBObject;
 import com.qpeka.db.book.store.AuthorHandler;
 import com.qpeka.db.book.store.WorksHandler;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
@@ -133,6 +134,15 @@ public class WorkInfoServlet extends HttpServlet {
 			}
 			else
 				response.getWriter().write("{\"error\":\"No work found\"}");
+		}
+		else if(actiontype.equalsIgnoreCase("getbook"))
+		{
+			String id = request.getParameter("id");
+			Work w = WorksHandler.getInstance().getWork(id);
+			BasicDBObject bdo = (BasicDBObject)w.toDBObject(false);
+			bdo.put("author", AuthorHandler.getInstance().getAuthor(bdo.getString(Work.AUTHORID)).toDBObject(false));
+			response.getWriter().write(bdo.toString());
+			return;
 		}
 		
 	}

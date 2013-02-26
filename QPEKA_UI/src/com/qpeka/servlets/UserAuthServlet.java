@@ -52,7 +52,7 @@ public class UserAuthServlet extends HttpServlet {
 				request.getSession().setAttribute("uid", u.get_id());
 				request.getSession().setAttribute("uname", uname);
 				
-				request.getRequestDispatcher("/userHome.jsp").forward(request, response);
+				request.getRequestDispatcher("/myProfile.jsp?uid="+u.get_id()).forward(request, response);
 				return;
 			}
 			else

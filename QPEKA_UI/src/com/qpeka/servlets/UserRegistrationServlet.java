@@ -19,8 +19,11 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.qpeka.db.book.store.UserAuthHandler;
+import com.qpeka.db.book.store.UserHandler;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
 import com.qpeka.db.book.store.tuples.Constants.GENDER;
 import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
@@ -90,14 +93,31 @@ public class UserRegistrationServlet extends HttpServlet {
         	
 			if(UserAuthHandler.getInstance().getUser(request.getParameter("uid"), request.getParameter("password")))
 			{
-				wr.write("{\"status\":\"authenticated\"}");
-				wr.flush();
+				
+				String id = UserHandler.getInstance().getUserByUserName(request.getParameter("uid")).get_id();
+				//request.getRequestDispatcher("/myProfile.jsp?uid="+id).forward(request, response);
+				response.sendRedirect("http://localhost:8080/QpekaWeb/myProfile.jsp?uid="+id);
 				return;
+//				JSONObject jo = new JSONObject();
+//				try {
+//					jo.put("status", "authenticated");
+//					jo.put("uid", id);
+//				} catch (JSONException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//				wr.write(jo.toString());
+//				wr.flush();
+//				return;
 			}
 			else
 			{
-				wr.write("{\"status\":\"error\"}");
-				wr.flush();
+				response.sendRedirect("http://localhost:8080/QpekaWeb/home.jsp?error=true");
+				
+				//request.getRequestDispatcher("/home.jsp?error=true").forward(request, response);
+//				wr.write("{\"status\":\"error\"}");
+//				wr.flush();
 	        	return;
 			}
 //			if(true)

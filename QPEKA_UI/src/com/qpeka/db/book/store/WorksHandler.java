@@ -493,21 +493,21 @@ public class WorksHandler {
 	public static void main(String[] args) throws JSONException {
 		
 		com.qpeka.db.book.store.tuples.Constants.CATEGORY.valueOf("ART");
-//		
-//		for(int i = 0; i<10;i++)
-//		{
-//		Author a = new Author("", new Name("Mark"+i, "Donald"+i, "Shane"+i), GENDER.MALE, new Date(), "INDIAN", "", "He is an awsome writer"+i, "http://google.com/mark", CATEGORY.ART,
-//				AUTHORTYPE.LEVEL1);
-//		
-//		String aid = AuthorHandler.getInstance().addAuthor(a);
-//		
-//		JSONObject metadata = new JSONObject();
-//		metadata.put(Work.SEARCHKEY, "art,history");
-//		
-//		Work w = new Work("", "Marks work"+1, aid, "", CATEGORY.ART, TYPE.BOOK, 100, metadata, "AWSOME BOOK"+i, LANGUAGES.English, false);
-//		
-//		WorksHandler.getInstance().addWork(w);
-//		}
+		
+		for(int i = 0; i<10;i++)
+		{
+		Author a = new Author("", new Name("Mark"+i, "Donald"+i, "Shane"+i), GENDER.MALE, new Date(), "INDIAN", "", "He is an awsome writer"+i, "http://google.com/mark", CATEGORY.ART,
+				AUTHORTYPE.LEVEL1);
+		
+		String aid = AuthorHandler.getInstance().addAuthor(a);
+		
+		JSONObject metadata = new JSONObject();
+		metadata.put(Work.SEARCHKEY, "art,history");
+		
+		Work w = new Work("", "Marks work"+1, aid, "", CATEGORY.ART, TYPE.BOOK, 100, metadata, "AWSOME BOOK"+i, LANGUAGES.English, false);
+		
+		WorksHandler.getInstance().addWork(w);
+		}
 //		String[] titles = {"Harry Potter" , "Pride & Prejudice" , "Gone with the wind"};
 //		String[] authorIds = {"5055fa47c4e7aaf93796c90a" , "5055fa47c4e7aaf93796c90d" , "5055fa47c4e7aaf93796c90f" , "5055fa47c4e7aaf93796c907" , "5055fa47c4e7aaf93796c906"};
 //		String[] publisherIds = {"50560049c4e7a9cad3686ed1","50560049c4e7a9cad3686ed4","50560049c4e7a9cad3686ed6"};

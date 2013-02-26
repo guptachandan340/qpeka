@@ -425,7 +425,7 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
     <script src="bootstrap/js/bootstrap-typeahead.js"></script>
     <script src="assets/js/jquery-1.7.1.min.js"></script>
 	<script src="assets/js/jquery.validate.min.js"></script>
-	<script src="bootstrap/js/uploadWork/script.js"></script>
 	<script src="bootstrap/js/jquery-form.js"></script>
+	<script src="bootstrap/js/uploadWork/script.js"></script>
   </body>
 </html>

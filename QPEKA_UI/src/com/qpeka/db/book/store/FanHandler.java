@@ -88,7 +88,7 @@ public class FanHandler {
 	
 	
 	
-	public BasicDBList getFriends(String userId)
+	public BasicDBList getFans(String userId)
 	{
 		
 		BasicDBObject q = new BasicDBObject();
@@ -124,7 +124,7 @@ public class FanHandler {
 	public static void main(String[] args) {
 		
 		//UserFriendHandler.getInstance().addFriend("1234", "4353");
-		System.err.println(FanHandler.getInstance().getFriends("123"));
+		//System.err.println(FanHandler.getInstance().getFriends("123"));
 	}
 	
 }

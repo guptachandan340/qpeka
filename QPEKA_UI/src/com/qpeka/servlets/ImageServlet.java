@@ -45,38 +45,75 @@ public class ImageServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		// TODO Auto-generated method stub
 		//FileInputStream fs = new FileInputStream(new File("/home/manoj/pride.LZZZZZZZ.jpg"));
-		
-		String bookId = request.getParameter("book");
-		if(bookId != null && bookId.length() > 0)
+		String action = request.getParameter("action");
+		if(action == null || action.length() == 0 || action.equalsIgnoreCase("bookcover"))
 		{
-			response.setContentType("image/jpeg");
-			OutputStream out = null;
-			try
+			String bookId = request.getParameter("book");
+			if(bookId != null && bookId.length() > 0)
 			{
-				
-				File f = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+"/"+bookId+".jpg");
-				System.out.println("[FILE] value=" + f.getAbsolutePath());
-				BufferedImage bi = ImageIO.read(f);
-				out = response.getOutputStream();
-				ImageIO.write(bi, "jpg", out);
-				
-				
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-			finally{
-				try 
+				response.setContentType("image/jpeg");
+				OutputStream out = null;
+				try
 				{
-					out.close();
+					
+					File f = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+"/"+bookId+".jpg");
+					System.out.println("[FILE] value=" + f.getAbsolutePath());
+					BufferedImage bi = ImageIO.read(f);
+					out = response.getOutputStream();
+					ImageIO.write(bi, "jpg", out);
+					
+					
 				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
+				catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+				finally{
+					try 
+					{
+						out.close();
+					}
+					catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
 			}
 		}
+		else if (action.equalsIgnoreCase("userimg")){
+			String uid = request.getParameter("uid");
+			if(uid != null && uid.length() > 0)
+			{
+				response.setContentType("image/jpeg");
+				OutputStream out = null;
+				try
+				{
+					
+					File f = new File(SystemConfigHandler.getInstance().getUserImageFolder()+"/"+uid+".jpg");
+					if(!f.exists())
+						f = new File(SystemConfigHandler.getInstance().getUserImageFolder()+"anon.jpg");
+					System.out.println("[FILE] value=" + f.getAbsolutePath());
+					BufferedImage bi = ImageIO.read(f);
+					out = response.getOutputStream();
+					ImageIO.write(bi, "jpg", out);
+					
+					
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				finally{
+					try 
+					{
+						out.close();
+					}
+					catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+		}
 	}
-	
+	}	
 }

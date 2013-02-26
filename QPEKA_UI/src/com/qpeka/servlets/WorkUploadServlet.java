@@ -207,6 +207,9 @@ public class WorkUploadServlet extends HttpServlet {
         	wr.write(resp.toString()); 
         	wr.flush();
         	
+        	return;
+        	
+        	
         }
         catch (Exception e) {
 			e.printStackTrace();

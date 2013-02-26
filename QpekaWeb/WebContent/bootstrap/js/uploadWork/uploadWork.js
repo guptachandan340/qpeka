@@ -76,7 +76,8 @@ var upload = function() {
 		    "http://localhost:8080/QPEKA/upload"+query,
 		    null,
 		    function(data) { 
-		    	alert(JSON.stringify(data));
+		    	//alert(JSON.stringify(data));
+		    	window.location.replace("http://localhost:8080/QpekaWeb/bookDetail.jsp?id="+data._id);
 		    },
 		    "json"
 		);

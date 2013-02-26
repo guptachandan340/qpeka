@@ -13,14 +13,15 @@ var showModalLogin = function() {
 		'<h3 id="myModalLabel">Login</h3>'+
 	'</div>'+
 	'<div class="modal-body">'+
-		'<form class="form-signin">'+
+		'<form class="form-signin" action="http://localhost:8080/QPEKA/register" method="get">'+
 			'<input id="uid" name="uid" type="text" class="input-block-level" placeholder="Email address">'+
 			'<input id="password" name="password" type="password" class="input-block-level" placeholder="Password">'+
+			' <input type="hidden" name="rType" id="rType" value="login">'+
 			'<label class="checkbox">'+
 			'<input type="checkbox" value="remember-me"> Remember me'+
 			'</label>'+
 			'<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>'+
-		    '<button onclick="authenticate();" class="btn btn-medium btn-primary" type="submit">Login</button>'+
+		    '<button type="submit" class="btn btn-medium btn-primary" >Login</button>'+
 		'</form>'+	
 	'</div>'+
  '</div>';
@@ -69,6 +70,7 @@ var authenticate = function() {
 		    	if(data.status == 'authenticated')
 		    	{
 		    		alert('SUCCESS');
+		    		window.location.href = "http://localhost:8080/QpekaWeb/userProfileEdit.jsp?uid="+data.uid;
 		    	}
 		    	else
 		    	{

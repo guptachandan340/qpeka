@@ -52,6 +52,12 @@ public class SystemConfigHandler
 		return props.getProperty(SystemConstants.BOOKCOVERPAGEFOLDER);
 	}
 	
+	public String getUserImageFolder()
+	{
+		return props.getProperty(SystemConstants.USERIMAGEFOLDER);
+	}
+	
+	
 	public String getImageServerURL()
 	{
 		return props.getProperty(SystemConstants.IMAGESERVERURL);

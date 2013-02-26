@@ -350,8 +350,8 @@ public class User {
 	public void setInterests(Set<CATEGORY> interests) {
 		this.interests = interests;
 	}
-	public USERLEVEL getType() {
-		return userlevel;
+	public com.qpeka.db.book.store.tuples.Constants.USERTYPE getType() {
+		return type;
 	}
 	public void setType(USERLEVEL type) {
 		this.userlevel = type;

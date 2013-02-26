@@ -20,7 +20,8 @@
       }
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-
+    <script src="bootstrap/js/jquery.js"></script>
+    <script src="bootstrap/js/userProfile/myProfile.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,8 +34,8 @@
                     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
-
-  <body>
+<!-- 5119008472d0d2bbd6526d61 -->
+  <body onload="init('<%=request.getParameter("uid")%>');">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -308,13 +309,13 @@
 				<br>
 				<div class="tabbable"> <!-- Only required for left/right tabs -->
 				  <ul class="nav nav-tabs">
-				    <li class="active"><a href="#tab1" data-toggle="tab">Updates</a></li>
-				    <li><a href="#tab2" data-toggle="tab">Friends</a></li>
-				    <li><a href="#tab3" data-toggle="tab">Fans</a></li>
-				    <li><a href="#tab4" data-toggle="tab">Statistics</a></li>
+				    <li class="active"><a href="#tab21" data-toggle="tab">Updates</a></li>
+				    <li><a href="#tab22" data-toggle="tab">Friends</a></li>
+				    <li><a href="#tab23" data-toggle="tab">Fans</a></li>
+				    <li><a href="#tab24" data-toggle="tab">Statistics</a></li>
 				  </ul>
 				  <div class="tab-content">
-				    <div class="tab-pane active" id="tab1">
+				    <div class="tab-pane active" id="tab21">
 				        <div class="media">
 			              <a class="pull-left" href="#">
 			              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
@@ -361,163 +362,20 @@
 			              </div>
 					    </div>
 				    </div>				
-				    <div class="tab-pane" id="tab2">
-				     	 <div class="container-fluid">
-						  <div class="row-fluid">
-						    <div class="span6">
-						     	<div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Reader)</small>
-					              </div>
-							    </div>
-						    </div>
-						    <div class="span6">
-						       <div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Writer)</small>
-					              </div>
-							    </div>
-						    </div>
-						  </div>
-						  <br>
-						  <div class="row-fluid">
-						    <div class="span6">
-						     	<div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Reader)</small>
-					              </div>
-							    </div>
-						    </div>
-						    <div class="span6">
-						       <div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Writer)</small>
-					              </div>
-							    </div>
-						    </div>
-						  </div>
-						  <br>
-						  <div class="row-fluid">
-						    <div class="span6">
-						     	<div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Reader)</small>
-					              </div>
-							    </div>
-						    </div>
-						    <div class="span6">
-						       <div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Writer)</small>
-					              </div>
-							    </div>
-						    </div>
-						  </div>
-						</div>	
+				    <div class="tab-pane" id="tab22">
+				     	 <div id="friends" class="container-fluid">
+					     	 <div class="row-fluid">
+						     	 <div class="span6">
+						     	 	
+						     	 </div>
+					     	 </div>
+						 </div>
 				    </div>
-				    <div class="tab-pane" id="tab3">
-				     	 <div class="container-fluid">
-						  <div class="row-fluid">
-						    <div class="span6">
-						     	<div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Reader)</small>
-					              </div>
-							    </div>
-						    </div>
-						    <div class="span6">
-						       <div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Writer)</small>
-					              </div>
-							    </div>
-						    </div>
-						  </div>
-						  <br>
-						  <div class="row-fluid">
-						    <div class="span6">
-						     	<div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Reader)</small>
-					              </div>
-							    </div>
-						    </div>
-						    <div class="span6">
-						       <div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Writer)</small>
-					              </div>
-							    </div>
-						    </div>
-						  </div>
-						  <br>
-						  <div class="row-fluid">
-						    <div class="span6">
-						     	<div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Reader)</small>
-					              </div>
-							    </div>
-						    </div>
-						    <div class="span6">
-						       <div class="media">
-					              <a class="pull-left" href="#">
-					              	<img src="assets/img/testimg.jpg" style="height: 60px;width: 50px;" class="img-polaroid media-object">		               
-					              </a>
-					              <div class="media-body">
-					                <b>Anonymous user</b><p class="pull-right"> </p><br>
-					                <small>(Writer)</small>
-					              </div>
-							    </div>
-						    </div>
-						  </div>
-						</div>	
+				    <div class="tab-pane" id="tab23">
+				     	 <div id="fans" class="container-fluid">
+						 </div>
 				    </div>
-				    <div class="tab-pane" id="tab4">
+				    <div class="tab-pane" id="tab24">
 				    	<div class="container-fluid">
 				    	<div class="span4">
 						  
@@ -554,19 +412,8 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.js"></script>
-    <script src="bootstrap/js/bootstrap-transition.js"></script>
-    <script src="bootstrap/js/bootstrap-alert.js"></script>
-    <script src="bootstrap/js/bootstrap-modal.js"></script>
-    <script src="bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="bootstrap/js/bootstrap-scrollspy.js"></script>
-    <script src="bootstrap/js/bootstrap-tab.js"></script>
-    <script src="bootstrap/js/bootstrap-tooltip.js"></script>
-    <script src="bootstrap/js/bootstrap-popover.js"></script>
-    <script src="bootstrap/js/bootstrap-button.js"></script>
-    <script src="bootstrap/js/bootstrap-collapse.js"></script>
-    <script src="bootstrap/js/bootstrap-carousel.js"></script>
-    <script src="bootstrap/js/bootstrap-typeahead.js"></script>
+  <script src="bootstrap/js/bootstrap.js"></script>
+
 
   </body>
 </html>
