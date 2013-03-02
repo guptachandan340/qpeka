@@ -24,9 +24,9 @@ var updateAddr = function() {
 		);
 }
 
-var updateGeneral = function() {
+var updateGeneral = function(id) {
 	
-	var reqBody = {"id":"5119008472d0d2bbd6526d61"};
+	var reqBody = {"id":id};
 	
 	reqBody.name = {};
 	
@@ -42,7 +42,7 @@ var updateGeneral = function() {
 	reqBody.website = $('#website').val();
 	reqBody.desc = $('#desc').val();
 	reqBody.nationality = $('#nationality').val();
-	
+	reqBody.type = $('#type').val();
 	alert(JSON.stringify(reqBody));
 	
 	$.post(
@@ -95,7 +95,7 @@ var loadUser = function(uid) {
 		    	{
 		    		var keys  = ['firstName','middleName','lastName'];
 			    	var address = ['state','city','pincode','addressLine1','addressLine2','addressLine3'];
-			    	var general = ['nationality', 'email', 'desc', 'gender'];
+			    	var general = ['nationality', 'email', 'desc', 'gender','type'];
 			    	
 			    	for(var i = 0 ; i < keys.length; i++)
 			    	{

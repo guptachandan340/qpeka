@@ -18,6 +18,8 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
+import org.apache.xmlbeans.impl.xb.ltgfmt.TestCase.Files;
 import org.json.JSONObject;
 
 import com.qpeka.book.converter.BookConverterUtils;
@@ -63,7 +65,9 @@ public class WorkUploadServlet extends HttpServlet {
 	    CATEGORY bookCategory = CATEGORY.CHILDREN;
 	    TYPE type = TYPE.BOOK;
 	    String fileName = "";
-	    LANGUAGES language = LANGUAGES.English;
+	    String coverPage = "";
+	    String bookContentFile="";
+	    LANGUAGES language = LANGUAGES.ENGLISH;
 	    boolean isPublished = false;
 	    String authorId = "";
 	    
@@ -92,15 +96,28 @@ public class WorkUploadServlet extends HttpServlet {
                     {
 	                    if (!item.isFormField()) {
 	                        fileName = item.getName();
-	 
-	                        String root = SystemConfigHandler.getInstance().getSrcBookFolder();
+	                        String fieldName = item.getFieldName();
+	                        String root = "";
+	                        if(fieldName.equalsIgnoreCase("file"))
+	                        {
+	                        	root = SystemConfigHandler.getInstance().getSrcBookFolder();
+	                        	bookContentFile = fileName;
+	                        	
+	                        }
+	                        else if(fieldName.equalsIgnoreCase("cover"))
+	                        {
+	                        	root = SystemConfigHandler.getInstance().getBookCoverPageFolder();
+	                        	coverPage = fileName;
+	                        	
+	                        }
+	                       
 	                        File path = new File(root);
 	                        if (!path.exists()) {
 	                            boolean status = path.mkdirs();
 	                        }
 	                        filePath = path + "/" + fileName;
 	                        
-	                        File uploadedFile = new File(path + "/" + fileName);
+	                        File uploadedFile = new File(path + "/" + fileName);	                 
 	                        System.out.println(uploadedFile.getAbsolutePath());
 	                        item.write(uploadedFile);
 	                    }
@@ -133,6 +150,7 @@ public class WorkUploadServlet extends HttpServlet {
 	                    	if(name.equalsIgnoreCase(Work.LANGUAGE))
 		                    	try
 		                    	{
+
 		                    		language = LANGUAGES.valueOf(value);
 		                    	}
 		                    	
@@ -185,18 +203,35 @@ public class WorkUploadServlet extends HttpServlet {
         		pId = publisherId;
         	}
         	
-        	String coverPageFile = SystemConfigHandler.getInstance().getBookCoverPageFolder()+title+".jpg";
+        	String coverPageFile = SystemConfigHandler.getInstance().getBookCoverPageFolder()+"/"+title+".jpg";
         	JSONObject metadata =  new JSONObject();
         	metadata.put(Work.SEARCHKEY, searchKey);
         	
         	String _id = WorkContentManager.getInstance().addWork("", title, authorId, coverPageFile, bookCategory, type, 0, metadata , bookDesc,
         			language, isPublished, new Date(pyear, pmonth, pday).getTime(), bookEdition, isbn, pId);
         	
-        	int numPages = 0;			
-        	if(fileName.endsWith(".doc"))
-        		numPages = BookConverterUtils.convertDOCToQPEKA(SystemConfigHandler.getInstance().getBookContentFolder(),SystemConfigHandler.getInstance().getSrcBookFolder()+fileName, title);
-			else if(fileName.endsWith(".docx"))
-				BookConverterUtils.convertFromDOCXToQPEKA(SystemConfigHandler.getInstance().getBookContentFolder(), SystemConfigHandler.getInstance().getSrcBookFolder()+fileName, title);
+//        	int numPages = 0;			
+//        	if(fileName.endsWith(".doc"))
+//        		numPages = BookConverterUtils.convertDOCToQPEKA(SystemConfigHandler.getInstance().getBookContentFolder(),SystemConfigHandler.getInstance().getSrcBookFolder()+fileName, title);
+//			else if(fileName.endsWith(".docx"))
+//				BookConverterUtils.convertFromDOCXToQPEKA(SystemConfigHandler.getInstance().getBookContentFolder(), SystemConfigHandler.getInstance().getSrcBookFolder()+fileName, title);
+        	//Rename files accordingly here
+        	
+        	File cvr = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+ "/"+coverPage);
+        	if(cvr != null && cvr.exists())
+        	{
+        		File idedFile = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+ "/"+_id+".jpg");
+        		FileUtils.copyFile(cvr, idedFile);	
+        		cvr.delete();
+        	}
+        	
+        	cvr = new File(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile);
+        	if(cvr != null && cvr.exists())
+        	{
+        		File idedFile = new File(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+        		FileUtils.copyFile(cvr, idedFile);	
+        		cvr.delete();
+        	}
         	
         	response.setContentType("application/json");
         	JSONObject resp = new JSONObject();

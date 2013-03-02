@@ -504,7 +504,7 @@ public class WorksHandler {
 		JSONObject metadata = new JSONObject();
 		metadata.put(Work.SEARCHKEY, "art,history");
 		
-		Work w = new Work("", "Marks work"+1, aid, "", CATEGORY.ART, TYPE.BOOK, 100, metadata, "AWSOME BOOK"+i, LANGUAGES.English, false);
+		Work w = new Work("", "Marks work"+1, aid, "", CATEGORY.ART, TYPE.BOOK, 100, metadata, "AWSOME BOOK"+i, LANGUAGES.ENGLISH, false);
 		
 		WorksHandler.getInstance().addWork(w);
 		}

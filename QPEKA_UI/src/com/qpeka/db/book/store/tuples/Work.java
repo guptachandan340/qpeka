@@ -66,7 +66,7 @@ public class Work {
 	private int numPages = 0;
 	private JSONObject metaData = new JSONObject();
 	private String description = "";
-	private LANGUAGES language = LANGUAGES.English;
+	private LANGUAGES language = LANGUAGES.ENGLISH;
 	private boolean isPub = true; 
 	
 	private long dateOfPub = -1;

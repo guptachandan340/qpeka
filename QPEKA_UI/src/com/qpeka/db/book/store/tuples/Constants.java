@@ -43,6 +43,6 @@ public class Constants {
 	
 	public enum LANGUAGES
 	{
-		Assamese , Bengali , Bodo , Dogri , Gujarati , Hindi , Kannada , Kashmiri , Konkani , Maithili , Malayalam , Manipuri , Marathi , Nepali , Oriya , Punjabi , Sanskrit , Santhali , Sindhi , Tamil , Telugu , Urdu , English
+		ASSAMESE , BENGALI , BODO , DOGRI , GUJARATI , HINDI , KANNADA , KASHMIRI , KONKANI , MAITHILI , MALAYALAM , MANIPURI , MARATHI , NEPALI , ORIYA , PUNJABI , SANSKRIT , SANTHALI , SINDHI , TAMIL , TELUGU , URDU , ENGLISH
 	}
 }

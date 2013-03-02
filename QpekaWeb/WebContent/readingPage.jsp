@@ -37,7 +37,7 @@
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
     <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
-  <body onload="loadToc('/home/manoj/Sam Williams - Free As In Freedom.epub');">
+  <body onload="loadToc('<%=request.getParameter("wid")%>');">
 	<!-- Text -->
 	<div class="container-fluid">
      <div class="row-fluid">

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -161,7 +163,7 @@ public class Author {
 	{
 		BasicDBObject dbObj = new BasicDBObject();
 		if(!insert)
-			dbObj.put(ID, _id);
+			dbObj.put(ID, new ObjectId(_id));
 		
 		dbObj.put(NAME, name.toDBObject());
 		dbObj.put(GENDER, gender.toString());

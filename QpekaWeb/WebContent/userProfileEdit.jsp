@@ -35,7 +35,7 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
   </head>
 
-  <body onload="loadUser('5119008472d0d2bbd6526d61');">
+  <body onload="loadUser('<%=request.getParameter("uid")%>');">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -207,6 +207,16 @@
 								 </div>
 							  </div>
 							  <div class="control-group">
+							    <label class="control-label" for="type">User Type</label>
+							     <div class="controls">
+								    <select id="type" name="utype">
+										  <option value="READER">READER</option>
+										  <option value="AUTHOR">AUTHOR</option>
+										 
+								    </select>
+								 </div>
+							  </div>
+							  <div class="control-group">
 							    <label class="control-label" for="website">Website</label>
 							     <div class="controls">
 								   <input type="text" id="website" class="span5"  placeholder="Website">
@@ -221,7 +231,7 @@
 							  
 							  <div class="control-group">
 							    <div class="controls">					     
-							      <button onclick="updateGeneral();return false;" class="btn">Edit</button>
+							      <button onclick="updateGeneral('<%=request.getParameter("uid")%>');return false;" class="btn">Edit</button>
 							    </div>
 							  </div>
 							</form>
@@ -286,7 +296,7 @@
 							  
 							  <div class="control-group">
 							    <div class="controls">					     
-							      <button onclick="updateAddr();return false;" class="btn">Edit</button>
+							      <button onclick="updateAddr('<%=request.getParameter("uid")%>');return false;" class="btn">Edit</button>
 							    </div>
 							  </div>
 							</form>

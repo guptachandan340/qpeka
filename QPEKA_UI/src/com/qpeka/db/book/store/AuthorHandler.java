@@ -45,6 +45,14 @@ public class AuthorHandler {
 		return id.toString();
 	}
 	
+	public String addAuthor(Author author, boolean useId)
+	{
+		BasicDBObject dObj = (BasicDBObject)author.toDBObject(useId?true:false);
+		WriteResult result = authors.insert(dObj, WriteConcern.SAFE);
+		ObjectId id =  dObj.getObjectId("_id");
+		return id.toString();
+	}
+	
 	public String addUserAsAuthor(Author author)
 	{
 		BasicDBObject dObj = (BasicDBObject)author.toDBObject(false);

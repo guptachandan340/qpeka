@@ -119,8 +119,8 @@
     <hr>
     <ul>
     	<li>My Profile</li>
-    	<li>My Account</li>
-    	<li>Upload</li>
+    	<li><a href="http://localhost:8080/QpekaWeb/userProfileEdit.jsp?uid=<%=request.getParameter("uid")%>">My Account</a></li>
+    	<li><a href="http://localhost:8080/QpekaWeb/uploadWork.jsp?aid=<%=request.getParameter("uid")%>">Upload</a></li>
     </ul>								
     </div>
     <div class="span7">

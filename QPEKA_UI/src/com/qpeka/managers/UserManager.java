@@ -6,11 +6,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.qpeka.db.book.store.AuthorHandler;
 import com.qpeka.db.book.store.UserHandler;
 import com.qpeka.db.book.store.tuples.Address;
+import com.qpeka.db.book.store.tuples.Author;
 import com.qpeka.db.book.store.tuples.BookMark;
+import com.qpeka.db.book.store.tuples.Constants.AUTHORTYPE;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
 import com.qpeka.db.book.store.tuples.Constants.GENDER;
 import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
@@ -95,6 +99,22 @@ private static UserManager instance = null;
 	
 	public void updateUser(JSONObject jReq)
 	{
+		try 
+		{
+			String uid = jReq.getString("id");
+			if(jReq.has("type") && jReq.getString("type").equalsIgnoreCase("AUTHOR"))
+			{
+				User u = UserHandler.getInstance().getUser(uid);
+				if(!u.isWriter())
+				{
+					Author a  = new Author(u.get_id(), u.getName(), u.getGender(), u.getDob(), u.getNationality(), "", u.getDesc(), "", u.getInterests(), AUTHORTYPE.LEVEL1);
+					AuthorHandler.getInstance().addAuthor(a, false);
+				}
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		UserHandler.getInstance().updateUser(jReq);
 	}
 	

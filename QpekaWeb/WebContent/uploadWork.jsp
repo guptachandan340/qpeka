@@ -388,6 +388,12 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							      <input type="file" id="file" name="file" placeholder="File to Upload">
 							    </div>
 							  </div>
+							  <div class="control-group">
+							    <label class="control-label" for="cover">Cover Image</label>
+							    <div class="controls">
+							      <input type="file" id="cover" name="cover" placeholder="Cover Page to Upload">
+							    </div>
+							  </div>
 	              		<div class="form-actions">
 			            	<button type="submit" class="btn btn-primary btn-small">Submit</button>
 	        			</div>
