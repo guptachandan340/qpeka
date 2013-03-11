@@ -138,4 +138,9 @@ private static UserManager instance = null;
 		//sdfjg
 		
 	}
+	
+	public List<User> getUsersBySearchKey(String searchKey)
+	{
+		return UserHandler.getInstance().getUsersBySearchKey(searchKey);
+	}
 }

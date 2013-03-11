@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,6 +79,18 @@ public class UserRegistrationServlet extends HttpServlet {
 			
 			Writer wr = response.getWriter();
         	wr.write(user);
+			wr.flush();
+        	return;
+		}
+		else if(requestype.equalsIgnoreCase("getUsersBysearchKey"))
+		{
+			JSONArray jsa = new JSONArray();
+			for(User u : UserManager.getInstance().getUsersBySearchKey(request.getParameter("key")))
+			{
+				jsa.put(u.toDBObject(false));
+			}
+			Writer wr = response.getWriter();
+        	wr.write(jsa.toString());
 			wr.flush();
         	return;
 		}

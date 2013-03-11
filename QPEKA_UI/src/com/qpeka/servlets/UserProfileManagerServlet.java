@@ -14,6 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.qpeka.db.book.store.UserAuthHandler;
+import com.qpeka.db.book.store.UserHandler;
+import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
 import com.qpeka.managers.UserManager;
 
 /**
@@ -43,7 +45,25 @@ public class UserProfileManagerServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String action = request.getParameter("rType");
 		
-		if(action.equalsIgnoreCase("update"))
+		if(action.equalsIgnoreCase("addrlang"))
+		{
+			UserHandler.getInstance().updateRLang(request.getParameter("uid"), LANGUAGES.valueOf(request.getParameter("lang")));
+			Writer wr = response.getWriter();
+        	
+			wr.write("{\"status\":\"success\"}");
+			wr.flush();
+			return;
+		}
+		else if(action.equalsIgnoreCase("addwlang"))
+		{
+			UserHandler.getInstance().updateWLang(request.getParameter("uid"), LANGUAGES.valueOf(request.getParameter("lang")));
+			Writer wr = response.getWriter();
+        	
+			wr.write("{\"status\":\"success\"}");
+			wr.flush();
+			return;
+		}
+		else if(action.equalsIgnoreCase("update"))
 		{
 			String req = request.getParameter("request");
 			try

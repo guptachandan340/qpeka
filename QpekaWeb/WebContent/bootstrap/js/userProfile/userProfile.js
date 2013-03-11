@@ -1,9 +1,17 @@
 /**
+
  * 
  */
-var updateAddr = function() {
 
-	var reqBody = {"id":"5119008472d0d2bbd6526d61"};
+var userProfileData = {};
+var keys  = [ 'email', 'userName', 'gender', 'nationality', 'type','desc'];
+var address = ['state','city','pincode','addressLine1','addressLine2','addressLine3'];
+var languages = ['rlang', 'wlang'];
+var names = ['firstName','middleName','lastName'];
+
+var updateAddr = function(id) {
+
+	var reqBody = {"id":id};
 	reqBody.address = {};
 	reqBody.address.city = $('#city').val();
 	reqBody.address.state = $('#state').val();
@@ -93,24 +101,11 @@ var loadUser = function(uid) {
 		    function(data) { 
 		    	try
 		    	{
-		    		var keys  = ['firstName','middleName','lastName'];
-			    	var address = ['state','city','pincode','addressLine1','addressLine2','addressLine3'];
-			    	var general = ['nationality', 'email', 'desc', 'gender','type'];
-			    	
-			    	for(var i = 0 ; i < keys.length; i++)
-			    	{
-			    		$('#'+keys[i]).val(data.name[keys[i]]);			
-			    	}
-			    	
-			    	for(var i = 0 ; i < address.length; i++)
-			    	{
-			    		$('#'+address[i]).val(data.address[address[i]]);
-			    	}
-			    	
-			    	for(var i = 0 ; i < general.length; i++)
-			    	{
-			    		$('#'+general[i]).val(data[general[i]]);
-			    	}
+		    		alert(JSON.stringify(data));
+		    		userProfileData = data;
+		    		populateBasicInfo();
+		    		populateAddress();
+		    		populateLang();
 		    	}
 		    	catch (e) {
 					alert(e);
@@ -119,4 +114,59 @@ var loadUser = function(uid) {
 		    "json"
 		);
 	
+}
+
+var populateBasicInfo = function() {
+	for(var i = 0 ; i < names.length; i++)
+	{
+		$('#'+names[i]).val(userProfileData.name[names[i]]);			
+	}
+	
+	for(var i = 0 ; i < keys.length; i++)
+	{
+		$('#'+keys[i]).val(userProfileData[keys[i]]);			
+	}
+	
+}
+
+var populateAddress = function() {
+	for(var i = 0 ; i < address.length; i++)
+	{
+		$('#'+address[i]).val(userProfileData.address[address[i]]);			
+	}
+}
+
+var populateLang  = function() {
+	var rlangs = userProfileData.rLang;
+	var wlangs = userProfileData.wLang;
+	for(r in rlangs)
+		$('#rlang1').append('&nbsp;<span class="label label-info">'+rlangs[r]+'</span>');
+	for(w in wlangs)
+		$('#wlang1').append('&nbsp;<span class="label label-info">'+wlangs[w]+'</span>');
+}
+
+var addRLang = function(id) {
+	
+	$.post(
+		    "http://localhost:8080/QPEKA/profile?rType=addrlang&uid="+id+"&lang="+$('#rlang').val(),
+		    null,
+		    function(data) { 
+		    	alert(JSON.stringify(data));  
+		    	$('#rlang1').append('&nbsp;<span class="label label-info">'+$('#rlang').val()+'</span>');
+		    },
+		    "json"
+		);
+}
+
+var addWLang = function(id) {
+	
+	$.post(
+			 "http://localhost:8080/QPEKA/profile?rType=addwlang&uid="+id+"&lang="+$('#wlang').val(),
+		    null,
+		    function(data) { 
+		    	alert(JSON.stringify(data));    
+		    	$('#wlang1').append('&nbsp;<span class="label label-info">'+$('#wlang').val()+'</span>');
+		    },
+		    "json"
+		);
 }

@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
@@ -374,7 +375,12 @@ public class User {
 		
 		if(!insert)
 			dbObj.put(ID, new ObjectId(_id));
-		
+		BasicDBList rbdl = new BasicDBList();
+		for(LANGUAGES l : rLang)
+			rbdl.add(l.toString());
+		BasicDBList wbdl = new BasicDBList();
+		for(LANGUAGES l : wLang)
+			wbdl.add(l.toString());
 		dbObj.put(USERNAME, this.userName);
 		dbObj.put(NAME, name.toDBObject());
 		dbObj.put(DOB, dob.getTime());
@@ -388,8 +394,8 @@ public class User {
 		dbObj.put(EMAIL, email);
 		dbObj.put(AGE, age);
 		dbObj.put(DESC, desc);
-		dbObj.put(RLANG, rLang.toString());
-		dbObj.put(WLANG, wLang.toString());
+		dbObj.put(RLANG, rbdl);
+		dbObj.put(WLANG, wbdl);
 		dbObj.put(PENNAME, penName);
 		
 		Set<BasicDBObject> bookMarkSet = new HashSet<BasicDBObject>();
@@ -420,6 +426,7 @@ public class User {
 		Set<LANGUAGES> rlang = new HashSet<Constants.LANGUAGES>();
 		Set<LANGUAGES> wlang = new HashSet<Constants.LANGUAGES>();
 		
+		BasicDBObject addr = (BasicDBObject)obj.get(User.ADDRESS);
 		try 
 		{
 			JSONArray ja = new JSONArray(obj.getString(RLANG));
@@ -440,7 +447,7 @@ public class User {
 		}
 		
 		return new User(obj.getString(USERNAME), obj.getString(ID), new Name(name.getString(Name.FIRSTNAME), name.getString(Name.MIDDLENAME), name.getString(Name.LASTNAME)),
-				com.qpeka.db.book.store.tuples.Constants.GENDER.valueOf(obj.getString(GENDER)),new Address("", "", "", "", "", ""), new HashSet<CATEGORY>(), com.qpeka.db.book.store.tuples.Constants.USERLEVEL.valueOf(obj.getString(USERLEVEL)),
+				com.qpeka.db.book.store.tuples.Constants.GENDER.valueOf(obj.getString(GENDER)),new Address(addr.getString(Address.CITY), addr.getString(Address.STATE), addr.getString(Address.ADDRESSLINE1), addr.getString(Address.ADDRESSLINE2), addr.getString(Address.ADDRESSLINE3), addr.getString(Address.PINCODE)), new HashSet<CATEGORY>(), com.qpeka.db.book.store.tuples.Constants.USERLEVEL.valueOf(obj.getString(USERLEVEL)),
 				com.qpeka.db.book.store.tuples.Constants.USERTYPE.valueOf(obj.getString(USERTYPE)),
 				new ArrayList(), obj.getInt(AGE), new Date(obj.getLong(DOB)), obj.getString(NATIONALITY), obj.getString(IMAGEFILE)
 				, obj.getString(EMAIL), obj.getString(PHONE), obj.getString(PENNAME), rlang, wlang, obj.getString(DESC));

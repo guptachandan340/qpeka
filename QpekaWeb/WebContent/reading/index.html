@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>ePub js test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/epubjs.css" ></link>
+    <link rel="stylesheet" href="css/readability/readability.css" ></link>
+    <link href="../bootstrap/css/bootstrap.css" rel="stylesheet">
+     <link href="../bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+	
+    <style type="text/css">
+      body {
+        padding-top: 5px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+    <script type="text/javascript">
+      var epub_dir = 'emma-jane_austen';
+//      var epub_dir = 'fielding-tom_jones';
+    </script>
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.2.custom.min.js"></script>
+    <script type="text/javascript" src="js/mousewheel.js"></script>    
+    <script type="text/javascript" src="js/epubjs.js"></script>
+
+  </head>
+  <body>
+    <div id="book" class="style1">
+      <div id="toc-container" ><ol id="toc"></ol></div>
+      <h3 id="content-title"></h3>
+       <div class="pagination pagination-mini">
+		  <ul>
+		    <li><a href="#" onclick="prev();">Prev</a></li>
+		    <li><a href="#" onclick="next();">Next</a></li>
+		  </ul>
+		</div>
+      <div id="total-size"><div id="remaining"></div></div>
+      <div id="content" ></div>
+    </div>
+  </body>
+</html>  

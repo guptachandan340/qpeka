@@ -336,44 +336,40 @@
 					    <div class="row-fluid">
 					      	<div class="span2"></div>
 					      	<div class="span8">		
-						    	 <div class="control-group">
-							    <label class="control-label" for="prefs">Preferences</label>
-							     <div class="controls">
-								 	<div id="prefs" name="prefs" class="thumbnail">
+						    <form class="form-horizontal">
+					      	  <div class="control-group">
+							    <label class="control-label" for="rlang">Reading language preference</label>
+							    <div class="controls">
+							        <div id="rlang1" name="rlang1" class="thumbnail">
 								     	<span class="label label-info">Info</span>
 								    </div>
-								 </div>
-							  </div>	
-							  <div class="control-group">
-							
-							       <select class="control-label" name="genre" id="genre">
-										  <option value="COMEDY">COMEDY</option>
-										  <option value="HORROR">HORROR</option>								 
-								   </select>
-								   <div class="controls">
-								   		<button onclick="addPref();return false;" class="btn">Add</button>
-								   </div>
+								    <select id="rlang" name="rlang" >
+										 <option value="HINDI">HINDI</option>
+										  <option value="ENGLISH">ENGLISH</option>	
+								    </select>
+								    <div class="controls">
+								   		<button onclick="addRLang('<%=request.getParameter("uid")%>');return false;" class="btn">Add</button>
+								    </div>
+							    </div>
 							  </div>
-							    <div class="control-group">
-							    <label class="control-label" for="prefs">Preferences</label>
-							     <div class="controls">
-								 	<div id="prefs" name="prefs" class="thumbnail">
+							  <div class="control-group">
+							    <label class="control-label" for="wlang">Writing language preference</label>
+							    <div class="controls">
+							        <div id="wlang1" name="wlang1" class="thumbnail">
 								     	<span class="label label-info">Info</span>
 								    </div>
-								 </div>
-							  </div>	
-							  <div class="control-group">
-							
-							       <select class="control-label" name="genre" id="genre">
-										  <option value="COMEDY">COMEDY</option>
-										  <option value="HORROR">HORROR</option>								 
-								   </select>
-								   <div class="controls">
-								   		<button onclick="addPref();return false;" class="btn">Add</button>
-								   </div>
+								    <select id="wlang" name="wlang" >
+										 <option value="HINDI">HINDI</option>
+										  <option value="ENGLISH">ENGLISH</option>	
+								    </select>
+								    <div class="controls">
+								   		<button onclick="addWLang('<%=request.getParameter("uid")%>');return false;" class="btn">Add</button>
+								    </div>
+							    </div>
 							  </div>
-					    </div>
-					    <div class="span2"></div>
+							  </form>	
+					    	</div>
+					    	<div class="span2"></div>
 					    </div>
 					   </div>
 					    

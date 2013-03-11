@@ -57,7 +57,6 @@ public class WorkUploadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		boolean create = false;
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-		System.out.println("shdgfsj" + request.getParameter("title"));
 		//file upload part 
 	    String filePath = "";
 	    String title = "";

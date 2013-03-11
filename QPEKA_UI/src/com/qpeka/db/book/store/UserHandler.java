@@ -1,12 +1,16 @@
 package com.qpeka.db.book.store;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -16,6 +20,8 @@ import com.mongodb.WriteResult;
 import com.qpeka.db.book.store.tuples.Author;
 import com.qpeka.db.book.store.tuples.Constants.AUTHORTYPE;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
+import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
+import com.qpeka.db.book.store.tuples.Name;
 import com.qpeka.db.book.store.tuples.User;
 
 public class UserHandler {
@@ -81,6 +87,22 @@ public class UserHandler {
 		q.put(User.ID, new ObjectId(user.get_id()));
 		
 		users.update(q, new BasicDBObject("$set" , user.toDBObject(true)), true, false, WriteConcern.SAFE);
+	}
+	
+	public void updateRLang(String uid , LANGUAGES l)
+	{
+		BasicDBObject q = new BasicDBObject();
+		q.put(User.ID, new ObjectId(uid));
+		
+		users.update(q, new BasicDBObject("$push" , new BasicDBObject(User.RLANG, l.toString())), true, false, WriteConcern.SAFE);
+	}
+	
+	public void updateWLang(String uid , LANGUAGES l)
+	{
+		BasicDBObject q = new BasicDBObject();
+		q.put(User.ID, new ObjectId(uid));
+		
+		users.update(q, new BasicDBObject("$push" , new BasicDBObject(User.WLANG, l.toString())), true, false, WriteConcern.SAFE);
 	}
 	
 	public void updateUser(JSONObject userAttrs)
@@ -176,4 +198,40 @@ public class UserHandler {
         }
 	}
 	
+	public List<User> getUsersBySearchKey(String searchKey)
+	{
+		List<User> retList = new ArrayList<User>();
+		
+		BasicDBList bdl = new BasicDBList();
+		bdl.add(new BasicDBObject(User.USERNAME, java.util.regex.Pattern.compile(searchKey,Pattern.CASE_INSENSITIVE)));
+		bdl.add(new BasicDBObject(User.NAME+"."+Name.FIRSTNAME, Pattern.compile(searchKey,Pattern.CASE_INSENSITIVE)));
+		bdl.add(new BasicDBObject(User.NAME+"."+Name.LASTNAME, Pattern.compile(searchKey,Pattern.CASE_INSENSITIVE)));
+		
+		BasicDBObject q = new BasicDBObject();
+		q.put("$or", bdl);
+		
+		DBCursor cursor = users.find(q);
+		
+        try 
+        {
+            while(cursor.hasNext()) 
+            {
+                BasicDBObject dObj = (BasicDBObject)cursor.next();
+                User user = User.getUserfromDBObject(dObj);
+                retList.add(user);
+            }
+            return retList;
+         
+        } 
+        catch (Exception e)
+        {
+			e.printStackTrace();
+			return retList;
+		}
+        finally {
+            cursor.close();
+            
+        }
+	
+	}
 }
