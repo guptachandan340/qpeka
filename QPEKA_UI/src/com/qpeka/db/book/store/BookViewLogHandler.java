@@ -37,12 +37,12 @@ public class BookViewLogHandler {
 		db.authenticate("manoj.thakur66@gmail.com", new char[]{'A','v','a','y','a','1','2','3'});
 		bookViewLogs = db.getCollection("bookViewLog");
 		
-		BasicDBObject compoundIndex = new BasicDBObject(BookPageViewLog.BOOKID, 1);
-		compoundIndex.put(BookPageViewLog.USERID, 1);
+		//BasicDBObject compoundIndex = new BasicDBObject(BookPageViewLog.BOOKID, 1);
+		//compoundIndex.put(BookPageViewLog.USERID, 1);
 		
 		bookViewLogs.createIndex(new BasicDBObject(BookPageViewLog.BOOKID, 1));
-		bookViewLogs.createIndex(new BasicDBObject(BookPageViewLog.USERID, 1));
-		bookViewLogs.createIndex(compoundIndex);
+		//bookViewLogs.createIndex(new BasicDBObject(BookPageViewLog.USERID, 1));
+		//bookViewLogs.createIndex(compoundIndex);
 		
 	}
 	
@@ -113,5 +113,23 @@ public class BookViewLogHandler {
         finally {
             cursor.close();
         }
+	}
+//	
+//	{
+//		  		bookId:2396425427348029534243f,
+//		  		viewLog : {
+//		  			4:{
+//		  				2735648723547238:[1625397123193,....]
+//		  			}
+//		 		}
+//		  }
+//	}
+	
+	public void updateLog(String user, String wid, String page, long ts)
+	{
+		BasicDBObject q = new BasicDBObject(BookPageViewLog.BOOKID, wid);
+		BasicDBObject mod = new BasicDBObject();
+		mod.put("viewLog."+page+"."+user, ts);
+		bookViewLogs.update(q, new BasicDBObject("$addToSet",mod), true, false);
 	}
 }

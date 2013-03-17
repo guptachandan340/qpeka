@@ -337,9 +337,12 @@ function logPageView()
 {
 	//increment 
 	cntr++;
-	var visitedtext = $('#content p:visible').text();
+	var visitedtext = $('#content p:visible');
+	var visitedHtml = '';
+	for(var i = 0; i < visitedtext.length;i++)
+		visitedHtml += visitedtext[i].innerHTML;
 	//log the page visit
-	jQuery.get('http://localhost:8080/QPEKA/log?log='+visitedtext, {}, function() {
+	jQuery.get('http://localhost:8080/QPEKA/log?log='+visitedHtml, {}, function() {
 	});
 	
 }

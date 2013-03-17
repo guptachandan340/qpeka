@@ -9,13 +9,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.qpeka.db.book.store.BookViewLogHandler;
+
 
 /**
  * Servlet implementation class PageViewLogger
  */
 public class PageViewLogger extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private Pattern p = Pattern.compile("<page=[0-9]*>");
+    private Pattern p = Pattern.compile("<page id=\"[0-9]*\"></page>");
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -33,10 +35,18 @@ public class PageViewLogger extends HttpServlet {
 		try 
 		{
 			String pgRd = request.getParameter("log");
+			String workId = request.getParameter("wid");
+			workId = (workId == null || workId.length() == 0)?"sampleWork":workId;
+			String uid = request.getParameter("uid");
+			uid = (uid == null || uid.length() == 0)?"anonymous":uid;
+			String ts = request.getParameter("ts");
+			ts = (ts == null || ts.length() == 0)?System.currentTimeMillis()+"":ts;
+			request.getParameter("log");
 			Matcher m = p.matcher(pgRd);
 			while(m.find())
 			{
-				System.out.println(m.group());
+				String pgId = m.group().split("id=")[1].split("><")[0].split("\"")[1];
+				BookViewLogHandler.getInstance().updateLog(uid, workId, pgId, Long.parseLong(ts));
 			}
 		}
 		catch (Exception e) {
@@ -53,4 +63,9 @@ public class PageViewLogger extends HttpServlet {
 		doGet(request, response);
 	}
 	
+	public static void main(String[] args) {
+		String x = "<page id=\"78\"></page>";
+		System.out.println(x.split("id=")[1].split("><")[0].split("\"")[1]);
+		
+	}
 }
