@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import nl.siegmann.epublib.domain.Book;
@@ -14,8 +16,11 @@ import nl.siegmann.epublib.epub.EpubWriter;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.parser.Tag;
@@ -68,16 +73,20 @@ public class EpubProcessor {
         				c.incrementCount();
         			if(c.getCount() > PAGE_COUNT)
         			{
-        				System.out.println(c.getPgCount());
-        				txt = txt + " " + StringEscapeUtils.unescapeHtml("&lt;page id=\""+c.getPgCount()+"\" &gt;")  + " " + arr[i]; //<div style='visibility:hidden'>Page="+pageCount+"</div>
+        				//"<!--page id="+c.getPgCount()+ "--!>" + " " +  arr[i]);
+        				txt = txt + " " + "<!--page id="+c.getPgCount()+ "--!>"  + " " + arr[i]; //<div style='visibility:hidden'>Page="+pageCount+"</div>
         				c.incrementPgCount();
         				c.setCount(0);
+        				
         			}
-        			else
+        			else{
         				txt = txt + " " + arr[i];
+        			}
         		}
+        		
         		nd.text(txt);
-        	
+        		
+        		
     		}
     		else if(n instanceof Element)
     		{
@@ -86,6 +95,7 @@ public class EpubProcessor {
     			c.setPgCount(ctemp.getPgCount());
     		}
     	}
+    	
     	return c;
     }
 	
@@ -142,5 +152,7 @@ public class EpubProcessor {
 		processEpub("/home/manoj/Emma_Jane-Austen.epub");
 //		Node n = new TextNode("<page id=23>", "");
 //		System.out.println(StringEscapeUtils.unescapeHtml("&lt;page&gt;"));
+		//Tag t = Tag.valueOf("<page>");
+		//System.out.println(t);
 	}
 }

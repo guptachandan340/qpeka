@@ -4,6 +4,7 @@ var opf_file = '';
 var ncx_file = '';
 var abs_container_bottom = null;
 var cntr = 0;
+
 function process_content() {
     $('#content p').css('color', 'white');
 
@@ -25,7 +26,8 @@ function process_content() {
             var top_with_padding = top + (line_height);
             if (top_with_padding > abs_container_bottom) {
                 // We went too far; this paragraph starts below the fold.
-                // This means the previous paragraph broke acceptably, so just return
+                // This means the previous paragraph broke acceptably, so just
+				// return
                 return false;
             }
             obscured_para = $(this);
@@ -38,14 +40,14 @@ function process_content() {
 
     });
 
-    /* Given a paragraph that needs to be broken, find the minimum displayable
-       text and push the remaining text to a new paragraph.
-       This could be improved by accelerating quickly when the disparity between
-       the current height and target height are great. 
-       Also investigate methods to preserve the DOM integrity of the original
-       by wrapping the overflow into a hidden span rather than by segmenting
-       it into a new paragraph.
-    */
+    /*
+	 * Given a paragraph that needs to be broken, find the minimum displayable
+	 * text and push the remaining text to a new paragraph. This could be
+	 * improved by accelerating quickly when the disparity between the current
+	 * height and target height are great. Also investigate methods to preserve
+	 * the DOM integrity of the original by wrapping the overflow into a hidden
+	 * span rather than by segmenting it into a new paragraph.
+	 */
 
     if (obscured_para != null && obscured_para.text() != '') {
         text_overflow = new Array();
@@ -82,7 +84,7 @@ function process_content() {
         status.bottom = obscured_para;
     } else {
         status.bottom = last_unobscured_para;
-        // Are there any more paragraphs?  If so, hide them
+        // Are there any more paragraphs? If so, hide them
         if (last_unobscured_para) {
             last_unobscured_para.nextAll('p').hide();
         }
@@ -121,11 +123,14 @@ function fade_content(content) {
 }
 
 function load_content() {
-	cntr = 0;
-    page = $(this).attr('href');
+	page = $(this).attr('href');
     // Unselect other sections
     $('.selected').attr('class', 'unselected');
     $(this).attr('class', 'selected');
+    
+    //reset page counter and assign pg count
+    cntr = 0;
+    
     $('#content').load(page, null, process_content);
     return false;
 }
@@ -147,12 +152,13 @@ function next() {
 }
 
 function previous() {
-    /* If we have no pages to go back to, call the previous chapter function instead.
-       This isn't really what the reader probably means -- they want to turn
-       back to the previous _page_ before the beginning of that chapter,
-       but we could only potentially do that if we had visited the page already
-       and had it in the stack.
-    */
+    /*
+	 * If we have no pages to go back to, call the previous chapter function
+	 * instead. This isn't really what the reader probably means -- they want to
+	 * turn back to the previous _page_ before the beginning of that chapter,
+	 * but we could only potentially do that if we had visited the page already
+	 * and had it in the stack.
+	 */
     var status = page_stack.pop();
     if (status == null) {
         return process_content();
@@ -169,10 +175,9 @@ function previous() {
 }
 
 function next_chapter() {
-	cntr=0;
-    // Simulate a click event on the next chapter after the selected one
+	// Simulate a click event on the next chapter after the selected one
     $('a.selected').parent().next('li').find('a').click();
-
+    
     // How far is the selected chapter now from the bottom border?
     var selected_position = $('a.selected').position().top;
     var height_of_toc = $('a.selected').height();
@@ -182,6 +187,7 @@ function next_chapter() {
         $('#toc a:visible:eq(0)').hide();
     }
     $('#remaining').css('width', '0px');
+    
 }
 
 function previous_chapter() {
@@ -204,7 +210,15 @@ function container(f) {
         oebps_dir = opf_file.substr(0, opf_file.lastIndexOf('/'));
     }
     opf_file = epub_dir + '/' + opf_file;
-    jQuery.get(opf_file, {}, opf);
+    try
+    {
+    	var url = 'http://localhost:8080/QPEKA/epub?file=/home/manoj/GITHUB/qpeka/QpekaWeb/WebContent/reading/emma-jane_austen/Emma_Jane-Austen.epub&action=0';
+    	jQuery.get(url, {}, opf);
+    }
+    catch (e) {
+		alert(e);
+	}
+    //jQuery.get(opf_file, {}, opf);
 }
 
 /* Open the TOC, get the first item and open it */
@@ -213,7 +227,20 @@ function toc(f) {
 
     $(f).find('navPoint').each(function() {
         var s = $('<span/>').text($(this).find('text:first').text());
-        var a = $('<a/>').attr('href', epub_dir + '/' + oebps_dir + '/' + $(this).find('content').attr('src'));
+        //http://localhost:8080/QPEKA/epub?action=1&section=$(this).find('content').attr('src')
+        //var href = epub_dir + '/' + oebps_dir + '/' + $(this).find('content').attr('src');
+        var res = '';
+        var subpart = '';
+        if($(this).find('content').attr('src').indexOf('#') !== -1 )
+        {
+        	res = $(this).find('content').attr('src').split('#')[0];
+        	subpart = $(this).find('content').attr('src').split('#')[1];
+        }
+        else
+        	res = $(this).find('content').attr('src');
+        
+        var href = 'http://localhost:8080/QPEKA/epub?file=/home/manoj/GITHUB/qpeka/QpekaWeb/WebContent/reading/emma-jane_austen/Emma_Jane-Austen.epub&action=1&res='+res+'#'+subpart;
+        var a = $('<a/>').attr('href',href);
         // If 's' has a parent navPoint, indent it
         if ($(this).parent()[0].tagName.toLowerCase() == 'navpoint') {
             s.addClass('indent');
@@ -222,27 +249,26 @@ function toc(f) {
         a.appendTo($('<li/>').appendTo('#toc'));
     });
 
-    // Click on the desired first item link 
+    // Click on the desired first item link
     $('#toc a:eq(0)').click();
 
 } /* Open the OPF file and read some useful metadata from it */
 
 function opf(f) {
-    // Get the document title
+	// Get the document title
     // Depending on the browser, namespaces may or may not be handled here
-    var title = $(f).find('title').text(); // Safari
+	var title = $(f).find('title').text(); // Safari
     var author = $(f).find('creator').text();
     $('#content-title').html(title + ' by ' + author);
     // Firefox
     if (title == null || title == '') {
         $('#content-title').html($(f).find('dc\\:title').text() + ' by ' + $(f).find('dc\\:creator').text());
     }
-    // Get the NCX 
+    // Get the NCX
     var opf_item_tag = 'opf\\:item';
     if ($(f).find('opf\\:item').length == 0) {
         opf_item_tag = 'item';
     }
-
     $(f).find(opf_item_tag).each(function() {
         // Cheat and find the first file ending in NCX
         if ($(this).attr('href').indexOf('.ncx') != -1) {
@@ -275,28 +301,85 @@ jQuery(document).ready(function() {
 
     $(document).bind('keydown', function(e) {
         var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 78) { //  'n'
-            next();
+        if (code == 78) { // 'n'
+        	next();
         }
         if (code == 80) { // 'p'
             previous();
         }
-        if (code == 74) { //  'j'
+        if (code == 74) { // 'j'
             next_chapter();
         }
-        if (code == 75) { //  'k'
+        if (code == 75) { // 'k'
             previous_chapter();
         }
     });
+    
+    var pg = parseInt(getCookie('chapter'));
+    cntr = getCookie('index');
+    
+    if(pg != undefined && cntr != undefined){
+    	setTimeout(function() {
+    		$("ol li:nth-child("+(pg+1)+")").find('a').click();
+		},100);
+    }
+    
 });
-//added newly
+// added newly
+
+function bookmark()
+{
+	setCookie('chapter', $('a.selected').parent().next('li').index()-1, 365);
+	setCookie('index', cntr, 365);
+}
+
 function logPageView()
 {
-	alert($('a.selected').parent().index() + ' ' + cntr);
+	//increment 
 	cntr++;
 	var visitedtext = $('#content p:visible').text();
+	//log the page visit
 	jQuery.get('http://localhost:8080/QPEKA/log?log='+visitedtext, {}, function() {
-		
 	});
 	
+}
+
+function getCookie(c_name)
+{
+	var i,x,y,ARRcookies=document.cookie.split(";");
+	for (i=0;i<ARRcookies.length;i++)
+	{
+		x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+		y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+		x=x.replace(/^\s+|\s+$/g,"");
+		if (x==c_name)
+		{
+			return unescape(y);
+		}
+	}
+}
+
+function setCookie(c_name,value,exdays)
+{
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() + exdays);
+	var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+	document.cookie=c_name + "=" + c_value;
+}
+
+function checkCookie()
+{
+	var username=getCookie("username");
+	if (username!=null && username!="")
+	{
+		alert("Welcome again " + username);
+	}
+	else
+	{
+		username=prompt("Please enter your name:","");
+		if (username!=null && username!="")
+	    {
+			setCookie("username",username,365);
+	    }
+	}
 }
