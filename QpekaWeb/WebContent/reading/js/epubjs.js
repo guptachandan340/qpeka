@@ -39,7 +39,7 @@ function process_content() {
         last_unobscured_para = $(this);
 
     });
-
+   
     /*
 	 * Given a paragraph that needs to be broken, find the minimum displayable
 	 * text and push the remaining text to a new paragraph. This could be
@@ -212,7 +212,7 @@ function container(f) {
     opf_file = epub_dir + '/' + opf_file;
     try
     {
-    	var url = 'http://localhost:8080/QPEKA/epub?file=/home/manoj/GITHUB/qpeka/QpekaWeb/WebContent/reading/emma-jane_austen/Emma_Jane-Austen.epub&action=0';
+    	var url = 'http://localhost:8080/QPEKA/epub?id='+wid+'&action=0';
     	jQuery.get(url, {}, opf);
     }
     catch (e) {
@@ -239,7 +239,7 @@ function toc(f) {
         else
         	res = $(this).find('content').attr('src');
         
-        var href = 'http://localhost:8080/QPEKA/epub?file=/home/manoj/GITHUB/qpeka/QpekaWeb/WebContent/reading/emma-jane_austen/Emma_Jane-Austen.epub&action=1&res='+res+'#'+subpart;
+        var href = 'http://localhost:8080/QPEKA/epub?id='+wid+'&action=1&res='+res+'#'+subpart;
         var a = $('<a/>').attr('href',href);
         // If 's' has a parent navPoint, indent it
         if ($(this).parent()[0].tagName.toLowerCase() == 'navpoint') {

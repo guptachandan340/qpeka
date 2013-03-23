@@ -126,7 +126,7 @@
          				<br>
 	         			<img src="assets/img/testimg.jpg" style="height: 220px;width: 160px;" class="img-polaroid"><br><br>
 	         			<div class="btn-group">		
-	         			  <a href="http://localhost:8080/QpekaWeb/readingPage.jsp?wid=<%=request.getParameter("id")%>"><button class="btn btn-small btn-primary" type="button">Start Reading</button></a>		
+	         			  <a href="http://localhost:8080/QpekaWeb/reading/readingPage.jsp?wid=<%=request.getParameter("id")%>" target="_blank"><button class="btn btn-small btn-primary" type="button">Start Reading</button></a>		
 						  <br>
 						  <div class="btn-group">
 			                <button class="btn btn-info btn-small dropdown-toggle" data-toggle="dropdown">Info <span class="caret"></span></button>
