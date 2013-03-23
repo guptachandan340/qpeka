@@ -19,16 +19,16 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
-import org.apache.xmlbeans.impl.xb.ltgfmt.TestCase.Files;
 import org.json.JSONObject;
 
-import com.qpeka.book.converter.BookConverterUtils;
 import com.qpeka.db.book.store.PublisherHandler;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
 import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
 import com.qpeka.db.book.store.tuples.Constants.TYPE;
 import com.qpeka.db.book.store.tuples.Publisher;
 import com.qpeka.db.book.store.tuples.Work;
+import com.qpeka.epub.provider.EpubProcessor;
+import com.qpeka.epub.provider.EpubProcessorNew;
 import com.qpeka.managers.WorkContentManager;
 import com.qpeka.utils.SystemConfigHandler;
 
@@ -227,8 +227,8 @@ public class WorkUploadServlet extends HttpServlet {
         	cvr = new File(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile);
         	if(cvr != null && cvr.exists())
         	{
-        		File idedFile = new File(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
-        		FileUtils.copyFile(cvr, idedFile);	
+        		EpubProcessorNew.processEpub(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile,
+        				SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
         		cvr.delete();
         	}
         	
