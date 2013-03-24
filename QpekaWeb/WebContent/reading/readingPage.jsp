@@ -7,11 +7,9 @@
 <title>Qpeka</title>
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="css/epubjs.css" ></link>
-    <link rel="stylesheet" href="css/readability/readability.css" ></link>
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
      <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-	
+	<link rel="stylesheet" href="css/reading.css" ></link>
     <style type="text/css">
       body {
         padding-top: 5px;
@@ -33,22 +31,37 @@
 </head>
 <body>
 	<div id="book" class="style1">
-      <div id="toc-container" ><ol id="toc"></ol></div>
-      <h3 id="content-title"></h3>
-      <!--This is a comment. Comments are not displayed in the browser-->
-       <div class="pagination pagination-mini">
-		  <ul>
-		    <li><a href="#" onclick="prev();">Prev</a></li>
-		    <li><a href="#" onclick="next();">Next</a></li>
-		  </ul>
-		  &nbsp;
-		  <ul>
-		    <li><a href="#" onclick="bookmark();">BookMark</a></li>
-		  </ul>
-		</div>
+	<div class="row-fluid">
+    	<div class="span1">
+        </div>
+        <div class="span10">
+        <div class="row-fluid">
+        	<div id="toc-container" class="span3">
+        		<br>
+        		<ol id="toc"></ol>
+        	</div>
+        	<div class="span7">
+        		<h3 id="content-title"></h3>
+        		 <!--This is a comment. Comments are not displayed in the browser-->
+			       <div class="pagination pagination-mini">
+					  <ul>
+					    <li><a href="#" onclick="prev();">Prev</a></li>
+					    <li><a href="#" onclick="next();">Next</a></li>
+					  </ul>
+					  &nbsp;
+					  <ul>
+					    <li><a href="#" onclick="bookmark();">BookMark</a></li>
+					  </ul>
+					</div>
+					<div id="total-size"><div id="remaining"></div></div>
+      				<div id="content" ></div>
+        	</div>
+        </div>
+        </div>
+        <div class="span1">
+        </div>
+    </div>
 	
-      <div id="total-size"><div id="remaining"></div></div>
-      <div id="content" ></div>
     </div>
 </body>
 </html>
