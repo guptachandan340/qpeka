@@ -349,9 +349,9 @@ public class UserRegistrationServlet extends HttpServlet {
 		request.getSession().setAttribute("uid", uid);
 		request.getSession().setAttribute("uname", username);
 		
-		request.getRequestDispatcher("/userHome.jsp?firstTime=true").forward(request, response);
-		
-		
+		//request.getRequestDispatcher("/myProfile.jsp?uid="+uid).forward(request, response);
+		response.sendRedirect("http://localhost:8080/QpekaWeb/myProfile.jsp?uid="+uid);
+		//http://localhost:8080/QpekaWeb/myProfile.jsp?uid=5152878c86adc1fd5ad43dc5
 		
 	}
 	}
