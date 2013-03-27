@@ -76,7 +76,7 @@ public class EpubProcessorNew {
         			{
         				((TextNode)nodes.get(j)).text(((TextNode)nodes.get(j)).text() + " ");
         				j++;
-        				nodes.add(j, new Element(Tag.valueOf("page id="+c.getPgCount()),""));
+        				nodes.add(j, new Element(Tag.valueOf("pageid="+c.getPgCount()),""));
         				j++;
         				nodes.add(j, new TextNode(" " + arr[i] + " ", ""));
         				//"<!--page id="+c.getPgCount()+ "--!>" + " " +  arr[i]);

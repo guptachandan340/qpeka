@@ -17,7 +17,7 @@ import com.qpeka.db.book.store.BookViewLogHandler;
  */
 public class PageViewLogger extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private Pattern p = Pattern.compile("<page id=\"[0-9]*\"></page>");
+    private Pattern p = Pattern.compile("<pageid=[0-9]*></pageid=[0-9]*>");
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -45,7 +45,7 @@ public class PageViewLogger extends HttpServlet {
 			Matcher m = p.matcher(pgRd);
 			while(m.find())
 			{
-				String pgId = m.group().split("id=")[1].split("><")[0].split("\"")[1];
+				String pgId = m.group().split("id=")[1].split("><")[0];
 				BookViewLogHandler.getInstance().updateLog(uid, workId, pgId, Long.parseLong(ts));
 			}
 		}
@@ -64,8 +64,15 @@ public class PageViewLogger extends HttpServlet {
 	}
 	
 	public static void main(String[] args) {
-		String x = "<page id=\"78\"></page>";
-		System.out.println(x.split("id=")[1].split("><")[0].split("\"")[1]);
+		Pattern p = Pattern.compile("<pageid=[0-9]*></pageid=[0-9]*>");
+		Matcher m = p.matcher("skjdlkasjdalkj<pageid=012312></pageid=0>skjdfhksjdfs");
+		while(m.find())
+		{
+			String pgId = m.group().split("pageid=")[1].split("><")[0];
+			
+			System.out.println(pgId);
+			//BookViewLogHandler.getInstance().updateLog(uid, workId, pgId, Long.parseLong(ts));
+		}
 		
 	}
 }

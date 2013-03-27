@@ -49,22 +49,22 @@ function process_content() {
 	 * span rather than by segmenting it into a new paragraph.
 	 */
 
-    if (obscured_para != null && obscured_para.text() != '') {
+    if (obscured_para != null && obscured_para.html() != '') {
         text_overflow = new Array();
 
         while (para_offset > target_height) {
-            t = obscured_para.text();
+	    t = obscured_para.html();
 	    index = t.length - 1;
             // Jump by word
             while (index > 0 && t.charAt(index) != ' ') {
                 index--;
             }
             if (index != 0) {
-                text_overflow.push(t.substr(index + 1, t.length - 1));
+            	text_overflow.push(t.substr(index + 1, t.length - 1));
             } else {
-                text_overflow.push(t.substr(index, t.length));
+            	text_overflow.push(t.substr(index, t.length));
             }
-            obscured_para.text(t.substr(0, index));
+            obscured_para.html(t.substr(0, index));
             if (index == 0) {
                 break;
             }
@@ -72,7 +72,8 @@ function process_content() {
             para_offset = parseInt(obscured_para.position().top + obscured_para.height());
         }
         // Put the overflow text into a new paragraph after the last one
-        obscured_para.after($('<p/>').text(text_overflow.reverse().join(' ')));
+	
+        obscured_para.after($('<p/>').html(text_overflow.reverse().join(' ')));
 
         // Hide all the remaining paragraphs
         obscured_para.nextAll('p').hide();
