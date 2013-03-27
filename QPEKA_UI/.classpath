@@ -21,15 +21,14 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/netty-3.5.7/netty-3.5.7.Final.jar"/>
 	<classpathentry kind="lib" path="/home/manoj/gupshup-lib/readonly/javamail/mail-1.4.1.jar"/>
-	<classpathentry kind="lib" path="/home/manoj/GITHUB/gupshup/lib/servlet/javax.servlet.jar"/>
-	<classpathentry kind="lib" path="/home/manoj/GITHUB/gupshup/lib/servlet/javax.servlet.jsp.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/epublib-core-3.1-complete.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/epublib-core-3.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jsoup-1.7.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/slf4j-log4j12-1.5.10.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.servlet.jsp.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
