@@ -23,8 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.qpeka.db.book.store.AuthorHandler;
 import com.qpeka.db.book.store.UserAuthHandler;
 import com.qpeka.db.book.store.UserHandler;
+import com.qpeka.db.book.store.tuples.Author;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
 import com.qpeka.db.book.store.tuples.Constants.GENDER;
 import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
@@ -79,6 +81,15 @@ public class UserRegistrationServlet extends HttpServlet {
 			
 			Writer wr = response.getWriter();
         	wr.write(user);
+			wr.flush();
+        	return;
+		}
+		else if(requestype.equalsIgnoreCase("getAuthor"))
+		{
+			Author a = AuthorHandler.getInstance().getAuthor(request.getParameter("aid"));
+			
+			Writer wr = response.getWriter();
+        	wr.write(a.toDBObject(false).toString());
 			wr.flush();
         	return;
 		}
@@ -338,9 +349,9 @@ public class UserRegistrationServlet extends HttpServlet {
 		request.getSession().setAttribute("uid", uid);
 		request.getSession().setAttribute("uname", username);
 		
-		request.getRequestDispatcher("/userHome.jsp?firstTime=true").forward(request, response);
-		
-		
+		//request.getRequestDispatcher("/myProfile.jsp?uid="+uid).forward(request, response);
+		response.sendRedirect("http://localhost:8080/QpekaWeb/myProfile.jsp?uid="+uid);
+		//http://localhost:8080/QpekaWeb/myProfile.jsp?uid=5152878c86adc1fd5ad43dc5
 		
 	}
 	}

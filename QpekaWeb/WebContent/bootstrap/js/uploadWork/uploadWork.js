@@ -1,7 +1,27 @@
 $(document).ready(function(){
 	
+	//{"_id":{"$oid":"514870871aa87b91a2f384bc"},"name":{"firstName":"Manoj","middleName":"","lastName":"Thakur"},"gender":"MALE","dob":1363701895932,"nationality":"","imageFile":"","shortBio":"","infoLink":"","genre":[],"type":"LEVEL3"}
+	$.get(
+		    "http://localhost:8080/QPEKA/register?rType=getAuthor&aid="+aid,
+		    null,
+		    function(data) { 
+		    	//alert(JSON.stringify(data));
+		    	$('#aName').value(data.name.firstName + ' ' + data.name.middleName + ' ' + data.name.lastName);
+		    	$("#aName").prop('disabled', true);
+		    },
+		    "json"
+		);
+	
 	$('#ispublished').change(function(){
-		  alert("The text has been changed.");
+		var temp = ($('#ispublished').val() === 'true')?true:false;
+		
+		$("#isbn").prop('disabled', !temp);
+		$("#edition").prop('disabled', !temp);
+		$("#publisherName").prop('disabled', !temp);
+		$("#pday").prop('disabled', !temp);
+		$("#pmonth").prop('disabled', !temp);
+		$("#pyear").prop('disabled', !temp);
+		
 	});
 	
 	$('#work').validate({

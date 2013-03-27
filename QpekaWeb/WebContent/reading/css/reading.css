@@ -1,0 +1,38 @@
+@CHARSET "UTF-8";
+
+#remaining {
+        background-color:rgb(200,200,200);
+        height: 5px;
+        width:0;
+}
+
+#total-size {
+        width: 500px;
+        height: 5px;
+        margin-left: 50px;
+	    margin-top: 1em;  margin-bottom: 1em;
+        border: 1px solid rgb(200,200,200);
+        clear:right;
+}
+
+#content {
+        float:right;
+        width:600px;      
+        padding-right: 1em;
+        padding-left: 1em;
+        border-left: 2px solid rgb(210,210,210);
+}
+#book { 
+        height: 600px;
+        overflow:hidden;
+}
+#toc-container {
+        float:left;
+        width:150px;
+        font-size:x-small;
+}
+#toc {
+        list-style-type:none;
+        margin:0; 
+        padding:1em 1em 10em 1em;
+}

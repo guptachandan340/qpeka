@@ -1,3 +1,6 @@
+<%@page import="com.qpeka.util.Constants.CATEGORY"%>
+<%@page import="com.qpeka.util.Constants.TYPE"%>
+<%@page import="com.qpeka.util.Constants.LANGUAGES"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -33,9 +36,13 @@
   	  }
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <script src="bootstrap/js/jquery.js"></script>
 	<script src="bootstrap/js/uploadWork/uploadWork.js"></script>
 	<script src="bootstrap/js/bootstrap-tooltip.js"></script>
     <script src="bootstrap/js/bootstrap-popover.js"></script>
+    <script type="text/javascript">
+    	aid = '<%=request.getParameter("aid")%>';
+    </script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -278,9 +285,10 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    <label class="control-label" for="language">Language</label>
 							     <div class="controls">
 								    <select id="language" name="language">
-								    		<option value="HINDI">HINDI</option>
-											<option value="ENGLISH">ENGLISH</option>
-										 
+								    		<%for(LANGUAGES l : LANGUAGES.values()){ %>
+								    			<option value="<%=l.toString()%>"><%=l.toString()%></option>
+								    		<%} %>
+											
 								    </select>
 								 </div>
 							  </div>
@@ -288,10 +296,10 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    <label class="control-label" for="type">Type of Work</label>
 							     <div class="controls">
 								    <select id="type" name="type">
-										  <option value="BOOK">BOOK</option>
-										  <option value="SHORTSTORY">SHORTSTORY</option>
-										  <option value="POEM">POEM</option>
-										  <option value="ARTICLE">ARTICLE</option>
+										  <%for(TYPE t : TYPE.values()){ %>
+								    			<option value="<%=t.toString()%>"><%=t.toString()%></option>
+								    		<%} %>
+											
 								    </select>
 								 </div>
 							  </div>
@@ -299,10 +307,9 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							    <label class="control-label" for="category">Genre</label>
 							     <div class="controls">
 								    <select id="category" name="category">
-										  <option value="COMEDY">COMEDY</option>
-										  <option value="FICTION">FICTION</option>
-										  <option value="HORROR">HORROR</option>
-										 
+										    <%for(CATEGORY cat : CATEGORY.values()){ %>
+								    			<option value="<%=cat.toString()%>"><%=cat.toString()%></option>
+								    		<%} %>
 								    </select>
 								 </div>
 							  </div>
