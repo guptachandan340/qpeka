@@ -124,6 +124,13 @@
 	 	<servlet-name>PageViewLogger</servlet-name>
 	 	<servlet-class>com.qpeka.epub.provider.servlet.PageViewLogger</servlet-class>
 	 </servlet>
+	 <servlet>
+	 	<description>
+	 	</description>
+	 	<display-name>BookmarkServlet</display-name>
+	 	<servlet-name>BookmarkServlet</servlet-name>
+	 	<servlet-class>com.qpeka.servlets.BookmarkServlet</servlet-class>
+	 </servlet>
 	  <servlet-mapping>
 	    <servlet-name>ContentProviderServlet</servlet-name>
 	    <url-pattern>/epub</url-pattern>
@@ -131,6 +138,10 @@
 	  <servlet-mapping>
 	  	<servlet-name>PageViewLogger</servlet-name>
 	  	<url-pattern>/log</url-pattern>
+	  </servlet-mapping>
+	  <servlet-mapping>
+	  	<servlet-name>BookmarkServlet</servlet-name>
+	  	<url-pattern>/bookmark</url-pattern>
 	  </servlet-mapping>
 	<error-page>
         <exception-type>java.lang.Throwable</exception-type>

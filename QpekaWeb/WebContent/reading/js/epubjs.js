@@ -137,7 +137,7 @@ function load_content() {
 }
 
 function next() {
-	logPageView();
+    logPageView();
     var top = page_stack[page_stack.length - 1].bottom;
     if (top) {
         top.prevAll('p').hide();
@@ -280,7 +280,7 @@ function opf(f) {
 
 }
 jQuery(document).ready(function() {
-	jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);
+    jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);
     $('#toc a').live('click', load_content);
 
     $('#book').resizable({
@@ -316,22 +316,35 @@ jQuery(document).ready(function() {
         }
     });
     
-    var pg = parseInt(getCookie('chapter'));
-    cntr = getCookie('index');
+    jQuery.get('http://localhost:8080/QPEKA/bookmark?workId='+wid, {}, function(data) {
+		alert(JSON.stringify(data));
+	});
     
-    if(pg != undefined && cntr != undefined){
-    	setTimeout(function() {
-    		$("ol li:nth-child("+(pg+1)+")").find('a').click();
-		},100);
-    }
     
 });
 // added newly
+function gotoBM(pg, sec) {
+	if(pg != undefined && sec != undefined){
+    	setTimeout(function() {
+    		$("ol li:nth-child("+(pg+1)+")").find('a').click();
+		setTimeout(function() {
+			for(var j = 1 ; j <= sec ; j++)
+				next();	
+		},10);
+	},100);
+    }
+}
 
 function bookmark()
 {
-	setCookie('chapter', $('a.selected').parent().next('li').index()-1, 365);
-	setCookie('index', cntr, 365);
+	var ch = $('a.selected').parent().next('li').index()-1;
+	var sec = cntr;
+	
+	jQuery.post('http://localhost:8080/QPEKA/bookmark?workId='+wid+'&chId='+ch+'&secId='+sec, {}, function() {
+		alert('done');
+	});
+//	setCookie('chapter', $('a.selected').parent().next('li').index()-1, 365);
+//	setCookie('index', cntr, 365);
 }
 
 function logPageView()

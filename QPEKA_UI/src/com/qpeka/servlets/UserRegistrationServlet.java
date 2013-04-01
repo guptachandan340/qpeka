@@ -193,7 +193,7 @@ public class UserRegistrationServlet extends HttpServlet {
 		USERTYPE userType = USERTYPE.READER;
 		Set<CATEGORY> prefs = new HashSet<CATEGORY>();
 		String nationality = "";
-		
+		String landing = "";
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		String filePath = "";
 		String fileName = "";
@@ -275,6 +275,8 @@ public class UserRegistrationServlet extends HttpServlet {
 	                    		userType = USERTYPE.valueOf(value);
 	                    	if(name.equalsIgnoreCase(User.NATIONALITY))
 	                    		nationality = value;
+	                    	if(name.equalsIgnoreCase("landing"))
+	                    		landing = value;
 	                    	if(name.equalsIgnoreCase(User.INTERESTS))
 	                    	{
 	                    		String[] interestes = value.split(",");
@@ -349,9 +351,16 @@ public class UserRegistrationServlet extends HttpServlet {
 		request.getSession().setAttribute("uid", uid);
 		request.getSession().setAttribute("uname", username);
 		
-		//request.getRequestDispatcher("/myProfile.jsp?uid="+uid).forward(request, response);
-		response.sendRedirect("http://localhost:8080/QpekaWeb/myProfile.jsp?uid="+uid);
-		//http://localhost:8080/QpekaWeb/myProfile.jsp?uid=5152878c86adc1fd5ad43dc5
+		if(landing == null || landing.length() == 0)
+		{
+			//request.getRequestDispatcher("/myProfile.jsp?uid="+uid).forward(request, response);
+			response.sendRedirect("http://localhost:8080/QpekaWeb/myProfile.jsp?uid="+uid);
+			//http://localhost:8080/QpekaWeb/myProfile.jsp?uid=5152878c86adc1fd5ad43dc5
+		}
+		else
+		{
+			response.sendRedirect("http://landing-qpeka.rhcloud.com/QpekaWeb/landing.jsp?msg=success");
+		}
 		
 	}
 	}
