@@ -2,7 +2,7 @@
  * 
  */
 
-var imgUrl = 'http://localhost:8080/QPEKA/image?book=';
+var imgUrl = 'http://'+host+':8080/QPEKA/image?book=';
 
 var createListItem = function(workId, title, aFName, aMName, aLName) {
 	
@@ -25,7 +25,7 @@ var createLibContent =  function(libType, category, section) {
 	
 	
 	$.get(
-		    'http://localhost:8080/QPEKA/work?actionType=getLibraryContent&type='+libType+'&category='+category+'&section='+section,
+		    'http://'+host+':8080/QPEKA/work?actionType=getLibraryContent&type='+libType+'&category='+category+'&section='+section,
 		    null,
 		    function(data) { 
 		    	

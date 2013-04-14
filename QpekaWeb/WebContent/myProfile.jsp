@@ -1,3 +1,4 @@
+<%@page import="com.qpeka.util.SystemConfigHandler"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -21,6 +22,7 @@
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <script src="bootstrap/js/jquery.js"></script>
+     <script src="config.js"></script>
     <script src="bootstrap/js/userProfile/myProfile.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -119,8 +121,8 @@
     <hr>
     <ul>
     	<li>My Profile</li>
-    	<li><a href="http://localhost:8080/QpekaWeb/userProfileEdit.jsp?uid=<%=request.getParameter("uid")%>">My Account</a></li>
-    	<li><a href="http://localhost:8080/QpekaWeb/uploadWork.jsp?aid=<%=request.getParameter("uid")%>">Upload</a></li>
+    	<li><a href="http://<%=SystemConfigHandler.getInstance().getHostString()%>/QpekaWeb/userProfileEdit.jsp?uid=<%=request.getParameter("uid")%>">My Account</a></li>
+    	<li><a href="http://<%=SystemConfigHandler.getInstance().getHostString()%>/QpekaWeb/uploadWork.jsp?aid=<%=request.getParameter("uid")%>">Upload</a></li>
     </ul>								
     </div>
     <div class="span7">

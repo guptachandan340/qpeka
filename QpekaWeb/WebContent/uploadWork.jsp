@@ -1,3 +1,4 @@
+<%@page import="com.qpeka.util.SystemConfigHandler"%>
 <%@page import="com.qpeka.util.Constants.CATEGORY"%>
 <%@page import="com.qpeka.util.Constants.TYPE"%>
 <%@page import="com.qpeka.util.Constants.LANGUAGES"%>
@@ -40,6 +41,7 @@
 	<script src="bootstrap/js/uploadWork/uploadWork.js"></script>
 	<script src="bootstrap/js/bootstrap-tooltip.js"></script>
     <script src="bootstrap/js/bootstrap-popover.js"></script>
+    <script src="config.js"></script>
     <script type="text/javascript">
     	aid = '<%=request.getParameter("aid")%>';
     </script>
@@ -251,7 +253,7 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 	     			 <div style="padding-bottom: 9px; border-bottom: 1px solid #ddd;">
 						
 					 <div class="tab-pane active" id="tab1">
-					 <form action="http://localhost:8080/QPEKA/upload" method="post" enctype="multipart/form-data" id="contact-form" class="form-horizontal">
+					 <form action="http://<%=SystemConfigHandler.getInstance().getHostString()%>/QPEKA/upload" method="post" enctype="multipart/form-data" id="contact-form" class="form-horizontal">
 					  <fieldset>
 					    <legend>Upload Work</legend>
 					    <div class="control-group">

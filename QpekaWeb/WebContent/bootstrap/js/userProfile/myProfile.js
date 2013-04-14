@@ -10,7 +10,7 @@ var generateFriendDiv = function(data) {
 		var uName = JSON.parse(data[i].name);
 		var div = '<div class="span6"><div class="media">'+
 	      '<a class="pull-left" href="#">'+
-	      	'<img src="http://localhost:8080/QPEKA/image?action=userimg&uid='+data[i].id+'" style="height: 60px;width: 50px;" class="img-polaroid media-object">'+            
+	      	'<img src="http://"+host+"/QPEKA/image?action=userimg&uid='+data[i].id+'" style="height: 60px;width: 50px;" class="img-polaroid media-object">'+            
 	      '</a>'+
 	      '<div class="media-body">'+
 	        '<b>'+uName['firstName'] + ' ' + uName['middleName'] + ' ' + uName['lastName'] + '</b><p class="pull-right"> </p><br>'+
@@ -33,7 +33,7 @@ var generateFriendDiv = function(data) {
 var loadFriends = function(uid) {
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/association?action=getFriends&uid="+uid,
+		    "http://"+host+"/QPEKA/association?action=getFriends&uid="+uid,
 		    null,
 		    function(data) { 
 		    	$('#friends').append(generateFriendDiv(data));
@@ -45,7 +45,7 @@ var loadFriends = function(uid) {
 var loadFans = function(uid) {
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/association?action=getFans&uid="+uid,
+		    "http://"+host+"/QPEKA/association?action=getFans&uid="+uid,
 		    null,
 		    function(data) { 
 		    	$('#fans').append(generateFriendDiv(data));

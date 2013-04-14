@@ -1,4 +1,4 @@
-package com.qpeka.utils;
+package com.qpeka.util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,49 +42,10 @@ public class SystemConfigHandler
 		return instance;
 	}
 	///var/lib/openshift/6d134eafb7434f86981aed6dcbc101cb/jbossews-1.0/data/books/content/
-	public String getBookContentFolder()
-	{
-		return props.getProperty(SystemConstants.BOOKCONTENTFOLDER);
-	}
-	
-	public String getBookCoverPageFolder()
-	{
-		return props.getProperty(SystemConstants.BOOKCOVERPAGEFOLDER);
-	}
-	
-	public String getUserImageFolder()
-	{
-		return props.getProperty(SystemConstants.USERIMAGEFOLDER);
-	}
-	
-	
-	public String getImageServerURL()
-	{
-		return props.getProperty(SystemConstants.IMAGESERVERURL);
-	}
-	
-	public String getBaseTinyURL()
-	{
-		return props.getProperty(SystemConstants.BASETINYURL);
-	}
-	
-	public String getSrcBookFolder()
-	{
-		return props.getProperty(SystemConstants.SRCBOOKFOLDER);
-	}
-	
-	public String getUserCoverImg()
-	{
-		return props.getProperty(SystemConstants.USERCOVERIMGFILE);
-	}
-	
-	public String getServerSalt()
-	{
-		return props.getProperty(SystemConstants.SERVERSALT);
-	}
-	
-	public String getHost()
+	public String getHostString()
 	{
 		return props.getProperty("host");
 	}
+	
+	
 }

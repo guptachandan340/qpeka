@@ -10,6 +10,7 @@
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
      <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/reading.css" ></link>
+	<script src="../config.js"></script>
     <style type="text/css">
       body {
         padding-top: 5px;
@@ -32,15 +33,15 @@
 <body>
 	<div id="book" class="style1">
 	<div class="row-fluid">
-    	<div class="span1">
+    	<div class="span2">
         </div>
-        <div class="span10">
+        <div class="span8">
         <div class="row-fluid">
-        	<div id="toc-container" class="span3">
+        	<div id="toc-container" class="span4">
         		<br>
         		<ol id="toc"></ol>
         	</div>
-        	<div class="span7">
+        	<div class="span8">
         		<h3 id="content-title"></h3>
         		 <!--This is a comment. Comments are not displayed in the browser-->
 			       <div class="pagination pagination-mini">
@@ -58,7 +59,7 @@
         	</div>
         </div>
         </div>
-        <div class="span1">
+        <div class="span2">
         </div>
     </div>
 	

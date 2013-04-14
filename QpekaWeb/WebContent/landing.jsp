@@ -1,3 +1,4 @@
+<%@page import="com.qpeka.util.Constants.MONTHS"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -58,6 +59,9 @@ h3 {
 .child {
 	max-height: 100%;
 }
+
+.row-fluid .span2 {margin-top: 60px;}
+
 </style>
 
 
@@ -77,7 +81,7 @@ var msg = '<%=request.getParameter("msg")%>';
 			<img src="assets/img/logo.gif" style="width:45%; height:25%" alt="qpeka logo" />
 		</div>
 		<div class="span3">
-			<br> <br> <br>
+			<br> <br> 
 			<iframe
 				src="https://www.facebook.com/plugins/like.php?href=http://www.facebook.com/QPeka&amp;width=250&amp;height=80&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;border_color&amp;header=false"
 				scrolling="no" frameborder="0"
@@ -85,10 +89,13 @@ var msg = '<%=request.getParameter("msg")%>';
 				allowTransparency="true"></iframe>
 		</div>
 		<div class="span2">
-			<br> <br> <br> <a href="https://twitter.com/Qpeka"
-				class="twitter-follow-button" data-show-count="true"
-				data-size="large" data-dnt="true">Follow @Qpeka</a>
-
+			 
+<!-- 			<a href="https://twitter.com/Qpeka" -->
+<!-- 				class="twitter-follow-button" data-show-count="true" -->
+<!-- 				data-size="large" data-dnt="true">Follow @Qpeka</a> -->
+				<iframe allowtransparency="true" frameborder="0" scrolling="no" 
+				  src="https://platform.twitter.com/widgets/follow_button.html?screen_name=qpeka"
+				  style="width:300px; height:30px;"></iframe>
 
 		</div>
 		<div class="span2"></div>
@@ -115,7 +122,7 @@ var msg = '<%=request.getParameter("msg")%>';
 						<div class="span12">
 							<h3 style="color: #33cccc">What is Qpeka</h3>
 							<p>
-								Qpeka is a unique reading platform, where readers can get books, short stories, poems, articles, blogs, all for FREE. We have an author-oriented approach to publishing on our platform which makes it possible for them to earn even though it’s free to the readers.<br><br>
+								Qpeka is an unique reading platform, where readers can get books, short stories, poems, articles, blogs, all for FREE. We have an author-oriented approach to publishing on our platform which makes it possible for them to earn even though it’s free to the readers.<br><br>
                     The dynamics of our platform are the stepping stone to help us reach our goal to make the LARGEST ONLINE READING PLATFORM in the world. Do make sure to go through our concepts and take advantage of our offers for early registration!
 							</p>
 						</div>
@@ -137,36 +144,80 @@ var msg = '<%=request.getParameter("msg")%>';
 					All in all, we at Qpeka are committed to give the best to our authors' community.<br><br></p>
 						</div>
 					</div>
-					<div class="tab-pane" id="tab4">
-						<div class="span12">
-							<h3 style="color: #33cccc">Qpeka offers</h3>
-							<br>
-							<h4>Coming soon.....</h4>
-<!-- 							<form class="form-horizontal"> -->
-<!-- 								<div class="control-group"> -->
-<!-- 									<label class="control-label" for="inputEmail">Email</label> -->
-<!-- 									<div class="controls"> -->
-<!-- 										<input type="text" id="inputEmail" placeholder="Email"> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 								<div class="control-group"> -->
-<!-- 									<label class="control-label" for="inputPassword">Password</label> -->
-<!-- 									<div class="controls"> -->
-<!-- 										<input type="password" id="inputPassword" -->
-<!-- 											placeholder="Password"> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 								<div class="control-group"> -->
-<!-- 									<div class="controls"> -->
-<!-- 										<label class="checkbox"> <input type="checkbox"> -->
-<!-- 											Remember me </label> -->
-<!-- 										<button type="submit" class="btn">Sign in</button> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
-<!-- 							</form> -->
+					<div  class="tab-pane" id="tab4">
+					<div class="span12" >
+					<div class="span4"><!--add-->
+					 <h3>Qpeka offers</h3>
+					 <p> To promote our relations with authors we are giving all authors who agree to publish on our website before the launch of the website a Instant Upgrade to Level 2 on our launch. All you need to do is upload your details along with your works and that's all.</p>
+					 </div>
+					 <div class="span7" style="margin-top:60px";><!--add-->
+					 <form class="form-signin" action="http://landing-qpeka.rhcloud.com/QPEKA/register" method="post" enctype="multipart/form-data">
+                        				 
+                      <div class="control-group">
+                      <div class="controls controls-row">
+                         <input type="text" id="firstName" name="firstName" class="span6 input-block-level" placeholder="First Name">
+						 <input type="text" id="lastName" name="lastName" class="span6 input-block-level"  placeholder="Last Name">
+						 <input type="hidden" name="landing" id="landing" value="true">
+                        </div>
+                         </div>
+						<div class="control-group">
+                        
+                         <div class="controls controls">
+						 <input type="text" class="span12" id="email" name="email" placeholder="Email ID">
+                       	</div>	
+                        </div>
+						<label style="color:#0066ff;font-family:gabriela,serif;">
+							Date Of Birth:
+                            </label>				 
+						<select id="dmonth" name="dmonth" class="span3" onchange="return wait_for_load(this, event, function() { editor_date_month_change(this, 'birthday_day','birthday_year'); });">
+						<option value="na">Month</option>
+						<%for(MONTHS mon : MONTHS.values()){ %>
+							<option value="<%=mon.ordinal()+1%>"><%=mon.toString() %></option>
+						<%}%>
+						</select>
+						
+						<select class="span3" id="dday" name="dday">
+						<option value="na">Day</option>
+						<%for(int i = 1; i <= 31; i++){%>
+						<option value="<%=i%>"><%=i%></option>
+						<%} %>
+						</select>
+					
+					<select class="span3" id="dyear" name="dyear">
+					<option value="na">Year</option>
+					<%for(int i = 1909; i <= 2009; i++){%>
+					<option value="<%=i%>"><%=i%></option>
+					<%} %>
+					</select>
 
-							</h3>
-						</div>
+                        					
+<!--<div class="control-group">
+						<div class="controls controls-row">
+						<label class="control-label" for="fileinput">Upload Content:</label>
+				        <input class="input-file" multiple="" id="fileInput" type="file"  placeholder="upload">
+                        </div>
+                        </div>-->
+						<span class="btn btn-success fileinput-button">
+                        <i class="icon-plus icon-white"></i>
+                         <span>Add files...</span>
+                         <input type="file" multiple="" name="files[]">
+                         </span>
+						 <div class="control-group">
+						    <div class="controls">
+							<label style="color:#0066ff;font-family:gabriela,serif;">
+							I Agree To The Terms Of The qpeka
+                            </label>
+                          <button type="submit" class="btn">Upload</button>
+                          </div>
+                          </div> 
+		
+                       </form>
+					   </div>
+					   <div class="span1">
+					   </div>
+				</div>
+					
+
 					</div>
 
 
@@ -199,7 +250,7 @@ var msg = '<%=request.getParameter("msg")%>';
 									type="text" onblur="checkUserAvail();" onfocus="setVar();"
 									class="input-block-level" name="email" id="email"
 									placeholder="Email address"> <input type="hidden"
-									name="landing" id="landing" value="true">'
+									name="landing" id="landing" value="true">
 								<p id="error" class="text-error"></p>
 								<p id="success" class="text-success"></p>
 								<label class="checkbox"> <input type="checkbox"
@@ -221,6 +272,16 @@ var msg = '<%=request.getParameter("msg")%>';
 			</div>
 		</div>
 	</div>
+	<br>
+		 <div class="row ">
+		 <div class="span4 ">
+		 </div>
+		 <div class="span4 ">
+		 <center><p>We would love to hear from you. So please write to us at  <a href="mailto:info@qpeka.com">info@qpeka.com</a></p></center>
+		 </div>
+		 <div class="span4 ">
+		 </div>
+		 <div>
 	<!-- Le javascript ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="bootstrap/js/bootstrap-transition.js"></script>

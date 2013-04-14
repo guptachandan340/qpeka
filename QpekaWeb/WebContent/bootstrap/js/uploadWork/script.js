@@ -34,7 +34,7 @@ $(document).ready(function(){
 		            alert('Submitting...');
 		        },
 		        success: function(data) {
-		        	window.location.href = "http://localhost:8080/QpekaWeb/bookDetail.jsp?id="+data._id;
+		        	window.location.href = "http://"+host+"/QpekaWeb/bookDetail.jsp?id="+data._id;
 		        }
 		    });
 		}

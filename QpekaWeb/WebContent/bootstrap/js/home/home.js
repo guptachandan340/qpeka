@@ -3,7 +3,7 @@
  */
 
 var workOfDayImg = '<img src="assets/img/testimg4.jpg" style="height: 200px;width: 120px;"  class="img-polaroid"><br><br>';
-var imgUrl = 'http://localhost:8080/QPEKA/image?book=';
+var imgUrl = 'http://'+host+':8080/QPEKA/image?book=';
 
 var getWorkOfDayHtml = function(bookId, fname, mname, lname, desc, title) {
 
@@ -29,7 +29,7 @@ var getWorkOfDayHtml = function(bookId, fname, mname, lname, desc, title) {
 var fetchWorkOfTheDay = function(type, div) {
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/work?actionType=workOfDay&type="+type,
+		    "http://"+host+"/QPEKA/work?actionType=workOfDay&type="+type,
 		    null,
 		    function(data) { 
 		    	var authorDetails = JSON.parse(data.authorDetails);
@@ -99,7 +99,7 @@ var createCarousal = function(workarray, tabid, carousalId, string, active) {
 var fetchPopularHtml = function() {
 
 	$.get(
-		    "http://localhost:8080/QPEKA/work?actionType=recommendedWork&type=BOOK",
+		    "http://"+host+"/QPEKA/work?actionType=recommendedWork&type=BOOK",
 		    null,
 		    function(data) { 	    	
 		    	var html = createCarousal(data, 'tab1', 'popularbooks', 'Popular Books', 'active');
@@ -110,7 +110,7 @@ var fetchPopularHtml = function() {
 		);
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/work?actionType=recommendedWork&type=SHORTSTORY",
+		    "http://"+host+"/QPEKA/work?actionType=recommendedWork&type=SHORTSTORY",
 		    null,
 		    function(data) { 	    	
 		    	var html = createCarousal(data, 'tab2', 'popularss', 'Popular ShortStories', '');
@@ -121,7 +121,7 @@ var fetchPopularHtml = function() {
 		);
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/work?actionType=recommendedWork&type=POEM",
+		    "http://"+host+"/QPEKA/work?actionType=recommendedWork&type=POEM",
 		    null,
 		    function(data) { 	    	
 		    	var html = createCarousal(data, 'tab3', 'popularpoems', 'Popular Poems', '');
@@ -132,7 +132,7 @@ var fetchPopularHtml = function() {
 		);
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/work?actionType=recommendedWork&type=ARTICLE",
+		    "http://"+host+"/QPEKA/work?actionType=recommendedWork&type=ARTICLE",
 		    null,
 		    function(data) { 	    	
 		    	var html = createCarousal(data, 'tab4', 'populararticles', 'Popular Articles', '' );
@@ -146,7 +146,7 @@ var fetchPopularHtml = function() {
 var createPoll = function(){
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/misc?type=poll",
+		    "http://"+host+"/QPEKA/misc?type=poll",
 		    null,
 		    function(data) { 	
 		    	
@@ -170,7 +170,7 @@ var createPoll = function(){
 var createQuizzes = function(){
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/misc?type=quiz",
+		    "http://"+host+"/QPEKA/misc?type=quiz",
 		    null,
 		    function(data) { 	
 		    	

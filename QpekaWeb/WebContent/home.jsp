@@ -22,6 +22,7 @@
     <script src="bootstrap/js/jquery.js"></script>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 	<script src="bootstrap/js/home/home.js"></script>
+	<script src="config.js"></script>
 	<script src="bootstrap/js/util.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>

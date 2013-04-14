@@ -18,7 +18,7 @@
 var getBook = function(id) {
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/work?actionType=getbook&id="+id,
+		    "http://'+host+':8080/QPEKA/work?actionType=getbook&id="+id,
 		    null,
 		    function(data) { 
 		    	$('#title').append(data.title);

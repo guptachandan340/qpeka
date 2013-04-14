@@ -213,7 +213,7 @@ function container(f) {
     opf_file = epub_dir + '/' + opf_file;
     try
     {
-    	var url = 'http://localhost:8080/QPEKA/epub?id='+wid+'&action=0';
+    	var url = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=0';
     	jQuery.get(url, {}, opf);
     }
     catch (e) {
@@ -228,7 +228,7 @@ function toc(f) {
 
     $(f).find('navPoint').each(function() {
         var s = $('<span/>').text($(this).find('text:first').text());
-        //http://localhost:8080/QPEKA/epub?action=1&section=$(this).find('content').attr('src')
+        //http://'+host+':8080/QPEKA/epub?action=1&section=$(this).find('content').attr('src')
         //var href = epub_dir + '/' + oebps_dir + '/' + $(this).find('content').attr('src');
         var res = '';
         var subpart = '';
@@ -240,7 +240,7 @@ function toc(f) {
         else
         	res = $(this).find('content').attr('src');
         
-        var href = 'http://localhost:8080/QPEKA/epub?id='+wid+'&action=1&res='+res+'#'+subpart;
+        var href = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=1&res='+res+'#'+subpart;
         var a = $('<a/>').attr('href',href);
         // If 's' has a parent navPoint, indent it
         if ($(this).parent()[0].tagName.toLowerCase() == 'navpoint') {
@@ -280,7 +280,7 @@ function opf(f) {
 
 }
 jQuery(document).ready(function() {
-    jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);
+    jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);//jhol
     $('#toc a').live('click', load_content);
 
     $('#book').resizable({
@@ -316,7 +316,7 @@ jQuery(document).ready(function() {
         }
     });
     
-    jQuery.get('http://localhost:8080/QPEKA/bookmark?workId='+wid, {}, function(data) {
+    jQuery.get('http://'+host+'/QPEKA/bookmark?workId='+wid, {}, function(data) {
 		alert(JSON.stringify(data));
 	});
     
@@ -340,7 +340,7 @@ function bookmark()
 	var ch = $('a.selected').parent().next('li').index()-1;
 	var sec = cntr;
 	
-	jQuery.post('http://localhost:8080/QPEKA/bookmark?workId='+wid+'&chId='+ch+'&secId='+sec, {}, function() {
+	jQuery.post('http://'+host+'/QPEKA/bookmark?workId='+wid+'&chId='+ch+'&secId='+sec, {}, function() {
 		alert('done');
 	});
 //	setCookie('chapter', $('a.selected').parent().next('li').index()-1, 365);
@@ -356,7 +356,7 @@ function logPageView()
 	for(var i = 0; i < visitedtext.length;i++)
 		visitedHtml += visitedtext[i].innerHTML;
 	//log the page visit
-	jQuery.get('http://localhost:8080/QPEKA/log?log='+visitedHtml, {}, function() {
+	jQuery.get('http://'+host+'/QPEKA/log?log='+visitedHtml, {}, function() {
 	});
 	
 }
