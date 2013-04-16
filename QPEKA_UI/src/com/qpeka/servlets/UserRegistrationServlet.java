@@ -1,8 +1,12 @@
 package com.qpeka.servlets;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,23 +24,22 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.qpeka.db.book.store.AuthorHandler;
 import com.qpeka.db.book.store.UserAuthHandler;
 import com.qpeka.db.book.store.UserHandler;
+import com.qpeka.db.book.store.tuples.Address;
 import com.qpeka.db.book.store.tuples.Author;
 import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
 import com.qpeka.db.book.store.tuples.Constants.GENDER;
 import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
 import com.qpeka.db.book.store.tuples.Constants.USERLEVEL;
 import com.qpeka.db.book.store.tuples.Constants.USERTYPE;
-import com.qpeka.db.book.store.tuples.Address;
 import com.qpeka.db.book.store.tuples.Name;
 import com.qpeka.db.book.store.tuples.User;
 import com.qpeka.db.book.store.tuples.UserAuth;
 import com.qpeka.managers.UserManager;
+import com.qpeka.utils.SystemConfigHandler;
 
 /**
  * Servlet implementation class UserRegistrationServlet
@@ -120,7 +123,7 @@ public class UserRegistrationServlet extends HttpServlet {
 				
 				String id = UserHandler.getInstance().getUserByUserName(request.getParameter("uid")).get_id();
 				//request.getRequestDispatcher("/myProfile.jsp?uid="+id).forward(request, response);
-				response.sendRedirect("http://localhost:8080/QpekaWeb/myProfile.jsp?uid="+id);
+				response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/myProfile.jsp?uid="+id);
 				return;
 //				JSONObject jo = new JSONObject();
 //				try {
@@ -137,7 +140,7 @@ public class UserRegistrationServlet extends HttpServlet {
 			}
 			else
 			{
-				response.sendRedirect("http://localhost:8080/QpekaWeb/home.jsp?error=true");
+				response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/home.jsp?error=true");
 				
 				//request.getRequestDispatcher("/home.jsp?error=true").forward(request, response);
 //				wr.write("{\"status\":\"error\"}");
@@ -193,11 +196,11 @@ public class UserRegistrationServlet extends HttpServlet {
 		USERTYPE userType = USERTYPE.READER;
 		Set<CATEGORY> prefs = new HashSet<CATEGORY>();
 		String nationality = "";
-		
+		String landing = "";
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		String filePath = "";
 		String fileName = "";
-		
+		FileItem fi = null;
 		if (isMultipart) {
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
@@ -213,16 +216,16 @@ public class UserRegistrationServlet extends HttpServlet {
 	                    if (!item.isFormField()) {
 	                        fileName = item.getName();
 	 
-	                        String root = "/var/tmp";
-	                        File path = new File(root);
-	                        if (!path.exists()) {
-	                            boolean status = path.mkdirs();
-	                        }
-	                        filePath = path + "/" + fileName;
-	                        
-	                        File uploadedFile = new File(path + "/" + fileName);
-	                        System.out.println(uploadedFile.getAbsolutePath());
-	                        item.write(uploadedFile);
+//	                        String root = "/var/tmp";
+//	                        File path = new File(root);
+//	                        if (!path.exists()) {
+//	                            boolean status = path.mkdirs();
+//	                        }
+//	                        filePath = path + "/" + fileName;
+	                        fi = item;
+//	                        File uploadedFile = new File(path + "/" + fileName);
+//	                        System.out.println(uploadedFile.getAbsolutePath());
+//	                        item.write(uploadedFile);
 	                    }
 	                    else
 	                    {
@@ -275,6 +278,8 @@ public class UserRegistrationServlet extends HttpServlet {
 	                    		userType = USERTYPE.valueOf(value);
 	                    	if(name.equalsIgnoreCase(User.NATIONALITY))
 	                    		nationality = value;
+	                    	if(name.equalsIgnoreCase("landing"))
+	                    		landing = value;
 	                    	if(name.equalsIgnoreCase(User.INTERESTS))
 	                    	{
 	                    		String[] interestes = value.split(",");
@@ -313,7 +318,13 @@ public class UserRegistrationServlet extends HttpServlet {
 		}
        	
 		int age = new Date().getYear() - dt.getYear();
-			
+		
+		if(landing != null && landing.length() > 0)
+		{
+			handleGuest(firstName, lastName, email, year, month, day,fi,response);
+			return;
+		}
+		
 		UserAuthHandler.getInstance().addUserAuth(new UserAuth(username, password));
 		
 		Set<LANGUAGES> rLangs =  new HashSet<LANGUAGES>();
@@ -350,9 +361,58 @@ public class UserRegistrationServlet extends HttpServlet {
 		request.getSession().setAttribute("uname", username);
 		
 		//request.getRequestDispatcher("/myProfile.jsp?uid="+uid).forward(request, response);
-		response.sendRedirect("http://localhost:8080/QpekaWeb/myProfile.jsp?uid="+uid);
+		response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/myProfile.jsp?uid="+uid);
 		//http://localhost:8080/QpekaWeb/myProfile.jsp?uid=5152878c86adc1fd5ad43dc5
 		
 	}
 	}
+	
+	private void handleGuest(String firstName, String lastName, String email, String year, String month, String day, FileItem fi, HttpServletResponse response)
+	{
+		    Calendar cal = Calendar.getInstance();
+            try
+            {
+            	cal.set(Calendar.MONTH, Integer.parseInt(month));
+            	cal.set(Calendar.DATE, Integer.parseInt(day));
+            	cal.set(Calendar.YEAR, Integer.parseInt(year));
+            	
+            }catch (Exception e) {
+				e.printStackTrace();
+			}
+            int age = Calendar.getInstance().get(Calendar.YEAR) - cal.get(Calendar.YEAR);
+    		
+            String uid = UserManager.getInstance().addUser(firstName, "", lastName, GENDER.MALE, email, 
+    				"", "", "", "", "", "", USERTYPE.AUTHOR, new HashSet<CATEGORY>(), 
+    				age, cal.getTime(), "Indian", "999999999", "", new HashSet<LANGUAGES>(),  new HashSet<LANGUAGES>(), USERLEVEL.FREE, "", "", "");
+            OutputStream os = null;
+            if(fi != null)
+				try {
+					File f = new File("/var/lib/openshift/5155a32ae0b8cd2c55000076/jbossews-1.0/data/"+uid);
+					if(!f.exists())
+						f.createNewFile();
+					
+					fi.write(f);
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				finally{
+					if(os != null)
+						try {
+							os.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				}
+            
+		try {
+			response.sendRedirect("http://landing-qpeka.rhcloud.com/QpekaWeb/landing.jsp?msg=success");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }

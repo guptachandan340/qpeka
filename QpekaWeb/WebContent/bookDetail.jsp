@@ -1,3 +1,4 @@
+<%@page import="com.qpeka.util.SystemConfigHandler"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
@@ -21,6 +22,10 @@
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 	<script src="bootstrap/js/bookDetails/bookDetail.js"></script>
+	<script src="config.js"></script>
+	<script type="text/javascript">
+	$('#link').attr("href", url);
+	</script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -126,7 +131,7 @@
          				<br>
 	         			<img src="assets/img/testimg.jpg" style="height: 220px;width: 160px;" class="img-polaroid"><br><br>
 	         			<div class="btn-group">		
-	         			  <a href="http://localhost:8080/QpekaWeb/reading/readingPage.jsp?wid=<%=request.getParameter("id")%>" target="_blank"><button class="btn btn-small btn-primary" type="button">Start Reading</button></a>		
+	         			  <a id="link" href="http://<%=SystemConfigHandler.getInstance().getHostString()%>/QpekaWeb/reading/readingPage.jsp?wid=<%=request.getParameter("id")%>" target="_blank"><button class="btn btn-small btn-primary" type="button">Start Reading</button></a>		
 						  <br>
 						  <div class="btn-group">
 			                <button class="btn btn-info btn-small dropdown-toggle" data-toggle="dropdown">Info <span class="caret"></span></button>

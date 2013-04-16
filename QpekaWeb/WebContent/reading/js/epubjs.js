@@ -49,22 +49,22 @@ function process_content() {
 	 * span rather than by segmenting it into a new paragraph.
 	 */
 
-    if (obscured_para != null && obscured_para.text() != '') {
+    if (obscured_para != null && obscured_para.html() != '') {
         text_overflow = new Array();
 
         while (para_offset > target_height) {
-            t = obscured_para.text();
+	    t = obscured_para.html();
 	    index = t.length - 1;
             // Jump by word
             while (index > 0 && t.charAt(index) != ' ') {
                 index--;
             }
             if (index != 0) {
-                text_overflow.push(t.substr(index + 1, t.length - 1));
+            	text_overflow.push(t.substr(index + 1, t.length - 1));
             } else {
-                text_overflow.push(t.substr(index, t.length));
+            	text_overflow.push(t.substr(index, t.length));
             }
-            obscured_para.text(t.substr(0, index));
+            obscured_para.html(t.substr(0, index));
             if (index == 0) {
                 break;
             }
@@ -72,7 +72,8 @@ function process_content() {
             para_offset = parseInt(obscured_para.position().top + obscured_para.height());
         }
         // Put the overflow text into a new paragraph after the last one
-        obscured_para.after($('<p/>').text(text_overflow.reverse().join(' ')));
+	
+        obscured_para.after($('<p/>').html(text_overflow.reverse().join(' ')));
 
         // Hide all the remaining paragraphs
         obscured_para.nextAll('p').hide();
@@ -136,7 +137,7 @@ function load_content() {
 }
 
 function next() {
-	logPageView();
+    logPageView();
     var top = page_stack[page_stack.length - 1].bottom;
     if (top) {
         top.prevAll('p').hide();
@@ -212,7 +213,7 @@ function container(f) {
     opf_file = epub_dir + '/' + opf_file;
     try
     {
-    	var url = 'http://localhost:8080/QPEKA/epub?id='+wid+'&action=0';
+    	var url = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=0';
     	jQuery.get(url, {}, opf);
     }
     catch (e) {
@@ -227,7 +228,7 @@ function toc(f) {
 
     $(f).find('navPoint').each(function() {
         var s = $('<span/>').text($(this).find('text:first').text());
-        //http://localhost:8080/QPEKA/epub?action=1&section=$(this).find('content').attr('src')
+        //http://'+host+':8080/QPEKA/epub?action=1&section=$(this).find('content').attr('src')
         //var href = epub_dir + '/' + oebps_dir + '/' + $(this).find('content').attr('src');
         var res = '';
         var subpart = '';
@@ -239,7 +240,7 @@ function toc(f) {
         else
         	res = $(this).find('content').attr('src');
         
-        var href = 'http://localhost:8080/QPEKA/epub?id='+wid+'&action=1&res='+res+'#'+subpart;
+        var href = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=1&res='+res+'#'+subpart;
         var a = $('<a/>').attr('href',href);
         // If 's' has a parent navPoint, indent it
         if ($(this).parent()[0].tagName.toLowerCase() == 'navpoint') {
@@ -279,7 +280,7 @@ function opf(f) {
 
 }
 jQuery(document).ready(function() {
-	jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);
+    jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);//jhol
     $('#toc a').live('click', load_content);
 
     $('#book').resizable({
@@ -315,22 +316,35 @@ jQuery(document).ready(function() {
         }
     });
     
-    var pg = parseInt(getCookie('chapter'));
-    cntr = getCookie('index');
+    jQuery.get('http://'+host+'/QPEKA/bookmark?workId='+wid, {}, function(data) {
+		alert(JSON.stringify(data));
+	});
     
-    if(pg != undefined && cntr != undefined){
-    	setTimeout(function() {
-    		$("ol li:nth-child("+(pg+1)+")").find('a').click();
-		},100);
-    }
     
 });
 // added newly
+function gotoBM(pg, sec) {
+	if(pg != undefined && sec != undefined){
+    	setTimeout(function() {
+    		$("ol li:nth-child("+(pg+1)+")").find('a').click();
+		setTimeout(function() {
+			for(var j = 1 ; j <= sec ; j++)
+				next();	
+		},10);
+	},100);
+    }
+}
 
 function bookmark()
 {
-	setCookie('chapter', $('a.selected').parent().next('li').index()-1, 365);
-	setCookie('index', cntr, 365);
+	var ch = $('a.selected').parent().next('li').index()-1;
+	var sec = cntr;
+	
+	jQuery.post('http://'+host+'/QPEKA/bookmark?workId='+wid+'&chId='+ch+'&secId='+sec, {}, function() {
+		alert('done');
+	});
+//	setCookie('chapter', $('a.selected').parent().next('li').index()-1, 365);
+//	setCookie('index', cntr, 365);
 }
 
 function logPageView()
@@ -342,7 +356,7 @@ function logPageView()
 	for(var i = 0; i < visitedtext.length;i++)
 		visitedHtml += visitedtext[i].innerHTML;
 	//log the page visit
-	jQuery.get('http://localhost:8080/QPEKA/log?log='+visitedHtml, {}, function() {
+	jQuery.get('http://'+host+'/QPEKA/log?log='+visitedHtml, {}, function() {
 	});
 	
 }

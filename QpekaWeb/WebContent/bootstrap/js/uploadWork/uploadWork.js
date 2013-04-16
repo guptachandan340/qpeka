@@ -2,7 +2,7 @@ $(document).ready(function(){
 	
 	//{"_id":{"$oid":"514870871aa87b91a2f384bc"},"name":{"firstName":"Manoj","middleName":"","lastName":"Thakur"},"gender":"MALE","dob":1363701895932,"nationality":"","imageFile":"","shortBio":"","infoLink":"","genre":[],"type":"LEVEL3"}
 	$.get(
-		    "http://localhost:8080/QPEKA/register?rType=getAuthor&aid="+aid,
+		    "http://"+host+"/QPEKA/register?rType=getAuthor&aid="+aid,
 		    null,
 		    function(data) { 
 		    	//alert(JSON.stringify(data));
@@ -93,11 +93,11 @@ var upload = function() {
 	var query = '?title='+title+'&aname='+aname+'&pname='+pname+'&description='+desc+'&language='+lang+'&type='+type+'&category='+genre+'&award='+award+'&loc='+loc+'&ispublished='+publishd+'&publisherName='+pub+'&pyear='+pyear+'&pmonth='+pmonth+'&pdate='+pdate+'&edition='+edition+'&file='+file+'&isbn='+isbn;
 	alert(query);
 	$.post(
-		    "http://localhost:8080/QPEKA/upload"+query,
+		    "http://"+host+"/QPEKA/upload"+query,
 		    null,
 		    function(data) { 
 		    	//alert(JSON.stringify(data));
-		    	window.location.replace("http://localhost:8080/QpekaWeb/bookDetail.jsp?id="+data._id);
+		    	window.location.replace("http://"+host+"/QpekaWeb/bookDetail.jsp?id="+data._id);
 		    },
 		    "json"
 		);

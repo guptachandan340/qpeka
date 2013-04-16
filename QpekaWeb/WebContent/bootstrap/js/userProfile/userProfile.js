@@ -23,7 +23,7 @@ var updateAddr = function(id) {
 	alert(JSON.stringify(reqBody));
 	
 	$.post(
-		    "http://localhost:8080/QPEKA/profile?rType=update&request="+JSON.stringify(reqBody),
+		    "http://"+host+"/QPEKA/profile?rType=update&request="+JSON.stringify(reqBody),
 		    null,
 		    function(data) { 
 		    	alert(JSON.stringify(data));    	
@@ -54,7 +54,7 @@ var updateGeneral = function(id) {
 	alert(JSON.stringify(reqBody));
 	
 	$.post(
-		    "http://localhost:8080/QPEKA/profile?rType=update&request="+JSON.stringify(reqBody),
+		    "http://"+host+"/QPEKA/profile?rType=update&request="+JSON.stringify(reqBody),
 		    null,
 		    function(data) { 
 		    	alert(JSON.stringify(data));    	
@@ -80,7 +80,7 @@ var addPref = function() {
 		prefs.push(genre);
 		var reqBody = {"id":"5119008472d0d2bbd6526d61", "interests":prefs};
 		$.post(
-			    "http://localhost:8080/QPEKA/profile?rType=update&request="+JSON.stringify(reqBody),
+			    "http://"+host+"/QPEKA/profile?rType=update&request="+JSON.stringify(reqBody),
 			    null,
 			    function(data) { 
 			    	alert(data);
@@ -96,7 +96,7 @@ var addPref = function() {
 var loadUser = function(uid) {
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/register?rType=getUser&uid="+uid,
+		    "http://"+host+"/QPEKA/register?rType=getUser&uid="+uid,
 		    null,
 		    function(data) { 
 		    	try
@@ -148,7 +148,7 @@ var populateLang  = function() {
 var addRLang = function(id) {
 	
 	$.post(
-		    "http://localhost:8080/QPEKA/profile?rType=addrlang&uid="+id+"&lang="+$('#rlang').val(),
+		    "http://"+host+"/QPEKA/profile?rType=addrlang&uid="+id+"&lang="+$('#rlang').val(),
 		    null,
 		    function(data) { 
 		    	alert(JSON.stringify(data));  
@@ -161,7 +161,7 @@ var addRLang = function(id) {
 var addWLang = function(id) {
 	
 	$.post(
-			 "http://localhost:8080/QPEKA/profile?rType=addwlang&uid="+id+"&lang="+$('#wlang').val(),
+			 "http://"+host+"/QPEKA/profile?rType=addwlang&uid="+id+"&lang="+$('#wlang').val(),
 		    null,
 		    function(data) { 
 		    	alert(JSON.stringify(data));    

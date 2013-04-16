@@ -5,7 +5,7 @@
 var loadToc = function(id) {
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/epub?action=getToc&bookId="+id,
+		    "http://"+host+"/QPEKA/epub?action=getToc&bookId="+id,
 		    null,
 		    function(data) { 
 		    	//alert(data);  
@@ -18,7 +18,7 @@ var loadToc = function(id) {
 var loadContent = function(id,resId) {
 	
 	$.get(
-		    "http://localhost:8080/QPEKA/epub?action=getContent&bookId="+id+"&resId="+resId,
+		    "http://"+host+"/QPEKA/epub?action=getContent&bookId="+id+"&resId="+resId,
 		    null,
 		    function(data) { 
 		    	//alert(data);  
