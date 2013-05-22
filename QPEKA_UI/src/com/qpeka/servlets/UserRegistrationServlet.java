@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -38,6 +39,7 @@ import com.qpeka.db.book.store.tuples.Constants.USERTYPE;
 import com.qpeka.db.book.store.tuples.Name;
 import com.qpeka.db.book.store.tuples.User;
 import com.qpeka.db.book.store.tuples.UserAuth;
+import com.qpeka.managers.SessionManager;
 import com.qpeka.managers.UserManager;
 import com.qpeka.utils.SystemConfigHandler;
 
@@ -123,39 +125,23 @@ public class UserRegistrationServlet extends HttpServlet {
 				
 				String id = UserHandler.getInstance().getUserByUserName(request.getParameter("uid")).get_id();
 				//request.getRequestDispatcher("/myProfile.jsp?uid="+id).forward(request, response);
+				HttpSession sess = request.getSession();
+				sess.setAttribute("uid", id);
+				
+				SessionManager.getInstance().addSession(id, sess);
+				
 				response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/myProfile.jsp?uid="+id);
 				return;
-//				JSONObject jo = new JSONObject();
-//				try {
-//					jo.put("status", "authenticated");
-//					jo.put("uid", id);
-//				} catch (JSONException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//				wr.write(jo.toString());
-//				wr.flush();
-//				return;
+
 			}
 			else
 			{
 				response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/home.jsp?error=true");
 				
-				//request.getRequestDispatcher("/home.jsp?error=true").forward(request, response);
-//				wr.write("{\"status\":\"error\"}");
-//				wr.flush();
+			
 	        	return;
 			}
-//			if(true)
-//			{
-//				User u = new User();//add here 
-//				UserAuth ua = new UserAuth("", "");
-//				request.getSession().setAttribute("uid", "werwer");
-//				request.getSession().setAttribute("uname", "23652");
-//				
-//				request.getRequestDispatcher("/userHome.jsp").forward(request, response);
-//			}
+
 		}
 		
 		

@@ -204,13 +204,8 @@ function previous_chapter() {
 
 /* Open the container file to find the resources */
 
-function container(f) {
-    opf_file = $(f).find('rootfile').attr('full-path');
-    // Get the OEPBS dir, if there is one
-    if (opf_file.indexOf('/') != -1) {
-        oebps_dir = opf_file.substr(0, opf_file.lastIndexOf('/'));
-    }
-    opf_file = epub_dir + '/' + opf_file;
+function container() {
+    
     try
     {
     	var url = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=0';
@@ -240,7 +235,7 @@ function toc(f) {
         else
         	res = $(this).find('content').attr('src');
         
-        var href = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=1&res='+res+'#'+subpart;
+        var href = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=1&res='+res+'&subpart='+subpart;
         var a = $('<a/>').attr('href',href);
         // If 's' has a parent navPoint, indent it
         if ($(this).parent()[0].tagName.toLowerCase() == 'navpoint') {
@@ -273,15 +268,17 @@ function opf(f) {
     $(f).find(opf_item_tag).each(function() {
         // Cheat and find the first file ending in NCX
         if ($(this).attr('href').indexOf('.ncx') != -1) {
-            ncx_file = epub_dir + '/' + oebps_dir + '/' + $(this).attr('href');
+            //ncx_file = epub_dir + '/' + oebps_dir + '/' + $(this).attr('href');
+            ncx_file = 'http://'+host+'/QPEKA/epub?id='+wid+'&action=2';
             jQuery.get(ncx_file, {}, toc);
         }
     });
 
 }
 jQuery(document).ready(function() {
-    jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);//jhol
-    $('#toc a').live('click', load_content);
+    //jQuery.get(epub_dir + '/META-INF/container.xml', {}, container);//jhol
+	container();
+	$('#toc a').live('click', load_content);
 
     $('#book').resizable({
         alsoResize: '#content',

@@ -33,15 +33,15 @@
 <body>
 	<div id="book" class="style1">
 	<div class="row-fluid">
-    	<div class="span2">
+    	<div class="span1">
         </div>
-        <div class="span8">
+        <div class="span10">
         <div class="row-fluid">
-        	<div id="toc-container" class="span4">
+        	<div id="toc-container" class="span5">
         		<br>
         		<ol id="toc"></ol>
         	</div>
-        	<div class="span8">
+        	<div class="span7">
         		<h3 id="content-title"></h3>
         		 <!--This is a comment. Comments are not displayed in the browser-->
 			       <div class="pagination pagination-mini">
@@ -59,7 +59,7 @@
         	</div>
         </div>
         </div>
-        <div class="span2">
+        <div class="span1">
         </div>
     </div>
 	
