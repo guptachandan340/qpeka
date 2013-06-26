@@ -1,4 +1,4 @@
-package com.qpeka.utils;
+/*package com.qpeka.utils;
 
 import java.util.Properties;
 
@@ -48,3 +48,4 @@ public class EmailSender {
 		    transport.close();
 		}
 }
+*/
