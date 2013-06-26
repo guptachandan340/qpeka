@@ -76,7 +76,6 @@ public class WorksHandler {
 		works.update(q, new BasicDBObject("$set" , work.toDBObject(true)), true, false, WriteConcern.SAFE);
 	}
 	
-	
 	public Work getWork(String id)
 	{
 		BasicDBObject q = new BasicDBObject();
@@ -107,14 +106,18 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByCategory(CATEGORY category)
+	public List<Work> getWorksByCategory(CATEGORY category, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.CATEGORY, category.toString());
 		
-		DBCursor cursor = works.find(q);
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
 		
         try 
         {
@@ -137,14 +140,18 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByType(TYPE type)
+	public List<Work> getWorksByType(TYPE type, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.TYPE, type.toString());
 		
-		DBCursor cursor = works.find(q);
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
 		
         try 
         {
@@ -167,8 +174,7 @@ public class WorksHandler {
 
 	}
 	
-	
-	public List<Work> getWorksByTypeCategory(TYPE type, CATEGORY cat)
+	public List<Work> getWorksByTypeCategory(TYPE type, CATEGORY cat, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
@@ -176,8 +182,11 @@ public class WorksHandler {
 		q.put(Work.TYPE, type.toString());
 		q.put(Work.CATEGORY, cat.toString());
 		
-		DBCursor cursor = works.find(q);
-		
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
         try 
         {
         	 while(cursor.hasNext()) 
@@ -198,6 +207,7 @@ public class WorksHandler {
         }
 
 	}
+	
 	public Work getWorkOfTheDayByType(TYPE type)
 	{
 		
@@ -258,15 +268,18 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByTitle(String title)
+	public List<Work> getWorksByTitle(String title, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.TITLE, "/"+title+"/");
 		
-		DBCursor cursor = works.find(q);
-		
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
         try 
         {
         	 while(cursor.hasNext()) 
@@ -288,16 +301,20 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByCriteria(String criteria)
+	public List<Work> getWorksByCriteria(String criteria, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.CATEGORY, "/"+criteria+"/");
 		
-		DBCursor cursor = works.find(q);
-		
-        try 
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
+        
+		try 
         {
         	 while(cursor.hasNext()) 
              {
@@ -318,14 +335,18 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getBooksByDescription(String description)
+	public List<Work> getBooksByDescription(String description, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.DESCRIPTION, "/"+description+"/");
 		
-		DBCursor cursor = works.find(q);
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
 		
         try 
         {
@@ -348,14 +369,18 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getBooksByMetaKey(String query)
+	public List<Work> getBooksByMetaKey(String query, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.METADATA+"."+Work.SEARCHKEY, "/"+query+"/");
 		
-		DBCursor cursor = works.find(q);
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
 		
         try 
         {
@@ -378,14 +403,18 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByAuthorId(String authorId)
+	public List<Work> getWorksByAuthorId(String authorId, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 	
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.AUTHORID, new ObjectId(authorId));
 		
-		DBCursor cursor = works.find(q);
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
 		
         try 
         {
@@ -415,7 +444,7 @@ public class WorksHandler {
 		
 		for(String authorId : aurthorIds)
 		{
-			List<Work> bk = getWorksByAuthorId(authorId); // can add $in query here
+			List<Work> bk = getWorksByAuthorId(authorId,-1,-1); // can add $in query here
 			if(bk != null && bk.size() > 0)
 				books.addAll(bk);
 		}
@@ -424,10 +453,16 @@ public class WorksHandler {
 		
 	}
 	
-	public List<Work> getAllBooks()
+	public List<Work> getAllBooks(int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
-		DBCursor cursor = works.find();
+		
+		DBCursor cursor = null;
+		if(start > -1 && end > -1 && end >= start)
+			cursor = works.find().sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
+		else
+			cursor = works.find().sort(new BasicDBObject(Work.TITLE,1));
+		
         try 
         {
             while(cursor.hasNext()) 
@@ -477,14 +512,15 @@ public class WorksHandler {
         }
 
 	}
+	
 	public List<Work> getWorksSpecificCriteriaHierarchy(String criteria)
 	{
 		List<Work> books = new ArrayList<Work>();
 		
-		books.addAll(getWorksByTitle(criteria));
-		books.addAll(getWorksByCriteria(criteria));
-		books.addAll(getBooksByMetaKey(criteria));
-		books.addAll(getBooksByDescription(criteria));
+		books.addAll(getWorksByTitle(criteria, -1,-1));
+		books.addAll(getWorksByCriteria(criteria,-1,-1));
+		books.addAll(getBooksByMetaKey(criteria,-1,-1));
+		books.addAll(getBooksByDescription(criteria,-1,-1));
 		
 		return books;
 	}

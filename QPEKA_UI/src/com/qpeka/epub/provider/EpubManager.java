@@ -8,6 +8,7 @@ import java.util.List;
 import com.qpeka.utils.SystemConfigHandler;
 
 import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.domain.TOCReference;
 import nl.siegmann.epublib.epub.EpubReader;
 
@@ -90,7 +91,12 @@ public class EpubManager {
 		try {
 			String fileName = SystemConfigHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
 			Book book = epubReader.readEpub(new FileInputStream(fileName));
-			return new String(book.getResources().getById(resId).getData());
+			for(Resource r : book.getTableOfContents().getAllUniqueResources())
+			{
+				if(r.getId().equalsIgnoreCase(resId))
+					return new String(r.getData());
+			}
+			
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -104,7 +110,10 @@ public class EpubManager {
 	}
 	
 	
-	public static void main(String[] args) {
-		System.out.println(EpubManager.getInstance().getTableOfContents("/home/manoj/Sam Williams - Free As In Freedom.epub"));
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+		//System.out.println(EpubManager.getInstance().getTableOfContents("/home/manoj/Sam Williams - Free As In Freedom.epub"));
+		String fileName = "/home/manoj/The.epub";
+		Book book = new EpubReader().readEpub(new FileInputStream(fileName));
+		System.out.println(new String(book.getNcxResource().getData()));
 	}
 }

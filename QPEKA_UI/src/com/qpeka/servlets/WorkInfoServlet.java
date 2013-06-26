@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.qpeka.db.book.store.AuthorHandler;
 import com.qpeka.db.book.store.WorksHandler;
@@ -41,6 +42,8 @@ public class WorkInfoServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		String actiontype = request.getParameter("actionType");
+		int start = (request.getParameter("start") != null?Integer.parseInt(request.getParameter("start") ):-1);
+		int end = (request.getParameter("end") != null?Integer.parseInt(request.getParameter("end") ):-1);
 		//work of the day
 		if(actiontype.equalsIgnoreCase("workOfDay"))
 		{
@@ -82,7 +85,7 @@ public class WorkInfoServlet extends HttpServlet {
 		else if(actiontype.equalsIgnoreCase("recommendedWork"))
 		{
 			TYPE type = TYPE.valueOf(request.getParameter("type"));
-			List<Work> w = WorksHandler.getInstance().getWorksByType(type);
+			List<Work> w = WorksHandler.getInstance().getWorksByType(type,start,end);
 			if(w != null && w.size() > 0)
 			{
 				JSONArray arr = new JSONArray();
@@ -109,11 +112,11 @@ public class WorkInfoServlet extends HttpServlet {
 			List<Work> lst = null;
 			if(category == CATEGORY.ALL)
 			{
-				lst = WorksHandler.getInstance().getWorksByType(type);
+				lst = WorksHandler.getInstance().getWorksByType(type,start,end);
 			}
 			else
 			{
-				lst = WorksHandler.getInstance().getWorksByTypeCategory(type, category);
+				lst = WorksHandler.getInstance().getWorksByTypeCategory(type, category, start, end);
 			}
 			
 			if(lst != null && lst.size() > 0)
@@ -142,6 +145,20 @@ public class WorkInfoServlet extends HttpServlet {
 			BasicDBObject bdo = (BasicDBObject)w.toDBObject(false);
 			bdo.put("author", AuthorHandler.getInstance().getAuthor(bdo.getString(Work.AUTHORID)).toDBObject(false));
 			response.getWriter().write(bdo.toString());
+			return;
+		}
+		else if(actiontype.equalsIgnoreCase("getbookbycategory"))
+		{
+			String cat = request.getParameter("category");
+			List<Work> w = WorksHandler.getInstance().getWorksByCategory(CATEGORY.valueOf(cat),start,end);
+			BasicDBList list = new BasicDBList();
+			for(Work wi : w)
+			{
+				BasicDBObject bdo = (BasicDBObject)wi.toDBObject(false);
+				bdo.put("author", AuthorHandler.getInstance().getAuthor(bdo.getString(Work.AUTHORID)).toDBObject(false));
+				list.add(bdo);
+			}
+			response.getWriter().write(list.toString());
 			return;
 		}
 		

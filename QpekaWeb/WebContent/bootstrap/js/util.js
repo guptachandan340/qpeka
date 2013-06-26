@@ -13,7 +13,7 @@ var showModalLogin = function() {
 		'<h3 id="myModalLabel">Login</h3>'+
 	'</div>'+
 	'<div class="modal-body">'+
-		'<form class="form-signin" action="http://localhost:8080/QPEKA/register" method="get">'+
+		'<form class="form-signin" action="http://'+host+'/QPEKA/register" method="get">'+
 			'<input id="uid" name="uid" type="text" class="input-block-level" placeholder="Email address">'+
 			'<input id="password" name="password" type="password" class="input-block-level" placeholder="Password">'+
 			' <input type="hidden" name="rType" id="rType" value="login">'+
@@ -39,7 +39,7 @@ var showModalSignup = function() {
 	'<h3 id="myModalLabel">Sign Up</h3>'+
 '</div>'+
 '<div class="modal-body">'+
-	'<form class="form-signin" action="http://localhost:8080/QPEKA/register" method="post" enctype="multipart/form-data" id="signin-form">'+
+	'<form class="form-signin" action="http://'+host+'/QPEKA/register" method="post" enctype="multipart/form-data" id="signin-form">'+
 	    '<input id="firstName" name="firstName" type="text" class="input-block-level" placeholder="First Name">'+
 	    '<input id="lastName" name="lastName" type="text" class="input-block-level" placeholder="Last Name">'+
 	    '<select id="gender" name="gender"><option value="MALE">MALE</option><option value="FEMALE">FEMALE</option></select>'+
@@ -61,7 +61,7 @@ var authenticate = function() {
 	var uid = $('#uid').val();
 	var pwd = $('#password').val();
 	$.get(
-		    "http://localhost:8080/QPEKA/register?rType=login&uid="+uid+'&password='+pwd,
+		    "http://"+host+"/QPEKA/register?rType=login&uid="+uid+'&password='+pwd,
 		    null,
 		    function(data) { 
 		    	check = false;
@@ -70,7 +70,7 @@ var authenticate = function() {
 		    	if(data.status == 'authenticated')
 		    	{
 		    		alert('SUCCESS');
-		    		window.location.href = "http://localhost:8080/QpekaWeb/userProfileEdit.jsp?uid="+data.uid;
+		    		window.location.href = "http://"+host+"/QpekaWeb/userProfileEdit.jsp?uid="+data.uid;
 		    	}
 		    	else
 		    	{
@@ -92,7 +92,7 @@ var checkUserAvail  = function() {
 	{
 		var uname = $('#email').val();
 		$.get(
-			    "http://localhost:8080/QPEKA/register?rType=authAvail&uname="+uname,
+			    "http://"+host+"/QPEKA/register?rType=authAvail&uname="+uname,
 			    null,
 			    function(data) { 
 			    	check = false;

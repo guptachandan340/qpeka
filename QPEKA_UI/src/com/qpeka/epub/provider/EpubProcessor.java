@@ -28,7 +28,7 @@ import org.jsoup.parser.Tag;
 public class EpubProcessor {
 	
 	private static final int PAGE_COUNT = 200;
-	public static void processEpub(String bookPath) throws FileNotFoundException, IOException{
+	public static void processEpub(String bookPath, String destPath) throws FileNotFoundException, IOException{
 		EpubReader reader =  new EpubReader();
 		Book b = reader.readEpub(new FileInputStream(new File(bookPath)));
 		String content = "";
@@ -52,7 +52,7 @@ public class EpubProcessor {
 //			}
 		}
 		EpubWriter wr = new EpubWriter();
-		wr.write(b, new FileOutputStream(new File("/home/manoj/The.epub")));
+		wr.write(b, new FileOutputStream(new File(destPath)));
 		
 	}
 	
@@ -149,7 +149,7 @@ public class EpubProcessor {
 //		System.out.println(modify(ele.get(0),new Count(0,0)));
 //		
 //		System.out.println(ele.toString());
-		processEpub("/home/manoj/Emma_Jane-Austen.epub");
+		//processEpub("/home/manoj/Emma_Jane-Austen.epub");
 //		Node n = new TextNode("<page id=23>", "");
 //		System.out.println(StringEscapeUtils.unescapeHtml("&lt;page&gt;"));
 		//Tag t = Tag.valueOf("<page>");

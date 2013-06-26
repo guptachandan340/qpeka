@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import nl.siegmann.epublib.domain.Book;
@@ -23,6 +24,7 @@ import org.jsoup.parser.Tag;
 public class EpubProcessorNew {
 	
 	private static final int PAGE_COUNT = 200;
+	
 	public static void processEpub(String bookPath,String dest) throws FileNotFoundException, IOException{
 		EpubReader reader =  new EpubReader();
 		Book b = reader.readEpub(new FileInputStream(new File(bookPath)));
@@ -41,6 +43,7 @@ public class EpubProcessorNew {
 			doc.head().after(elem);
 			System.out.println(doc.head().data());
 			Element ele = doc.body();
+			alterElement(ele);
 			Count cTemp = modify(ele, cnt);
 			cnt.setCount(cTemp.getCount());
 			cnt.setPgCount(cTemp.getPgCount());
@@ -51,6 +54,32 @@ public class EpubProcessorNew {
 		EpubWriter wr = new EpubWriter();
 		wr.write(b, new FileOutputStream(new File(dest)));
 		
+	}
+	
+	private static void alterElement(Element e)
+	{
+		org.jsoup.select.Elements s = e.children();
+		Iterator<Element> ele = s.iterator();
+		int i = 0;
+		while(ele.hasNext())
+		{
+			Element r = ele.next();
+		
+			if(!r.tag().getName().equals("p"))
+			{
+				r.tagName("p");//plain replace
+//				Element rtemp = r.clone();
+//				Element ep = new Element(Tag.valueOf("p"), "");
+//				ep.appendChild(rtemp);
+//				r.replaceWith(ep);
+//				StringBuffer bf = new StringBuffer();
+//				bf.append("<k>").append(r.toString()).append("</k>");
+//				r.html(bf.toString());
+//				System.out.println(r.tagName());
+				
+			}
+			i++;
+		}
 	}
 	
 	private static Count modify(Element e, Count c)
@@ -169,5 +198,52 @@ public class EpubProcessorNew {
 //		System.out.println(StringEscapeUtils.unescapeHtml("&lt;page&gt;"));
 		//Tag t = Tag.valueOf("<page>");
 		//System.out.println(t);
+		processEpub("/home/manoj/5180cc95d35d399cb58da7d8.2.epub","/home/manoj/testRes.epub");
+//		String[] a = {"br","","","",""};
+//		EpubReader reader =  new EpubReader();
+//		Book b = reader.readEpub(new FileInputStream(new File("/home/manoj/5180cc95d35d399cb58da7d8.2.epub")));
+//		String ret = "";
+//		for(String x :  b.getResources().getResourceMap().keySet())
+//		{
+//			Resource res = b.getResources().getResourceMap().get(x);
+//			if(res.getHref().contains("@public@vhost@g@gutenberg@html@files@580@580-h@580-h-0.htm.html"))
+//			{
+//				 ret = new String(res.getData());
+//			}
+//		}
+//		
+//		Document doc = Jsoup.parse(ret, "UTF-8");
+//		org.jsoup.select.Elements s = doc.body().children();
+//		org.jsoup.select.Elements newElems = new Elements();
+//		Iterator<Element> ele = s.iterator();
+//		while(ele.hasNext())
+//		{
+//			Element r = ele.next();
+//			
+//			if(!r.tag().getName().equals("p"))
+//			{
+//				StringBuffer htm = new StringBuffer("<p>");
+//				htm.append(r.html());
+//				htm.append("</p>");
+//				r.html(htm.toString());
+//				//System.out.println("[MANOJ] = " + htm);
+//				newElems.add(r);
+//			}
+//			else
+//			{
+//				newElems.add(r);
+//			}
+//		}
+//		
+//		ele = newElems.iterator();
+//		while(ele.hasNext())
+//		{
+//			Element r = ele.next();
+//			
+//		//	System.out.println(r.tag().getName());
+//			
+//		}
+		
+		//System.out.println(newElems.html());
 	}
 }

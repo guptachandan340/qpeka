@@ -51,17 +51,17 @@ public class WorkContentManager {
 	
 	public List<Work> getWorkDetailsByCategory(CATEGORY category)
 	{
-		return WorksHandler.getInstance().getWorksByCategory(category);
+		return WorksHandler.getInstance().getWorksByCategory(category,-1,-1);
 	}
 	
 	public List<Work> getWorkDetailsByTitle(String title)
 	{
-		return WorksHandler.getInstance().getWorksByTitle(title);
+		return WorksHandler.getInstance().getWorksByTitle(title,-1,-1);
 	}
 	
 	public List<Work> getWorkDetailsByAuthor(String authorId)
 	{
-		return WorksHandler.getInstance().getWorksByAuthorId(authorId);
+		return WorksHandler.getInstance().getWorksByAuthorId(authorId,-1,-1);
 	}
 	
 	public List<Work> getWorkDetailsByAuthorName(String name)
