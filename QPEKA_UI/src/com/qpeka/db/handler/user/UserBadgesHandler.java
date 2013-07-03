@@ -29,6 +29,8 @@ public class UserBadgesHandler extends AbstractHandler implements UserBadgesDao 
 
 	protected static final Logger logger = Logger
 			.getLogger(UserBadgesHandler.class);
+	
+	public static UserBadgesHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -506,6 +508,14 @@ public class UserBadgesHandler extends AbstractHandler implements UserBadgesDao 
 	protected void reset(UserBadges userbadges) {
 		userbadges.setUseridModified(false);
 		userbadges.setBadgeidModified(false);
+	}
+	
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static UserBadgesHandler getInstance() {
+		return (instance == null ? (instance = new UserBadgesHandler()) : instance);
 	}
 
 }

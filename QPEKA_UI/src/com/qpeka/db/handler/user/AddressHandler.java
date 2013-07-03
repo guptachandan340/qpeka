@@ -30,6 +30,8 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(AddressHandler.class);
+	
+	public static AddressHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -844,6 +846,14 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 		address.setCountryModified(false);
 		address.setPincodeModified(false);
 		address.setTimestampModified(false);
+	}
+	
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static AddressHandler getInstance() {
+		return (instance == null ? (instance = new AddressHandler()) : instance);
 	}
 
 }

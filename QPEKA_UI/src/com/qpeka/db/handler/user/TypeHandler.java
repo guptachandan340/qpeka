@@ -28,6 +28,8 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 	protected java.sql.Connection userConn;
 
 	protected static final Logger logger = Logger.getLogger(TypeHandler.class);
+	
+	public static TypeHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -522,6 +524,14 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 		type.setTypeidModified(false);
 		type.setTypeModified(false);
 		type.setTypenameModified(false);
+	}
+	
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static TypeHandler getInstance() {
+		return (instance == null ? (instance = new TypeHandler()) : instance);
 	}
 
 }

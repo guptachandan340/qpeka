@@ -30,6 +30,8 @@ public class UserLanguageHandler extends AbstractHandler implements
 
 	protected static final Logger logger = Logger
 			.getLogger(UserLanguageHandler.class);
+	
+	public static UserLanguageHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -538,6 +540,14 @@ public class UserLanguageHandler extends AbstractHandler implements
 		userlanguage.setUseridModified(false);
 		userlanguage.setLanguageidModified(false);
 		userlanguage.setTypeModified(false);
+	}
+	
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static UserLanguageHandler getInstance() {
+		return (instance == null ? (instance = new UserLanguageHandler()) : instance);
 	}
 
 }

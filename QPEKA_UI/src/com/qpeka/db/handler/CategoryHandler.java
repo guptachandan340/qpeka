@@ -15,6 +15,7 @@ import com.qpeka.db.Category;
 import com.qpeka.db.ResourceManager;
 import com.qpeka.db.dao.CategoryDao;
 import com.qpeka.db.exceptions.CategoryException;
+import com.qpeka.db.handler.user.UserHandler;
 
 public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
@@ -29,6 +30,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(CategoryHandler.class);
+	
+	public static CategoryHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -621,4 +624,11 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		category.setPointsModified(false);
 	}
 
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static CategoryHandler getInstance() {
+		return (instance == null ? (instance = new CategoryHandler()) : instance);
+	}
 }

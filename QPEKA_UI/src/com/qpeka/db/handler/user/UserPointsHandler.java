@@ -29,6 +29,8 @@ public class UserPointsHandler extends AbstractHandler implements UserPointsDao 
 
 	protected static final Logger logger = Logger
 			.getLogger(UserPointsHandler.class);
+	
+	public static UserPointsHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -549,6 +551,14 @@ public class UserPointsHandler extends AbstractHandler implements UserPointsDao 
 		userpoints.setUseridModified(false);
 		userpoints.setTypeModified(false);
 		userpoints.setPointsModified(false);
+	}
+	
+	/**
+	 * User points handler instance
+	 * @return instance of user points
+	 */
+	public static UserPointsHandler getInstance() {
+		return (instance == null ? (instance = new UserPointsHandler()) : instance);
 	}
 
 }

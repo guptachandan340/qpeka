@@ -29,6 +29,8 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 
 	protected static final Logger logger = Logger.getLogger(FilesHandler.class);
 
+	public static FilesHandler instance = null;
+
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
@@ -777,6 +779,15 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		files.setFilesizeModified(false);
 		files.setStatusModified(false);
 		files.setTimestampModified(false);
+	}
+
+	/**
+	 * Get FilesHandler object instance
+	 * 
+	 * @return instance of FilesHandler
+	 */
+	public static FilesHandler getInstance() {
+		return (instance == null ? (instance = new FilesHandler()) : instance);
 	}
 
 }

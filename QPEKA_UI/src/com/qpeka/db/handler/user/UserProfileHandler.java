@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Constants;
+import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.ResourceManager;
 import com.qpeka.db.dao.user.UserProfileDao;
 import com.qpeka.db.exceptions.user.UserProfileException;
@@ -922,6 +923,10 @@ public class UserProfileHandler extends AbstractHandler implements
 		user.setProfilepicModified(false);
 	}
 	
+	/**
+	 * User profile handler instance
+	 * @return instance of user profile
+	 */
 	public static UserProfileHandler getInstance() {
 		return (instance == null ? (instance = new UserProfileHandler()) : instance);
 	}
@@ -956,7 +961,7 @@ public class UserProfileHandler extends AbstractHandler implements
 		// "Maharashtra", "India", 400603);
 		Date dob = new Date();
 		UserProfile user = new UserProfile(1, "Rauline", name,
-				Constants.GENDER.MALE, dob, up.deriveAge(dob), (short) 102,
+				GENDER.valueOf("Male"), dob, up.deriveAge(dob), (short) 102,
 				"rahulshelke.com", biography, 1);
 		// "/home/rahul/Pictures/Webcam/2013-06-10-123500.jpg"
 		// user.setNameModified(true);

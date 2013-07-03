@@ -14,6 +14,7 @@ import com.qpeka.db.Languages;
 import com.qpeka.db.ResourceManager;
 import com.qpeka.db.dao.LanguagesDao;
 import com.qpeka.db.exceptions.LanguagesException;
+import com.qpeka.db.handler.user.UserHandler;
 
 public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
@@ -28,6 +29,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(LanguagesHandler.class);
+	
+	public static LanguagesHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -662,6 +665,14 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 		language.setANativeModified(false);
 		language.setDirectionModified(false);
 		language.setEnabledModified(false);
+	}
+	
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static LanguagesHandler getInstance() {
+		return (instance == null ? (instance = new LanguagesHandler()) : instance);
 	}
 
 }

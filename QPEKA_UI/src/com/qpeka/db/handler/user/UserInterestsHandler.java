@@ -30,6 +30,8 @@ public class UserInterestsHandler extends AbstractHandler implements
 
 	protected static final Logger logger = Logger
 			.getLogger(UserInterestsHandler.class);
+	
+	public static UserInterestsHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -515,6 +517,14 @@ public class UserInterestsHandler extends AbstractHandler implements
 	protected void reset(UserInterests userinterests) {
 		userinterests.setUseridModified(false);
 		userinterests.setCategoryidModified(false);
+	}
+	
+	/**
+	 * Get UserInterestsHandler object instance
+	 * @return instance of UserInterestHandler
+	 */
+	public static UserInterestsHandler getInstance() {
+		return (instance == null ? (instance = new UserInterestsHandler()) : instance);
 	}
 
 }
