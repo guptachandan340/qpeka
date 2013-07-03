@@ -6,8 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bson.types.ObjectId;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -15,7 +13,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 import com.qpeka.db.book.store.MongoAccessor;
-import com.qpeka.db.book.store.tuples.Work;
 
 public class AuthHandler {
 

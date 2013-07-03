@@ -2,7 +2,7 @@ package com.qpeka.db.user.session;
 
 import java.util.List;
 
-import com.qpeka.db.user.exceptions.SessionException;
+import com.qpeka.db.exceptions.user.SessionException;
 
 public interface SessionDao {
 

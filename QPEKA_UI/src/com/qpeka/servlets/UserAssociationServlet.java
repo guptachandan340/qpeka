@@ -14,10 +14,10 @@ import org.json.JSONObject;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.qpeka.db.book.store.FanHandler;
-import com.qpeka.db.book.store.UserFriendHandler;
-import com.qpeka.db.book.store.UserHandler;
-import com.qpeka.db.book.store.tuples.User;
+import com.qpeka.db.handler.user.FanHandler;
+import com.qpeka.db.handler.user.UserFriendHandler;
+import com.qpeka.db.handler.user.UserProfileHandler;
+import com.qpeka.db.user.profile.UserProfile;
 
 /**
  * Servlet implementation class UserAssociationServlet
@@ -55,7 +55,7 @@ public class UserAssociationServlet extends HttpServlet {
 			for(int i = 0 ; i < b.size();i++)
 			{
 				String fid = (String)b.get(i);
-				User u = UserHandler.getInstance().getUser(fid);
+				UserProfile u = UserProfileHandler.getInstance().getUser(fid);
 				JSONObject fJson = new JSONObject();
 				try {
 					fJson.put("id", fid);
@@ -83,7 +83,7 @@ public class UserAssociationServlet extends HttpServlet {
 			for(int i = 0 ; i < b.size();i++)
 			{
 				String fid = (String)b.get(i);
-				User u = UserHandler.getInstance().getUser(fid);
+				UserProfile u = UserProfileHandler.getInstance().getUser(fid);
 				JSONObject fJson = new JSONObject();
 				try {
 					fJson.put("id", fid);

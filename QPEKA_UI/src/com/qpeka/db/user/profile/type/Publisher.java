@@ -2,7 +2,7 @@ package com.qpeka.db.user.profile.type;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.qpeka.db.user.profile.User;
+import com.qpeka.db.user.User;
 
 public class Publisher extends User {
 
