@@ -29,6 +29,8 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(CountryHandler.class);
+	
+	public static CountryHandler instance;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -787,4 +789,11 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 		country.setCctldModified(false);
 	}
 
+	/**
+	 * User profile handler instance
+	 * @return instance of user profile
+	 */
+	public static CountryHandler getInstance() {
+		return (instance == null ? (instance = new CountryHandler()) : instance);
+	}
 }

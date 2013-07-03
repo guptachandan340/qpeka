@@ -6,17 +6,18 @@ import java.util.UUID;
 
 import org.json.JSONObject;
 
-import com.qpeka.db.book.store.AuthorHandler;
+import com.qpeka.db.Constants.CATEGORY;
+import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.Constants.WORKTYPE;
 import com.qpeka.db.book.store.TinyBookURLIdGenerator;
 import com.qpeka.db.book.store.UserCommentHandler;
 import com.qpeka.db.book.store.UserRatingHandler;
 import com.qpeka.db.book.store.WorksHandler;
-import com.qpeka.db.book.store.tuples.Author;
-import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
-import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
 import com.qpeka.db.book.store.tuples.UserComments;
 import com.qpeka.db.book.store.tuples.UserRating;
 import com.qpeka.db.book.store.tuples.Work;
+import com.qpeka.db.handler.user.AuthorHandler;
+import com.qpeka.db.user.profile.type.Author;
 import com.qpeka.utils.BookTinyURLIDGenerator;
 
 public class WorkContentManager {
@@ -161,8 +162,8 @@ public class WorkContentManager {
 	
 	public String addWork(String _id, String title, String authorId,
 			String coverPageFile,
-			com.qpeka.db.book.store.tuples.Constants.CATEGORY category,
-			com.qpeka.db.book.store.tuples.Constants.TYPE type, int numPages,
+			com.qpeka.db.Constants.CATEGORY category,
+			WORKTYPE type, int numPages,
 			JSONObject metaData, String description, LANGUAGES language,
 			boolean isPub, long dateOfPub, int edition, String isbn,
 			String publisherId)
