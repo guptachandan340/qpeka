@@ -913,28 +913,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 * 
 	 * @throws UserException
 	 */
-	public User createUser(String email, String username, String password)
-			throws UserException {
-
-		User user = new User();
-		user.setEmail(email);
-		user.setUsername(username);
-		user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-		user.setCreated(System.currentTimeMillis() / 1000);
-		user.setLastaccess(0);
-		user.setLastlogin(0);
-		user.setStatus((short) 0);
-
-		try {
-			insert(user);
-		} catch (UserException _e) {
-			throw new UserException("User Creation Exception: "
-					+ _e.getMessage(), _e);
-		}
-
-		return null;
-	}
-
+	
 	/**
 	 * Change account password
 	 * 

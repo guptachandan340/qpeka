@@ -353,7 +353,7 @@ public class UserProfileHandler extends AbstractHandler implements
 				if (user.isProfilepicNull()) {
 					stmt.setNull(index++, java.sql.Types.INTEGER);
 				} else {
-					stmt.setInt(index++, user.getProfilepic());
+					stmt.setLong(index++, user.getProfilepic());
 				}
 
 			}
@@ -560,7 +560,7 @@ public class UserProfileHandler extends AbstractHandler implements
 				if (user.isProfilepicNull()) {
 					stmt.setNull(index++, java.sql.Types.INTEGER);
 				} else {
-					stmt.setInt(index++, user.getProfilepic());
+					stmt.setLong(index++, user.getProfilepic());
 				}
 
 			}
@@ -931,26 +931,7 @@ public class UserProfileHandler extends AbstractHandler implements
 		return (instance == null ? (instance = new UserProfileHandler()) : instance);
 	}
 
-	/**
-	 * Compute age of a person
-	 */
-	public short deriveAge(Date dob) {
-		Calendar dateOfBirth = Calendar.getInstance();
-		dateOfBirth.setTime(dob);
-		Calendar today = Calendar.getInstance();
-
-		int age = today.get(Calendar.YEAR) - dateOfBirth.get(Calendar.YEAR);
-		if (today.get(Calendar.MONDAY) < dateOfBirth.get(Calendar.MONTH)) {
-			age--;
-		} else if (today.get(Calendar.MONTH) == dateOfBirth.get(Calendar.MONTH)
-				&& today.get(Calendar.DAY_OF_MONTH) < dateOfBirth
-						.get(Calendar.DAY_OF_MONTH)) {
-			age--;
-		}
-
-		return (short) age;
-	}
-
+	
 	public static void main(String[] args) throws ParseException,
 			UserProfileException {
 		UserProfileHandler up = new UserProfileHandler();

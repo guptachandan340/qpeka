@@ -14,6 +14,7 @@ import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.LANGUAGES;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
+import com.qpeka.managers.user.UserManager;
 
 /*
  * 
@@ -93,7 +94,7 @@ public class UserProfile implements Serializable {
 	private short nationality = 0;
 	private String website = "";
 	private String biography = "";
-	private int profilepic = 0;
+	private long profilepic = 0;
 
 	private Address address = new Address();
 	// private String phone ="";
@@ -133,12 +134,14 @@ public class UserProfile implements Serializable {
 	 * null.
 	 */
 	protected boolean profilepicNull = true;
+	public static UserProfile instance = null;
 
 	// protected boolean bookmarksModified = false;
 
 	/*
 	 * Constructors
 	 */
+
 	public UserProfile() {
 		super();
 	}
@@ -198,6 +201,10 @@ public class UserProfile implements Serializable {
 		this.website = website;
 		this.biography = biography;
 		this.profilepic = profilepic;
+	}
+
+	public static UserProfile getInstance() {
+		return (instance == null ? (instance = new UserProfile()) : instance);
 	}
 
 	/*
@@ -291,11 +298,11 @@ public class UserProfile implements Serializable {
 		this.biographyModified = true;
 	}
 
-	public int getProfilepic() {
+	public long getProfilepic() {
 		return profilepic;
 	}
 
-	public void setProfilepic(int profilepic) {
+	public void setProfilepic(long profilepic) {
 		this.profilepic = profilepic;
 		this.profilepicNull = false;
 		this.profilepicModified = true;
@@ -464,7 +471,7 @@ public class UserProfile implements Serializable {
 	public void setProfilepicModified(boolean profilepicModified) {
 		this.profilepicModified = profilepicModified;
 	}
-	
+
 	public boolean isProfilepicNull() {
 		return profilepicNull;
 	}
@@ -672,11 +679,11 @@ public class UserProfile implements Serializable {
 		if (profilepic != _cast.profilepic) {
 			return false;
 		}
-		
+
 		if (profilepicNull != _cast.profilepicNull) {
 			return false;
 		}
-		
+
 		if (profilepicModified != _cast.profilepicModified) {
 			return false;
 		}
@@ -794,7 +801,7 @@ public class UserProfile implements Serializable {
 		}
 
 		_hashCode = 29 * _hashCode + (biographyModified ? 1 : 0);
-		_hashCode = 29 * _hashCode + profilepic;
+		_hashCode = (int) (29 * _hashCode + profilepic);
 		_hashCode = 29 * _hashCode + (profilepicNull ? 1 : 0);
 		_hashCode = 29 * _hashCode + (profilepicModified ? 1 : 0);
 		if (address != null) {
