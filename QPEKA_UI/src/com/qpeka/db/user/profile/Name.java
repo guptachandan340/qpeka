@@ -2,6 +2,8 @@ package com.qpeka.db.user.profile;
 
 import java.io.Serializable;
 
+import com.qpeka.managers.user.UserManager;
+
 /*
  * name : {
  firstName : "manoj",
@@ -15,6 +17,7 @@ public class Name implements Serializable {
 	/**
 	 * 
 	 */
+	public Name instance = null;
 	private static final long serialVersionUID = -6418849114132369831L;
 	
 	public static final String FIRSTNAME = "firstName";
@@ -50,6 +53,12 @@ public class Name implements Serializable {
 	/*
 	 * Getters and setters for attributes
 	 */
+	
+	public Name getInstance()
+	 {
+   	     return (instance == null ? (instance =  new Name()) : instance);
+     }
+
 	public String getFirstname() {
 		return firstname;
 	}
