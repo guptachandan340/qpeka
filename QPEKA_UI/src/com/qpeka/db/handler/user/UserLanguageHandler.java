@@ -135,7 +135,7 @@ public class UserLanguageHandler extends AbstractHandler implements
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
-			sql.append("INSERT INTO " + getTableName() + " (");
+			sql.append("INSERT IGNORE INTO " + getTableName() + " (");
 			int modifiedCount = 0;
 			if (userlanguage.isUseridModified()) {
 				if (modifiedCount > 0) {
