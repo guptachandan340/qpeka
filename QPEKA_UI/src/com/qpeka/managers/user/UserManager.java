@@ -6,17 +6,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.qpeka.db.Constants.GENDER;
+import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERSTATUS;
+import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
+import com.qpeka.db.Languages;
 import com.qpeka.db.exceptions.CountryException;
+import com.qpeka.db.exceptions.LanguagesException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.CountryHandler;
+import com.qpeka.db.handler.LanguagesHandler;
 import com.qpeka.db.handler.user.AddressHandler;
 import com.qpeka.db.handler.user.UserHandler;
 import com.qpeka.db.handler.user.UserLanguageHandler;
@@ -24,6 +32,8 @@ import com.qpeka.db.handler.user.UserProfileHandler;
 import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.Address;
 import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.UserLanguage;
+import com.qpeka.db.user.profile.UserPoints;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.security.bcrypt.BCrypt;
 
@@ -262,10 +272,13 @@ public class UserManager {
 		long userid = 0;
 		if (profile.get(UserProfile.USERID) != null) {
 			userid = Long.parseLong(UserProfile.USERID);
+			
+			// Set Pen name 
 			if (profile.get(UserProfile.PENNAME) != null) {
 				userProfile.setPenname(profile.get(UserProfile.PENNAME));
 			}
-
+			
+			// set firstName, LastName and MiddleName for UserProfile
 			if (profile.get(UserProfile.NAME) != null) {
 				Name name = UserProfile.getInstance().getName().getInstance();
 
@@ -283,12 +296,13 @@ public class UserManager {
 
 				userProfile.setName(name);
 			}
-			// check whether gender exist
+			
+			// check and set Gender for UserProfile
 			if (profile.get(UserProfile.GENDER) != null) {
 				userProfile.setGender(GENDER.valueOf(profile
 						.get(UserProfile.GENDER)));
 			}
-
+			//Check and set Date of birth and age for userProfile.
 			if (profile.get(UserProfile.DOB) != null) {
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				Date dob;
@@ -301,6 +315,8 @@ public class UserManager {
 					e.printStackTrace();
 				}
 			}
+			
+			// Check and set Nationality for userProfile
 			if (profile.get(UserProfile.NATIONALITY) != null) {
 				List<Country> nation = null;
 				try {
@@ -311,29 +327,126 @@ public class UserManager {
 									profile.get(UserProfile.NATIONALITY));
 				} catch (CountryException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e.printStackTrace();						
+
 				}
 				userProfile.setNationality((short) nation.get(0).getCountryid());
 			}
+			
+			// set WEbSite for UserProfile
 			if (profile.get(UserProfile.WEBSITE) != null) {
 				userProfile.setWebsite(profile.get(UserProfile.WEBSITE));
 			}
+			
+			//Set Biography for userProfile
 			if (profile.get(UserProfile.BIOGRAPHY) != null) {
 				userProfile.setBiography(profile.get(UserProfile.BIOGRAPHY));
 			}
+			
+			//Set ProfilePic for UserProfile
 			if (profile.get(UserProfile.PROFILEPIC) != null) {
 				Files file = new Files();
 				file.setFilepath(profile.get(UserProfile.PROFILEPIC));
 
 				userProfile.setProfilepic(file.getFileid());
 			    }
-		    if(profile.get(UserProfile.ADDRESS)!=null)
-		    		Address address = Address.getInstance();
 		    
-		    
-		  
-		    
-		
+			// Set Address, Country, State and Pin code To Addess Object
+			if(profile.get(UserProfile.ADDRESS)!=null) {
+				Address address = Address.getInstance();
+				
+				// Set AddressLine1
+				if(profile.get(Address.ADDRESSLINE1)!=null) {
+				    address.setAddressLine1(profile.get(Address.ADDRESSLINE1));
+				}
+			     
+				//Set addressLine2
+				if(profile.get(Address.ADDRESSLINE2)!=null) {
+					address.setAddressLine2(profile.get(Address.ADDRESSLINE2));
+				}
+				
+				//Set AddressLine3
+				if(profile.get(Address.ADDRESSLINE3)!= null) {
+			            address.setAddressLine3(profile.get(Address.ADDRESSLINE3));
+				}
+				
+				//Set City
+				if(profile.get(Address.CITY)!=null) {
+					address.setCity(profile.get(Address.CITY));
+				}
+				//Set Country
+				if(profile.get(Address.COUNTRY)!=null) {
+					List<Country> country = null;
+					try {
+						// TODO using short name, ideal it should be iso2 or iso3
+						// (preferred). Change it accordingly
+						country = CountryHandler.getInstance()
+								.findWhereShortnameEquals(
+										profile.get(Address.COUNTRY));
+					} catch (CountryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				address.setCountry((short) country.get(0).getCountryid());
+				}
+				
+				//Set PinCode
+				if(profile.get(Address.PINCODE)!=null) {
+					address.setPincode(Short.parseShort(profile.get(Address.PINCODE)));
+				}
+				// Set State
+				if(profile.get(Address.STATE)!=null) {
+					address.setState(profile.get(Address.STATE));
+				}
+				userProfile.setAddress(address);  //Set Address for UserProfile
+			}
+			
+	
+					//Set<LANGUAGES> rLang1 = UserProfile.getInstance().getrLang();
+		//Iterator it1 = UserProfile.getInstance().getrLang().iterator();
+		Iterator<LANGUAGES> it = UserProfile.getInstance().getrLang().iterator();
+			while(it.hasNext()) {
+			
+				if(profile.get(UserProfile.RLANG)!= null) {
+					List<Languages> rLang1 = null;
+					try {
+						// TODO using short name, ideal it should be iso2 or iso3
+						// (preferred). Change it accordingly
+							
+						rLang1 = LanguagesHandler.getInstance().findWhereLanguageidEquals(Short.parseShort(profile.get(UserProfile.RLANG)));
+						
+						it1.set(rLang1.get(0).getLanguageid());
+						
+					} catch (LanguagesException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					userProfile.setrLang(it.next().valueOf(profile.get(UserProfile.RLANG)));
+					//userProfile.setNationality((short) nation.get(0).getCountryid());
+				}
+				
+				if(profile.get(UserProfile.USERPOINTS)!=null) {
+					Map<String, Integer> userpoints;
+					
+					userProfile.setUserpoints(userpoints);
+				}
+				
+				if(profile.get(UserProfile.USERLEVEL)!=null) {
+					userProfile.setUserlevel(USERLEVEL.valueOf(profile.get(UserProfile.USERLEVEL)));}
+				}
+			
+			if(profile.get(UserProfile.USERTYPE)!= null) {
+				userProfile.setUsertype(USERTYPE.valueOf(profile.get(UserProfile.USERTYPE)));
+			}
+				
+				
+					
+			
+			
+			
+		            
+		   
+			
 			try {
 				UserProfileHandler.getInstance().update(userid, userProfile);
 			} catch (UserProfileException e) {
