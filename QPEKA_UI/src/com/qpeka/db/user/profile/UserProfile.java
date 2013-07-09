@@ -11,10 +11,9 @@ import com.qpeka.db.Constants;
 import com.qpeka.db.Constants.BADGES;
 import com.qpeka.db.Constants.CATEGORY;
 import com.qpeka.db.Constants.GENDER;
-import com.qpeka.db.Constants.LANGUAGES;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
-import com.qpeka.managers.user.UserManager;
+import com.qpeka.db.Languages;
 
 /*
  * 
@@ -100,8 +99,8 @@ public class UserProfile implements Serializable {
 	// private String phone ="";
 
 	private Set<CATEGORY> interests = new HashSet<Constants.CATEGORY>();
-	private Set<LANGUAGES> rLang = new HashSet<Constants.LANGUAGES>();
-	private Set<LANGUAGES> wLang = new HashSet<Constants.LANGUAGES>();
+	private Set<Languages> rLang = new HashSet<Languages>();
+	private Set<Languages> wLang = new HashSet<Languages>();
 
 	private Set<BADGES> userbadges = new HashSet<Constants.BADGES>();
 	private Map<String, Integer> userpoints = new HashMap<String, Integer>();
@@ -158,7 +157,7 @@ public class UserProfile implements Serializable {
 			com.qpeka.db.Constants.GENDER gender, Date dob, short age,
 			short nationality, String website, String biography,
 			int profilepic, Address address, Set<CATEGORY> interests,
-			Set<LANGUAGES> rLang, Set<LANGUAGES> wLang,
+			Set<Languages> rLang, Set<Languages> wLang,
 			Set<com.qpeka.db.Constants.BADGES> userbadges,
 			Map<String, Integer> userpoints,
 			com.qpeka.db.Constants.USERLEVEL userlevel,
@@ -326,20 +325,20 @@ public class UserProfile implements Serializable {
 		this.interestsModified = true;
 	}
 
-	public Set<LANGUAGES> getrLang() {
+	public Set<Languages> getrLang() {
 		return rLang;
 	}
 
-	public void setrLang(Set<LANGUAGES> rLang) {
+	public void setrLang(Set<Languages> rLang) {
 		this.rLang = rLang;
 		this.rLangModified = true;
 	}
 
-	public Set<LANGUAGES> getwLang() {
+	public Set<Languages> getwLang() {
 		return wLang;
 	}
 
-	public void setwLang(Set<LANGUAGES> wLang) {
+	public void setwLang(Set<Languages> wLang) {
 		this.wLang = wLang;
 		this.wLangModified = true;
 	}

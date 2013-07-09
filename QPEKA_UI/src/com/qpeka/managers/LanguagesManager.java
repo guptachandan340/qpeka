@@ -1,4 +1,4 @@
-package com.qpeka.managers.user;
+package com.qpeka.managers;
 
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 

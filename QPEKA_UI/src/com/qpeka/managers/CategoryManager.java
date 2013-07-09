@@ -1,4 +1,4 @@
-package com.qpeka.managers.user;
+package com.qpeka.managers;
 
 import com.qpeka.db.handler.CategoryHandler;
 

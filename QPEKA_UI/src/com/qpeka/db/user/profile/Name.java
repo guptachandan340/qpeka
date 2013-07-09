@@ -2,8 +2,6 @@ package com.qpeka.db.user.profile;
 
 import java.io.Serializable;
 
-import com.qpeka.managers.user.UserManager;
-
 /*
  * name : {
  firstName : "manoj",
@@ -17,9 +15,8 @@ public class Name implements Serializable {
 	/**
 	 * 
 	 */
-	public Name instance = null;
 	private static final long serialVersionUID = -6418849114132369831L;
-	
+
 	public static final String FIRSTNAME = "firstName";
 	public static final String MIDDLENAME = "middleName";
 	public static final String LASTNAME = "lastName";
@@ -35,6 +32,8 @@ public class Name implements Serializable {
 	protected boolean firstnameModified = false;
 	protected boolean middlenameModified = false;
 	protected boolean lastnameModified = false;
+	
+	public static Name instance = null;
 
 	/*
 	 * Constructors
@@ -53,11 +52,10 @@ public class Name implements Serializable {
 	/*
 	 * Getters and setters for attributes
 	 */
-	
-	public Name getInstance()
-	 {
-   	     return (instance == null ? (instance =  new Name()) : instance);
-     }
+
+	public static Name getInstance() {
+		return (instance == null ? (instance = new Name()) : instance);
+	}
 
 	public String getFirstname() {
 		return firstname;
@@ -207,19 +205,19 @@ public class Name implements Serializable {
 		return ret.toString();
 	}
 
-//	public DBObject toDBObject() {
-//		BasicDBObject dbObj = new BasicDBObject();
-//		dbObj.put(FIRSTNAME, firstname);
-//		dbObj.put(MIDDLENAME, middlename);
-//		dbObj.put(LASTNAME, lastname);
-//
-//		return dbObj;
-//	}
-//
-//	public static Name getNamefromDBObject(BasicDBObject obj) {
-//		return new Name(obj.getString(FIRSTNAME), obj.getString(MIDDLENAME),
-//				obj.getString(LASTNAME));
-//	}
+	// public DBObject toDBObject() {
+	// BasicDBObject dbObj = new BasicDBObject();
+	// dbObj.put(FIRSTNAME, firstname);
+	// dbObj.put(MIDDLENAME, middlename);
+	// dbObj.put(LASTNAME, lastname);
+	//
+	// return dbObj;
+	// }
+	//
+	// public static Name getNamefromDBObject(BasicDBObject obj) {
+	// return new Name(obj.getString(FIRSTNAME), obj.getString(MIDDLENAME),
+	// obj.getString(LASTNAME));
+	// }
 
 	// public static void main(String[] args) {
 	// BasicDBObject dbObj = new BasicDBObject();
