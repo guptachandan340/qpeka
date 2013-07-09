@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -131,11 +132,16 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public User authenticateByEmail(String email, String password)
-			throws UserException {
+	public User authenticateUser(String authName, String password,
+			boolean isEmail) throws UserException {
 		List<User> user = new ArrayList<User>();
 		try {
-			user = UserHandler.getInstance().findWhereEmailEquals(email);
+			if (!isEmail) {
+				user = UserHandler.getInstance().findWhereUsernameEquals(
+						authName);
+			} else {
+				user = UserHandler.getInstance().findWhereEmailEquals(authName);
+			}
 		} catch (UserException _e) {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
@@ -154,25 +160,19 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public User authenticateByUsername(String username, String password)
-			throws UserException {
-		List<User> user = new ArrayList<User>();
-		try {
-			user = UserHandler.getInstance().findWhereUsernameEquals(username);
-		} catch (UserException _e) {
-			throw new UserException("User Authentication Exception: "
-					+ _e.getMessage(), _e);
-		}
-
-		if (!user.isEmpty()) {
-			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? user
-					.get(0) : null);
-		} else {
-			return null;
-		}
-
-	}// end of authenticateByUsername()
-
+	/*
+	 * public User authenticateByUsername(String username, String password)
+	 * throws UserException { List<User> user = new ArrayList<User>(); try {
+	 * 
+	 * } catch (UserException _e) { throw new
+	 * UserException("User Authentication Exception: " + _e.getMessage(), _e); }
+	 * 
+	 * if (!user.isEmpty()) { return (BCrypt.checkpw(password,
+	 * user.get(0).getPassword()) ? user .get(0) : null); } else { return null;
+	 * }
+	 * 
+	 * }// end of authenticateByUsername()
+	 */
 	/**
 	 * Username exists?
 	 * 
@@ -188,11 +188,12 @@ public class UserManager {
 					+ _e.getMessage(), _e);
 		}
 
-		if (!userList.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		/*
+		 * if (!userList.isEmpty()) { return true; } else { return false; }
+		 */
+
+		// Returns false when userlist is empty else true (Username exists)
+		return (!userList.isEmpty());
 	}// end of usernameExists()
 
 	/**
@@ -209,11 +210,12 @@ public class UserManager {
 					+ _e.getMessage(), _e);
 		}
 
-		if (!userList.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		/*
+		 * if (!userList.isEmpty()) { return true; } else { return false; }
+		 */
+
+		// Returns false when userlist is empty else true (Email exists)
+		return (!userList.isEmpty());
 	}// end of emailExists()
 
 	/**
@@ -233,6 +235,7 @@ public class UserManager {
 		try {
 			user = UserHandler.getInstance().findByPrimaryKey(userid);
 			user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+
 			UserHandler.getInstance().update(userid, user);
 		} catch (UserException _e) {
 			throw new UserException("Update User Password Exception: "
@@ -247,19 +250,30 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public User resetPassword(String username, boolean usernameStatus)
-			throws UserException {
+	public String resetPassword(String authName, String newPassword,
+			boolean isEmail) throws UserException {
 		List<User> user = new ArrayList<User>();
-		if (!usernameStatus) {
-			try {
+		try {
+			if (!isEmail) {
 				user = UserHandler.getInstance().findWhereUsernameEquals(
-						username);
-			} catch (UserException _e) {
-				throw new UserException("Reset user Password Exception: "
-						+ _e.getMessage(), _e);
+						authName);
+			} else {
+				user = UserHandler.getInstance().findWhereEmailEquals(authName);
 			}
+		} catch (UserException _e) {
+			throw new UserException("Reset user Password Exception: "
+					+ _e.getMessage(), _e);
 		}
-		return user.get(0);
+
+		if (!user.isEmpty()) {
+			user.get(0).setPassword(
+					BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+
+			UserHandler.getInstance().update(user.get(0).getUserid(),
+					user.get(0));
+		}
+
+		return user.get(0).getEmail();
 	} // end of resetpassword()
 
 	/**
@@ -267,47 +281,50 @@ public class UserManager {
 	 * 
 	 * throws UserException
 	 */
-	public UserProfile editProfile(Map<String, String> profile) {
+	public UserProfile editProfile(Map<String, Object> profile) {
 		UserProfile userProfile = UserProfile.getInstance();
 		long userid = 0;
+
 		if (profile.get(UserProfile.USERID) != null) {
 			userid = Long.parseLong(UserProfile.USERID);
-			
-			// Set Pen name 
+
+			// Set Pen name
 			if (profile.get(UserProfile.PENNAME) != null) {
-				userProfile.setPenname(profile.get(UserProfile.PENNAME));
+				userProfile.setPenname(profile.get(UserProfile.PENNAME)
+						.toString());
 			}
-			
+
 			// set firstName, LastName and MiddleName for UserProfile
 			if (profile.get(UserProfile.NAME) != null) {
-				Name name = UserProfile.getInstance().getName().getInstance();
+				Name name = Name.getInstance();
 
 				if (profile.get(Name.FIRSTNAME) != null) {
-					name.setFirstname(profile.get(Name.FIRSTNAME));
+					name.setFirstname(profile.get(Name.FIRSTNAME).toString());
 				}
 
 				if (profile.get(Name.MIDDLENAME) != null) {
-					name.setMiddlename(profile.get(Name.MIDDLENAME));
+					name.setMiddlename(profile.get(Name.MIDDLENAME).toString());
 				}
 
 				if (profile.get(Name.LASTNAME) != null) {
-					name.setLastname(profile.get(Name.LASTNAME));
+					name.setLastname(profile.get(Name.LASTNAME).toString());
 				}
 
 				userProfile.setName(name);
 			}
-			
+
 			// check and set Gender for UserProfile
 			if (profile.get(UserProfile.GENDER) != null) {
-				userProfile.setGender(GENDER.valueOf(profile
-						.get(UserProfile.GENDER)));
+				userProfile.setGender(GENDER.valueOf(profile.get(
+						UserProfile.GENDER).toString()));
 			}
-			//Check and set Date of birth and age for userProfile.
+			// Check and set Date of birth and age for userProfile.
 			if (profile.get(UserProfile.DOB) != null) {
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 				Date dob;
 				try {
-					dob = (Date) df.parse(profile.get(UserProfile.DOB));
+					dob = (Date) df.parse(profile.get(UserProfile.DOB)
+							.toString());
 					userProfile.setDob(dob);
 					userProfile.setAge(deriveAge(dob));
 				} catch (ParseException e) {
@@ -315,7 +332,7 @@ public class UserManager {
 					e.printStackTrace();
 				}
 			}
-			
+
 			// Check and set Nationality for userProfile
 			if (profile.get(UserProfile.NATIONALITY) != null) {
 				List<Country> nation = null;
@@ -324,141 +341,148 @@ public class UserManager {
 					// (preferred). Change it accordingly
 					nation = CountryHandler.getInstance()
 							.findWhereShortnameEquals(
-									profile.get(UserProfile.NATIONALITY));
+									profile.get(UserProfile.NATIONALITY)
+											.toString());
 				} catch (CountryException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();						
+					e.printStackTrace();
 
 				}
-				userProfile.setNationality((short) nation.get(0).getCountryid());
+				userProfile
+						.setNationality((short) nation.get(0).getCountryid());
 			}
-			
+
 			// set WEbSite for UserProfile
 			if (profile.get(UserProfile.WEBSITE) != null) {
-				userProfile.setWebsite(profile.get(UserProfile.WEBSITE));
+				userProfile.setWebsite(profile.get(UserProfile.WEBSITE)
+						.toString());
 			}
-			
-			//Set Biography for userProfile
+
+			// Set Biography for userProfile
 			if (profile.get(UserProfile.BIOGRAPHY) != null) {
-				userProfile.setBiography(profile.get(UserProfile.BIOGRAPHY));
+				userProfile.setBiography(profile.get(UserProfile.BIOGRAPHY)
+						.toString());
 			}
-			
-			//Set ProfilePic for UserProfile
+
+			// Set ProfilePic for UserProfile
 			if (profile.get(UserProfile.PROFILEPIC) != null) {
 				Files file = new Files();
-				file.setFilepath(profile.get(UserProfile.PROFILEPIC));
+				file.setFilepath(profile.get(UserProfile.PROFILEPIC).toString());
 
 				userProfile.setProfilepic(file.getFileid());
-			    }
-		    
+			}
+
 			// Set Address, Country, State and Pin code To Addess Object
-			if(profile.get(UserProfile.ADDRESS)!=null) {
+			if (profile.get(UserProfile.ADDRESS) != null) {
 				Address address = Address.getInstance();
-				
+
 				// Set AddressLine1
-				if(profile.get(Address.ADDRESSLINE1)!=null) {
-				    address.setAddressLine1(profile.get(Address.ADDRESSLINE1));
+				if (profile.get(Address.ADDRESSLINE1) != null) {
+					address.setAddressLine1(profile.get(Address.ADDRESSLINE1)
+							.toString());
 				}
-			     
-				//Set addressLine2
-				if(profile.get(Address.ADDRESSLINE2)!=null) {
-					address.setAddressLine2(profile.get(Address.ADDRESSLINE2));
+
+				// Set addressLine2
+				if (profile.get(Address.ADDRESSLINE2) != null) {
+					address.setAddressLine2(profile.get(Address.ADDRESSLINE2)
+							.toString());
 				}
-				
-				//Set AddressLine3
-				if(profile.get(Address.ADDRESSLINE3)!= null) {
-			            address.setAddressLine3(profile.get(Address.ADDRESSLINE3));
+
+				// Set AddressLine3
+				if (profile.get(Address.ADDRESSLINE3) != null) {
+					address.setAddressLine3(profile.get(Address.ADDRESSLINE3)
+							.toString());
 				}
-				
-				//Set City
-				if(profile.get(Address.CITY)!=null) {
-					address.setCity(profile.get(Address.CITY));
+
+				// Set City
+				if (profile.get(Address.CITY) != null) {
+					address.setCity(profile.get(Address.CITY).toString());
 				}
-				//Set Country
-				if(profile.get(Address.COUNTRY)!=null) {
+				// Set Country
+				if (profile.get(Address.COUNTRY) != null) {
 					List<Country> country = null;
 					try {
-						// TODO using short name, ideal it should be iso2 or iso3
+						// TODO using short name, ideal it should be iso2 or
+						// iso3
 						// (preferred). Change it accordingly
-						country = CountryHandler.getInstance()
+						country = CountryHandler
+								.getInstance()
 								.findWhereShortnameEquals(
-										profile.get(Address.COUNTRY));
+										profile.get(Address.COUNTRY).toString());
 					} catch (CountryException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				address.setCountry((short) country.get(0).getCountryid());
+					address.setCountry((short) country.get(0).getCountryid());
 				}
-				
-				//Set PinCode
-				if(profile.get(Address.PINCODE)!=null) {
-					address.setPincode(Short.parseShort(profile.get(Address.PINCODE)));
+
+				// Set PinCode
+				if (profile.get(Address.PINCODE) != null) {
+					address.setPincode(Short.parseShort(profile.get(
+							Address.PINCODE).toString()));
 				}
 				// Set State
-				if(profile.get(Address.STATE)!=null) {
-					address.setState(profile.get(Address.STATE));
+				if (profile.get(Address.STATE) != null) {
+					address.setState(profile.get(Address.STATE).toString());
 				}
-				userProfile.setAddress(address);  //Set Address for UserProfile
+				userProfile.setAddress(address); // Set Address for UserProfile
 			}
-			
-	
-					//Set<LANGUAGES> rLang1 = UserProfile.getInstance().getrLang();
-		//Iterator it1 = UserProfile.getInstance().getrLang().iterator();
-		Iterator<LANGUAGES> it = UserProfile.getInstance().getrLang().iterator();
-			while(it.hasNext()) {
-			
-				if(profile.get(UserProfile.RLANG)!= null) {
-					List<Languages> rLang1 = null;
-					try {
-						// TODO using short name, ideal it should be iso2 or iso3
-						// (preferred). Change it accordingly
-							
-						rLang1 = LanguagesHandler.getInstance().findWhereLanguageidEquals(Short.parseShort(profile.get(UserProfile.RLANG)));
+
+			// Read Language
+			if(profile.get(UserProfile.RLANG) != null) {
+				@SuppressWarnings("unchecked")
+				Iterator<String> languageIt = ((Set<String>) profile.get(UserProfile.RLANG)).iterator();
+				List<Object> rLangObj = new ArrayList<Object>();
+				rLangObj.add(convertCollectionToString(languageIt));
 						
-						it1.set(rLang1.get(0).getLanguageid());
+				List<Languages> rLang = null;
 						
-					} catch (LanguagesException e) {
+				try {
+					// TODO using short name, ideal it should be iso2 or
+					// iso3 (preferred). Change it accordingly
+					rLang = LanguagesHandler.getInstance().findByDynamicWhere("language IN (?)", rLangObj);
+				} catch (LanguagesException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-					userProfile.setrLang(it.next().valueOf(profile.get(UserProfile.RLANG)));
-					//userProfile.setNationality((short) nation.get(0).getCountryid());
 				}
 				
-				if(profile.get(UserProfile.USERPOINTS)!=null) {
+				UserLanguage userLang = UserLanguage.getInstance();
+				userLang.setUserid(userid);
+				
+				for(Languages language : rLang) {
+					userLang.setLanguageid(language.getLanguageid());
+					UserLanguageHandler.getInstance().insert(userLang);
+				}
+			}
+
+				if (profile.get(UserProfile.USERPOINTS) != null) {
 					Map<String, Integer> userpoints;
-					
+
 					userProfile.setUserpoints(userpoints);
 				}
-				
-				if(profile.get(UserProfile.USERLEVEL)!=null) {
-					userProfile.setUserlevel(USERLEVEL.valueOf(profile.get(UserProfile.USERLEVEL)));}
+
+				if (profile.get(UserProfile.USERLEVEL) != null) {
+					userProfile.setUserlevel(USERLEVEL.valueOf(profile
+							.get(UserProfile.USERLEVEL)));
 				}
-			
-			if(profile.get(UserProfile.USERTYPE)!= null) {
-				userProfile.setUsertype(USERTYPE.valueOf(profile.get(UserProfile.USERTYPE)));
 			}
-				
-				
-					
-			
-			
-			
-		            
-		   
-			
+
+			if (profile.get(UserProfile.USERTYPE) != null) {
+				userProfile.setUsertype(USERTYPE.valueOf(profile
+						.get(UserProfile.USERTYPE)));
+			}
+
 			try {
 				UserProfileHandler.getInstance().update(userid, userProfile);
 			} catch (UserProfileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else {
-			return null;
-		}
-		return userProfile;
-	}// end of edit Profile 
+		} 
 	
+		return userProfile;
+	}// end of edit Profile
+
 	/**
 	 * Compute age of a person
 	 */
@@ -477,6 +501,24 @@ public class UserManager {
 		}
 
 		return (short) age;
+	}
+	
+	/**
+	 * Accepts collection and converts to string
+	 * @param languageIt
+	 * @return
+	 */
+	public String convertCollectionToString(Iterator<String> languageIt) {
+		
+		StringBuilder languageString = new StringBuilder();
+		while (languageIt.hasNext()) {
+			if(languageString.length() > 0) {
+				languageString.append(", ");
+			}
+			languageString.append(languageIt.next().toString());
+		}
+		
+		languageString.toString();
 	}
 
 }// End of class UserManager.java

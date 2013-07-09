@@ -1,5 +1,7 @@
 package com.qpeka.db.user.profile;
 
+import com.qpeka.db.handler.user.UserHandler;
+
 public class UserLanguage {
 
 	public static final String USERID = "userid";
@@ -13,6 +15,8 @@ public class UserLanguage {
 	protected boolean useridModified = false;
 	protected boolean languageidModified = false;
 	protected boolean typeModified = false;
+	
+	public static UserLanguage instance = null;
 
 	public UserLanguage() {
 		super();
@@ -154,5 +158,9 @@ public class UserLanguage {
 		ret.append(", " + LANGUAGEID + "=" + languageid);
 		ret.append(", " + TYPE + "=" + type);
 		return ret.toString();
+	}
+	
+	public static UserLanguage getInstance() {
+		return ((instance == null) ? (new UserLanguage()) : instance);
 	}
 }

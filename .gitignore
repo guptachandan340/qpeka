@@ -1,0 +1,5 @@
+/QPEKA_UI/build
+/QpekaWeb/build
+.classpath
+.project
+*.class
