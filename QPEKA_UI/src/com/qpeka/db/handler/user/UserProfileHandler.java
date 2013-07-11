@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.qpeka.db.Constants;
 import com.qpeka.db.Constants.GENDER;
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.UserProfileDao;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.AbstractHandler;
@@ -36,7 +36,7 @@ public class UserProfileHandler extends AbstractHandler implements
 
 	protected static final Logger logger = Logger
 			.getLogger(UserProfileHandler.class);
-	
+
 	public static UserProfileHandler instance;
 
 	/**
@@ -44,7 +44,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	 * queries
 	 */
 	protected final String SQL_SELECT = "SELECT userid, penname, firstname, "
-			+ "middlename, lastname, gender, dob, nationality, website, biography, profilepic FROM "
+			+ "middlename, lastname, gender, dob, nationality, website, biography, profilepic, level FROM "
 			+ getTableName() + "";
 
 	/**
@@ -58,7 +58,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
 			+ " ( userid, penname, firstname, middlename, lastname, gender, "
-			+ "dob, nationality, website, biography, profilepic ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			+ "dob, nationality, website, biography, level, profilepic ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
@@ -66,7 +66,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
 			+ " SET userid = ?, penname = ?, firstname = ?, middlename = ?, "
-			+ "lastname = ?, gender = ?, dob = ?, nationality = ?, website = ?, biography = ?, profilepic = ? WHERE userid = ?";
+			+ "lastname = ?, gender = ?, dob = ?, nationality = ?, website = ?, biography = ?, profilepic = ?, level = ? WHERE userid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -130,9 +130,14 @@ public class UserProfileHandler extends AbstractHandler implements
 	protected static final int COLUMN_PROFILEPIC = 11;
 
 	/**
+	 * Index of column level
+	 */
+	protected static final int COLUMN_LEVEL = 12;
+
+	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 11;
+	protected static final int NUMBER_OF_COLUMNS = 12;
 
 	/**
 	 * Index of primary-key column userid
@@ -297,6 +302,17 @@ public class UserProfileHandler extends AbstractHandler implements
 				modifiedCount++;
 			}
 
+			if (user.isUserlevelModified()) {
+				if (modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+
+				sql.append("level");
+				values.append("?");
+				modifiedCount++;
+			}
+
 			if (modifiedCount == 0) {
 				// nothing to insert
 				throw new IllegalStateException("Nothing to insert");
@@ -356,6 +372,10 @@ public class UserProfileHandler extends AbstractHandler implements
 					stmt.setLong(index++, user.getProfilepic());
 				}
 
+			}
+
+			if (user.isUserlevelModified()) {
+				stmt.setShort(index++, (short) user.getUserlevel().ordinal());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -501,6 +521,15 @@ public class UserProfileHandler extends AbstractHandler implements
 				modified = true;
 			}
 
+			if (user.isUserlevelModified()) {
+				if (modified) {
+					sql.append(", ");
+				}
+
+				sql.append("level=?");
+				modified = true;
+			}
+
 			if (!modified) {
 				// nothing to update
 				return;
@@ -562,7 +591,10 @@ public class UserProfileHandler extends AbstractHandler implements
 				} else {
 					stmt.setLong(index++, user.getProfilepic());
 				}
+			}
 
+			if (user.isUserlevelModified()) {
+				stmt.setShort(index++, (short) user.getUserlevel().ordinal());
 			}
 
 			stmt.setLong(index++, userid);
@@ -581,7 +613,6 @@ public class UserProfileHandler extends AbstractHandler implements
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
 
 	}
@@ -744,6 +775,14 @@ public class UserProfileHandler extends AbstractHandler implements
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE profilepic = ? ORDER BY profilepic",
 				Arrays.asList(new Object[] { new Integer(profilepic) }));
+	}
+	
+	@Override
+	public List<UserProfile> findWhereLevelEquals(short level)
+			throws UserProfileException {
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE level = ? ORDER BY level",
+				Arrays.asList(new Object[] { new Short(level) }));
 	}
 
 	@Override
@@ -922,13 +961,15 @@ public class UserProfileHandler extends AbstractHandler implements
 		user.setBiographyModified(false);
 		user.setProfilepicModified(false);
 	}
-	
+
 	/**
 	 * User profile handler instance
+	 * 
 	 * @return instance of user profile
 	 */
 	public static UserProfileHandler getInstance() {
-		return (instance == null ? (instance = new UserProfileHandler()) : instance);
+		return (instance == null ? (instance = new UserProfileHandler())
+				: instance);
 	}
 
 	/**

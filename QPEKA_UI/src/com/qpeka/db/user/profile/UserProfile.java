@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.qpeka.db.Badges;
+import com.qpeka.db.Category;
 import com.qpeka.db.Constants;
 import com.qpeka.db.Constants.BADGES;
-import com.qpeka.db.Constants.CATEGORY;
 import com.qpeka.db.Constants.GENDER;
+import com.qpeka.db.Constants.TYPE;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Languages;
@@ -85,7 +87,6 @@ public class UserProfile implements Serializable {
 	// These attributes maps to the columns of the userprofile table.
 	private long userid;
 	private String penname = "";
-	// private String email = "";
 	private Name name = null;
 	private GENDER gender = Constants.GENDER.UNSPECIFIED;
 	private Date dob = new Date();
@@ -94,18 +95,17 @@ public class UserProfile implements Serializable {
 	private String website = "";
 	private String biography = "";
 	private long profilepic = 0;
+	private USERLEVEL userlevel = Constants.USERLEVEL.FREE;
 
 	private Address address = new Address();
-	// private String phone ="";
 
-	private Set<CATEGORY> interests = new HashSet<Constants.CATEGORY>();
+	private Set<Category> interests = new HashSet<Category>();
 	private Set<Languages> rLang = new HashSet<Languages>();
 	private Set<Languages> wLang = new HashSet<Languages>();
 
-	private Set<BADGES> userbadges = new HashSet<Constants.BADGES>();
+	private Set<Badges> userbadges = new HashSet<Badges>();
 	private Map<String, Integer> userpoints = new HashMap<String, Integer>();
-	private USERLEVEL userlevel = Constants.USERLEVEL.FREE;
-	private USERTYPE usertype = Constants.USERTYPE.AUTHENTIC;
+	private USERTYPE usertype = Constants.USERTYPE.READER;
 	// private List<BookMark> bookmarks = new ArrayList<BookMark>();
 
 	// These attributes represents whether the above attributes has been
@@ -156,13 +156,11 @@ public class UserProfile implements Serializable {
 	public UserProfile(long userid, String penname, Name name,
 			com.qpeka.db.Constants.GENDER gender, Date dob, short age,
 			short nationality, String website, String biography,
-			int profilepic, Address address, Set<CATEGORY> interests,
-			Set<Languages> rLang, Set<Languages> wLang,
-			Set<com.qpeka.db.Constants.BADGES> userbadges,
-			Map<String, Integer> userpoints,
-			com.qpeka.db.Constants.USERLEVEL userlevel,
-			com.qpeka.db.Constants.USERTYPE usertype) {// , List<BookMark>
-														// bookmarks) {
+			int profilepic, Address address, Set<Category> interests,
+			Set<Languages> rLang, Set<Languages> wLang, Set<Badges> userbadges,
+			Map<String, Integer> userpoints, USERLEVEL userlevel,
+			USERTYPE usertype) {// , List<BookMark>
+								// bookmarks) {
 		super();
 		this.userid = userid;
 		this.penname = penname;
@@ -225,14 +223,6 @@ public class UserProfile implements Serializable {
 		this.penname = penname;
 		this.pennameModified = true;
 	}
-
-	// public String getEmail() {
-	// return email;
-	// }
-	//
-	// public void setEmail(String email) {
-	// this.email = email;
-	// }
 
 	public Name getName() {
 		return name;
@@ -316,11 +306,11 @@ public class UserProfile implements Serializable {
 		this.addressModified = true;
 	}
 
-	public Set<CATEGORY> getInterests() {
+	public Set<Category> getInterests() {
 		return interests;
 	}
 
-	public void setInterests(Set<CATEGORY> interests) {
+	public void setInterests(Set<Category> interests) {
 		this.interests = interests;
 		this.interestsModified = true;
 	}
@@ -343,11 +333,11 @@ public class UserProfile implements Serializable {
 		this.wLangModified = true;
 	}
 
-	public Set<BADGES> getUserbadges() {
+	public Set<Badges> getUserbadges() {
 		return userbadges;
 	}
 
-	public void setUserbadges(Set<BADGES> userbadges) {
+	public void setUserbadges(Set<Badges> userbadges) {
 		this.userbadges = userbadges;
 		this.userbadgesModified = true;
 	}
@@ -555,20 +545,9 @@ public class UserProfile implements Serializable {
 	/*
 	 * Verify User type
 	 */
-	public boolean isAuthentic() {
-		return this.usertype == Constants.USERTYPE.AUTHENTIC;
-	}
-
-	public boolean isQpekaAdmin() {
-		return this.usertype == Constants.USERTYPE.QPEKAADMIN;
-	}
-
-	public boolean isQpekaManager() {
-		return this.usertype == Constants.USERTYPE.QPEKAMANAGER;
-	}
-
 	public boolean isWriter() {
-		return this.userbadges.contains(com.qpeka.db.Constants.BADGES.WRITER);
+		// TODO change this. this wont work. It should look for badges in set
+		return this.userbadges.contains(BADGES.WRITER.toString());
 	}
 
 	/**

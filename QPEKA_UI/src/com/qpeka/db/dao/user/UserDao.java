@@ -70,6 +70,11 @@ public interface UserDao {
 	 * Returns all rows from the user table that match the criteria 'status = :status'.
 	 */
 	public List<User> findWhereStatusEquals(short status) throws UserException;
+	
+	/** 
+	 * Returns all rows from the user table that match the criteria 'type = :type'.
+	 */
+	public List<User> findWhereTypeEquals(short type) throws UserException;
 
 	/** 
 	 * Returns all rows from the user table that match the criteria 'timezone = :timezone'.

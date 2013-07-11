@@ -2,6 +2,8 @@ package com.qpeka.db.user;
 
 import java.io.Serializable;
 
+import com.qpeka.db.Constants;
+
 public class User implements Serializable {
 
 	/**
@@ -9,7 +11,6 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 5342974486315750933L;
 
-	
 	public static final String PROFILEID = "userid";
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
@@ -18,8 +19,9 @@ public class User implements Serializable {
 	public static final String LASTACCESS = "lastaccess";
 	public static final String LASTLOGIN = "lastlogin";
 	public static final String STATUS = "status";
+	public static final String TYPE = "type";
 	public static final String TIMEZONE = "timezone";
-	
+
 	// These attributes maps to the columns of the user table.
 	private long userid = 0;
 	private String username = "";
@@ -38,14 +40,17 @@ public class User implements Serializable {
 	 */
 	private long lastlogin = 0;
 	/**
-	 * Status of a user specifies following things. 
-	 * 0 => created (new user, not yet logged in), 
-	 * 1 => active (User active on qpeka, including first time login), 
-	 * 2 => passive (User is infrequent on qpeka), 
-	 * 3 => blocked (user blocked by qpeka), 
-	 * 4 => deleted (user account has been deleted)
+	 * Status of a user specifies following things. 0 => created (new user, not
+	 * yet logged in), 1 => active (User active on qpeka, including first time
+	 * login), 2 => passive (User is infrequent on qpeka), 3 => blocked (user
+	 * blocked by qpeka), 4 => deleted (user account has been deleted)
 	 */
 	private short status = 0;
+
+	/**
+	 * Type of user 0 => Authenticated 1 => Qpeka Admin 2 => Apeka Manager
+	 */
+	private short type = 0;
 	/**
 	 * Users timezone.
 	 */
@@ -62,6 +67,7 @@ public class User implements Serializable {
 	protected boolean lastaccessModified = false;
 	protected boolean lastloginModified = false;
 	protected boolean statusModified = false;
+	protected boolean typeModified = false;
 	protected boolean timezoneModified = false;
 
 	// protected boolean languageModified = false;
@@ -172,6 +178,15 @@ public class User implements Serializable {
 		this.statusModified = true;
 	}
 
+	public short getType() {
+		return type;
+	}
+
+	public void setType(short type) {
+		this.type = type;
+		this.typeModified = true;
+	}
+
 	public String getTimezone() {
 		return timezone;
 	}
@@ -180,15 +195,6 @@ public class User implements Serializable {
 		this.timezone = timezone;
 		this.timezoneModified = true;
 	}
-
-	// public String getLanguage() {
-	// return language;
-	// }
-	//
-	// public void setLanguage(String language) {
-	// this.language = language;
-	// this.languageModified = true;
-	// }
 
 	/*
 	 * Getters and setters for attribute modified status
@@ -257,6 +263,14 @@ public class User implements Serializable {
 		this.statusModified = statusModified;
 	}
 
+	public boolean isTypeModified() {
+		return typeModified;
+	}
+
+	public void setTypeModified(boolean typeModified) {
+		this.typeModified = typeModified;
+	}
+
 	public boolean isTimezoneModified() {
 		return timezoneModified;
 	}
@@ -264,14 +278,6 @@ public class User implements Serializable {
 	public void setTimezoneModified(boolean timezoneModified) {
 		this.timezoneModified = timezoneModified;
 	}
-
-	// public boolean isLanguageModified() {
-	// return languageModified;
-	// }
-	//
-	// public void setLanguageModified(boolean languageModified) {
-	// this.languageModified = languageModified;
-	// }
 
 	/*
 	 * Other Methods
@@ -363,6 +369,14 @@ public class User implements Serializable {
 			return false;
 		}
 
+		if (type != _cast.type) {
+			return false;
+		}
+
+		if (typeModified != _cast.typeModified) {
+			return false;
+		}
+
 		if (timezone == null ? _cast.timezone != timezone : !timezone
 				.equals(_cast.timezone)) {
 			return false;
@@ -371,15 +385,6 @@ public class User implements Serializable {
 		if (timezoneModified != _cast.timezoneModified) {
 			return false;
 		}
-
-		// if (language == null ? _cast.language != language : !language
-		// .equals(_cast.language)) {
-		// return false;
-		// }
-		//
-		// if (languageModified != _cast.languageModified) {
-		// return false;
-		// }
 
 		return true;
 	}
@@ -417,16 +422,13 @@ public class User implements Serializable {
 		_hashCode = 29 * _hashCode + (lastloginModified ? 1 : 0);
 		_hashCode = 29 * _hashCode + (int) status;
 		_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
+		_hashCode = 29 * _hashCode + (int) type;
+		_hashCode = 29 * _hashCode + (typeModified ? 1 : 0);
 		if (timezone != null) {
 			_hashCode = 29 * _hashCode + timezone.hashCode();
 		}
 
 		_hashCode = 29 * _hashCode + (timezoneModified ? 1 : 0);
-		// if (language != null) {
-		// _hashCode = 29 * _hashCode + language.hashCode();
-		// }
-		//
-		// _hashCode = 29 * _hashCode + (languageModified ? 1 : 0);
 
 		return (int) _hashCode;
 	}
@@ -448,26 +450,27 @@ public class User implements Serializable {
 		ret.append(", " + LASTACCESS + "=" + lastaccess);
 		ret.append(", " + LASTLOGIN + "=" + lastlogin);
 		ret.append(", " + STATUS + "=" + status);
+		ret.append(", " + TYPE + "=" + type);
 		ret.append(", " + TIMEZONE + "=" + timezone);
-		// ret.append(", language=" + language);
 
 		return ret.toString();
 	}
 
-	// public DBObject toDBObject(boolean insert)
-	// {
-	// BasicDBObject dbObj = new BasicDBObject();
-	// if(!insert)
-	// dbObj.put("username", username);
-	// dbObj.put("password", password);
-	//
-	// return dbObj;
-	// }
-	//
-	// public static User getUserfromDBObject(BasicDBObject obj)
-	// {
-	// return new User(obj.getString("username"), obj.getString("password"));
-	// }
+	/**
+	 * Verify Type
+	 * TODO check this and verify whether perfect or not
+	 */
+	public boolean isAuthentic() {
+		return this.type == Constants.TYPE.AUTHENTIC.ordinal();
+	}
+
+	public boolean isQpekaAdmin() {
+		return this.type == Constants.TYPE.QPEKAADMIN.ordinal();
+	}
+
+	public boolean isQpekaManager() {
+		return this.type == Constants.TYPE.QPEKAMANAGER.ordinal();
+	}
 
 	public static void main(String[] args) {
 		User u = new User("srahul07", "123456", "srahul07@rediffmail.com", 1,

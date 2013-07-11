@@ -11,10 +11,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Languages;
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.LanguagesDao;
 import com.qpeka.db.exceptions.LanguagesException;
-import com.qpeka.db.handler.user.UserHandler;
 
 public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 

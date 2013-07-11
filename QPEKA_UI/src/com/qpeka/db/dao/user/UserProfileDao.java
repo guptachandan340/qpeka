@@ -101,6 +101,11 @@ public interface UserProfileDao {
 	 * Returns all rows from the userprofile table that match the criteria 'profilepic = :profilepic'.
 	 */
 	public List<UserProfile> findWhereProfilepicEquals(int profilepic) throws UserProfileException;
+	
+	/** 
+	 * Returns all rows from the userprofile table that match the criteria 'level = :level'.
+	 */
+	public List<UserProfile> findWhereLevelEquals(short level) throws UserProfileException;
 
 	/** 
 	 * Sets the value of maxRows
@@ -121,5 +126,7 @@ public interface UserProfileDao {
 	 * Returns all rows from the userprofile table that match the specified arbitrary SQL statement
 	 */
 	public List<UserProfile> findByDynamicWhere(String sql, List<Object> sqlParams) throws UserProfileException;
+
+	
 	
 }

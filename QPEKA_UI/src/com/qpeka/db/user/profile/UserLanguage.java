@@ -1,8 +1,9 @@
 package com.qpeka.db.user.profile;
 
-import com.qpeka.db.handler.user.UserHandler;
+import java.io.Serializable;
 
-public class UserLanguage {
+
+public class UserLanguage implements Serializable {
 
 	public static final String USERID = "userid";
 	public static final String LANGUAGEID = "languageid";

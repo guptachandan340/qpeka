@@ -10,11 +10,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.List;
+
+import com.qpeka.db.exceptions.QpekaException;
 
 /**
  * Generic Base class for DAO classes.
  */
-public class AbstractHandler {
+public abstract class AbstractHandler {
 
 	public byte[] getBlobColumn(ResultSet rs, int columnIndex)
 			throws SQLException {
@@ -93,5 +96,9 @@ public class AbstractHandler {
 					new ByteArrayInputStream(value.getBytes()), value.length());
 		}
 	}
+	
+	public abstract List<?> findByDynamicWhere(String sql, List<Object> sqlParams)
+			throws QpekaException;
+	
 
 }
