@@ -43,6 +43,7 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 	 * Finder methods will pass this value to the JDBC setMaxRows method
 	 */
 	protected int maxRows;
+	protected int updatedRows;
 
 	/**
 	 * SQL INSERT statement for this table
@@ -259,7 +260,7 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 	}
 
 	@Override
-	public void update(short badgeid, Badges badges) throws BadgesException {
+	public short update(short badgeid, Badges badges) throws BadgesException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -321,7 +322,7 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE badgeid=?");
@@ -353,13 +354,13 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 			}
 
 			stmt.setInt(index++, badgeid);
-			int rows = stmt.executeUpdate();
+			short rows = (short) stmt.executeUpdate();
 			reset(badges);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new BadgesException("Exception: " + _e.getMessage(), _e);
@@ -368,8 +369,8 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
+		
 	}
 
 	@Override
@@ -472,11 +473,21 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 	public void setMaxRows(int maxRows) {
 		this.maxRows = maxRows;
 	}
-
+	
 	@Override
 	public int getMaxRows() {
 		return maxRows;
 	}
+	
+	public void setUpdatedRow(int updatedRows) {
+		this.updatedRows= updatedRows;
+	}
+	
+	public int getUpdatedRow() {
+		return updatedRows;
+	}
+
+	
 
 	@Override
 	public List<Badges> findByDynamicSelect(String sql, List<Object> sqlParams)
@@ -631,7 +642,7 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 	 * @return instance of UserHandler
 	 */
 	public static BadgesHandler getInstance() {
-		return (instance == null ? (instance = new BadgesHandler()) : instance);
+		return (instance == null ? instance = new BadgesHandler() : instance);
 	}
 
 }

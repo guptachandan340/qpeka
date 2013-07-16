@@ -1,5 +1,7 @@
 package com.qpeka.db.user.profile;
 
+import com.qpeka.db.Constants.USERTYPE;
+
 public class UserBadges {
 
 	public static final String USERID = "userid";
