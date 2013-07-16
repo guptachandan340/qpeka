@@ -77,7 +77,7 @@ public class Category implements Serializable {
 
 	public void setCategory(String category) {
 		this.category = category;
-		this.categoryidModified = true;
+		this.categoryModified = true;
 	}
 
 	public String getGenre() {

@@ -30,7 +30,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(CategoryHandler.class);
-	
+
 	public static CategoryHandler instance = null;
 
 	/**
@@ -260,7 +260,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	}
 
 	@Override
-	public void update(short categoryid, Category category)
+	public short update(short categoryid, Category category)
 			throws CategoryException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -323,7 +323,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE categoryid=?");
@@ -355,13 +355,13 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			}
 
 			stmt.setShort(index++, categoryid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(category);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+		return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
@@ -394,7 +394,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 			stmt = conn.prepareStatement(SQL_DELETE);
 			stmt.setShort(1, categoryid);
-			int rows = stmt.executeUpdate();
+			 int rows = stmt.executeUpdate();
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
