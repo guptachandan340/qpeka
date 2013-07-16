@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,21 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.mysql.jdbc.Constants;
 import com.qpeka.db.Badges;
 import com.qpeka.db.Category;
-import com.qpeka.db.Constants.BADGES;
 import com.qpeka.db.Constants.GENDER;
-import com.qpeka.db.Constants.LANGUAGES;
-import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.STATUS;
+import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
-import com.qpeka.db.exceptions.BadgesException;
 import com.qpeka.db.exceptions.CountryException;
-import com.qpeka.db.exceptions.LanguagesException;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.exceptions.user.UserBadgesException;
 import com.qpeka.db.exceptions.user.UserException;
@@ -39,7 +33,6 @@ import com.qpeka.db.handler.BadgesHandler;
 import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.CountryHandler;
 import com.qpeka.db.handler.LanguagesHandler;
-import com.qpeka.db.handler.user.AddressHandler;
 import com.qpeka.db.handler.user.UserBadgesHandler;
 import com.qpeka.db.handler.user.UserHandler;
 import com.qpeka.db.handler.user.UserInterestsHandler;
@@ -51,7 +44,6 @@ import com.qpeka.db.user.profile.Name;
 import com.qpeka.db.user.profile.UserBadges;
 import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
-import com.qpeka.db.user.profile.UserPoints;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.security.bcrypt.BCrypt;
 
@@ -509,6 +501,9 @@ public class UserManager {
 			}
 
 			// User Points
+			if(profile.get(UserProfile.USERPOINTS) != null) {
+				
+			}
 			userProfile.getUserpoints();
 
 			// User Level
@@ -537,13 +532,14 @@ public class UserManager {
 	public UserProfile updateUserPoints(Map<String, Integer> userPoints) {
 		Map<String, Integer> userpoints = null;
 
-		userProfile.setUserpoints(userpoints);
+//		userProfile.setUserpoints(userpoints);
 
 		return null;
 	}
 
 	public UserProfile updateUserLevel(long userid, USERLEVEL userlevel) {
 		List<UserProfile> userProfileList = null;
+		
 		try {
 			userProfileList = UserProfileHandler.getInstance().findByUser(userid);
 		} catch (UserProfileException e1) {
@@ -562,16 +558,34 @@ public class UserManager {
 				}
 			}
 		}
-		
 
-		return null;
+		return userProfileList.get(0);
 	}
 
-	public UserProfile updateUserType() {
-		userProfile.setUsertype(USERTYPE.valueOf(profile.get(
-				UserProfile.USERTYPE).toString()));
+	public UserProfile updateUserType(long userid, USERTYPE usertype) {
+		List<UserProfile> userProfileList = null;
+		
+		try {
+			userProfileList = UserProfileHandler.getInstance().findByUser(userid);
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(userProfileList != null) {
+			for(UserProfile userProfile : userProfileList) {
+				userProfile.setUsertype(usertype);
+				
+				try {
+					UserProfileHandler.getInstance().update(userid, userProfile);
+				} catch (UserProfileException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 
-		return null;
+		return userProfileList.get(0);
 	}
 
 	/**
