@@ -15,7 +15,7 @@ public interface AddressDao {
 	/** 
 	 * Updates a single row in the useraddress table.
 	 */
-	public void update(long addressid, Address address) throws AddressException;
+	public short update(long addressid, Address address) throws AddressException;
 
 	/** 
 	 * Deletes a single row in the useraddress table.

@@ -195,7 +195,7 @@ public class UserBadgesHandler extends AbstractHandler implements UserBadgesDao 
 	}
 
 	@Override
-	public void update(UserBadges oldUserbadge, UserBadges userbadges)
+	public short update(UserBadges oldUserbadge, UserBadges userbadges)
 			throws UserBadgesException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -231,7 +231,7 @@ public class UserBadgesHandler extends AbstractHandler implements UserBadgesDao 
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE userid=? AND badgeid=?");
@@ -252,7 +252,7 @@ public class UserBadgesHandler extends AbstractHandler implements UserBadgesDao 
 
 			stmt.setLong(index++, oldUserbadge.getUserid());
 			stmt.setShort(index++, oldUserbadge.getBadgeid());
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 
 			reset(userbadges);
 
@@ -260,7 +260,7 @@ public class UserBadgesHandler extends AbstractHandler implements UserBadgesDao 
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserBadgesException("Exception: " + _e.getMessage(), _e);

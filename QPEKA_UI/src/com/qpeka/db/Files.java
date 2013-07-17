@@ -2,6 +2,8 @@ package com.qpeka.db;
 
 import java.io.Serializable;
 
+import com.qpeka.db.handler.CategoryHandler;
+
 public class Files implements Serializable {
 
 	/**
@@ -46,7 +48,11 @@ public class Files implements Serializable {
 	protected boolean filesizeModified = false;
 	protected boolean statusModified = false;
 	protected boolean timestampModified = false;
+	public static Files instance = null;
 
+	public static Files getInstance() {
+		return (instance == null ? (instance = new Files()) : instance);
+	}
 	/*
 	 * Constructors
 	 */

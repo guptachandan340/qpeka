@@ -15,7 +15,7 @@ public interface UserBadgesDao {
 	/** 
 	 * Updates a single row in the userbadges table.
 	 */
-	public void update(UserBadges oldUserbadge, UserBadges userbadges) throws UserBadgesException;
+	public short update(UserBadges oldUserbadge, UserBadges userbadges) throws UserBadgesException;
 
 	/** 
 	 * Deletes a single row in the userbadges table.

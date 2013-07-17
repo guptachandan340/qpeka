@@ -199,7 +199,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 	}
 
 	@Override
-	public void update(UserInterests olduserinterests,
+	public short update(UserInterests olduserinterests,
 			UserInterests userinterests) throws UserInterestsException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -235,7 +235,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE userid=? AND categoryid=?");
@@ -256,14 +256,14 @@ public class UserInterestsHandler extends AbstractHandler implements
 
 			stmt.setLong(index++, olduserinterests.getUserid());
 			stmt.setShort(index++, olduserinterests.getCategoryid());
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 
 			reset(userinterests);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserInterestsException("Exception: " + _e.getMessage(),

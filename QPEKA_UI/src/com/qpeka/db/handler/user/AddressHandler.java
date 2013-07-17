@@ -364,7 +364,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 	}
 
 	@Override
-	public void update(long addressid, Address address) throws AddressException {
+	public short update(long addressid, Address address) throws AddressException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -471,7 +471,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE addressid=?");
@@ -523,13 +523,13 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 			}
 
 			stmt.setLong(index++, addressid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(address);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new AddressException("Exception: " + _e.getMessage(), _e);

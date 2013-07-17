@@ -215,7 +215,7 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 	}
 
 	@Override
-	public void update(short typeid, Type type) throws TypeException {
+	public short update(short typeid, Type type) throws TypeException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -259,7 +259,7 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE typeid=?");
@@ -283,13 +283,13 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 			}
 
 			stmt.setShort(index++, typeid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(type);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new TypeException("Exception: " + _e.getMessage(), _e);

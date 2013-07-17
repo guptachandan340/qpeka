@@ -384,7 +384,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	}
 
 	@Override
-	public void update(long userid, UserProfile user)
+	public short update(long userid, UserProfile user)
 			throws UserProfileException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -503,7 +503,7 @@ public class UserProfileHandler extends AbstractHandler implements
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE userid=?");
@@ -566,13 +566,13 @@ public class UserProfileHandler extends AbstractHandler implements
 			}
 
 			stmt.setLong(index++, userid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(user);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserProfileException("Exception: " + _e.getMessage(), _e);

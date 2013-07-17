@@ -14,7 +14,7 @@ public interface UserDao {
 	/** 
 	 * Updates a single row in the user table.
 	 */
-	public void update(long userid, User user) throws UserException;
+	public short update(long userid, User user) throws UserException;
 	
 	/**
 	 * Deletes a single row in the user table.

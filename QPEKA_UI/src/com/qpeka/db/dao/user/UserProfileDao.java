@@ -15,7 +15,7 @@ public interface UserProfileDao {
 	/** 
 	 * Updates a single row in the userprofile table.
 	 */
-	public void update(long userid, UserProfile user) throws UserProfileException;
+	public short update(long userid, UserProfile user) throws UserProfileException;
 
 	/** 
 	 * Deletes a single row in the userprofile table.

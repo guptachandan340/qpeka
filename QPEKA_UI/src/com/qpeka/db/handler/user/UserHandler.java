@@ -350,7 +350,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	}
 
 	@Override
-	public void update(long userid, User user) throws UserException {
+	public short update(long userid, User user) throws UserException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -457,7 +457,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE userid=?");
@@ -505,13 +505,13 @@ public class UserHandler extends AbstractHandler implements UserDao {
 			}
 
 			stmt.setLong(index++, userid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(user);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserException("Exception: " + _e.getMessage(), _e);
@@ -522,7 +522,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 			}
 
 		}
-
+		
 	}
 
 	@Override

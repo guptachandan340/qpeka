@@ -218,7 +218,7 @@ public class UserLanguageHandler extends AbstractHandler implements
 	}
 
 	@Override
-	public void update(UserLanguage olduserlanguage, UserLanguage userlanguage)
+	public short update(UserLanguage olduserlanguage, UserLanguage userlanguage)
 			throws UserLanguageException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -263,7 +263,7 @@ public class UserLanguageHandler extends AbstractHandler implements
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE userid=? AND languageid=?");
@@ -288,14 +288,14 @@ public class UserLanguageHandler extends AbstractHandler implements
 
 			stmt.setLong(index++, olduserlanguage.getUserid());
 			stmt.setShort(index++, olduserlanguage.getLanguageid());
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 
 			reset(userlanguage);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserLanguageException("Exception: " + _e.getMessage(), _e);

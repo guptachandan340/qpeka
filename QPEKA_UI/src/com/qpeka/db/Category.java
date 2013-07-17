@@ -2,6 +2,8 @@ package com.qpeka.db;
 
 import java.io.Serializable;
 
+import com.qpeka.db.handler.CategoryHandler;
+
 public class Category implements Serializable {
 	
 	public static final String CATEGORYID = "categoryid";
@@ -24,7 +26,7 @@ public class Category implements Serializable {
 	protected boolean categoryModified = false;
 	protected boolean genreModified = false;
 	protected boolean pointsModified = false;
-	
+	public static Category instance = null;
 	/*
 	 * Constructors
 	 */
@@ -50,6 +52,10 @@ public class Category implements Serializable {
 		this.points = points;
 	}
 
+	public static Category getInstance() {
+		return (instance == null ? (instance = new Category()) : instance);
+	}
+	
 	/*
 	 * Getters and setters for attributes
 	 */

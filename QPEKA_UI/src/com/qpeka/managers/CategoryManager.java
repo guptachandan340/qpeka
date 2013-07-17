@@ -11,8 +11,8 @@ import com.qpeka.db.handler.CategoryHandler;
 
 public class CategoryManager {
 public static CategoryManager instance= null;
-Category category = new Category();
-List<Category> categories = null;
+
+
 
 public CategoryManager() {
 	super();
@@ -23,7 +23,7 @@ public CategoryManager getInstance() {
 }
 
 public Category createCategory(short categoryid,String type,String categoryField,String genres,int points) {
-	
+	Category category = Category.getInstance();
 	category.setCategoryid(categoryid);
 	category.setType(type);
 	category.setCategory(categoryField);
@@ -50,15 +50,14 @@ public boolean deleteCategory(short categoryid) {
 }
 
 
-	public short updateCategory(Map<String, Object> updatecategory) {
-
+	public short updateCategory(Map<String, Object> updatecategoryMap) {
 		short counter = 0;
-		if (updatecategory.get(Category.CATEGORYID) != null) {
+		if (updatecategoryMap.get(Category.CATEGORYID) != null) {
 			List<Category> existingCategory = null;
 			try {
 				existingCategory = CategoryHandler.getInstance()
 						.findWhereCategoryidEquals(
-								Short.parseShort(updatecategory.get(
+								Short.parseShort(updatecategoryMap.get(
 										Category.CATEGORYID).toString()));
 			} catch (NumberFormatException e1) {
 				// TODO Auto-generated catch block
@@ -69,23 +68,23 @@ public boolean deleteCategory(short categoryid) {
 			}
 			if (existingCategory != null) {
 				for (Category category : existingCategory) {
-					if (updatecategory.get(Category.CATEGORY) != null) {
-						category.setCategory(updatecategory.get(
+					if (updatecategoryMap.get(Category.CATEGORY) != null) {
+						category.setCategory(updatecategoryMap.get(
 								Category.CATEGORY).toString());
 					}
 
-					if (updatecategory.get(Category.TYPE) != null) {
-						category.setType(updatecategory.get(Category.TYPE)
+					if (updatecategoryMap.get(Category.TYPE) != null) {
+						category.setType(updatecategoryMap.get(Category.TYPE)
 								.toString());
 					}
 
-					if (updatecategory.get(Category.GENRE) != null) {
-						category.setGenre(updatecategory.get(Category.GENRE)
+					if (updatecategoryMap.get(Category.GENRE) != null) {
+						category.setGenre(updatecategoryMap.get(Category.GENRE)
 								.toString());
 					}
 					try {
 						counter += CategoryHandler.getInstance().update(
-								Short.parseShort(updatecategory.get(
+								Short.parseShort(updatecategoryMap.get(
 										Category.CATEGORYID).toString()),
 								category);
 					} catch (NumberFormatException e) {
@@ -102,6 +101,7 @@ public boolean deleteCategory(short categoryid) {
 	}
 
 public List<Category> readCategory() {
+	List<Category> categories = null;
 	try {
 		categories = CategoryHandler.getInstance().findAll();
 	} catch (CategoryException e) {
@@ -112,6 +112,7 @@ public List<Category> readCategory() {
 }
 
 public List<Category> readCategory(short categoryid) {
+	List<Category> categories = null;
 	try {
 		categories = CategoryHandler.getInstance().findWhereCategoryidEquals(categoryid);
 	} catch (CategoryException e) {
@@ -120,33 +121,39 @@ public List<Category> readCategory(short categoryid) {
 	}
 	return categories;
 }
-
-	public List<Category> readCategory(String categoryGenrefield,
-			String categoryGenreField) {
+	
+	// READ CATEGORY THROUGH CATEGORY OR TYPE
+	public List<Category> readCategory(String categoryIdentifier,
+			String categoryIdentifierString) {
+		List<Category> categories = null;
 		// Read through Category
-		if (categoryGenreField.equalsIgnoreCase("category")) {
+		if (categoryIdentifierString.equalsIgnoreCase(Category.CATEGORY)) {
 			try {
 				categories = CategoryHandler.getInstance()
-						.findWhereCategoryEquals(categoryGenrefield);
+						.findWhereCategoryEquals(categoryIdentifier);
 			} catch (CategoryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} 
 		// Read Categories through type
-		else {
+		else if(categoryIdentifierString.equalsIgnoreCase(Category.GENRE)){
 			try {
 				categories = CategoryHandler.getInstance().findWhereTypeEquals(
-						categoryGenrefield);
+						categoryIdentifier);
 			} catch (CategoryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else {
+			return categories;
 		}
 		return categories;
 	}
 
+	//READ CATEGORY THROUGH POINTS
 public List<Category> readCategory(int points) {
+	List<Category> categories = null;
 	try {
 		categories= CategoryHandler.getInstance().findWherePointsEquals(points);
 	} catch (CategoryException e) {
@@ -162,15 +169,16 @@ public List<Category> readCategory(int points) {
 /*
 	public static void main(String[] args) {
 		CategoryManager categoryManager = new CategoryManager();
-		categoryManager.deleteCategory((short)1);
-		categoryManager.createCategory((short)1,"book","inspiring","Fiction",(short)1000);
+		categoryManager.deleteCategory((short)2);
+		categoryManager.createCategory((short)2,"book","horror","Fiction",(short)5000);
 		Map<String, Object> updateMap = new HashMap<String, Object>();
-		updateMap.put("categoryid", (short)1);
-		updateMap.put("genre", "nonfictional");
+		updateMap.put(Category.CATEGORYID, (short)1);
+		updateMap.put(Category.GENRE, "nonfictional");
 		categoryManager.updateCategory(updateMap);
 		System.out.println(categoryManager.readCategory((short)1));
+		System.out.println(categoryManager.readCategory());
 		
 	}
-	*/
+*/	
 
 }

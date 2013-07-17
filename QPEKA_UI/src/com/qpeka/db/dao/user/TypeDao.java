@@ -15,7 +15,7 @@ public interface TypeDao {
 	/**
 	 * Updates a single row in the usertype table.
 	 */
-	public void update(short typeid, Type type) throws TypeException;
+	public short update(short typeid, Type type) throws TypeException;
 
 	/**
 	 * Deletes a single row in the usertype table.

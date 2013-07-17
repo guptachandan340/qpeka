@@ -218,7 +218,7 @@ public class UserPointsHandler extends AbstractHandler implements UserPointsDao 
 	}
 
 	@Override
-	public void update(UserPoints olduserpoints, UserPoints userpoints)
+	public short update(UserPoints olduserpoints, UserPoints userpoints)
 			throws UserPointsException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -263,7 +263,7 @@ public class UserPointsHandler extends AbstractHandler implements UserPointsDao 
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE userid=? AND type=?");
@@ -288,14 +288,14 @@ public class UserPointsHandler extends AbstractHandler implements UserPointsDao 
 
 			stmt.setLong(index++, olduserpoints.getUserid());
 			stmt.setShort(index++, olduserpoints.getType());
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 
 			reset(userpoints);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserPointsException("Exception: " + _e.getMessage(), _e);

@@ -12,8 +12,6 @@ import com.qpeka.db.handler.BadgesHandler;
 public class BadgesManager {
 
 	public static BadgesManager instance = null;
-	Badges badges = new Badges();
-	List<Badges> badge = null;
 	
 	public BadgesManager() {
 		super();
@@ -26,7 +24,7 @@ public class BadgesManager {
 	// Create badges
 	public Badges createBadges(short badgeid, short typeid, String badge,
 			short level, int points) {
-		//badges = null;
+		Badges badges = Badges.getInstance();
 		badges.setBadgeid(badgeid);
 		badges.setTypeid(typeid);
 		badges.setBadge(badge);
@@ -54,7 +52,7 @@ public class BadgesManager {
 	
 	//Reading all badges
 	public List<Badges> readBadges() {
-		//badge = null;
+		List<Badges> badge = null;
 		try {
 			badge = BadgesHandler.getInstance().findAll();
 		} catch (BadgesException e) {
@@ -63,58 +61,60 @@ public class BadgesManager {
 		}
 		return badge;
 	} 
-	
-	//@ overloading
-    // Reading badges through badgeid or Typeid or Level
-	public List<Badges> readBadges(short badgeid_level, String id_level) {
-		//badge = null;
-		if (id_level.equalsIgnoreCase(Badges.BADGEID)) {
+
+	// @ overloading
+	// Reading badges through badgeid or Typeid or Level
+	public List<Badges> readBadges(short badgeidentifier, String badgeIdentfierString) {
+		List<Badges> badges = null;
+		if (badgeIdentfierString.equalsIgnoreCase(Badges.BADGEID)) {
 			try {
-				badge = BadgesHandler.getInstance().findWhereBadgeidEquals(
-						badgeid_level);
+				badges = BadgesHandler.getInstance().findWhereBadgeidEquals(
+						badgeidentifier);
 			} catch (BadgesException e) {
 				e.printStackTrace();
 			}
 
-		} else if (id_level.equalsIgnoreCase(Badges.TYPEID)) {
+		} else if (badgeIdentfierString.equalsIgnoreCase(Badges.TYPEID)) {
 			try {
-				badge = BadgesHandler.getInstance()
-						.findWhereTypeidEquals(badgeid_level);
+				badges = BadgesHandler.getInstance().findWhereTypeidEquals(
+						badgeidentifier);
 			} catch (BadgesException e) {
 				e.printStackTrace();
 			}
 		}
 
-		else {
+		else if (badgeIdentfierString.equalsIgnoreCase(Badges.LEVEL)) {
 			try {
-				badge = BadgesHandler.getInstance()
-						.findWhereLevelEquals(badgeid_level);
+				badges = BadgesHandler.getInstance().findWhereLevelEquals(
+						badgeidentifier);
 			} catch (BadgesException e) {
 				e.printStackTrace();
 			}
+		} else {
+			return badges;
 		}
-		return badge;
+		return badges;
 	}
 
 	// @overloading
 	// Reading badges through badges;
-	public List<Badges> readBadges(String badgeField) {
-	//	badge = null;
+	public List<Badges> readBadges(String badge) {
+		List<Badges> badges = null;
 		try {
-			badge = BadgesHandler.getInstance().findWhereBadgeEquals(badgeField);
+			badges = BadgesHandler.getInstance().findWhereBadgeEquals(badge);
 		} catch (BadgesException e) {
 			e.printStackTrace();
 		}
-		return badge;
+		return badges;
 	}
 
 	//@Overloading
 	//Reading through badges_points
-	public List<Badges> readBadges(int badges_points) {
-		//badge= null;
+	public List<Badges> readBadges(int badgesPoints) {
+		List<Badges> badge = null;
 		try {
 			badge = BadgesHandler.getInstance().findWherePointsEquals(
-					badges_points);
+					badgesPoints);
 		} catch (BadgesException e) {
 			e.printStackTrace();
 		}
@@ -122,15 +122,15 @@ public class BadgesManager {
 	}
 
 	// Updating badges;
-	public short updateBadges(Map<String, Object> badge) {
+	public short updateBadges(Map<String, Object> updateBadgeMap) {
 		short counter = 0;
-		if (badge.get(Badges.BADGEID) != null) {
+		if (updateBadgeMap.get(Badges.BADGEID) != null) {
 			List<Badges> existingbadge = null;
 			try {
 				// Retrieving badges from database based on BadgeId
 				existingbadge = BadgesHandler.getInstance()
 						.findWhereBadgeidEquals(
-								Short.parseShort(badge.get(Badges.BADGEID)
+								Short.parseShort(updateBadgeMap.get(Badges.BADGEID)
 										.toString()));
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
@@ -141,31 +141,30 @@ public class BadgesManager {
 			}
 			if (existingbadge != null) {
 				for (Badges badges : existingbadge) {
-					if (badge.get(Badges.TYPEID) != null) {
-						badges.setTypeid(Short.parseShort(badge.get(
+					if (updateBadgeMap.get(Badges.TYPEID) != null) {
+						badges.setTypeid(Short.parseShort(updateBadgeMap.get(
 								Badges.TYPEID).toString()));
 					}
 
-					if (badge.get(Badges.BADGE) != null) {
-						badges.setBadge(badge.get(Badges.BADGE).toString());
+					if (updateBadgeMap.get(Badges.BADGE) != null) {
+						badges.setBadge(updateBadgeMap.get(Badges.BADGE).toString());
 					}
 
-					if (badge.get(Badges.LEVEL) != null) {
-						badges.setLevel(Short.parseShort(badge
+					if (updateBadgeMap.get(Badges.LEVEL) != null) {
+						badges.setLevel(Short.parseShort(updateBadgeMap
 								.get(Badges.LEVEL).toString()));
 					}
 
-					if (badge.get(Badges.POINTS) != null) {
-						badges.setPoints(Integer.parseInt(badge.get(
+					if (updateBadgeMap.get(Badges.POINTS) != null) {
+						badges.setPoints(Integer.parseInt(updateBadgeMap.get(
 								Badges.POINTS).toString()));
 					}
 
 					try {
 						counter += BadgesHandler.getInstance().update(
-								Short.parseShort(badge.get(Badges.BADGEID)
+								Short.parseShort(updateBadgeMap.get(Badges.BADGEID)
 										.toString()), badges);
 					} catch (BadgesException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -195,13 +194,11 @@ public class BadgesManager {
 		update1.put("points", 1000);
 		System.out.println(badgesManager.updateBadges(update1));
 		System.out.println(badgesManager.readBadges()); 
-		System.out.println(badgesManager.readBadges((short) 2, "badgeid")); 
-		System.out.println(badgesManager.readBadges((short) 4, "typeid"));
+		System.out.println(badgesManager.readBadges((short) 3, "badgeid")); 
+		System.out.println(badgesManager.readBadges((short) 2, "level"));
 		System.out.println(badgesManager.readBadges("programmer")); 
 		System.out.println(badgesManager.readBadges(1000));  
-		
-		
-	}
+		}
 */
-	
 }
+

@@ -15,7 +15,7 @@ public interface UserPointsDao {
 	/** 
 	 * Updates a single row in the userpoints table.
 	 */
-	public void update(UserPoints olduserpoints, UserPoints userpoints) throws UserPointsException;
+	public short update(UserPoints olduserpoints, UserPoints userpoints) throws UserPointsException;
 
 	/** 
 	 * Deletes a single row in the userpoints table.
