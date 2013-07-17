@@ -12,6 +12,8 @@ public class UserBadges {
 
 	protected boolean useridModified = false;
 	protected boolean badgeidModified = false;
+	
+	public static UserBadges instance = null;
 
 	public UserBadges() {
 		super();
@@ -108,6 +110,14 @@ public class UserBadges {
 		_hashCode = 29 * _hashCode + badgeid;
 		_hashCode = 29 * _hashCode + (badgeidModified ? 1 : 0);
 		return _hashCode;
+	}
+	
+	/**
+	 * Return instance of UserBadges
+	 * @return
+	 */
+	public static UserBadges getInstance() {
+		return ((instance == null) ? (instance = new UserBadges()) : instance);
 	}
 
 	/**

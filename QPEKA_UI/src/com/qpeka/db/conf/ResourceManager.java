@@ -1,4 +1,4 @@
-package com.qpeka.db;
+package com.qpeka.db.conf;
 
 import java.io.IOException;
 import java.io.InputStream;
