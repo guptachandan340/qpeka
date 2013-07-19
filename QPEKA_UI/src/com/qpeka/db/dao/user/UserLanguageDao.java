@@ -15,7 +15,7 @@ public interface UserLanguageDao {
 	/** 
 	 * Updates a single row in the userlanguage table.
 	 */
-	public void update(UserLanguage olduserlanguage, UserLanguage userlanguage) throws UserLanguageException;
+	public short update(UserLanguage olduserlanguage, UserLanguage userlanguage) throws UserLanguageException;
 
 	/** 
 	 * Deletes a single row in the userlanguage table.

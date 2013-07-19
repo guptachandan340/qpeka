@@ -16,8 +16,8 @@ public class Languages implements Serializable {
 	private String language;
 	private String name;
 	private String aNative;
-	private int direction;
-	private int enabled;
+	private short direction;
+	private short enabled;
 
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
@@ -27,7 +27,7 @@ public class Languages implements Serializable {
 	protected boolean aNativeModified = false;
 	protected boolean directionModified = false;
 	protected boolean enabledModified = false;
-
+	public static Languages instance = null;
 	/*
 	 * Constructors
 	 */
@@ -36,7 +36,7 @@ public class Languages implements Serializable {
 	}
 
 	public Languages(short languageid, String language, String name,
-			String aNative, int direction, int enabled) {
+			String aNative, short direction, short enabled) {
 		super();
 		this.languageid = languageid;
 		this.language = language;
@@ -47,7 +47,7 @@ public class Languages implements Serializable {
 	}
 
 	public Languages(String language, String name, String aNative,
-			int direction, int enabled) {
+			short direction, short enabled) {
 		super();
 		this.language = language;
 		this.name = name;
@@ -55,7 +55,10 @@ public class Languages implements Serializable {
 		this.direction = direction;
 		this.enabled = enabled;
 	}
-
+	
+	public static Languages getInstance() {
+		return (instance == null ? (instance = new Languages()) : instance);
+	}
 	/*
 	 * Getters and setters for attributes
 	 */
@@ -95,20 +98,20 @@ public class Languages implements Serializable {
 		this.aNativeModified = true;
 	}
 
-	public int getDirection() {
+	public short getDirection() {
 		return direction;
 	}
 
-	public void setDirection(int direction) {
+	public void setDirection(short direction) {
 		this.direction = direction;
 		this.directionModified = true;
 	}
 
-	public int getEnabled() {
+	public short getEnabled() {
 		return enabled;
 	}
 
-	public void setEnabled(int enabled) {
+	public void setEnabled(short enabled) {
 		this.enabled = enabled;
 		this.enabledModified = true;
 	}

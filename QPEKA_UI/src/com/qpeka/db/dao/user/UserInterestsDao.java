@@ -16,7 +16,7 @@ public interface UserInterestsDao {
 	/**
 	 * Updates a single row in the userinterests table.
 	 */
-	public void update(UserInterests olduserinterests, UserInterests userinterests)
+	public short update(UserInterests olduserinterests, UserInterests userinterests)
 			throws UserInterestsException;
 
 	/**
