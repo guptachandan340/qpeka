@@ -598,7 +598,7 @@ public class UserProfileHandler extends AbstractHandler implements
 			}
 
 			stmt.setLong(index++, userid);
-			short rows = (short)stmt.executeUpdate();
+			short rows = (short) stmt.executeUpdate();
 			reset(user);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
@@ -776,7 +776,7 @@ public class UserProfileHandler extends AbstractHandler implements
 				+ " WHERE profilepic = ? ORDER BY profilepic",
 				Arrays.asList(new Object[] { new Integer(profilepic) }));
 	}
-	
+
 	@Override
 	public List<UserProfile> findWhereLevelEquals(short level)
 			throws UserProfileException {

@@ -439,8 +439,7 @@ public class UserManager {
 				@SuppressWarnings("unchecked")
 				List<Category> interestsList = (List<Category>) getProfilePreferences(
 						"category", profile.get(UserProfile.INTERESTS),
-						CategoryHandler.getInstance(),
-						(short) 0);
+						CategoryHandler.getInstance(), (short) 0);
 
 				UserInterests userInterests = UserInterests.getInstance();
 				userInterests.setUserid(userid);
@@ -501,8 +500,8 @@ public class UserManager {
 			}
 
 			// User Points
-			if(profile.get(UserProfile.USERPOINTS) != null) {
-				
+			if (profile.get(UserProfile.USERPOINTS) != null) {
+
 			}
 			userProfile.getUserpoints();
 
@@ -532,26 +531,28 @@ public class UserManager {
 	public UserProfile updateUserPoints(Map<String, Integer> userPoints) {
 		Map<String, Integer> userpoints = null;
 
-//		userProfile.setUserpoints(userpoints);
+		// userProfile.setUserpoints(userpoints);
 
 		return null;
 	}
 
 	public UserProfile updateUserLevel(long userid, USERLEVEL userlevel) {
 		List<UserProfile> userProfileList = null;
-		
+
 		try {
-			userProfileList = UserProfileHandler.getInstance().findByUser(userid);
+			userProfileList = UserProfileHandler.getInstance().findByUser(
+					userid);
 		} catch (UserProfileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		if(userProfileList != null) {
-			for(UserProfile userProfile : userProfileList) {
+		if (userProfileList != null) {
+			for (UserProfile userProfile : userProfileList) {
 				userProfile.setUserlevel(userlevel);
-				
+
 				try {
-					UserProfileHandler.getInstance().update(userid, userProfile);
+					UserProfileHandler.getInstance()
+							.update(userid, userProfile);
 				} catch (UserProfileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -564,20 +565,22 @@ public class UserManager {
 
 	public UserProfile updateUserType(long userid, USERTYPE usertype) {
 		List<UserProfile> userProfileList = null;
-		
+
 		try {
-			userProfileList = UserProfileHandler.getInstance().findByUser(userid);
+			userProfileList = UserProfileHandler.getInstance().findByUser(
+					userid);
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(userProfileList != null) {
-			for(UserProfile userProfile : userProfileList) {
+
+		if (userProfileList != null) {
+			for (UserProfile userProfile : userProfileList) {
 				userProfile.setUsertype(usertype);
-				
+
 				try {
-					UserProfileHandler.getInstance().update(userid, userProfile);
+					UserProfileHandler.getInstance()
+							.update(userid, userProfile);
 				} catch (UserProfileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -674,7 +677,7 @@ public class UserManager {
 
 		return (short) age;
 	}
-	
+
 	/**
 	 * Accepts collection and converts to string
 	 * 
