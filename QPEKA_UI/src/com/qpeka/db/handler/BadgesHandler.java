@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Badges;
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.BadgesDao;
 import com.qpeka.db.exceptions.BadgesException;
 

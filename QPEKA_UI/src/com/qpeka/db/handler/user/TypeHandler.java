@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.TypeDao;
 import com.qpeka.db.exceptions.user.TypeException;
 import com.qpeka.db.handler.AbstractHandler;

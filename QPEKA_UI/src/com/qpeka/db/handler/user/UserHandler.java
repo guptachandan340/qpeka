@@ -11,12 +11,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.UserDao;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.user.User;
-import com.qpeka.security.bcrypt.BCrypt;
 
 public class UserHandler extends AbstractHandler implements UserDao {
 
@@ -38,7 +37,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 * queries
 	 */
 	protected final String SQL_SELECT = "SELECT userid, username, password, email, "
-			+ "created, lastaccess, lastlogin, status, timezone FROM "
+			+ "created, lastaccess, lastlogin, status, type, timezone FROM "
 			+ getTableName() + "";
 
 	/**
@@ -52,7 +51,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
 			+ " ( userid, username, password, email, created, lastaccess, lastlogin, "
-			+ "status, timezone ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			+ "status, type, timezone ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
@@ -60,7 +59,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
 			+ " SET userid = ?, username = ?, password = ?, email = ?, created = ?, lastaccess = ?, "
-			+ "lastlogin = ?, status = ?, timezone = ? WHERE userid = ?";
+			+ "lastlogin = ?, status = ?, type = ?, timezone = ? WHERE userid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -107,16 +106,21 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 * Index of column status
 	 */
 	protected static final int COLUMN_STATUS = 8;
+	
+	/**
+	 * Index of column type
+	 */
+	protected static final int COLUMN_TYPE = 9;
 
 	/**
 	 * Index of column timezone
 	 */
-	protected static final int COLUMN_TIMEZONE = 9;
+	protected static final int COLUMN_TIMEZONE = 10;
 
 	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 9;
+	protected static final int NUMBER_OF_COLUMNS = 10;
 
 	/**
 	 * Index of primary-key column userid
@@ -249,6 +253,17 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				values.append("?");
 				modifiedCount++;
 			}
+			
+			if (user.isTypeModified()) {
+				if (modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+
+				sql.append("type");
+				values.append("?");
+				modifiedCount++;
+			}
 
 			if (user.isTimezoneModified()) {
 				if (modifiedCount > 0) {
@@ -260,17 +275,6 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				values.append("?");
 				modifiedCount++;
 			}
-
-			// if (user.isLanguageModified()) {
-			// if (modifiedCount>0) {
-			// sql.append( ", " );
-			// values.append( ", " );
-			// }
-			//
-			// sql.append( "language" );
-			// values.append( "?" );
-			// modifiedCount++;
-			// }
 
 			if (modifiedCount == 0) {
 				// nothing to insert
@@ -313,6 +317,10 @@ public class UserHandler extends AbstractHandler implements UserDao {
 
 			if (user.isStatusModified()) {
 				stmt.setShort(index++, user.getStatus());
+			}
+			
+			if (user.isTypeModified()) {
+				stmt.setShort(index++, user.getType());
 			}
 
 			if (user.isTimezoneModified()) {
@@ -436,6 +444,15 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				sql.append("status=?");
 				modified = true;
 			}
+			
+			if (user.isTypeModified()) {
+				if (modified) {
+					sql.append(", ");
+				}
+
+				sql.append("type=?");
+				modified = true;
+			}
 
 			if (user.isTimezoneModified()) {
 				if (modified) {
@@ -445,15 +462,6 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				sql.append("timezone=?");
 				modified = true;
 			}
-
-			// if (user.isLanguageModified()) {
-			// if (modified) {
-			// sql.append( ", " );
-			// }
-			//
-			// sql.append( "language=?" );
-			// modified=true;
-			// }
 
 			if (!modified) {
 				// nothing to update
@@ -498,6 +506,10 @@ public class UserHandler extends AbstractHandler implements UserDao {
 
 			if (user.isStatusModified()) {
 				stmt.setShort(index++, user.getStatus());
+			}
+			
+			if (user.isTypeModified()) {
+				stmt.setShort(index++, user.getType());
 			}
 
 			if (user.isTimezoneModified()) {
@@ -634,6 +646,13 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE status = ? ORDER BY status",
 				Arrays.asList(new Object[] { new Short(status) }));
+	}
+	
+	@Override
+	public List<User> findWhereTypeEquals(short type) throws UserException {
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE type = ? ORDER BY type",
+				Arrays.asList(new Object[] { new Short(type) }));
 	}
 
 	@Override
@@ -790,6 +809,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		user.setLastaccess(rs.getLong(COLUMN_LASTACCESS));
 		user.setLastlogin(rs.getLong(COLUMN_LASTLOGIN));
 		user.setStatus(rs.getShort(COLUMN_STATUS));
+		user.setStatus(rs.getShort(COLUMN_TYPE));
 		user.setTimezone(rs.getString(COLUMN_TIMEZONE));
 		// user.setLanguage( rs.getShort( COLUMN_LANGUAGE ) );
 		reset(user);
@@ -807,8 +827,8 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		user.setLastaccessModified(false);
 		user.setLastloginModified(false);
 		user.setStatusModified(false);
+		user.setTypeModified(false);
 		user.setTimezoneModified(false);
-		// user.setLanguageModified( false );
 	}
 	
 	/**
@@ -819,11 +839,11 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		return (instance == null ? (instance = new UserHandler()) : instance);
 	}
 
-	/**
+/*	*//**
 	 * Authenticate User
 	 * 
 	 * @throws UserException
-	 */
+	 *//*
 	public User authenticateByEmail(String email, String password)
 			throws UserException {
 		List<User> user = new ArrayList<User>();
@@ -842,11 +862,11 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		}
 	}
 
-	/**
+	*//**
 	 * Authenticate User
 	 * 
 	 * @throws UserException
-	 */
+	 *//*
 	public User authenticateByUsername(String username, String password)
 			throws UserException {
 		List<User> user = new ArrayList<User>();
@@ -866,11 +886,11 @@ public class UserHandler extends AbstractHandler implements UserDao {
 
 	}
 
-	/**
+	*//**
 	 * Username exists?
 	 * 
 	 * @throws UserException
-	 */
+	 *//*
 	public boolean usernameExists(String username) throws UserException {
 		List<User> userList = new ArrayList<User>();
 		try {
@@ -887,11 +907,11 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		}
 	}
 
-	/**
+	*//**
 	 * Email exists?
 	 * 
 	 * @throws UserException
-	 */
+	 *//*
 	public boolean emailExists(String email) throws UserException {
 		List<User> userList = new ArrayList<User>();
 		try {
@@ -908,17 +928,17 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		}
 	}
 
-	/**
+	*//**
 	 * Create user Account
 	 * 
 	 * @throws UserException
-	 */
+	 *//*
 	
-	/**
+	*//**
 	 * Change account password
 	 * 
 	 * @throws UserException
-	 */
+	 *//*
 	public User changePassword(long userid, String password)
 			throws UserException {
 		User user = new User();
@@ -935,11 +955,11 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		return user;
 	}
 
-	/**
+	*//**
 	 * Reset users password
 	 * 
 	 * @throws UserException
-	 */
+	 *//*
 	public User resetPassword(String username, boolean usernameStatus)
 			throws UserException {
 		List<User> user = new ArrayList<User>();
@@ -956,11 +976,11 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		return user.get(0);
 	}
 
-	/**
+	*//**
 	 * 
 	 * @param args
 	 * @throws UserException
-	 */
+	 *//*
 	public static void main(String[] args) throws UserException {
 		UserHandler handler = new UserHandler();
 		User user = new User("qpeka1",
@@ -981,7 +1001,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				"diamirza1");
 		System.out.println(user);
 	}
-
+*/
 	// private DB db = null;
 	// private DBCollection users = null;
 	//

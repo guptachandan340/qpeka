@@ -11,6 +11,8 @@ public class UserInterests {
 	protected boolean useridModified = false;
 	protected boolean categoryidModified = false;
 	
+	public static UserInterests instance = null;
+	
 	public UserInterests() {
 		super();
 	}
@@ -109,6 +111,14 @@ public class UserInterests {
 		_hashCode = 29 * _hashCode + (int) categoryid;
 		_hashCode = 29 * _hashCode + (categoryidModified ? 1 : 0);
 		return _hashCode;
+	}
+	
+	/**
+	 * Get Instance of User Interests class
+	 * @return user interest object
+	 */
+	public static UserInterests getInstance() {
+		return ((instance == null) ? (instance = new UserInterests()) : instance);
 	}
 
 	/**

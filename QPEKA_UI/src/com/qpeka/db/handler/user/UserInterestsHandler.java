@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.UserInterestsDao;
 import com.qpeka.db.exceptions.user.UserInterestsException;
 import com.qpeka.db.handler.AbstractHandler;
@@ -130,7 +130,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
-			sql.append("INSERT INTO " + getTableName() + " (");
+			sql.append("INSERT IGNORE INTO " + getTableName() + " (");
 			int modifiedCount = 0;
 			if (userinterests.isUseridModified()) {
 				if (modifiedCount > 0) {
