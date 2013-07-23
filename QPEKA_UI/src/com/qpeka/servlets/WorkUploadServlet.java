@@ -21,12 +21,12 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
-import com.qpeka.db.book.store.PublisherHandler;
-import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
-import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
-import com.qpeka.db.book.store.tuples.Constants.TYPE;
-import com.qpeka.db.book.store.tuples.Publisher;
+import com.qpeka.db.Constants.CATEGORY;
+import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.Constants.TYPE;
 import com.qpeka.db.book.store.tuples.Work;
+import com.qpeka.db.handler.user.PublisherHandler;
+import com.qpeka.db.user.profile.type.Publisher;
 import com.qpeka.epub.provider.EpubProcessor;
 import com.qpeka.epub.provider.EpubProcessorNew;
 import com.qpeka.managers.WorkContentManager;

@@ -15,7 +15,7 @@ public interface CountryDao {
 	/**
 	 * Updates a single row in the country table.
 	 */
-	public void update(short countryid, Country country)
+	public short update(short countryid, Country country)
 			throws CountryException;
 
 	/**

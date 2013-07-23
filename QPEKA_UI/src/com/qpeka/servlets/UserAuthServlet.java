@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.qpeka.db.book.store.UserAuthHandler;
-import com.qpeka.db.book.store.UserHandler;
-import com.qpeka.db.book.store.tuples.User;
-import com.qpeka.db.book.store.tuples.UserAuth;
+import com.qpeka.db.handler.user.UserHandler;
+import com.qpeka.db.handler.user.UserProfileHandler;
+import com.qpeka.db.user.User;
+import com.qpeka.db.user.profile.UserProfile;
 
 /**
  * Servlet implementation class UserAuthServlet
@@ -39,18 +39,27 @@ public class UserAuthServlet extends HttpServlet {
 		String requestype = request.getParameter("rType"); // password + user  availability 
 		if(requestype.equalsIgnoreCase("login"))
 		{
-			String uname = request.getParameter("username");
-			String pwd = request.getParameter("password");
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");
+			UserHandler userHandler = new UserHandler();
+			User user;
 			
-			UserAuth ua = UserAuthHandler.getInstance().getUser(uname);
-			boolean isAuth = (ua!=null) && ua.getPassword().equals(pwd);
+			if(!username.contains("@")) {
+				// Username
+				user = userHandler.authenticateByUsername(username, password);
+			} else {
+				// Email
+				user = userHandler.authenticateByEmail(username, password);
+			}
+			
+			boolean isAuth = (user!=null) && user.getPassword().equals(password);
 			
 			if(isAuth)
 			{
-				User u = UserHandler.getInstance().getUserByUserName(uname);
+				UserProfile u = UserProfileHandler.getInstance().getUserByUserName(uname);
 				
 				request.getSession().setAttribute("uid", u.get_id());
-				request.getSession().setAttribute("uname", uname);
+				request.getSession().setAttribute("uname", username);
 				
 				request.getRequestDispatcher("/myProfile.jsp?uid="+u.get_id()).forward(request, response);
 				return;
@@ -66,11 +75,11 @@ public class UserAuthServlet extends HttpServlet {
 			String uname = request.getParameter("username");
 			String email = request.getParameter("email");
 			
-			UserAuth ua = UserAuthHandler.getInstance().getUser(uname);
+			User ua = UserHandler.getInstance().getUser(uname);
 			
 			if(ua != null)
 			{
-				User u = UserHandler.getInstance().getUserByUserName(uname);
+				UserProfile u = UserProfileHandler.getInstance().getUserByUserName(uname);
 				
 				if(u.getEmail().equals(email))
 				{
@@ -94,14 +103,14 @@ public class UserAuthServlet extends HttpServlet {
 			String uname = request.getParameter("username");
 			String password = request.getParameter("password");
 			
-			UserAuth ua = UserAuthHandler.getInstance().getUser(uname);
+			User ua = UserHandler.getInstance().getUser(uname);
 			
 			if(ua != null)
 			{
 				ua.setPassword(password);
-				UserAuthHandler.getInstance().updateUser(ua);
+				UserHandler.getInstance().updateUser(ua);
 				
-				User u = UserHandler.getInstance().getUserByUserName(uname);
+				UserProfile u = UserProfileHandler.getInstance().getUserByUserName(uname);
 				
 				request.getSession().setAttribute("uid", u.get_id());
 				request.getSession().setAttribute("uname", uname);

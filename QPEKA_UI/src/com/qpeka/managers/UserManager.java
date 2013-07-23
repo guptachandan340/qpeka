@@ -9,19 +9,19 @@ import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.qpeka.db.book.store.AuthorHandler;
-import com.qpeka.db.book.store.UserHandler;
-import com.qpeka.db.book.store.tuples.Address;
-import com.qpeka.db.book.store.tuples.Author;
+import com.qpeka.db.Constants.AUTHORTYPE;
+import com.qpeka.db.Constants.CATEGORY;
+import com.qpeka.db.Constants.GENDER;
+import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.Constants.USERLEVEL;
+import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.book.store.tuples.BookMark;
-import com.qpeka.db.book.store.tuples.Constants.AUTHORTYPE;
-import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
-import com.qpeka.db.book.store.tuples.Constants.GENDER;
-import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
-import com.qpeka.db.book.store.tuples.Constants.USERLEVEL;
-import com.qpeka.db.book.store.tuples.Constants.USERTYPE;
-import com.qpeka.db.book.store.tuples.Name;
-import com.qpeka.db.book.store.tuples.User;
+import com.qpeka.db.handler.user.AuthorHandler;
+import com.qpeka.db.handler.user.UserProfileHandler;
+import com.qpeka.db.user.profile.Address;
+import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.UserProfile;
+import com.qpeka.db.user.profile.type.Author;
 import com.qpeka.utils.SystemConfigHandler;
 import com.qpeka.utils.Utils;
 
@@ -50,19 +50,19 @@ private static UserManager instance = null;
 	
 	public String addUser(String firstName, String middleName, String lastName, GENDER gender, String email, String city, String state, String addressLine1,
 			String addressLine2, String addressLine3, String pincode , USERTYPE userType, Set<CATEGORY> interests, int age , Date dob, String nationality, String phone,
-			String desc, Set<LANGUAGES> rLang, Set<LANGUAGES> wLang, USERLEVEL level, String userName, String penName, String imageFile)
-	{
-		Address addr = new Address(city, state, addressLine1, addressLine2, addressLine3, pincode);
+			String desc, Set<LANGUAGES> rLang, Set<LANGUAGES> wLang, USERLEVEL level, String userName, String penName, String imageFile) {
+		
+		Address addr = new Address(addressLine1, addressLine2, addressLine3, city, state, "IND", Integer.parseInt(pincode));
 		
 		
-		User u = new User(userName, "", new Name(firstName, middleName, lastName), gender, email, addr, interests, level, new ArrayList<BookMark>(),
+		UserProfile u = new UserProfile(userName, "", new Name(firstName, middleName, lastName), gender, email, addr, interests, level, new ArrayList<BookMark>(),
 				age, dob, nationality, imageFile , phone, userType);
 		u.setrLang(rLang);
 		u.setwLang(wLang);
 		u.setDesc(desc);
 		u.setPenName(penName);
 		
-		String uID =  UserHandler.getInstance().addUser(u);
+		String uID =  UserProfileHandler.getInstance().addUser(u);
 		
 		Utils.createImageFile(imageFile,SystemConfigHandler.getInstance().getUserCoverImg() + uID + ".jpg");
 		
@@ -87,14 +87,14 @@ private static UserManager instance = null;
 			}
 		}
 		
-		User u = new User(userName, "", new Name(firstName, middleName, lastName), gender, email, addr, interests, level, new ArrayList<BookMark>(),
+		UserProfile u = new UserProfile(userName, "", new Name(firstName, middleName, lastName), gender, email, addr, interests, level, new ArrayList<BookMark>(),
 				age, dob, nationality, imageFile , phone, userType);
 		u.setrLang(rLang);
 		u.setwLang(wLang);
 		u.setDesc(desc);
 		u.setPenName(penName);
 		
-		UserHandler.getInstance().updateUser(u);
+		UserProfileHandler.getInstance().updateUser(u);
 	}
 	
 	public void updateUser(JSONObject jReq)
@@ -104,7 +104,7 @@ private static UserManager instance = null;
 			String uid = jReq.getString("id");
 			if(jReq.has("type") && jReq.getString("type").equalsIgnoreCase("AUTHOR"))
 			{
-				User u = UserHandler.getInstance().getUser(uid);
+				UserProfile u = UserProfileHandler.getInstance().getUser(uid);
 				if(!u.isWriter())
 				{
 					Author a  = new Author(u.get_id(), u.getName(), u.getGender(), u.getDob(), u.getNationality(), "", u.getDesc(), "", u.getInterests(), AUTHORTYPE.LEVEL1);
@@ -115,12 +115,12 @@ private static UserManager instance = null;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		UserHandler.getInstance().updateUser(jReq);
+		UserProfileHandler.getInstance().updateUser(jReq);
 	}
 	
 	public String getUser(String id)
 	{
-		return UserHandler.getInstance().getUser(id).toDBObject(false).toString();
+		return UserProfileHandler.getInstance().getUser(id).toDBObject(false).toString();
 	}
 	
 	public void addBookMark(String uid , String bookId, int page)
@@ -128,7 +128,7 @@ private static UserManager instance = null;
 		Set<Integer> pageIds = new HashSet<Integer>();
 		pageIds.add(page);
 		BookMark bmk = new BookMark(bookId, pageIds);
-		User u = UserHandler.getInstance().getUser(uid);
+		UserProfile u = UserProfileHandler.getInstance().getUser(uid);
 		List<BookMark> l = u.getBookMarks();
 		if(!l.contains(bmk))
 		{
@@ -139,8 +139,8 @@ private static UserManager instance = null;
 		
 	}
 	
-	public List<User> getUsersBySearchKey(String searchKey)
+	public List<UserProfile> getUsersBySearchKey(String searchKey)
 	{
-		return UserHandler.getInstance().getUsersBySearchKey(searchKey);
+		return UserProfileHandler.getInstance().getUsersBySearchKey(searchKey);
 	}
 }

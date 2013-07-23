@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Files;
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.FilesDao;
 import com.qpeka.db.exceptions.FileException;
 
@@ -28,6 +28,8 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 	protected java.sql.Connection userConn;
 
 	protected static final Logger logger = Logger.getLogger(FilesHandler.class);
+
+	public static FilesHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -296,7 +298,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 			}
 
 			if (file.isTimestampModified()) {
-				stmt.setInt(index++, file.getTimestamp());
+				stmt.setLong(index++, file.getTimestamp());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -331,7 +333,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 	}
 
 	@Override
-	public void update(long fileid, Files file) throws FileException {
+	public short update(long fileid, Files file) throws FileException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -429,7 +431,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE fileid=?");
@@ -473,17 +475,17 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 			}
 
 			if (file.isTimestampModified()) {
-				stmt.setInt(index++, file.getTimestamp());
+				stmt.setLong(index++, file.getTimestamp());
 			}
 
 			stmt.setLong(index++, fileid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(file);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new FileException("Exception: " + _e.getMessage(), _e);
@@ -632,7 +634,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-
+		
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
@@ -644,17 +646,16 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL);
 			}
-
+			
 			// prepare statement
 			stmt = conn.prepareStatement(SQL);
 			stmt.setMaxRows(maxRows);
-
+			
 			// bind parameters
 			for (int counter = 0; sqlParams != null
 					&& counter < sqlParams.size(); counter++) {
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
 			rs = stmt.executeQuery();
 
 			// fetch the results
@@ -760,7 +761,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		files.setFilemime(rs.getString(COLUMN_FILEMIME));
 		files.setFilesize(rs.getInt(COLUMN_FILESIZE));
 		files.setStatus(rs.getInt(COLUMN_STATUS));
-		files.setTimestamp(rs.getInt(COLUMN_TIMESTAMP));
+		files.setTimestamp(rs.getLong(COLUMN_TIMESTAMP));
 		reset(files);
 	}
 
@@ -777,6 +778,15 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		files.setFilesizeModified(false);
 		files.setStatusModified(false);
 		files.setTimestampModified(false);
+	}
+
+	/**
+	 * Get FilesHandler object instance
+	 * 
+	 * @return instance of FilesHandler
+	 */
+	public static FilesHandler getInstance() {
+		return (instance == null ? (instance = new FilesHandler()) : instance);
 	}
 
 }

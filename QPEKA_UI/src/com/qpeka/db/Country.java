@@ -45,7 +45,7 @@ public class Country implements Serializable {
 	protected boolean unmemberModified = false;
 	protected boolean callingcodeModified = false;
 	protected boolean cctldModified = false;
-
+	public static Country instance = null;
 	/*
 	 * Constructors
 	 */
@@ -68,6 +68,9 @@ public class Country implements Serializable {
 		this.cctld = cctld;
 	}
 
+	public static Country getInstance() {
+		return (instance == null ? (instance = new Country()) : instance);
+	}
 	/*
 	 * Getters and setters for attributes
 	 */

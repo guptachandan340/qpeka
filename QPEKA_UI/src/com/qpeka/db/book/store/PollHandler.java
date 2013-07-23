@@ -13,7 +13,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
-import com.qpeka.db.book.store.tuples.Publisher;
+import com.qpeka.db.user.profile.type.Publisher;
 
 
 public class PollHandler {

@@ -16,7 +16,7 @@ public interface FilesDao {
 	/** 
 	 * Updates a single row in the files table.
 	 */
-	public void update(long fileid, Files file) throws FileException;
+	public short update(long fileid, Files file) throws FileException;
 
 	/** 
 	 * Deletes a single row in the files table.

@@ -14,12 +14,12 @@ import org.json.JSONObject;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.qpeka.db.book.store.AuthorHandler;
+import com.qpeka.db.Constants.CATEGORY;
+import com.qpeka.db.Constants.SECTION;
+import com.qpeka.db.Constants.TYPE;
 import com.qpeka.db.book.store.WorksHandler;
-import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
-import com.qpeka.db.book.store.tuples.Constants.SECTION;
-import com.qpeka.db.book.store.tuples.Constants.TYPE;
 import com.qpeka.db.book.store.tuples.Work;
+import com.qpeka.db.handler.user.AuthorHandler;
 
 /**
  * Servlet implementation class WorkInfoServlet

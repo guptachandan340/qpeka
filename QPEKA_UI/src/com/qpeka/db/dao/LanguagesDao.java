@@ -15,7 +15,7 @@ public interface LanguagesDao {
 	/** 
 	 * Updates a single row in the languages table.
 	 */
-	public void update(short languageid, Languages language) throws LanguagesException;
+	public short update(short languageid, Languages language) throws LanguagesException;
 
 	/** 
 	 * Deletes a single row in the languages table.

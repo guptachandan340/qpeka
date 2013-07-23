@@ -6,8 +6,10 @@ import org.json.JSONObject;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
-import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
+import com.qpeka.db.Constants;
+import com.qpeka.db.Constants.CATEGORY;
+import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.Constants.WORKTYPE;
 
 /*
  * 
@@ -61,8 +63,8 @@ public class Work {
 	private String title = "";
 	private String authorId = "";
 	private String coverPageFile = "";
-	private CATEGORY category = com.qpeka.db.book.store.tuples.Constants.CATEGORY.FACTS;
-	private com.qpeka.db.book.store.tuples.Constants.TYPE type = com.qpeka.db.book.store.tuples.Constants.TYPE.BOOK;
+	private CATEGORY category = com.qpeka.db.Constants.CATEGORY.FACTS;
+	private WORKTYPE type = Constants.WORKTYPE.BOOK;
 	private int numPages = 0;
 	private JSONObject metaData = new JSONObject();
 	private String description = "";
@@ -82,8 +84,8 @@ public class Work {
 
 	public Work(String _id, String title, String authorId,
 			String coverPageFile,
-			com.qpeka.db.book.store.tuples.Constants.CATEGORY category,
-			com.qpeka.db.book.store.tuples.Constants.TYPE type, int numPages,
+			com.qpeka.db.Constants.CATEGORY category,
+			WORKTYPE type, int numPages,
 			JSONObject metaData, String description, LANGUAGES language,
 			boolean isPub) {
 		super();
@@ -102,8 +104,8 @@ public class Work {
 
 	public Work(String _id, String title, String authorId,
 			String coverPageFile,
-			com.qpeka.db.book.store.tuples.Constants.CATEGORY category,
-			com.qpeka.db.book.store.tuples.Constants.TYPE type, int numPages,
+			com.qpeka.db.Constants.CATEGORY category,
+			WORKTYPE type, int numPages,
 			JSONObject metaData, String description, LANGUAGES language,
 			boolean isPub, long dateOfPub, int edition, String isbn,
 			String publisherId) {
@@ -194,11 +196,11 @@ public class Work {
 		this.numPages = numPages;
 	}
 
-	public com.qpeka.db.book.store.tuples.Constants.TYPE getType() {
+	public WORKTYPE getType() {
 		return type;
 	}
 
-	public void setType(com.qpeka.db.book.store.tuples.Constants.TYPE type) {
+	public void setType(WORKTYPE type) {
 		this.type = type;
 	}
 
@@ -279,8 +281,8 @@ public class Work {
 	{
 		try 
 		{
-			com.qpeka.db.book.store.tuples.Constants.CATEGORY c = com.qpeka.db.book.store.tuples.Constants.CATEGORY.valueOf(obj.getString(CATEGORY));
-			com.qpeka.db.book.store.tuples.Constants.TYPE t = com.qpeka.db.book.store.tuples.Constants.TYPE.valueOf(obj.getString(TYPE));
+			com.qpeka.db.Constants.CATEGORY c = com.qpeka.db.Constants.CATEGORY.valueOf(obj.getString(CATEGORY));
+			WORKTYPE t = Constants.WORKTYPE.valueOf(obj.getString(TYPE));
 			Work w = new  Work(obj.getString(ID),obj.getString(TITLE),obj.getString(AUTHORID),obj.getString(COVERPAGEFILE),
 					c ,t , obj.getInt(NUMPAGES),new JSONObject(obj.getString(METADATA)), obj.getString(DESCRIPTION),LANGUAGES.valueOf(obj.getString(LANGUAGE)),
 					obj.getBoolean(ISPUBLISHED));

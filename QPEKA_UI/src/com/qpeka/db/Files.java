@@ -2,6 +2,8 @@ package com.qpeka.db;
 
 import java.io.Serializable;
 
+import com.qpeka.db.handler.CategoryHandler;
+
 public class Files implements Serializable {
 
 	/**
@@ -31,7 +33,7 @@ public class Files implements Serializable {
 	private String filemime;
 	private int filesize;
 	private int status;
-	private int timestamp;
+	private long timestamp;
 
 	/**
 	 * These attributes represents whether the above attributes has been
@@ -46,7 +48,11 @@ public class Files implements Serializable {
 	protected boolean filesizeModified = false;
 	protected boolean statusModified = false;
 	protected boolean timestampModified = false;
+	public static Files instance = null;
 
+	public static Files getInstance() {
+		return (instance == null ? (instance = new Files()) : instance);
+	}
 	/*
 	 * Constructors
 	 */
@@ -98,7 +104,7 @@ public class Files implements Serializable {
 		return userid;
 	}
 
-	public void setUserid(int userid) {
+	public void setUserid(long userid) {
 		this.userid = userid;
 		this.useridModified = true;
 	}
@@ -157,11 +163,11 @@ public class Files implements Serializable {
 		this.statusModified = true;
 	}
 
-	public int getTimestamp() {
+	public long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(int timestamp) {
+	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 		this.timestampModified = true;
 	}
@@ -371,11 +377,11 @@ public class Files implements Serializable {
 		}
 
 		_hashCode = 29 * _hashCode + (filemimeModified ? 1 : 0);
-		_hashCode = 29 * _hashCode + filesize;
+		_hashCode = 29 * _hashCode + filesize; 
 		_hashCode = 29 * _hashCode + (filesizeModified ? 1 : 0);
 		_hashCode = 29 * _hashCode + status;
 		_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
-		_hashCode = 29 * _hashCode + timestamp;
+		_hashCode = 29 * _hashCode + (int)timestamp;
 		_hashCode = 29 * _hashCode + (timestampModified ? 1 : 0);
 		return _hashCode;
 	}

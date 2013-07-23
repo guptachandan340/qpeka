@@ -1,6 +1,5 @@
 package com.qpeka.db.book.store.tuples;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.bson.types.ObjectId;

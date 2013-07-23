@@ -13,8 +13,8 @@ import com.qpeka.db.Constants;
 import com.qpeka.db.Constants.AUTHORTYPE;
 import com.qpeka.db.Constants.CATEGORY;
 import com.qpeka.db.Constants.GENDER;
+import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.Name;
-import com.qpeka.db.user.profile.User;
 
 /*
  * 
