@@ -16,14 +16,16 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
-import com.qpeka.db.book.store.tuples.Author;
-import com.qpeka.db.book.store.tuples.Constants.AUTHORTYPE;
-import com.qpeka.db.book.store.tuples.Constants.GENDER;
-import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
-import com.qpeka.db.book.store.tuples.Constants.TYPE;
-import com.qpeka.db.book.store.tuples.Name;
+import com.qpeka.db.Constants;
+import com.qpeka.db.Constants.AUTHORTYPE;
+import com.qpeka.db.Constants.CATEGORY;
+import com.qpeka.db.Constants.GENDER;
+import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.Constants.WORKTYPE;
 import com.qpeka.db.book.store.tuples.Work;
-import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
+import com.qpeka.db.handler.user.AuthorHandler;
+import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.type.Author;
 
 /*
  * 1) Primary key testing
@@ -140,7 +142,7 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByType(TYPE type, int start, int end)
+	public List<Work> getWorksByType(WORKTYPE type, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
@@ -174,7 +176,7 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByTypeCategory(TYPE type, CATEGORY cat, int start, int end)
+	public List<Work> getWorksByTypeCategory(WORKTYPE type, CATEGORY cat, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
 		
@@ -208,7 +210,7 @@ public class WorksHandler {
 
 	}
 	
-	public Work getWorkOfTheDayByType(TYPE type)
+	public Work getWorkOfTheDayByType(WORKTYPE type)
 	{
 		
 		BasicDBObject q = new BasicDBObject();
@@ -238,7 +240,7 @@ public class WorksHandler {
 
 	}
 	
-	public Work getFeauredWorkByType(TYPE type)
+	public Work getFeauredWorkByType(WORKTYPE type)
 	{
 		
 		BasicDBObject q = new BasicDBObject();
@@ -528,7 +530,7 @@ public class WorksHandler {
 	
 	public static void main(String[] args) throws JSONException {
 		
-		com.qpeka.db.book.store.tuples.Constants.CATEGORY.valueOf("ART");
+		com.qpeka.db.Constants.CATEGORY.valueOf("ART");
 		
 		for(int i = 0; i<10;i++)
 		{
@@ -540,7 +542,7 @@ public class WorksHandler {
 		JSONObject metadata = new JSONObject();
 		metadata.put(Work.SEARCHKEY, "art,history");
 		
-		Work w = new Work("", "Marks work"+1, aid, "", CATEGORY.ART, TYPE.BOOK, 100, metadata, "AWSOME BOOK"+i, LANGUAGES.ENGLISH, false);
+		Work w = new Work("", "Marks work"+1, aid, "", CATEGORY.ART, WORKTYPE.BOOK, 100, metadata, "AWSOME BOOK"+i, LANGUAGES.ENGLISH, false);
 		
 		WorksHandler.getInstance().addWork(w);
 		}

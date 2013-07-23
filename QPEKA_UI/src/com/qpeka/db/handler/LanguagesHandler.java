@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Languages;
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.LanguagesDao;
 import com.qpeka.db.exceptions.LanguagesException;
 
@@ -28,6 +29,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(LanguagesHandler.class);
+	
+	public static LanguagesHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -217,7 +220,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			sql.append(") VALUES (");
 			sql.append(values);
 			sql.append(")");
-			stmt = conn.prepareStatement(sql.toString());
+			stmt = conn.prepareStatement(sql.toString(),
+					Statement.RETURN_GENERATED_KEYS);
 			int index = 1;
 			if (language.isLanguageidModified()) {
 				stmt.setShort(index++, language.getLanguageid());
@@ -236,11 +240,11 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			}
 
 			if (language.isDirectionModified()) {
-				stmt.setInt(index++, language.getDirection());
+				stmt.setShort(index++, language.getDirection());
 			}
 
 			if (language.isEnabledModified()) {
-				stmt.setInt(index++, language.getEnabled());
+				stmt.setShort(index++, language.getEnabled());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -275,7 +279,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	}
 
 	@Override
-	public void update(short languageid, Languages language)
+	public short update(short languageid, Languages language)
 			throws LanguagesException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -347,7 +351,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE languageid=?");
@@ -375,21 +379,21 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			}
 
 			if (language.isDirectionModified()) {
-				stmt.setInt(index++, language.getDirection());
+				stmt.setShort(index++, language.getDirection());
 			}
 
 			if (language.isEnabledModified()) {
-				stmt.setInt(index++, language.getEnabled());
+				stmt.setShort(index++, language.getEnabled());
 			}
 
 			stmt.setShort(index++, languageid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(language);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new LanguagesException("Exception: " + _e.getMessage(), _e);
@@ -398,7 +402,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
+			
 		}
 	}
 
@@ -646,8 +650,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 		language.setLanguage(rs.getString(COLUMN_LANGUAGE));
 		language.setName(rs.getString(COLUMN_NAME));
 		language.setANative(rs.getString(COLUMN_A_NATIVE));
-		language.setDirection(rs.getInt(COLUMN_DIRECTION));
-		language.setEnabled(rs.getInt(COLUMN_ENABLED));
+		language.setDirection(rs.getShort(COLUMN_DIRECTION));
+		language.setEnabled(rs.getShort(COLUMN_ENABLED));
 
 		reset(language);
 	}
@@ -662,6 +666,14 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 		language.setANativeModified(false);
 		language.setDirectionModified(false);
 		language.setEnabledModified(false);
+	}
+	
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static LanguagesHandler getInstance() {
+		return (instance == null ? (instance = new LanguagesHandler()) : instance);
 	}
 
 }

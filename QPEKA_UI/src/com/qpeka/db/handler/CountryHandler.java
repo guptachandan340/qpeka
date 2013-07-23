@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Country;
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.CountryDao;
 import com.qpeka.db.exceptions.CountryException;
 
@@ -29,6 +29,8 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(CountryHandler.class);
+	
+	public static CountryHandler instance;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -331,7 +333,7 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 	}
 
 	@Override
-	public void update(short countryid, Country country)
+	public short update(short countryid, Country country)
 			throws CountryException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -430,7 +432,7 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE countryid=?");
@@ -478,13 +480,13 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 			}
 
 			stmt.setShort(index++, countryid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(country);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CountryException("Exception: " + _e.getMessage(), _e);
@@ -787,4 +789,11 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 		country.setCctldModified(false);
 	}
 
+	/**
+	 * User profile handler instance
+	 * @return instance of user profile
+	 */
+	public static CountryHandler getInstance() {
+		return (instance == null ? (instance = new CountryHandler()) : instance);
+	}
 }

@@ -15,7 +15,7 @@ public interface CategoryDao {
 	/** 
 	 * Updates a single row in the category table.
 	 */
-	public void update(short categoryid, Category category) throws CategoryException;
+	public short update(short categoryid, Category category) throws CategoryException;
 
 	/** 
 	 * Deletes a single row in the category table.

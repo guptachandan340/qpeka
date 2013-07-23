@@ -44,6 +44,9 @@ public class Address implements Serializable {
 	protected boolean countryModified = false;
 	protected boolean pincodeModified = false;
 	protected boolean timestampModified = false;
+	
+	public static Address instance = null;
+	
 
 	/*
 	 * Constructors
@@ -94,6 +97,9 @@ public class Address implements Serializable {
 		this.pincode = pincode;
 	}
 
+	public static Address getInstance() {
+		return (instance == null ? (instance = new Address()) : instance);
+	}
 	/*
 	 * Getters and setters for attributes
 	 */

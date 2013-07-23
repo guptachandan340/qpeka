@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.qpeka.db.book.store.UserAuthHandler;
-import com.qpeka.db.book.store.UserHandler;
-import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
+import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.handler.user.UserHandler;
+import com.qpeka.db.handler.user.UserProfileHandler;
 import com.qpeka.managers.UserManager;
 
 /**
@@ -47,7 +47,7 @@ public class UserProfileManagerServlet extends HttpServlet {
 		
 		if(action.equalsIgnoreCase("addrlang"))
 		{
-			UserHandler.getInstance().updateRLang(request.getParameter("uid"), LANGUAGES.valueOf(request.getParameter("lang")));
+			UserProfileHandler.getInstance().updateRLang(request.getParameter("uid"), LANGUAGES.valueOf(request.getParameter("lang")));
 			Writer wr = response.getWriter();
         	
 			wr.write("{\"status\":\"success\"}");
@@ -56,7 +56,7 @@ public class UserProfileManagerServlet extends HttpServlet {
 		}
 		else if(action.equalsIgnoreCase("addwlang"))
 		{
-			UserHandler.getInstance().updateWLang(request.getParameter("uid"), LANGUAGES.valueOf(request.getParameter("lang")));
+			UserProfileHandler.getInstance().updateWLang(request.getParameter("uid"), LANGUAGES.valueOf(request.getParameter("lang")));
 			Writer wr = response.getWriter();
         	
 			wr.write("{\"status\":\"success\"}");

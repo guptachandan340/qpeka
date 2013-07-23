@@ -1,6 +1,9 @@
 package com.qpeka.db.user.profile;
 
-public class UserLanguage {
+import java.io.Serializable;
+
+
+public class UserLanguage implements Serializable {
 
 	public static final String USERID = "userid";
 	public static final String LANGUAGEID = "languageid";
@@ -13,6 +16,8 @@ public class UserLanguage {
 	protected boolean useridModified = false;
 	protected boolean languageidModified = false;
 	protected boolean typeModified = false;
+	
+	public static UserLanguage instance = null;
 
 	public UserLanguage() {
 		super();
@@ -154,5 +159,9 @@ public class UserLanguage {
 		ret.append(", " + LANGUAGEID + "=" + languageid);
 		ret.append(", " + TYPE + "=" + type);
 		return ret.toString();
+	}
+	
+	public static UserLanguage getInstance() {
+		return ((instance == null) ? (new UserLanguage()) : instance);
 	}
 }

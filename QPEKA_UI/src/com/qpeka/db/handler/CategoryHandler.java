@@ -12,9 +12,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Category;
-import com.qpeka.db.ResourceManager;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.CategoryDao;
 import com.qpeka.db.exceptions.CategoryException;
+import com.qpeka.db.handler.user.UserHandler;
 
 public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
@@ -29,6 +30,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 	protected static final Logger logger = Logger
 			.getLogger(CategoryHandler.class);
+
+	public static CategoryHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -257,7 +260,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	}
 
 	@Override
-	public void update(short categoryid, Category category)
+	public short update(short categoryid, Category category)
 			throws CategoryException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
@@ -320,7 +323,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 			if (!modified) {
 				// nothing to update
-				return;
+				return -1;
 			}
 
 			sql.append(" WHERE categoryid=?");
@@ -352,13 +355,13 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			}
 
 			stmt.setShort(index++, categoryid);
-			int rows = stmt.executeUpdate();
+			short rows = (short)stmt.executeUpdate();
 			reset(category);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-
+		return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
@@ -391,7 +394,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 			stmt = conn.prepareStatement(SQL_DELETE);
 			stmt.setShort(1, categoryid);
-			int rows = stmt.executeUpdate();
+			 int rows = stmt.executeUpdate();
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
@@ -621,4 +624,11 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		category.setPointsModified(false);
 	}
 
+	/**
+	 * Get UserHandler object instance
+	 * @return instance of UserHandler
+	 */
+	public static CategoryHandler getInstance() {
+		return (instance == null ? (instance = new CategoryHandler()) : instance);
+	}
 }
