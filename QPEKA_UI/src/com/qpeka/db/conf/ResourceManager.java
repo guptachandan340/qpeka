@@ -16,7 +16,7 @@ public class ResourceManager {
 	private static String JDBC_URL = "jdbc:mysql://localhost/mysql";
 
 	private static String JDBC_USER = "root";
-	private static String JDBC_PASSWORD = "root";
+	private static String JDBC_PASSWORD = "ankita";
 
 	private static Driver driver = null;
 
