@@ -21,6 +21,7 @@ import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.exceptions.user.UserBadgesException;
@@ -57,14 +58,10 @@ public class UserManager {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserManager getInstance() {
+	public static UserManager getInstance() {
 		return (instance == null ? (instance = new UserManager()) : instance);
 	}
 
-	/*
-	 * public static UserHandler getInstance() { return (instance == null ?
-	 * (instance = new UserHandler()) : instance); }
-	 */
 	/**
 	 * Register User to Qpeka
 	 * 
@@ -151,14 +148,17 @@ public class UserManager {
 			} else {
 				user = UserHandler.getInstance().findWhereEmailEquals(authName);
 			}
+			
 		} catch (UserException _e) {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
 		}
-
+		
 		if (!user.isEmpty()) {
+			
 			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? user
 					.get(0) : null);
+			
 		} else {
 			return null;
 		}
@@ -455,23 +455,21 @@ public class UserManager {
 						e.printStackTrace();
 					}
 				}
-
 				userProfile.setInterests(new HashSet<Category>(interestsList));
+				
 			}
 
 			// Read Language
 			if (profile.get(UserProfile.RLANG) != null) {
-				Set<Languages> userLanguages = updateUserLanguages(userid,
-						"read", profile.get(UserProfile.RLANG));
+				Set<Languages> userLanguages = updateUserLanguages(userid,"read",profile.get(UserProfile.RLANG));
 
 				userProfile.setrLang(userLanguages);
 			}
 
 			// Written Language
 			if (profile.get(UserProfile.WLANG) != null) {
-				Set<Languages> userLanguages = updateUserLanguages(userid,
-						"write", profile.get(UserProfile.WLANG));
-
+			
+				Set<Languages> userLanguages = updateUserLanguages(userid,"write",profile.get(UserProfile.WLANG));
 				userProfile.setrLang(userLanguages);
 			}
 
@@ -699,6 +697,7 @@ public class UserManager {
 		return collectionString.toString();
 	}
 
+
 	/*
 	public static void main(String [] args) {
 		UserManager userman = new UserManager();
@@ -718,7 +717,6 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
 		try {
 			User usr = userman.authenticateUser("rahul", "rahul", false);
 			System.out.println(usr.toString());
@@ -727,6 +725,7 @@ public class UserManager {
 			e.printStackTrace();
 		}
 	}
+
 	*/
 	
 }// End of class UserManager.java
