@@ -290,9 +290,9 @@ public class UserManager {
 		if (profile.get(UserProfile.USERID) != null) {
 			userid = Long.parseLong(UserProfile.USERID);
 
-			usertype = (short) ((profile.get(UserProfile.USERTYPE) != null) ? profile
-					.get(UserProfile.USERTYPE)
-					: com.qpeka.db.Constants.USERTYPE.READER);
+			usertype = (short) ((profile.get(UserProfile.USERTYPE) != null) 
+					? Short.parseShort(profile.get(UserProfile.USERTYPE).toString())
+					: com.qpeka.db.Constants.USERTYPE.READER.ordinal());
 
 			// Set Pen name
 			if (profile.get(UserProfile.PENNAME) != null) {
@@ -699,4 +699,34 @@ public class UserManager {
 		return collectionString.toString();
 	}
 
+	/*
+	public static void main(String [] args) {
+		UserManager userman = new UserManager();
+		User user = new User("rahul",
+				BCrypt.hashpw("rahul", BCrypt.gensalt()),
+				"srahul07.qpeka@gmail.com",
+				(System.currentTimeMillis()) / 1000, "East");
+		user.setUsernameModified(true);
+		user.setPasswordModified(true);
+		user.setEmailModified(true);
+		user.setCreatedModified(true);
+		user.setTimezoneModified(true);
+		
+		try {
+			UserHandler.getInstance().insert(user);
+		} catch (UserException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			User usr = userman.authenticateUser("rahul", "rahul", false);
+			System.out.println(usr.toString());
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	*/
+	
 }// End of class UserManager.java

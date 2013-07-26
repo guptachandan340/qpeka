@@ -112,20 +112,21 @@ DROP TABLE IF EXISTS `files`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `files` (
-  `fileid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `userid` int(10) unsigned NOT NULL DEFAULT '0',
+  `fileid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(11) NOT NULL DEFAULT '0',
   `filetype` varchar(25) NOT NULL DEFAULT 'profilepic',
   `filename` varchar(255) NOT NULL DEFAULT '',
   `filepath` varchar(255) NOT NULL DEFAULT '',
   `filemime` varchar(255) NOT NULL DEFAULT '',
-  `filesize` int(10) unsigned NOT NULL DEFAULT '0',
-  `status` int(11) NOT NULL DEFAULT '0',
-  `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
+  `filesize` int(11) unsigned NOT NULL DEFAULT '0',
+  `status` tinyint(11) NOT NULL DEFAULT '0',
+  `timestamp` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`fileid`),
-  KEY `uid` (`userid`),
   KEY `filetype` (`filetype`),
   KEY `status` (`status`),
-  KEY `timestamp` (`timestamp`)
+  KEY `timestamp` (`timestamp`),
+  KEY `files_ibfk_1` (`userid`),
+  CONSTRAINT `files_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -149,12 +150,13 @@ CREATE TABLE `languages` (
   `languageid` smallint(6) NOT NULL,
   `language` varchar(12) NOT NULL DEFAULT '',
   `name` varchar(64) NOT NULL DEFAULT '',
-  `native` varchar(64) NOT NULL DEFAULT '',
-  `direction` int(11) NOT NULL DEFAULT '0',
-  `enabled` int(11) NOT NULL DEFAULT '0',
+  `native` smallint(5) NOT NULL DEFAULT '0',
+  `direction` tinyint(4) NOT NULL DEFAULT '0',
+  `enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`languageid`),
   KEY `language` (`language`),
-  KEY `list` (`name`)
+  KEY `list` (`name`),
+  KEY `native` (`native`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -212,11 +214,12 @@ CREATE TABLE `user` (
   `lastaccess` int(11) NOT NULL DEFAULT '0',
   `lastlogin` int(11) NOT NULL DEFAULT '0',
   `status` tinyint(4) NOT NULL DEFAULT '0',
+  `type` tinyint(4) NOT NULL DEFAULT '0',
   `timezone` varchar(8) DEFAULT NULL,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -225,7 +228,6 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'srahul07','$2a$10$OGSZjrsxdWdiOO/gFJVV0ekXIpBuo1u2vznMvqKpTg863aecXZgdC','srahul07@gmail.com',1371038525,0,0,0,'East'),(2,'qpeka','$2a$10$Pw7TsFp8uUpenATsYpha7e2JgDYvSVz9bytMw0GOhYHoeBO5whOKG','srahul07.qpeka@gmail.com',1371041240,0,0,0,'East'),(3,'qpeka1','$2a$10$so7XvjT0mxXZHEezSrSYTeHEzcxUNqB1c9ZH5l/xX5zW9OYd/MqKq','srahul07.qpeka1@gmail.com',1371041283,0,0,0,'East');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -353,8 +355,8 @@ DROP TABLE IF EXISTS `userlanguage`;
 CREATE TABLE `userlanguage` (
   `userid` int(11) NOT NULL DEFAULT '0',
   `languageid` smallint(6) NOT NULL DEFAULT '0',
-  `type` enum('read','write') DEFAULT 'read',
-  PRIMARY KEY (`userid`,`languageid`)
+  `type` enum('read','write') NOT NULL DEFAULT 'read',
+  PRIMARY KEY (`userid`,`languageid`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -412,7 +414,8 @@ CREATE TABLE `userprofile` (
   `nationality` smallint(6) DEFAULT NULL,
   `website` varchar(256) DEFAULT NULL,
   `biography` text,
-  `profilepic` int(10) unsigned DEFAULT NULL,
+  `profilepic` int(11) unsigned DEFAULT NULL,
+  `level` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`userid`),
   KEY `userprofile_ibfk_2` (`nationality`),
   KEY `fk_userprofile_1` (`profilepic`),
@@ -428,7 +431,6 @@ CREATE TABLE `userprofile` (
 
 LOCK TABLES `userprofile` WRITE;
 /*!40000 ALTER TABLE `userprofile` DISABLE KEYS */;
-INSERT INTO `userprofile` VALUES (1,'Rauline','Rahul','Baban','Shelke','Male',1371130976,102,'rahulshelke.com','An Optimist with zest for life, fluid thinking, adventure, network, and programming!!! I love to meet people, get in touch with.I have been working on opensource technologies like Java, Drupal, Pentaho, Linux, Perl, etc. It has been a great source of sharing the knowledge and making impact online all over the world.',NULL);
 /*!40000 ALTER TABLE `userprofile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -441,12 +443,13 @@ DROP TABLE IF EXISTS `usertype`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `usertype` (
   `typeid` smallint(6) NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) NOT NULL DEFAULT '',
+  `type` varchar(50) NOT NULL DEFAULT '' COMMENT 'User type: Reader, Writer, Publisher, Service Provider',
   `typename` varchar(50) NOT NULL DEFAULT '',
+  `typeidentifier` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`typeid`),
   KEY `type` (`type`),
   KEY `typename` (`typename`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -455,6 +458,7 @@ CREATE TABLE `usertype` (
 
 LOCK TABLES `usertype` WRITE;
 /*!40000 ALTER TABLE `usertype` DISABLE KEYS */;
+INSERT INTO `usertype` VALUES (1,'Reader','Reader','reader'),(2,'Writer','Writer','writer'),(3,'Publisher','Publisher','publisher'),(4,'Service Provider','Reviewer','reviewer'),(5,'Service Provider','Editor','editor'),(6,'Service Provider','Printers','printers'),(7,'Service Provider','Marketing','marketing'),(8,'Service Provider','Cover Designer','cover-designer'),(9,'Service Provider','Proof Reader','proof-reader'),(10,'Service Provider','Copyright Registration','copyright-registration'),(11,'Service Provider','Public Relation','public-relation');
 /*!40000 ALTER TABLE `usertype` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -467,4 +471,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-25 17:31:36
+-- Dump completed on 2013-07-25 13:52:47
