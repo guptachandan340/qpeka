@@ -290,8 +290,14 @@ public class UserManager {
 		if (profile.get(UserProfile.USERID) != null) {
 			userid = Long.parseLong(UserProfile.USERID);
 
+<<<<<<< HEAD
 			usertype = Short.parseShort(((profile.get(UserProfile.USERTYPE) != null) ? profile
 					.get(UserProfile.USERTYPE).toString(): com.qpeka.db.Constants.USERTYPE.READER).toString());
+=======
+			usertype = (short) ((profile.get(UserProfile.USERTYPE) != null) 
+					? Short.parseShort(profile.get(UserProfile.USERTYPE).toString())
+					: com.qpeka.db.Constants.USERTYPE.READER.ordinal());
+>>>>>>> 6838b35eaef97216e9aa2851e367657ae6203d62
 
 			// Set Pen name
 			if (profile.get(UserProfile.PENNAME) != null) {
@@ -696,10 +702,16 @@ public class UserManager {
 		return collectionString.toString();
 	}
 
+<<<<<<< HEAD
 	public static void main(String [] args) {
 		
 		UserManager userman = new UserManager();
 		/*
+=======
+	/*
+	public static void main(String [] args) {
+		UserManager userman = new UserManager();
+>>>>>>> 6838b35eaef97216e9aa2851e367657ae6203d62
 		User user = new User("rahul",
 				BCrypt.hashpw("rahul", BCrypt.gensalt()),
 				"srahul07.qpeka@gmail.com",
@@ -716,7 +728,11 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+<<<<<<< HEAD
 		*/
+=======
+		
+>>>>>>> 6838b35eaef97216e9aa2851e367657ae6203d62
 		try {
 			User usr = userman.authenticateUser("rahul", "rahul", false);
 			System.out.println(usr.toString());
@@ -725,4 +741,10 @@ public class UserManager {
 			e.printStackTrace();
 		}
 	}
+<<<<<<< HEAD
 	}// End of class UserManager.java;
+=======
+	*/
+	
+}// End of class UserManager.java
+>>>>>>> 6838b35eaef97216e9aa2851e367657ae6203d62
