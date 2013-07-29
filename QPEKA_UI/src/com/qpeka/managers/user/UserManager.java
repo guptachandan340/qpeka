@@ -21,7 +21,6 @@ import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.exceptions.user.UserBadgesException;
@@ -63,7 +62,6 @@ public class UserManager {
 	}
 
 	/**
-	 * Register User to Qpeka
 	 * 
 	 * @param firstName
 	 * @param lastName
@@ -151,7 +149,6 @@ public class UserManager {
 			} else {
 				user = UserHandler.getInstance().findWhereEmailEquals(authName);
 			}
-			
 		} catch (UserException _e) {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
@@ -219,6 +216,7 @@ public class UserManager {
 		}
 
 		// Returns false when userlist is empty else true (Email exists)
+		// false -> email does not exists, true -> email exists
 		return (!userList.isEmpty());
 	}// end of emailExists()
 
