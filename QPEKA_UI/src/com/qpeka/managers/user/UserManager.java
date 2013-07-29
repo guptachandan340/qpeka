@@ -80,10 +80,12 @@ public class UserManager {
 			String nationality) {
 		// Create User
 		User user = new User();
-		user.setEmail(email);
+		
 		user.setUsername(username);
 		user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+		user.setEmail(email);
 		user.setCreated(System.currentTimeMillis() / 1000);
+		// To Do : write statement for lastaccess and lastlogin
 		user.setLastaccess(0);
 		user.setLastlogin(0);
 		user.setStatus((short) STATUS.DEFAULT.ordinal());
@@ -120,7 +122,9 @@ public class UserManager {
 
 		// Insert user to database;
 		try {
-			UserHandler.getInstance().insert(user);
+			Long userId = UserHandler.getInstance().insert(user);
+	
+			userprofile.setUserid(userId);
 			UserProfileHandler.getInstance().insert(userprofile);
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
@@ -129,8 +133,7 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return user;
+	return user;
 	}// end of registeruser()
 
 	/**
