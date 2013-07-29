@@ -17,7 +17,7 @@ public class BadgesManager {
 		super();
 	}
 
-	public BadgesManager getInstance() {
+	public static BadgesManager getInstance() {
 		return (instance == null ? instance = new BadgesManager() : instance);
 	}
 
@@ -178,7 +178,7 @@ public class BadgesManager {
 	 *            badgesManager.updateBadges();
 	 */
 
-	/*
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -199,6 +199,6 @@ public class BadgesManager {
 		System.out.println(badgesManager.readBadges("programmer")); 
 		System.out.println(badgesManager.readBadges(1000));  
 		}
-*/
+
 }
 

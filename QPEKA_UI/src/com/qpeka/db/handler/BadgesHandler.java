@@ -519,9 +519,9 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 					&& counter < sqlParams.size(); counter++) {
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
+			
 			rs = stmt.executeQuery();
-
+		
 			// fetch the results
 			return fetchMultiResults(rs);
 		} catch (Exception _e) {
