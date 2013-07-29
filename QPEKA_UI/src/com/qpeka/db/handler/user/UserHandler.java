@@ -487,7 +487,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 			if (user.isPasswordModified()) {
 				stmt.setString(index++, user.getPassword());
 			}
-
+			
 			if (user.isEmailModified()) {
 				stmt.setString(index++, user.getEmail());
 			}
@@ -613,6 +613,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 
 	@Override
 	public List<User> findWhereEmailEquals(String email) throws UserException {
+		
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE email = ? ORDER BY email",
 				Arrays.asList(new Object[] { email }));
@@ -703,9 +704,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 					&& counter < sqlParams.size(); counter++) {
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
 			rs = stmt.executeQuery();
-
 			// fetch the results
 			return fetchMultiResults(rs);
 		} catch (Exception _e) {

@@ -213,6 +213,7 @@ public class UserProfile implements Serializable {
 
 	public void setUserid(long userid) {
 		this.userid = userid;
+		this.useridModified = true;
 	}
 
 	public String getPenname() {
