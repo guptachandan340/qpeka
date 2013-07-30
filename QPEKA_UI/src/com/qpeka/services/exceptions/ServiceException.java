@@ -1,4 +1,4 @@
-package com.qpeka.services.Exceptions;
+package com.qpeka.services.exceptions;
 
 public class ServiceException extends Exception {
 

@@ -1,6 +1,8 @@
 package com.qpeka.services.user;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -8,8 +10,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
+import com.qpeka.db.Badges;
+import com.qpeka.db.Category;
+import com.qpeka.db.Country;
+import com.qpeka.db.Files;
+import com.qpeka.db.Languages;
 import com.qpeka.db.exceptions.user.UserException;
+import com.qpeka.db.handler.FilesHandler;
 import com.qpeka.db.user.User;
+import com.qpeka.managers.BadgesManager;
+import com.qpeka.managers.CategoryManager;
+import com.qpeka.managers.CountryManager;
+import com.qpeka.managers.FilesManager;
+import com.qpeka.managers.LanguagesManager;
 import com.qpeka.managers.user.UserManager;
 
 @Path("/user")
@@ -17,7 +30,7 @@ public class UserService {
 
 	@POST
 	@Path("/login")
-	public Response loginUserService(@FormParam("username") String username,
+	public Response loginService(@FormParam("username") String username,
 			@FormParam("password") String password) {
 		boolean flag;
 		User user = null;
@@ -43,7 +56,7 @@ public class UserService {
 
 	@POST
 	@Path("/register")
-	public Response registerUserService(@FormParam("firstname") String firstName,
+	public Response registerService(@FormParam("firstname") String firstName,
 			@FormParam("lastname") String lastName,
 			@FormParam("email") String email,
 			@FormParam("username") String username,
@@ -124,5 +137,56 @@ public class UserService {
 		}
 		return Response.status(200).entity(response).build();
 	}
+	
+	@POST
+	@Path("/retrievingfiles")
+	public Response retrievingFileService() {
+		List<Files> files = new ArrayList<Files>();
+		files = FilesManager.getInstance().readFiles();
+		Gson gson = new Gson();
+		String response = gson.toJson(files);
+		return Response.status(200).entity(response).build();
+	}
+	
+	@POST
+	@Path("/retrievinglanguages")
+	public Response retrievingLanguageService() {
+		List<Languages> languages = new ArrayList<Languages>();
+		languages = LanguagesManager.getInstance().readLanguages();
+		Gson gson = new Gson();
+		String response = gson.toJson(languages);
+		return Response.status(200).entity(response).build();
+	}
+	
+	@POST
+	@Path("/retrievingcategory")
+	public Response retrievingCategoryService() {
+		List<Category> category = new ArrayList<Category>();
+		category = CategoryManager.getInstance().readCategory();
+		Gson gson = new Gson();
+		String response = gson.toJson(category);
+		return Response.status(200).entity(response).build();
+	}
+	
+	@POST
+	@Path("/retrievingcountry")
+	public Response retrievingCountryService() {
+		List<Country> country = new ArrayList<Country>();
+		country = CountryManager.getInstance().RetrieveCountry();
+		Gson gson = new Gson();
+		String response = gson.toJson(country);
+		return Response.status(200).entity(response).build();
+	}
+	
+	@POST
+	@Path("/retrievingbadges")
+	public Response retrievingBadgeService() {
+		List<Badges> badges = new ArrayList<Badges>();
+		badges = BadgesManager.getInstance().readBadges();
+		Gson gson = new Gson();
+		String response = gson.toJson(badges);
+		return Response.status(200).entity(response).build();
+	}
+	
 }
 

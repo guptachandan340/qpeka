@@ -1,12 +1,16 @@
 package com.qpeka.managers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.qpeka.db.Country;
+import com.qpeka.db.Files;
 import com.qpeka.db.exceptions.CountryException;
+import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.handler.CountryHandler;
+import com.qpeka.db.handler.FilesHandler;
 
 public class CountryManager {
 	public static CountryManager instance = null;
@@ -133,6 +137,23 @@ public class CountryManager {
 		}
 		return countries;
 	}
+	
+	public void RetrieveCountry() {
+			List<Country> existingCountry = null;
+			//Map<short, O>
+				try {
+					existingCountry = CountryHandler.getInstance().findAll();
+					for(Country country : existingCountry) {
+							String shortName = country.getShortname();
+							
+					}
+				} catch (CountryException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
+	
 
 	// @Overloading
 	// Reading countries through Countryid
@@ -232,12 +253,13 @@ public class CountryManager {
 	/**
 	 * @param args
 	 */
-/*
+
 	public static void main(String[] args) {
 		CountryManager countryManager = new CountryManager();
 		System.out.println(countryManager.deleteCountry((short) 251));
 		System.out.println(countryManager.createCountry((short) 251, "MI", "MY INDIA",
 				"I love My India", "MLI", "444", "yes", "91", ".ILI"));
+		System.out.println(countryManager.RetrieveCountry());
 		Map<String, Object> updateCountry = new HashMap<String, Object>();
 		updateCountry.put("countryid", 2);
 		updateCountry.put("iso2", "AX");
@@ -245,5 +267,5 @@ public class CountryManager {
 		System.out.println(countryManager.readCountry("248", "numcode"));
 
 	}
-*/
+
 }

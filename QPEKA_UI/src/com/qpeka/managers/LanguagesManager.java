@@ -16,7 +16,7 @@ public class LanguagesManager {
 		super();
 	}
 
-	public LanguagesManager getInstance() {
+	public static LanguagesManager getInstance() {
 		return (instance == null ? (instance = new LanguagesManager()) : instance);
 	}
 
