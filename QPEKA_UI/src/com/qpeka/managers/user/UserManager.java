@@ -21,7 +21,6 @@ import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.exceptions.user.UserBadgesException;
@@ -33,6 +32,7 @@ import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.handler.BadgesHandler;
 import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.CountryHandler;
+import com.qpeka.db.handler.FilesHandler;
 import com.qpeka.db.handler.LanguagesHandler;
 import com.qpeka.db.handler.user.UserBadgesHandler;
 import com.qpeka.db.handler.user.UserHandler;
@@ -63,7 +63,6 @@ public class UserManager {
 	}
 
 	/**
-	 * Register User to Qpeka
 	 * 
 	 * @param firstName
 	 * @param lastName
@@ -151,14 +150,12 @@ public class UserManager {
 			} else {
 				user = UserHandler.getInstance().findWhereEmailEquals(authName);
 			}
-			
 		} catch (UserException _e) {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
 		}
 		
 		if (!user.isEmpty()) {
-			
 			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? user
 					.get(0) : null);
 			
@@ -167,6 +164,29 @@ public class UserManager {
 		}
 	} // end of authenticateByEmail()
 
+	/**
+	 * Confirm Password With Database
+	 * 
+	 * @throws UserException
+	 */
+	//Check for authenticate user by passing username and password for reset password
+	public boolean confirmPassword(long userid, String password) {
+		List<User> user = new ArrayList<User>();
+		try {
+			user = UserHandler.getInstance().findWhereUseridEquals(userid);
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (!user.isEmpty()) {
+			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? true : false);
+			
+		} else {
+			return false;
+		}
+	}
+
+			
 	/**
 	 * Authenticate User
 	 * 
@@ -219,6 +239,7 @@ public class UserManager {
 		}
 
 		// Returns false when userlist is empty else true (Email exists)
+		// false -> email does not exists, true -> email exists
 		return (!userList.isEmpty());
 	}// end of emailExists()
 
@@ -278,7 +299,7 @@ public class UserManager {
 		}
 
 		return user.get(0).getEmail();
-	} // end of resetpassword()
+	} // end of reset password()
 
 	/**
 	 * Edit profile
@@ -588,7 +609,6 @@ public class UserManager {
 				}
 			}
 		}
-
 		return userProfileList.get(0);
 	}
 
