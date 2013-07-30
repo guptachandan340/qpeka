@@ -23,7 +23,7 @@ public class FilesManager {
 		// TODO Auto-generated constructor stub
 	}
 
-	public FilesManager getIntance() {
+	public static FilesManager getInstance() {
 		return (instance == null ? (instance = new FilesManager()) : instance);
 	}
 
@@ -93,6 +93,7 @@ public class FilesManager {
 	
 
 	/* Check delete function with userid for user */
+	// Set file status to delete instead of deleting the files;
 	public boolean deleteFiles(long fileId) {
 		try {
 			FilesHandler.getInstance().delete(fileId);
@@ -240,8 +241,8 @@ public class FilesManager {
 		return existingFiles;
 	}
 
-	public List<Files> readFiles(String filetype, String filesAttribute,
-			long userId) {
+	public List<Files> readFiles(long userId,String filetype, String filesAttribute,
+			) {
 		List<Files> existingFiles = null;
 		List<Object> readFilesobj = new ArrayList<Object>();
 		readFilesobj.add(userId);
@@ -256,12 +257,10 @@ public class FilesManager {
 				e.printStackTrace();
 			}
 		}
-
 		return existingFiles;
-
 	}
 
-
+	
 	/**
 	 * @param args
 	 */
@@ -272,7 +271,7 @@ public class FilesManager {
 		filesManager.deleteFiles(6);
 		filesManager.createFiles((long)6,(long)40,"/home/ankita/Downloads/google-chrome-stable_current_amd64.deb");
 		System.out.println(filesManager.readFiles("deb", "filetype"));
-	    System.out.println(filesManager.readFiles("bin", "filetype", 20));
+	    System.out.println(20,filesManager.readFiles("bin", "filetype"));
 	    Map<String, Object> updateMap = new HashMap<String, Object>();
 		updateMap.put("fileid", 3);
 		updateMap.put("filetype", "sql");
