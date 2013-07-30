@@ -18,7 +18,7 @@ public CategoryManager() {
 	super();
 }
 
-public CategoryManager getInstance() {
+public static CategoryManager getInstance() {
 	return(instance == null ? instance = new CategoryManager() : instance);
 }
 

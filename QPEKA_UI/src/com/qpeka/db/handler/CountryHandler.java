@@ -67,9 +67,23 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 	/**
 	 * Index of column countryid
 	 */
+	
+	/* ToDo : change ID to String 
+	 * problem during :
+	 *  public List<Country> RetrieveCountry() {
+			List<Country> country = null;
+				try {
+					country = CountryHandler.getInstance().findByDynamicSelect("SELECT shortname, iso2 from qpeka.country ",null);
+				} catch (CountryException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		return country;
+		}
+		Error : Invalid value for getShort() */ 
 	protected static final int COLUMN_COUNTRYID = 1;
 
-	/**
+	/** 
 	 * Index of column iso2
 	 */
 	protected static final int COLUMN_ISO2 = 2;
@@ -676,7 +690,6 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
 	}
 
