@@ -17,8 +17,8 @@ public class UserService {
 
 	@POST
 	@Path("/login")
-	public Response loginUser(@FormParam("uname") String username,
-			@FormParam("pwd") String password) {
+	public Response loginUserService(@FormParam("username") String username,
+			@FormParam("password") String password) {
 		boolean flag;
 		User user = null;
 		if (username.indexOf("@") != -1) {
@@ -29,7 +29,6 @@ public class UserService {
 		try {
 			user = UserManager.getInstance().authenticateUser(username,
 					password, flag);
-			System.out.println(user.toString());
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,47 +43,86 @@ public class UserService {
 
 	@POST
 	@Path("/register")
-	public Response registerUser(@FormParam("firstname") String firstName,
+	public Response registerUserService(@FormParam("firstname") String firstName,
 			@FormParam("lastname") String lastName,
 			@FormParam("email") String email,
 			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("gender") String gender, @FormParam("dob") Date dob,
 			@FormParam("nationality") String nationality) {
-		
-		//Ask for emailexist, username exist and confirm passwor criteria
+
+		// Ask for emailexist, username exist and confirm password criteria
 		User user = null;
-		user = UserManager.getInstance().registerUser(firstName,
-						lastName, email, username, password, gender, dob,
-						nationality);
+		user = UserManager.getInstance().registerUser(firstName, lastName,
+				email, username, password, gender, dob, nationality);
 
 		Gson gson = new Gson();
 		String json = gson.toJson(user);
-
 		return Response.status(200).entity(json).build();
 
 	}
 
-	/*
+	
 	@POST
-	@Path("/verifyEmailExist")
-	public Response VerifyEmail(@FormParam("email") String email) {
-		boolean emailStatus = true;
+	@Path("/verifyemailexist")
+	public Response verifyEmailService(@FormParam("email") String email) {
+		// boolean emailStatus = true;
+		String response= null;
+		System.out.println(email);
 		if (email.indexOf("@") != -1) {
-			try {
-				emailStatus = UserManager.getInstance().emailExists(email);
-			} catch (UserException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			if (UserManager.getInstance().emailExists(email)) {
+				response = "Already Available in our System, Try with other";
+			} else {
+				response = "Available for you";
 			}
-			if (!emailStatus) {
-				return Response.status(200).entity("available").build();
-			}
-			return Response.status(200)
-					.entity("Already Available, Try with other").build();
-
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return null;
+		System.out.println(response);
+		 } else {
+			 response = "Enter Email Id Properly";
+		}
+		return Response.status(200).entity(response).build();
 	}
-*/
+	
+	
+	@POST
+	@Path("/verifyusernameexist")
+	public Response verifyUserNameService(@FormParam("username") String userName) {
+		// boolean emailStatus = true;
+		String response= null;
+		System.out.println(userName);
+		try {
+			if (UserManager.getInstance().usernameExists(userName)) {
+				response = "Already Available in our System, Try with other";
+			} else {
+				response = "Available for you";
+			}
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(response);
+		return Response.status(200).entity(response).build();
+	}
+	
+	@POST
+	@Path("/confirmpassword")
+	public Response cofirmPasswordService(@FormParam("password") String password, @FormParam("confirmpassword") String confirmPassword) {
+		String response = null;
+		if(password.length() < 8) {
+			response = "Minimum 8 characters are allowed for password";
+		} else {
+			if(!password.equals(confirmPassword)) {
+				response = "Password doesnot matches";
+			}
+			else {
+				response = "Correct password";
+			}
+		}
+		return Response.status(200).entity(response).build();
+	}
 }
+
