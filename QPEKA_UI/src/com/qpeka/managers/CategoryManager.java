@@ -1,12 +1,17 @@
 package com.qpeka.managers;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.qpeka.db.Category;
+import com.qpeka.db.Languages;
 import com.qpeka.db.exceptions.CategoryException;
+import com.qpeka.db.exceptions.LanguagesException;
 import com.qpeka.db.handler.CategoryHandler;
+import com.qpeka.db.handler.LanguagesHandler;
 
 
 public class CategoryManager {
@@ -163,22 +168,104 @@ public List<Category> readCategory(int points) {
 	return categories;
 }
 
-/**
-	 * @param args
+/* Read category through category type */
+public Map<Short, Map.Entry<String, String>> readCategory(String type) {
+	//Map<Short, Map<String, String>> retrievedCategory = new HashMap<Short, Map<String,String>>();
+	List<Category> existingCategory = null;
+	try {
+		existingCategory = CategoryHandler.getInstance().findWhereTypeEquals(type);
+	} catch (CategoryException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return retrieveCategory(existingCategory);
+}
+
+	public Map<Short, Map.Entry<String, String>> retrieveCategory(
+			List<Category> existingCategory) {
+		Map<Short, Map.Entry<String, String>> outerMap = new HashMap<Short, Map.Entry<String, String>>();
+		Map<String, String> innerMap = new HashMap<String, String>();
+		for (Category category : existingCategory) {
+			innerMap.put(category.getCategory(), category.getGenre());
+		}
+		Iterator iterator = innerMap.entrySet().iterator();
+		while (iterator.hasNext()) {
+			for (Category category : existingCategory) {
+				Map.Entry mapEntry = (Map.Entry) iterator.next();
+				outerMap.put(category.getCategoryid(), mapEntry);
+				System.out.println(mapEntry);
+			}
+		}
+		return outerMap;
+	}
+//@SuppressWarnings("unchecked")
+/*	public Map<Short, Map<String, String>> retrieveCategory(
+			List<Category> existingCategory) {
+		Map<String, String> categoryGenreMap = new HashMap<String, String>();
+		Map<Short, Map<String, String>> categoryIdentifierMap = new HashMap<Short, Map<String, String>>();
+		for (Category category : existingCategory) {
+			// category.getCategory();
+			categoryGenreMap.put(category.getCategory(), category.getGenre());
+		}
+		for (Category category : existingCategory) {
+			Iterator<String, String> it = categoryGenreMap.entrySet()
+					.iterator();
+			while (it.hasNext()) {
+				Map<String, String> mapEntry = (Map<String, String>) it
+						.next();
+				System.out.println(mapEntry.toString());
+				categoryIdentifierMap.put(category.getCategoryid(),mapEntry);
+			}
+		}
+		return categoryIdentifierMap;
+	}
+
+*/
+/*public Map<Short, Map<String, String>> readCategory(String type) {
+	//Map<Short, Map<String, String>> retrievedCategory = new HashMap<Short, Map<String,String>>();
+	List<Category> existingCategory = null;
+	List<Category> readCategory = null;
+	try {
+		existingCategory = CategoryHandler.getInstance().findWhereTypeEquals(type);
+		for(Category category : existingCategory) {
+		}
+			//categoryGenreMap.put(category.getCategory(),category.getGenre());	
+	} catch (CategoryException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return retrieveCategory(existingCategory);
+	
+}
+
+public Map<Short, Map<String, String>> retrieveCategory(List<Category> existingCategory) {
+	List<Category> genres = null;
+	Map<String, String> categoryGenreMap = new HashMap<String, String>();
+	Map<Short, Map<String, String>> categoryIdentifierMap = new HashMap<Short, Map<String, String>>();
+	for(Category category : existingCategory) {
+		categoryGenreMap.put(category.getCategory(),category.getGenre());	
+		categoryIdentifierMap.put(category.getCategoryid(), categoryGenreMap);
+	}
+	
+	return categoryIdentifierMap;
+}
+*/
+	/**
+	 * @param argsl
 	 */
 /*
 	public static void main(String[] args) {
 		CategoryManager categoryManager = new CategoryManager();
-		categoryManager.deleteCategory((short)2);
-		categoryManager.createCategory((short)2,"book","horror","Fiction",(short)5000);
-		Map<String, Object> updateMap = new HashMap<String, Object>();
-		updateMap.put(Category.CATEGORYID, (short)1);
-		updateMap.put(Category.GENRE, "nonfictional");
-		categoryManager.updateCategory(updateMap);
+		categoryManager.deleteCategory((short)5);
+		categoryManager.createCategory((short)5,"Article","love","life",(short)5000);
+	//	Map<String, Object> updateMap = new HashMap<String, Object>();
+	//	updateMap.put(Category.CATEGORYID, (short)1);
+	//	updateMap.put(Category.GENRE, "nonfictional");
+	//	categoryManager.updateCategory(updateMap);
 		System.out.println(categoryManager.readCategory((short)1));
 		System.out.println(categoryManager.readCategory());
+		System.out.println(categoryManager.readCategory("book"));
 		
 	}
-*/	
-
+*/
 }
