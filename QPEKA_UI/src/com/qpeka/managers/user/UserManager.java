@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.RandomStringUtils;
+
 import com.qpeka.db.Badges;
 import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
@@ -76,7 +78,7 @@ public class UserManager {
 	 */
 	public User registerUser(String firstName, String lastName, String email,
 			String username, String password, String gender, Date dob,
-			String nationality) {
+			List<String> languages) {
 		// Create User
 		User user = new User();
 		
@@ -132,6 +134,8 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//store lang in userlangtable
 	return user;
 	}// end of registeruser()
 
@@ -164,47 +168,6 @@ public class UserManager {
 		}
 	} // end of authenticateByEmail()
 
-	/**
-	 * Confirm Password With Database
-	 * 
-	 * @throws UserException
-	 */
-	//Check for authenticate user by passing username and password for reset password
-	public boolean confirmPassword(long userid, String password) {
-		List<User> user = new ArrayList<User>();
-		try {
-			user = UserHandler.getInstance().findWhereUseridEquals(userid);
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (!user.isEmpty()) {
-			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? true : false);
-			
-		} else {
-			return false;
-		}
-	}
-
-			
-	/**
-	 * Authenticate User
-	 * 
-	 * @throws UserException
-	 */
-	/*
-	 * public User authenticateByUsername(String username, String password)
-	 * throws UserException { List<User> user = new ArrayList<User>(); try {
-	 * 
-	 * } catch (UserException _e) { throw new
-	 * UserException("User Authentication Exception: " + _e.getMessage(), _e); }
-	 * 
-	 * if (!user.isEmpty()) { return (BCrypt.checkpw(password,
-	 * user.get(0).getPassword()) ? user .get(0) : null); } else { return null;
-	 * }
-	 * 
-	 * }// end of authenticateByUsername()
-	 */
 	/**
 	 * Username exists?
 	 * 
@@ -254,19 +217,23 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public User changePassword(long userid, String password)
+	public User changePassword(User user, String currentPassword, String newPassword)
 			throws UserException {
-		User user = new User();
+		boolean oldPasswordResult = false;
+		if(BCrypt.checkpw(currentPassword, user.getPassword())) {
 		try {
-			user = UserHandler.getInstance().findByPrimaryKey(userid);
-			user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-
-			UserHandler.getInstance().update(userid, user);
+			oldPasswordResult = BCrypt.checkpw(newPassword, user.getPassword()) ? true : false;
+			if(!oldPasswordResult) {
+				user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+			} else {
+				System.out.println("Old password is matching");
+			}
+			UserHandler.getInstance().update(user.getUserid(), user);
 		} catch (UserException _e) {
 			throw new UserException("Update User Password Exception: "
 					+ _e.getMessage(), _e);
 		}
-
+		}
 		return user;
 	}// end of changePassword()
 
@@ -275,9 +242,9 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public String resetPassword(String authName, String newPassword,
-			boolean isEmail) throws UserException {
+	public String resetPassword(String authName, boolean isEmail) throws UserException {
 		List<User> user = new ArrayList<User>();
+		String newPassword = RandomStringUtils.random(8, true, true);
 		try {
 			if (!isEmail) {
 				user = UserHandler.getInstance().findWhereUsernameEquals(
@@ -298,7 +265,7 @@ public class UserManager {
 					user.get(0));
 		}
 
-		return user.get(0).getEmail();
+		return newPassword;
 	} // end of reset password()
 
 	/**

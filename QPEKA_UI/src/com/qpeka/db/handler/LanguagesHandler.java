@@ -236,7 +236,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			}
 
 			if (language.isANativeModified()) {
-				stmt.setString(index++, language.getANative());
+				stmt.setShort(index++, language.getANative());
 			}
 
 			if (language.isDirectionModified()) {
@@ -375,7 +375,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			}
 
 			if (language.isANativeModified()) {
-				stmt.setString(index++, language.getANative());
+				stmt.setShort(index++, language.getANative());
 			}
 
 			if (language.isDirectionModified()) {
@@ -649,7 +649,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 		language.setLanguageid(rs.getShort(COLUMN_LANGUAGEID));
 		language.setLanguage(rs.getString(COLUMN_LANGUAGE));
 		language.setName(rs.getString(COLUMN_NAME));
-		language.setANative(rs.getString(COLUMN_A_NATIVE));
+		language.setANative(rs.getShort(COLUMN_A_NATIVE));
 		language.setDirection(rs.getShort(COLUMN_DIRECTION));
 		language.setEnabled(rs.getShort(COLUMN_ENABLED));
 

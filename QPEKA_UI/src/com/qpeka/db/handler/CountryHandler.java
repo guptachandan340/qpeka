@@ -561,7 +561,7 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 
 	@Override
 	public List<Country> findAll() throws CountryException {
-		return findByDynamicSelect(SQL_SELECT + " ORDER BY countryid", null);
+		return findByDynamicSelect(SQL_SELECT + " ORDER BY iso2", null);
 	}
 
 	@Override
