@@ -216,7 +216,7 @@ public class LanguagesManager {
 			try {
 				existingLanguage = LanguagesHandler.getInstance().findAll();
 				for(Languages language : existingLanguage) {
-					languageIdentifierMap.put(language.getLanguageid(),language.getLanguage());	
+					languageIdentifierMap.put(language.getLanguageid(),language.getName());	
 				}
 			} catch (LanguagesException e) {
 				// TODO Auto-generated catch block

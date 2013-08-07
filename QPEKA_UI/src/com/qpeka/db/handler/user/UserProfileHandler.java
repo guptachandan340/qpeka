@@ -44,7 +44,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	 * queries
 	 */
 	protected final String SQL_SELECT = "SELECT userid, penname, firstname, "
-			+ "middlename, lastname, gender, dob, nationality, website, biography, profilepic, level FROM "
+			+ "middlename, lastname, gender, dob, nationality, website, biography, profilepic, level, tnc FROM "
 			+ getTableName() + "";
 
 	/**
@@ -58,7 +58,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
 			+ " ( userid, penname, firstname, middlename, lastname, gender, "
-			+ "dob, nationality, website, biography, level, profilepic ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			+ "dob, nationality, website, biography, level, profilepic, tnc) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
@@ -66,7 +66,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
 			+ " SET userid = ?, penname = ?, firstname = ?, middlename = ?, "
-			+ "lastname = ?, gender = ?, dob = ?, nationality = ?, website = ?, biography = ?, profilepic = ?, level = ? WHERE userid = ?";
+			+ "lastname = ?, gender = ?, dob = ?, nationality = ?, website = ?, biography = ?, profilepic = ?, level = ? tnc = ? WHERE userid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -134,6 +134,11 @@ public class UserProfileHandler extends AbstractHandler implements
 	 */
 	protected static final int COLUMN_LEVEL = 12;
 
+	/**
+	 * Index of column TNC
+	 */
+	protected static final int COLUMN_TNC = 13;
+	
 	/**
 	 * Number of columns
 	 */
@@ -312,6 +317,18 @@ public class UserProfileHandler extends AbstractHandler implements
 				values.append("?");
 				modifiedCount++;
 			}
+			
+			if (user.isTncModified()) {
+				if (modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+
+				sql.append("tnc");
+				values.append("?");
+				modifiedCount++;
+			}
+
 
 			if (modifiedCount == 0) {
 				// nothing to insert
@@ -373,6 +390,11 @@ public class UserProfileHandler extends AbstractHandler implements
 				}
 
 			}
+
+			if (user.isTncModified()) {
+				stmt.setShort(index++, user.getTnc());
+			}
+
 
 			if (user.isUserlevelModified()) {
 				stmt.setShort(index++, (short) user.getUserlevel().ordinal());
@@ -521,6 +543,15 @@ public class UserProfileHandler extends AbstractHandler implements
 				modified = true;
 			}
 
+			if (user.isTncModified()) {
+				if (modified) {
+					sql.append(", ");
+				}
+
+				sql.append("tnc=?");
+				modified = true;
+			}
+
 			if (user.isUserlevelModified()) {
 				if (modified) {
 					sql.append(", ");
@@ -593,6 +624,10 @@ public class UserProfileHandler extends AbstractHandler implements
 				}
 			}
 
+			if (user.isTncModified()) {
+				stmt.setShort(index++, user.getTnc());
+			}
+			
 			if (user.isUserlevelModified()) {
 				stmt.setShort(index++, (short) user.getUserlevel().ordinal());
 			}
@@ -784,6 +819,14 @@ public class UserProfileHandler extends AbstractHandler implements
 				+ " WHERE level = ? ORDER BY level",
 				Arrays.asList(new Object[] { new Short(level) }));
 	}
+	
+	@Override
+	public List<UserProfile> findWhereTncEquals(short tnc)
+			throws UserProfileException {
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE tnc = ? ORDER BY tnc",
+				Arrays.asList(new Object[] { new Short(tnc) }));
+	}
 
 	@Override
 	public void setMaxRows(int maxRows) {
@@ -938,6 +981,7 @@ public class UserProfileHandler extends AbstractHandler implements
 		user.setWebsite(rs.getString(COLUMN_WEBSITE));
 		user.setBiography(rs.getString(COLUMN_BIOGRAPHY));
 		user.setProfilepic(rs.getInt(COLUMN_PROFILEPIC));
+		user.setNationality(rs.getShort(COLUMN_TNC));
 		if (rs.wasNull()) {
 			user.setProfilepicNull(true);
 		}
@@ -960,6 +1004,7 @@ public class UserProfileHandler extends AbstractHandler implements
 		user.setWebsiteModified(false);
 		user.setBiographyModified(false);
 		user.setProfilepicModified(false);
+		user.setTncModified(false);
 	}
 
 	/**
@@ -1003,7 +1048,7 @@ public class UserProfileHandler extends AbstractHandler implements
 		Date dob = new Date();
 		UserProfile user = new UserProfile(1, "Rauline", name,
 				GENDER.valueOf("Male"), dob, up.deriveAge(dob), (short) 102,
-				"rahulshelke.com", biography, 1);
+				"rahulshelke.com", biography, 1,(short)1);
 		// "/home/rahul/Pictures/Webcam/2013-06-10-123500.jpg"
 		// user.setNameModified(true);
 		// user.setUseridModified(true);

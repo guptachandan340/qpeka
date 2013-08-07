@@ -45,10 +45,9 @@ function createUserObject(){
 		<p>
 		<input type="hidden"  name = "userObject" value="hello"> 
 		</p>
-		 -->
-		
-</form>
+		</form>
 </body>
+
 
 <!-- 
 <script language="Javascript">

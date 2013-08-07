@@ -1,15 +1,41 @@
 <html>
+<head>
+
+<script type="text/javascript">
+   
+    function check()
+    {
+    	var val = frm1.uname.value;
+    	//alert(val);
+        if (val.indexOf("@") > 0)
+        {
+            alert ("email");
+            document.getElementById('isEmail1').value = true;
+            //alert( document.getElementById('isEmail1').value);
+        } else {
+        	alert("usernam");
+        	  document.getElementById('isEmail1').value = false;
+              //alert( document.getElementById('isEmail1').value);
+        }
+    }
+
+</script>
+
+</head>
 <body>
 	<h1>JAX-RS @FormQuery Testing</h1>
  
-	<form action="v1.0/user/login" method="post">
+	<form action="v1.0/user/login" method="post" id = "frm1">
 		<p>
-			UserName : <input type="text" name="username" />
+			UserName : <input type="text" id = "uname" name="username" />
 		</p>
 		<p>
 			Password : <input type="text" name="password" />
 		</p>
-		<input type="submit" value="Add User" />
+		<p>
+			<input type="hidden" class="email" id = "isEmail1" name = "isEmail"/>
+		</p>
+		<input type="submit" id = "submit" value="Add User" onclick="return check();"/>
 	</form>
  
 </body>
