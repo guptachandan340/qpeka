@@ -50,6 +50,21 @@ public class UserService {
 	}
 
 	@POST
+	@Path("/logout")
+	// pass user id  or user session object.
+	public Response logoutService(long lastaccess) {
+		User user = new User();
+		user.setUserid(1);
+		short counter = 0;
+		counter = UserManager.getInstance().updateLastLogin(lastaccess, user.getUserid(), false);
+		if(counter > 0) {
+			// or return true;
+			return Response.status(200).entity("successfully updated").build();
+		}
+		return null;
+	}
+
+	@POST
 	@Path("/registerpost")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response registerpost(MultivaluedMap<String, String> formParams) {

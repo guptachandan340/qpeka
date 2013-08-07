@@ -981,7 +981,7 @@ public class UserProfileHandler extends AbstractHandler implements
 		user.setWebsite(rs.getString(COLUMN_WEBSITE));
 		user.setBiography(rs.getString(COLUMN_BIOGRAPHY));
 		user.setProfilepic(rs.getInt(COLUMN_PROFILEPIC));
-		user.setNationality(rs.getShort(COLUMN_TNC));
+		user.setTnc(rs.getShort(COLUMN_TNC));
 		if (rs.wasNull()) {
 			user.setProfilepicNull(true);
 		}

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jws.soap.SOAPBinding.Use;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -200,18 +201,55 @@ public class UserManager {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
 		}
-		
-		if (!user.isEmpty()) {
-			
-			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? user
-					.get(0) : null);
-			
-		} else {
+		if (user.get(0).getStatus() != 3 || user.get(0).getStatus() != 4) {
+			if (!user.isEmpty()) {
+				if (BCrypt.checkpw(password, user.get(0).getPassword())) {
+					// check whether counter is > 0 or not; if not then set error code.
+					updateLastLogin(System
+							.currentTimeMillis() / 1000, user.get(0)
+							.getUserid(), true);
+					return user.get(0);
+				} else {
+					return null;
+				}
+			} else {
+				return null;
+			}
+		}else {
 			return null;
 		}
 	} // end of authenticateByEmail()
 
-
+	/**
+	 * update lastlogin or lastaccess
+	 */
+	public short updateLastLogin(long lastaccess,long userid, boolean isLastLogin) {
+		List<User> existingUser = new ArrayList<User>();
+		short counter = 0;
+		try {
+			existingUser = UserHandler.getInstance().findWhereUseridEquals(userid);
+		} catch (UserException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		// isLastLogin = true when incoming data is LastLogin
+		// isLastLogin = false when incoming data is LastAccess
+		for(User user : existingUser) {
+			if(!isLastLogin) {
+				user.setLastaccess(lastaccess);
+			} else {
+				user.setLastlogin(lastaccess);
+			}
+			try {
+				counter += UserHandler.getInstance().update(userid, user);
+			} catch (UserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+	return counter;
+	}
+	
 	/**
 	 * Username exists?
 	 * 
@@ -323,7 +361,7 @@ public class UserManager {
 		short usertype = 0;
 
 		if (profile.get(UserProfile.USERID) != null) {
-			userid = Long.parseLong(UserProfile.USERID);
+			userid = Long.parseLong(profile.get(UserProfile.USERID).toString());
 
 			usertype = (short) ((profile.get(UserProfile.USERTYPE) != null) 
 					? Short.parseShort(profile.get(UserProfile.USERTYPE).toString())
