@@ -15,7 +15,7 @@ public class Languages implements Serializable {
 	private short languageid;
 	private String language;
 	private String name;
-	private String aNative;
+	private short aNative;
 	private short direction;
 	private short enabled;
 
@@ -36,7 +36,7 @@ public class Languages implements Serializable {
 	}
 
 	public Languages(short languageid, String language, String name,
-			String aNative, short direction, short enabled) {
+			short aNative, short direction, short enabled) {
 		super();
 		this.languageid = languageid;
 		this.language = language;
@@ -46,7 +46,7 @@ public class Languages implements Serializable {
 		this.enabled = enabled;
 	}
 
-	public Languages(String language, String name, String aNative,
+	public Languages(String language, String name, short aNative,
 			short direction, short enabled) {
 		super();
 		this.language = language;
@@ -89,11 +89,11 @@ public class Languages implements Serializable {
 		this.nameModified = true;
 	}
 
-	public String getANative() {
+	public short getANative() {
 		return aNative;
 	}
 
-	public void setANative(String aNative) {
+	public void setANative(short aNative) {
 		this.aNative = aNative;
 		this.aNativeModified = true;
 	}
@@ -212,8 +212,7 @@ public class Languages implements Serializable {
 			return false;
 		}
 
-		if (aNative == null ? _cast.aNative != aNative : !aNative
-				.equals(_cast.aNative)) {
+		if (aNative != _cast.aNative) {
 			return false;
 		}
 
@@ -259,9 +258,6 @@ public class Languages implements Serializable {
 		}
 
 		_hashCode = 29 * _hashCode + (nameModified ? 1 : 0);
-		if (aNative != null) {
-			_hashCode = 29 * _hashCode + aNative.hashCode();
-		}
 
 		_hashCode = 29 * _hashCode + (aNativeModified ? 1 : 0);
 		_hashCode = 29 * _hashCode + direction;

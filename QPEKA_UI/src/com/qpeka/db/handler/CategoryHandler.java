@@ -280,7 +280,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 				if (modified) {
 					sql.append(", ");
 				}
-
 				sql.append("categoryid=?");
 				modified = true;
 			}

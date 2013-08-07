@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.qpeka.db.Country;
 import com.qpeka.db.Languages;
+import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.LanguagesException;
+import com.qpeka.db.handler.CountryHandler;
 import com.qpeka.db.handler.LanguagesHandler;
 
 
@@ -21,7 +25,7 @@ public class LanguagesManager {
 	}
 
 	public Languages createLanguages(short languageid, String language,
-			String name, String aNative, short direction, short enabled) {
+			String name, short aNative, short direction, short enabled) {
 		Languages languages = Languages.getInstance();
 		languages.setLanguageid(languageid);
 		languages.setLanguage(language);
@@ -73,8 +77,8 @@ public class LanguagesManager {
 					}
 
 					if (updatelanguageMap.get(Languages.ANATIVE) != null) {
-						languages.setANative(updatelanguageMap.get(
-								Languages.ANATIVE).toString());
+						languages.setANative(Short.parseShort(updatelanguageMap.get(
+								Languages.ANATIVE).toString()));
 					}
 
 					if (updatelanguageMap.get(Languages.DIRECTION) != null) {
@@ -205,6 +209,22 @@ public class LanguagesManager {
 		}
 		return languages;
 	}
+	
+	public Map<Short, String> retrieveLangugage() {
+		List<Languages> existingLanguage = null;
+		Map<Short, String> languageIdentifierMap = new HashMap<Short, String>();
+			try {
+				existingLanguage = LanguagesHandler.getInstance().findAll();
+				for(Languages language : existingLanguage) {
+					languageIdentifierMap.put(language.getLanguageid(),language.getName());	
+				}
+			} catch (LanguagesException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return languageIdentifierMap;
+	}
+	
 
 	/**
 	 * @param args
@@ -214,14 +234,14 @@ public class LanguagesManager {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		LanguagesManager languagesManager = new LanguagesManager();
-		System.out.println(languagesManager.deleteLanguages((short) 6));
-		System.out.println(languagesManager.createLanguages((short) 6, "HINDI", "DEVNAGRI",
-				"INDIA", (short) 1, (short) 1));
-		System.out.println(languagesManager.readLanguages());
-		System.out.println(languagesManager.readLanguages((short) 3,
+		System.out.println(languagesManager.deleteLanguages((short) 3));
+		System.out.println(languagesManager.createLanguages((short) 3, "ENGLISH", "ENGLISH US",
+				(short)4, (short) 0, (short) 0));
+		System.out.println(languagesManager.retrieveLangugage());
+		//System.out.println(languagesManager.readLanguages((short) 6,
 				"languageid"));
 		System.out
-				.println(languagesManager.readLanguages((short) 0, "enabled"));
+				//.println(languagesManager.readLanguages((short) 0, "enabled"));
 		System.out.println(languagesManager.readLanguages(
 				"ENGLISH SOUTH AMERICA", "name"));
 		System.out.println(languagesManager.readLanguages("INDIA",Languages.ANATIVE)

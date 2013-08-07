@@ -742,7 +742,7 @@ public class BCrypt {
 	 * Check that a plaintext password matches a previously hashed
 	 * one
 	 * @param plaintext	the plaintext password to verify
-	 * @param hashed	the previously-hashed password
+	 * @param hashed the previously-hashed password
 	 * @return	true if the passwords match, false otherwise
 	 */
 	public static boolean checkpw(String plaintext, String hashed) {

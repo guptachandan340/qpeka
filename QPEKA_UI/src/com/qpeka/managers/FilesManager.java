@@ -5,15 +5,22 @@ import java.io.File;
 import java.util.ArrayList;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import com.qpeka.db.Category;
 import com.qpeka.db.Files;
+import com.qpeka.db.Languages;
+import com.qpeka.db.exceptions.CategoryException;
 import com.qpeka.db.exceptions.FileException;
+import com.qpeka.db.exceptions.LanguagesException;
 
+import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.FilesHandler;
+import com.qpeka.db.handler.LanguagesHandler;
 
 public class FilesManager {
 	public static FilesManager instance = null;
@@ -68,29 +75,19 @@ public class FilesManager {
 		return fileType;
 	}
 
-	/*public Files createFiles(long fileid, long userid, String filetype,
-			String filename, String filepath, String filemime, int filesize,
-			int status, long timestamp) {
-		Files files = new Files();
-		files.setFileid(fileid);
-		files.setUserid(userid);
-		files.setFiletype(filetype);
-		files.setFilename(filename);
-		files.setFilepath(filepath);
-		files.setFilemime(filemime);
-		files.setFilesize(filesize);
-		files.setStatus(status);
-		files.setTimestamp(timestamp);
-		try {
-			FilesHandler.getInstance().insert(files);
-		} catch (FileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(" file is created ");
-		return files;
-	}*/
-	
+	/*
+	 * public Files createFiles(long fileid, long userid, String filetype,
+	 * String filename, String filepath, String filemime, int filesize, int
+	 * status, long timestamp) { Files files = new Files();
+	 * files.setFileid(fileid); files.setUserid(userid);
+	 * files.setFiletype(filetype); files.setFilename(filename);
+	 * files.setFilepath(filepath); files.setFilemime(filemime);
+	 * files.setFilesize(filesize); files.setStatus(status);
+	 * files.setTimestamp(timestamp); try {
+	 * FilesHandler.getInstance().insert(files); } catch (FileException e) { //
+	 * TODO Auto-generated catch block e.printStackTrace(); }
+	 * System.out.println(" file is created "); return files; }
+	 */
 
 	/* Check delete function with userid for user */
 	// Set file status to delete instead of deleting the files;
@@ -241,8 +238,9 @@ public class FilesManager {
 		return existingFiles;
 	}
 
-	public List<Files> readFiles(long userId,String filetype, String filesAttribute,
-			) {
+	/* reading all fileds of file through userId and filetype */
+	
+	public List<Files> readFiles(long userId, String filetype,String filesAttribute) {
 		List<Files> existingFiles = null;
 		List<Object> readFilesobj = new ArrayList<Object>();
 		readFilesobj.add(userId);
@@ -260,27 +258,65 @@ public class FilesManager {
 		return existingFiles;
 	}
 
+	/*
+	public Map<String, Map.Entry<String, String>> readFiles(long userId, String filetype,
+			String filesAttribute) {
+		List<Files> existingFiles = null;
+		List<Object> readFilesobj = new ArrayList<Object>();
+		readFilesobj.add(userId);
+		readFilesobj.add(filetype);
+		if (filesAttribute.equalsIgnoreCase(Files.FILETYPE)) {
+			try {
+				existingFiles = FilesHandler.getInstance().findByDynamicWhere(
+						"userid = ? AND filetype IN (?)", readFilesobj);
+
+			} catch (FileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return retrieveFiles(existingFiles);
+	}
+
+	// Function for retrieving selected fields of file object 
 	
+	public Map<String, Map.Entry<String, String>> retrieveFiles(
+			List<Files> existingFiles) {
+		Map<String, Map.Entry<String, String>> outerMap = new HashMap<String, Map.Entry<String, String>>();
+		Map<String, String> innerMap = new HashMap<String, String>();
+		for (Files files : existingFiles) {
+			innerMap.put(files.getFilepath(),files.getFilemime());
+		}
+		Iterator iterator = innerMap.entrySet().iterator();
+		while (iterator.hasNext()) {
+			for (Files files : existingFiles) {
+				Map.Entry mapEntry = (Map.Entry) iterator.next();
+				outerMap.put(files.getFilename(), mapEntry);
+			}
+		}
+		return outerMap;
+	}
+
 	/**
 	 * @param args
 	 */
+
 	/*
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		FilesManager filesManager = new FilesManager();
-		filesManager.deleteFiles(6);
-		filesManager.createFiles((long)6,(long)40,"/home/ankita/Downloads/google-chrome-stable_current_amd64.deb");
-		System.out.println(filesManager.readFiles("deb", "filetype"));
-	    System.out.println(20,filesManager.readFiles("bin", "filetype"));
-	    Map<String, Object> updateMap = new HashMap<String, Object>();
-		updateMap.put("fileid", 3);
-		updateMap.put("filetype", "sql");
+		FilesManager.getInstance().deleteFiles(5);
+		FilesManager.getInstance().createFiles((long)5,(long)6,"/home/ankita/Desktop/cd2_lml13(www.songs.pk).mp3");
+		System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));
+		System.out.println(FilesManager.getInstance().readFiles(6, "mp3", Files.FILETYPE));
+	  //  Map<String, Object> updateMap = new HashMap<String, Object>();
+	//	updateMap.put("fileid", 3);
+	//	updateMap.put("filetype", "sql");
 	//	updateMap.put("filename", "qpeka");
 	//	updateMap.put("filepath", "/home/ankita/desktop");
 		//updateMap.put("filesize", 3333);
 		
-		System.out.println(filesManager.updateFiles(updateMap)); // Done
-		System.out.println(filesManager.updateFiles((short)1,(short)3,"fileid"));
+		//System.out.println(filesManager.updateFiles(updateMap)); // Done
+	//	System.out.println(filesManager.updateFiles((short)1,(short)3,"fileid"));
 	}
 	*/
 }
