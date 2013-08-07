@@ -9,27 +9,27 @@
 	
 	<display-name>Qpeka</display-name>
 	<servlet>
-  		<servlet-name>testservice</servlet-name>
+  		<servlet-name>qpekaservices</servlet-name>
   		<servlet-class>
   			com.sun.jersey.spi.container.servlet.ServletContainer
   		</servlet-class>
- <!--
+   
     <init-param>
 		<param-name>com.sun.jersey.config.property.packages</param-name>
-		<param-value>com.qpeka.db.services.user</param-value>
+		<param-value>com.qpeka.services</param-value>
 	</init-param>
 
 	<init-param>
     	<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
     	<param-value>true</param-value>
 	</init-param>
- -->
+
  
   		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
-  		<servlet-name>testservice</servlet-name>
+  		<servlet-name>qpekaservices</servlet-name>
   		<url-pattern>/v1.0/*</url-pattern>
 	</servlet-mapping>
 

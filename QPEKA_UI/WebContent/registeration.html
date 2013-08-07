@@ -1,7 +1,7 @@
 <html>
 <body>
 	<h1>JAX-RS @ REGISTERATION FROM</h1>
- 	<form action="v1.0/user/register" method="post">
+ 	<form action="v1.0/user/registerpost" method="post">
 		<p>
 			First Name : <input type="text" name="firstname" />
 		</p>
@@ -12,9 +12,6 @@
 			Email : <input type="text" name="email" />
 		</p>
 		<p>
-			UserName : <input type="text" name="username" />
-		</p>
-		<p>
 			Password : <input type="password" name="password" />
 		</p>
 		<p>
@@ -23,8 +20,14 @@
 		<p>
 			DOB : <input type="text" name="dob" />
 		</p>
-		<p>
-			Nationality : <input type="text" name="nationality" />
+		
+		<select name="languageid" size="3" multiple="multiple" tabindex="1">
+        <option value="1">HINDI DEVNAGRI</option>
+        <option value="2">ENGLISH UK</option>
+        <option value="3">ENGLISH US</option>
+      </select>
+      	<p>
+			Terms and Conditions : <input type="text" name="tnc" />
 		</p>
 		<input type="submit" value="Register User" />
 	</form>

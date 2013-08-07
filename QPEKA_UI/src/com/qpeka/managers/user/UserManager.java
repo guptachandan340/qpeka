@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 import org.apache.commons.lang.RandomStringUtils;
 
 import com.qpeka.db.Badges;
@@ -34,7 +36,6 @@ import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.handler.BadgesHandler;
 import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.CountryHandler;
-import com.qpeka.db.handler.FilesHandler;
 import com.qpeka.db.handler.LanguagesHandler;
 import com.qpeka.db.handler.user.UserBadgesHandler;
 import com.qpeka.db.handler.user.UserHandler;
@@ -76,37 +77,96 @@ public class UserManager {
 	 * @param nationality
 	 * @return
 	 */
-	public User registerUser(String firstName, String lastName, String email,
-			String username, String password, String gender, Date dob,
-			List<String> languages) {
+	public User registerUser(MultivaluedMap<String, String> formParams) {
 		// Create User
 		User user = new User();
-		
-		user.setUsername(username);
-		user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-		user.setEmail(email);
+		Name name = new Name();
+		// Create User Profile
+		UserProfile userprofile = new UserProfile();
+		for(String keys : formParams.keySet()) {
+			if(keys.equalsIgnoreCase(Name.FIRSTNAME)) {
+				for(String firstname : formParams.get(keys)) {
+					name.setFirstname(firstname);
+				}
+			} else if(keys.equalsIgnoreCase(Name.LASTNAME)) {
+				for(String lastname : formParams.get(keys)) {
+					name.setLastname(lastname);
+				}
+			} else if(keys.equalsIgnoreCase(User.EMAIL)) {
+				for(String email : formParams.get(keys)) {
+					user.setEmail(email);
+				}
+			} else if(keys.equalsIgnoreCase(User.PASSWORD)) {
+				for(String password : formParams.get(keys)) {
+					user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+				}
+			} else if(keys.equalsIgnoreCase(UserProfile.GENDER)) {
+				for(String gender : formParams.get(keys)) {
+					userprofile.setGender(GENDER.valueOf(gender));
+				}
+			} else if(keys.equalsIgnoreCase(UserProfile.DOB)) {
+				for(String dob : formParams.get(keys)) {
+					DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+					try {
+						Date dateOfBirth = (Date)formatter.parse(dob);
+						userprofile.setDob(dateOfBirth);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+				}
+			} else if(keys.equalsIgnoreCase(UserProfile.TNC)) {
+				for(String tnc : formParams.get(keys)) {
+					userprofile.setTnc(Short.parseShort(tnc));
+				}
+			}
+		}
+		//user.setUsername(username);
 		user.setCreated(System.currentTimeMillis() / 1000);
-		// To Do : write statement for lastaccess and lastlogin
+		// TODO : write statement for lastaccess and lastlogin
 		user.setLastaccess(0);
 		user.setLastlogin(0);
 		user.setStatus((short) STATUS.DEFAULT.ordinal());
-
-		// Create User Profile
 		// Set name
-
-		Name name = new Name();
-		name.setFirstname(firstName);
-		name.setLastname(lastName);
-
-		UserProfile userprofile = new UserProfile();
 		userprofile.setName(name);
-		userprofile.setGender(GENDER.valueOf(gender));
-		userprofile.setDob(dob);
 
-		// Get nationality
+		// Insert user to database;
+		try {
+				Long userId = UserHandler.getInstance().insert(user);
+				userprofile.setUserid(userId);
+				UserProfileHandler.getInstance().insert(userprofile);
+				for(String keys : formParams.keySet()) {
+					if(keys.equalsIgnoreCase(Languages.LANGUAGEID)) {
+						for(String languageid : formParams.get(keys)) {
+							UserLanguage userlanguage = new UserLanguage();
+							userlanguage.setUserid(userId);
+							userlanguage.setLanguageid(Short.parseShort(languageid));
+							UserLanguageHandler.getInstance().insert(userlanguage);
+						}
+					}
+				}
+			}
+			catch (UserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UserProfileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UserLanguageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return user;
+		}// end of registeruser()
+		 
+		//store lang in userlangtable
+	
+
+		
+		/*		// Get nationality
 		List<Country> nation = null;
 
-		try {
+		/*try {
 			// TODO using short name, ideal it should be iso2 or iso3
 			// (preferred). Change it accordingly
 			nation = CountryHandler.getInstance().findWhereShortnameEquals(
@@ -119,26 +179,8 @@ public class UserManager {
 		// update nationality
 		if (nation != null) {
 			userprofile.setNationality(nation.get(0).getCountryid());
-		}
-
-		// Insert user to database;
-		try {
-			Long userId = UserHandler.getInstance().insert(user);
+		}*/
 	
-			userprofile.setUserid(userId);
-			UserProfileHandler.getInstance().insert(userprofile);
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UserProfileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//store lang in userlangtable
-	return user;
-	}// end of registeruser()
-
 	/**
 	 * Authenticate User
 	 * 
@@ -160,6 +202,7 @@ public class UserManager {
 		}
 		
 		if (!user.isEmpty()) {
+			
 			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? user
 					.get(0) : null);
 			
@@ -167,6 +210,7 @@ public class UserManager {
 			return null;
 		}
 	} // end of authenticateByEmail()
+
 
 	/**
 	 * Username exists?
@@ -214,7 +258,7 @@ public class UserManager {
 
 	/**
 	 * Change account password
-	 * 
+	 * -
 	 * @throws UserException
 	 */
 	public User changePassword(User user, String currentPassword, String newPassword)

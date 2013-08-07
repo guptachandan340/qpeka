@@ -108,6 +108,11 @@ public interface UserProfileDao {
 	public List<UserProfile> findWhereLevelEquals(short level) throws UserProfileException;
 
 	/** 
+	 * Returns all rows from the userprofile table that match the criteria 'tnc = :tnc'.
+	 */
+	public List<UserProfile> findWhereTncEquals(short tnc) throws UserProfileException;
+	
+	/** 
 	 * Sets the value of maxRows
 	 */
 	public void setMaxRows(int maxRows);
