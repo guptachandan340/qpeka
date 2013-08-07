@@ -68,6 +68,9 @@ public class UserProfile implements Serializable {
 	public static final String WEBSITE = "website";
 	public static final String BIOGRAPHY = "biography";
 	public static final String PROFILEPIC = "profilepic";
+	//Terms and conditions
+	public static final String TNC = "tnc";
+
 	// Address
 	public static final String ADDRESS = "address";
 	// public static final String PHONE = "phone";
@@ -83,6 +86,7 @@ public class UserProfile implements Serializable {
 	public static final String USERPOINTS = "userpoints";
 	// Bookmarks
 	public static final String BOOKMARKS = "bookmarks";
+	
 
 	// These attributes maps to the columns of the userprofile table.
 	private long userid;
@@ -95,6 +99,8 @@ public class UserProfile implements Serializable {
 	private String website = "";
 	private String biography = "";
 	private long profilepic = 0;
+	// terms and conditions : 1 for agree and 0 for not agree
+	private short tnc = 0;
 	private USERLEVEL userlevel = Constants.USERLEVEL.FREE;
 
 	private Address address = new Address();
@@ -120,6 +126,7 @@ public class UserProfile implements Serializable {
 	protected boolean websiteModified = false;
 	protected boolean biographyModified = false;
 	protected boolean profilepicModified = false;
+	protected boolean tncModified = false;
 	protected boolean addressModified = false;
 	protected boolean interestsModified = false;
 	protected boolean rLangModified = false;
@@ -156,7 +163,7 @@ public class UserProfile implements Serializable {
 	public UserProfile(long userid, String penname, Name name,
 			com.qpeka.db.Constants.GENDER gender, Date dob, short age,
 			short nationality, String website, String biography,
-			int profilepic, Address address, Set<Category> interests,
+			int profilepic, short tnc, Address address, Set<Category> interests,
 			Set<Languages> rLang, Set<Languages> wLang, Set<Badges> userbadges,
 			Map<String, Integer> userpoints, USERLEVEL userlevel,
 			USERTYPE usertype) {// , List<BookMark>
@@ -173,6 +180,7 @@ public class UserProfile implements Serializable {
 		this.website = website;
 		this.biography = biography;
 		this.profilepic = profilepic;
+		this.tnc = tnc;
 		this.address = address;
 		this.interests = interests;
 		this.rLang = rLang;
@@ -186,7 +194,7 @@ public class UserProfile implements Serializable {
 
 	public UserProfile(long userid, String penname, Name name,
 			com.qpeka.db.Constants.GENDER gender, Date dob, short age,
-			short nationality, String website, String biography, int profilepic) {
+			short nationality, String website, String biography, int profilepic, short tnc) {
 		super();
 		this.userid = userid;
 		this.penname = penname;
@@ -198,6 +206,7 @@ public class UserProfile implements Serializable {
 		this.website = website;
 		this.biography = biography;
 		this.profilepic = profilepic;
+		this.tnc = tnc;
 	}
 
 	public static UserProfile getInstance() {
@@ -298,6 +307,15 @@ public class UserProfile implements Serializable {
 		this.profilepicModified = true;
 	}
 
+	public short getTnc() {
+		return tnc;
+	}
+
+	public void setTnc(short tnc) {
+		this.tnc = tnc;
+		this.tncModified = true;
+	}
+	
 	public Address getAddress() {
 		return address;
 	}
@@ -470,7 +488,16 @@ public class UserProfile implements Serializable {
 		this.profilepicNull = value;
 		this.profilepicModified = true;
 	}
+	
 
+	public boolean isTncModified() {
+		return tncModified;
+	}
+
+	public void setTncModified(boolean tncModified) {
+		this.tncModified = tncModified;
+	}
+	
 	public boolean isAddressModified() {
 		return addressModified;
 	}
@@ -667,6 +694,15 @@ public class UserProfile implements Serializable {
 			return false;
 		}
 
+		if (tnc != _cast.tnc) {
+			return false;
+		}
+
+		if (tncModified != _cast.tncModified) {
+			return false;
+		}
+
+		
 		if (address == null ? _cast.address != address : !address
 				.equals(_cast.address)) {
 			return false;
@@ -783,6 +819,9 @@ public class UserProfile implements Serializable {
 		_hashCode = (int) (29 * _hashCode + profilepic);
 		_hashCode = 29 * _hashCode + (profilepicNull ? 1 : 0);
 		_hashCode = 29 * _hashCode + (profilepicModified ? 1 : 0);
+		_hashCode = 29 * _hashCode + tnc;
+		_hashCode = 29 * _hashCode + (tncModified ? 1 : 0);
+		
 		if (address != null) {
 			_hashCode = 29 * _hashCode + address.hashCode();
 		}
@@ -846,6 +885,7 @@ public class UserProfile implements Serializable {
 		ret.append(", " + WEBSITE + "=" + website);
 		ret.append(", " + BIOGRAPHY + "=" + biography);
 		ret.append(", " + PROFILEPIC + "=" + profilepic);
+		ret.append(", " + TNC + "=" + tnc);
 		ret.append(", " + ADDRESS + "=" + address.toString());
 		ret.append(", " + INTERESTS + "" + interests.toString());
 		ret.append(", " + RLANG + "=" + rLang.toString());

@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.core.MultivaluedMap;
+
+import org.apache.commons.lang.RandomStringUtils;
+
 import com.qpeka.db.Badges;
 import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
@@ -32,7 +36,6 @@ import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.handler.BadgesHandler;
 import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.CountryHandler;
-import com.qpeka.db.handler.FilesHandler;
 import com.qpeka.db.handler.LanguagesHandler;
 import com.qpeka.db.handler.user.UserBadgesHandler;
 import com.qpeka.db.handler.user.UserHandler;
@@ -74,37 +77,96 @@ public class UserManager {
 	 * @param nationality
 	 * @return
 	 */
-	public User registerUser(String firstName, String lastName, String email,
-			String username, String password, String gender, Date dob,
-			String nationality) {
+	public User registerUser(MultivaluedMap<String, String> formParams) {
 		// Create User
 		User user = new User();
-		
-		user.setUsername(username);
-		user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-		user.setEmail(email);
+		Name name = new Name();
+		// Create User Profile
+		UserProfile userprofile = new UserProfile();
+		for(String keys : formParams.keySet()) {
+			if(keys.equalsIgnoreCase(Name.FIRSTNAME)) {
+				for(String firstname : formParams.get(keys)) {
+					name.setFirstname(firstname);
+				}
+			} else if(keys.equalsIgnoreCase(Name.LASTNAME)) {
+				for(String lastname : formParams.get(keys)) {
+					name.setLastname(lastname);
+				}
+			} else if(keys.equalsIgnoreCase(User.EMAIL)) {
+				for(String email : formParams.get(keys)) {
+					user.setEmail(email);
+				}
+			} else if(keys.equalsIgnoreCase(User.PASSWORD)) {
+				for(String password : formParams.get(keys)) {
+					user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+				}
+			} else if(keys.equalsIgnoreCase(UserProfile.GENDER)) {
+				for(String gender : formParams.get(keys)) {
+					userprofile.setGender(GENDER.valueOf(gender));
+				}
+			} else if(keys.equalsIgnoreCase(UserProfile.DOB)) {
+				for(String dob : formParams.get(keys)) {
+					DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+					try {
+						Date dateOfBirth = (Date)formatter.parse(dob);
+						userprofile.setDob(dateOfBirth);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+				}
+			} else if(keys.equalsIgnoreCase(UserProfile.TNC)) {
+				for(String tnc : formParams.get(keys)) {
+					userprofile.setTnc(Short.parseShort(tnc));
+				}
+			}
+		}
+		//user.setUsername(username);
 		user.setCreated(System.currentTimeMillis() / 1000);
-		// To Do : write statement for lastaccess and lastlogin
+		// TODO : write statement for lastaccess and lastlogin
 		user.setLastaccess(0);
 		user.setLastlogin(0);
 		user.setStatus((short) STATUS.DEFAULT.ordinal());
-
-		// Create User Profile
 		// Set name
-
-		Name name = new Name();
-		name.setFirstname(firstName);
-		name.setLastname(lastName);
-
-		UserProfile userprofile = new UserProfile();
 		userprofile.setName(name);
-		userprofile.setGender(GENDER.valueOf(gender));
-		userprofile.setDob(dob);
 
-		// Get nationality
+		// Insert user to database;
+		try {
+				Long userId = UserHandler.getInstance().insert(user);
+				userprofile.setUserid(userId);
+				UserProfileHandler.getInstance().insert(userprofile);
+				for(String keys : formParams.keySet()) {
+					if(keys.equalsIgnoreCase(Languages.LANGUAGEID)) {
+						for(String languageid : formParams.get(keys)) {
+							UserLanguage userlanguage = new UserLanguage();
+							userlanguage.setUserid(userId);
+							userlanguage.setLanguageid(Short.parseShort(languageid));
+							UserLanguageHandler.getInstance().insert(userlanguage);
+						}
+					}
+				}
+			}
+			catch (UserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UserProfileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UserLanguageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return user;
+		}// end of registeruser()
+		 
+		//store lang in userlangtable
+	
+
+		
+		/*		// Get nationality
 		List<Country> nation = null;
 
-		try {
+		/*try {
 			// TODO using short name, ideal it should be iso2 or iso3
 			// (preferred). Change it accordingly
 			nation = CountryHandler.getInstance().findWhereShortnameEquals(
@@ -117,24 +179,8 @@ public class UserManager {
 		// update nationality
 		if (nation != null) {
 			userprofile.setNationality(nation.get(0).getCountryid());
-		}
-
-		// Insert user to database;
-		try {
-			Long userId = UserHandler.getInstance().insert(user);
+		}*/
 	
-			userprofile.setUserid(userId);
-			UserProfileHandler.getInstance().insert(userprofile);
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UserProfileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	return user;
-	}// end of registeruser()
-
 	/**
 	 * Authenticate User
 	 * 
@@ -156,6 +202,7 @@ public class UserManager {
 		}
 		
 		if (!user.isEmpty()) {
+			
 			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? user
 					.get(0) : null);
 			
@@ -164,47 +211,7 @@ public class UserManager {
 		}
 	} // end of authenticateByEmail()
 
-	/**
-	 * Confirm Password With Database
-	 * 
-	 * @throws UserException
-	 */
-	//Check for authenticate user by passing username and password for reset password
-	public boolean confirmPassword(long userid, String password) {
-		List<User> user = new ArrayList<User>();
-		try {
-			user = UserHandler.getInstance().findWhereUseridEquals(userid);
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (!user.isEmpty()) {
-			return (BCrypt.checkpw(password, user.get(0).getPassword()) ? true : false);
-			
-		} else {
-			return false;
-		}
-	}
 
-			
-	/**
-	 * Authenticate User
-	 * 
-	 * @throws UserException
-	 */
-	/*
-	 * public User authenticateByUsername(String username, String password)
-	 * throws UserException { List<User> user = new ArrayList<User>(); try {
-	 * 
-	 * } catch (UserException _e) { throw new
-	 * UserException("User Authentication Exception: " + _e.getMessage(), _e); }
-	 * 
-	 * if (!user.isEmpty()) { return (BCrypt.checkpw(password,
-	 * user.get(0).getPassword()) ? user .get(0) : null); } else { return null;
-	 * }
-	 * 
-	 * }// end of authenticateByUsername()
-	 */
 	/**
 	 * Username exists?
 	 * 
@@ -251,22 +258,26 @@ public class UserManager {
 
 	/**
 	 * Change account password
-	 * 
+	 * -
 	 * @throws UserException
 	 */
-	public User changePassword(long userid, String password)
+	public User changePassword(User user, String currentPassword, String newPassword)
 			throws UserException {
-		User user = new User();
+		boolean oldPasswordResult = false;
+		if(BCrypt.checkpw(currentPassword, user.getPassword())) {
 		try {
-			user = UserHandler.getInstance().findByPrimaryKey(userid);
-			user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-
-			UserHandler.getInstance().update(userid, user);
+			oldPasswordResult = BCrypt.checkpw(newPassword, user.getPassword()) ? true : false;
+			if(!oldPasswordResult) {
+				user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+			} else {
+				System.out.println("Old password is matching");
+			}
+			UserHandler.getInstance().update(user.getUserid(), user);
 		} catch (UserException _e) {
 			throw new UserException("Update User Password Exception: "
 					+ _e.getMessage(), _e);
 		}
-
+		}
 		return user;
 	}// end of changePassword()
 
@@ -275,9 +286,9 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public String resetPassword(String authName, String newPassword,
-			boolean isEmail) throws UserException {
+	public String resetPassword(String authName, boolean isEmail) throws UserException {
 		List<User> user = new ArrayList<User>();
+		String newPassword = RandomStringUtils.random(8, true, true);
 		try {
 			if (!isEmail) {
 				user = UserHandler.getInstance().findWhereUsernameEquals(
@@ -298,7 +309,7 @@ public class UserManager {
 					user.get(0));
 		}
 
-		return user.get(0).getEmail();
+		return newPassword;
 	} // end of reset password()
 
 	/**
