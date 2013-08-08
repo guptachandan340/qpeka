@@ -142,7 +142,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 12;
+	protected static final int NUMBER_OF_COLUMNS = 13;
 
 	/**
 	 * Index of primary-key column userid
@@ -970,14 +970,15 @@ public class UserProfileHandler extends AbstractHandler implements
 			throws SQLException {
 		user.setUserid(rs.getInt(COLUMN_USERID));
 		user.setPenname(rs.getString(COLUMN_PENNAME));
+		if(user.getName() == null) { 
+			user.setName(Name.getInstance());
+		}
 		user.getName().setFirstname(rs.getString(COLUMN_FIRSTNAME));
 		user.getName().setMiddlename(rs.getString(COLUMN_MIDDLENAME));
 		user.getName().setLastname(rs.getString(COLUMN_LASTNAME));
-		user.setGender(Constants.GENDER.valueOf(rs.getString(COLUMN_GENDER)));
+		user.setGender(GENDER.valueOf(rs.getString(COLUMN_GENDER).toUpperCase()));
 		user.setDob(new Date(rs.getLong(COLUMN_DOB) * 1000));
-
 		user.setNationality(rs.getShort(COLUMN_NATIONALITY));
-
 		user.setWebsite(rs.getString(COLUMN_WEBSITE));
 		user.setBiography(rs.getString(COLUMN_BIOGRAPHY));
 		user.setProfilepic(rs.getInt(COLUMN_PROFILEPIC));

@@ -6,13 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.jws.soap.SOAPBinding.Use;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -54,7 +53,6 @@ import com.qpeka.security.bcrypt.BCrypt;
 
 public class UserManager {
 	private static UserManager instance = null;
-
 	UserHandler userHandler = new UserHandler();
 
 	public UserManager() {
@@ -136,6 +134,7 @@ public class UserManager {
 				Long userId = UserHandler.getInstance().insert(user);
 				userprofile.setUserid(userId);
 				UserProfileHandler.getInstance().insert(userprofile);
+				//store languages in userlanguagetable
 				for(String keys : formParams.keySet()) {
 					if(keys.equalsIgnoreCase(Languages.LANGUAGEID)) {
 						for(String languageid : formParams.get(keys)) {
@@ -160,11 +159,11 @@ public class UserManager {
 		return user;
 		}// end of registeruser()
 		 
-		//store lang in userlangtable
+		
 	
 
 		
-		/*		// Get nationality
+	/* // Get nationality
 		List<Country> nation = null;
 
 		/*try {
@@ -187,7 +186,7 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public User authenticateUser(String authName, String password,
+	public Map<String, Object> authenticateUser(String authName, String password,
 			boolean isEmail) throws UserException {
 		List<User> user = new ArrayList<User>();
 		try {
@@ -208,7 +207,7 @@ public class UserManager {
 					updateLastLogin(System
 							.currentTimeMillis() / 1000, user.get(0)
 							.getUserid(), true);
-					return user.get(0);
+					return createUserObjectMap(user.get(0));
 				} else {
 					return null;
 				}
@@ -220,6 +219,49 @@ public class UserManager {
 		}
 	} // end of authenticateByEmail()
 
+	/**
+	 *  creating UserObjectMap for user and userprofile data            
+	 */
+	public Map<String, Object> createUserObjectMap(User user) {
+		Map<String, Object> userObject = new HashMap<String, Object>();
+		List<UserProfile> userProfileObject = new ArrayList<UserProfile>();
+		try {
+			userProfileObject = UserProfileHandler.getInstance().findWhereUseridEquals(user.getUserid());
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		userObject.put(User.PROFILEID, user.getUserid());
+		userObject.put(User.USERNAME, user.getUsername());
+		userObject.put(User.EMAIL, user.getEmail());
+		if(userProfileObject != null) {
+			Name name = userProfileObject.get(0).getName();
+			if(name.getFirstname() != null) {
+				userObject.put(Name.FIRSTNAME, name.getFirstname());
+			} else {
+				userObject.put(Name.FIRSTNAME, " ");
+			}
+			if(name.getFirstname() != null) {
+				userObject.put(Name.LASTNAME, name.getLastname());
+			} else {
+				userObject.put(Name.LASTNAME, " ");
+			}
+			if(userProfileObject.get(0).getPenname() != null) {
+				userObject.put(UserProfile.PENNAME,userProfileObject.get(0).getPenname());
+			} else {
+				userObject.put(UserProfile.PENNAME, " ");
+			}
+			
+			if(userProfileObject.get(0).getGender() != null) {
+				userObject.put(UserProfile.GENDER, userProfileObject.get(0).getGender());
+			} else {
+				userObject.put(UserProfile.GENDER, " ");
+			}
+			userObject.put(UserProfile.PROFILEPIC, userProfileObject.get(0).getProfilepic());
+		}
+		return userObject;
+	}
+	
 	/**
 	 * update lastlogin or lastaccess
 	 */
@@ -264,7 +306,6 @@ public class UserManager {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
 		}
-
 		// Returns false when userlist is empty else true (Username exists)
 		return (!userList.isEmpty());
 	}// end of usernameExists()
@@ -289,16 +330,11 @@ public class UserManager {
 	}// end of emailExists()
 
 	/**
-	 * Create user Account
-	 * 
-	 * @throws UserException
-	 */
-
-	/**
 	 * Change account password
 	 * -
 	 * @throws UserException
 	 */
+	
 	public User changePassword(User user, String currentPassword, String newPassword)
 			throws UserException {
 		boolean oldPasswordResult = false;
@@ -620,7 +656,6 @@ public class UserManager {
 		if (userProfileList != null) {
 			for (UserProfile userProfile : userProfileList) {
 				userProfile.setUserlevel(userlevel);
-
 				try {
 					UserProfileHandler.getInstance()
 							.update(userid, userProfile);
@@ -630,7 +665,6 @@ public class UserManager {
 				}
 			}
 		}
-
 		return userProfileList.get(0);
 	}
 
