@@ -25,6 +25,8 @@ public class UserService {
 			@FormParam("password") String password, @FormParam("isEmail") boolean isEmail) {
 		Map<String, Object> user = new HashMap<String, Object>();
 		String response = null;
+		Gson gson = new Gson();
+		Object error = null;
 		/*if (username.indexOf("@") != -1) {
 			isEmail = true;
 		}*/
@@ -36,8 +38,10 @@ public class UserService {
 			e.printStackTrace();
 		}
 		if (user != null) {
-			Gson gson = new Gson();
 			response = gson.toJson(user);
+		} else {
+				error = "Error : 34";
+				response = gson.toJson(error);
 		}
 		return Response.status(200).entity(response).build();
 	}
@@ -45,12 +49,11 @@ public class UserService {
 	@POST
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid,@FormParam("lastaccess") long lastaccess) {
-		System.out.println(lastaccess);
 		short counter = 0;
 		counter = UserManager.getInstance().updateLastLogin(lastaccess, userid, false);
 		if(counter > 0) {
 			// or return true;
-			return Response.status(200).entity("successfully updated").build();
+			return Response.status(200).entity(true).build();
 		}
 		return null;
 	}
@@ -61,6 +64,8 @@ public class UserService {
 	public Response registerpost(MultivaluedMap<String, String> formParams) {
 		User user = null;
 		String response = null;
+		Object error = null;
+		Gson gson = new Gson();
 		for (String keys : formParams.keySet()) {
 			if (keys.equalsIgnoreCase(User.EMAIL)) {
 				for (String email : formParams.get(keys)) {
@@ -69,11 +74,9 @@ public class UserService {
 							user = UserManager.getInstance().registerUser(
 									formParams);
 						} else {
-							// TODO set error code
-							response = "Already Available in our System, Try with other";
-							Response.status(200)
-									.entity(response)
-									.build();
+							error = "Error : 34";
+							response = gson.toJson(error);
+							return Response.status(200).entity(response).build();
 						}
 					} catch (UserException e) {
 						// TODO Auto-generated catch block
@@ -83,8 +86,10 @@ public class UserService {
 			}
 		}
 		if (user != null) {
-			Gson gson = new Gson();
 			response = gson.toJson(user);
+		} else {
+			error = "Error : 215";
+			response = gson.toJson(error);
 		}
 		return Response.status(200).entity(response).build();
 	}
@@ -134,9 +139,11 @@ public class UserService {
 	@POST
 	@Path("/resetpassword")
 	public Response resetPasswordService(@FormParam("authname") String authName) {
+		Gson gson = new Gson();
 		String response = null;
 		boolean isEmail = false;;
 		String changedPassword = null;
+		Object error = null;
 		if (authName.indexOf("@") != -1) {
 			isEmail = true;
 		}
@@ -147,8 +154,10 @@ public class UserService {
 			e.printStackTrace();
 		}
 		if(changedPassword != null) {
-				Gson gson = new Gson();
 				response = gson.toJson(changedPassword);
+		} else {
+			error = "Error : 215";
+			response = gson.toJson(error);
 		}
 		return Response.status(200).entity(response).build();
 	}
@@ -159,10 +168,10 @@ public class UserService {
 	public Response changePasswordService(
 			@FormParam("currentpassword") String currentPassword,
 			@FormParam("newpassword") String newPassword) {
-		User user = new User();
+		User user = new User();Gson gson = new Gson();
 		// TODO This user object will be passed from session
 		user.setUserid((long) 27);
-		//user.setUsername(");
+		//user.setUsername(" ");
 		user.setPassword("$2a$10$2XDpu7jbvqa79JehxN4rUumKgYNt0Hccvt6Hsmsgc6lRpmVhehpI.");
 		user.setEmail("jinalmashruwala@gmail.com");
 		user.setCreated(1375958659);

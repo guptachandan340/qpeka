@@ -122,7 +122,6 @@ public class UserManager {
 		}
 		//user.setUsername(username);
 		user.setCreated(System.currentTimeMillis() / 1000);
-		// TODO : write statement for lastaccess and lastlogin
 		user.setLastaccess(0);
 		user.setLastlogin(0);
 		user.setStatus((short) STATUS.DEFAULT.ordinal());
@@ -188,6 +187,7 @@ public class UserManager {
 	 */
 	public Map<String, Object> authenticateUser(String authName, String password,
 			boolean isEmail) throws UserException {
+		Map<String, Object> loginresponse = new HashMap<String, Object>();
 		List<User> user = new ArrayList<User>();
 		try {
 			if (!isEmail) {
@@ -200,68 +200,89 @@ public class UserManager {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
 		}
-		if (user.get(0).getStatus() != 3 || user.get(0).getStatus() != 4) {
-			if (!user.isEmpty()) {
+		
+		if (!user.isEmpty()) {
+			if (user.get(0).getStatus() != 3 || user.get(0).getStatus() != 4) {
 				if (BCrypt.checkpw(password, user.get(0).getPassword())) {
 					// check whether counter is > 0 or not; if not then set error code.
 					updateLastLogin(System
 							.currentTimeMillis() / 1000, user.get(0)
 							.getUserid(), true);
-					return createUserObjectMap(user.get(0));
+					return createUserInfoMap(user.get(0));
 				} else {
-					return null;
+					loginresponse.put("Error", "215");
+					return loginresponse;
 				}
 			} else {
-				return null;
+				loginresponse.put("Error", "64");
+				return loginresponse;
 			}
 		}else {
-			return null;
+			loginresponse.put("Error", "215");
+			return loginresponse;
 		}
-	} // end of authenticateByEmail()
+	} 
 
 	/**
-	 *  creating UserObjectMap for user and userprofile data            
+	 * creating UserObjectMap for user and userprofile data
 	 */
-	public Map<String, Object> createUserObjectMap(User user) {
-		Map<String, Object> userObject = new HashMap<String, Object>();
-		List<UserProfile> userProfileObject = new ArrayList<UserProfile>();
+	public Map<String, Object> createUserInfoMap(User user) {
+		Map<String, Object> userInfo = new HashMap<String, Object>();
+		List<UserProfile> userProfile = new ArrayList<UserProfile>();
 		try {
-			userProfileObject = UserProfileHandler.getInstance().findWhereUseridEquals(user.getUserid());
+			userProfile = UserProfileHandler.getInstance()
+					.findWhereUseridEquals(user.getUserid());
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		userObject.put(User.PROFILEID, user.getUserid());
-		userObject.put(User.USERNAME, user.getUsername());
-		userObject.put(User.EMAIL, user.getEmail());
-		if(userProfileObject != null) {
-			Name name = userProfileObject.get(0).getName();
-			if(name.getFirstname() != null) {
-				userObject.put(Name.FIRSTNAME, name.getFirstname());
-			} else {
-				userObject.put(Name.FIRSTNAME, " ");
-			}
-			if(name.getFirstname() != null) {
-				userObject.put(Name.LASTNAME, name.getLastname());
-			} else {
-				userObject.put(Name.LASTNAME, " ");
-			}
-			if(userProfileObject.get(0).getPenname() != null) {
-				userObject.put(UserProfile.PENNAME,userProfileObject.get(0).getPenname());
-			} else {
-				userObject.put(UserProfile.PENNAME, " ");
-			}
-			
-			if(userProfileObject.get(0).getGender() != null) {
-				userObject.put(UserProfile.GENDER, userProfileObject.get(0).getGender());
-			} else {
-				userObject.put(UserProfile.GENDER, " ");
-			}
-			userObject.put(UserProfile.PROFILEPIC, userProfileObject.get(0).getProfilepic());
 		}
-		return userObject;
+		if (user != null) {
+			userInfo.put(User.PROFILEID, user.getUserid());
+			if (user.getUsername() != null) {
+				userInfo.put(User.USERNAME, user.getUsername());
+			} else {
+				userInfo.put(User.USERNAME, "");
+			}
+			if (user.getEmail() != null) {
+				userInfo.put(User.EMAIL, user.getEmail());
+			} else {
+				userInfo.put(User.EMAIL, "");
+			}
+		}
+		if (userProfile != null) {
+			Name name = userProfile.get(0).getName();
+			if (name.getFirstname() != null) {
+				userInfo.put(Name.FIRSTNAME, name.getFirstname());
+			} else {
+				userInfo.put(Name.FIRSTNAME, "");
+			}
+			if (name.getFirstname() != null) {
+				userInfo.put(Name.LASTNAME, name.getLastname());
+			} else {
+				userInfo.put(Name.LASTNAME, "");
+			}
+			if (userProfile.get(0).getPenname() != null) {
+				userInfo.put(UserProfile.PENNAME, userProfile.get(0)
+						.getPenname());
+			} else {
+				userInfo.put(UserProfile.PENNAME, "");
+			}
+
+			if (userProfile.get(0).getGender() != null) {
+				userInfo.put(UserProfile.GENDER, userProfile.get(0).getGender());
+			} else {
+				userInfo.put(UserProfile.GENDER, "");
+			}
+			if (userProfile.get(0).getProfilepic() > 0) {
+				userInfo.put(UserProfile.PROFILEPIC, userProfile.get(0)
+						.getProfilepic());
+			} else {
+				userInfo.put(UserProfile.PROFILEPIC, "");
+			}
+		}
+		return userInfo;
 	}
-	
+
 	/**
 	 * update lastlogin or lastaccess
 	 */
@@ -362,6 +383,7 @@ public class UserManager {
 	 */
 	public String resetPassword(String authName, boolean isEmail) throws UserException {
 		List<User> user = new ArrayList<User>();
+		Object error = null;
 		String newPassword = RandomStringUtils.random(8, true, true);
 		try {
 			if (!isEmail) {
@@ -378,12 +400,13 @@ public class UserManager {
 		if (!user.isEmpty()) {
 			user.get(0).setPassword(
 					BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-
 			UserHandler.getInstance().update(user.get(0).getUserid(),
 					user.get(0));
+			return newPassword;
+		} else {
+			error = "215";
+			return error.toString();
 		}
-
-		return newPassword;
 	} // end of reset password()
 
 	/**
