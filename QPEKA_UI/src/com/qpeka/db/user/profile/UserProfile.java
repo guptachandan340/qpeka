@@ -135,8 +135,9 @@ public class UserProfile implements Serializable {
 	protected boolean userpointsModified = false;
 	protected boolean userlevelModified = false;
 	protected boolean usertypeModified = false;
+	
 	/**
-	 * This attribute represents whether the primitive attribute profilepic is
+	 * This attribute represents whether the primitive attribute profile pic is
 	 * null.
 	 */
 	protected boolean profilepicNull = true;

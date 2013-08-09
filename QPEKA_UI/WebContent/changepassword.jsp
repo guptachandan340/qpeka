@@ -40,8 +40,7 @@ function createUserObject(){
 		</p>
 		<p>
 		<input type = "submit" value="submit" >
-		</p>
-		<!-- 
+		</p> 
 		<p>
 		<input type="hidden"  name = "userObject" value="hello"> 
 		</p>

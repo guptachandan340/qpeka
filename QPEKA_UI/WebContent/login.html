@@ -6,16 +6,11 @@
     function check()
     {
     	var val = frm1.uname.value;
-    	//alert(val);
         if (val.indexOf("@") > 0)
         {
-            alert ("email");
             document.getElementById('isEmail1').value = true;
-            //alert( document.getElementById('isEmail1').value);
         } else {
-        	alert("usernam");
         	  document.getElementById('isEmail1').value = false;
-              //alert( document.getElementById('isEmail1').value);
         }
     }
 
@@ -36,6 +31,7 @@
 			<input type="hidden" class="email" id = "isEmail1" name = "isEmail"/>
 		</p>
 		<input type="submit" id = "submit" value="Add User" onclick="return check();"/>
+		</p>
 	</form>
  
 </body>
