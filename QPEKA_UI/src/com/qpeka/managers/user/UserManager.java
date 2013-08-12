@@ -26,6 +26,7 @@ import com.qpeka.db.Country;
 import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
 import com.qpeka.db.exceptions.CountryException;
+import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.exceptions.user.UserBadgesException;
 import com.qpeka.db.exceptions.user.UserException;
@@ -49,6 +50,7 @@ import com.qpeka.db.user.profile.UserBadges;
 import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
+import com.qpeka.managers.FilesManager;
 import com.qpeka.security.bcrypt.BCrypt;
 
 public class UserManager {
@@ -73,7 +75,7 @@ public class UserManager {
 	 * @param password
 	 * @param gender
 	 * @param dob
-	 * @param nationality
+	 * @param langugaes
 	 * @return
 	 */
 	public User registerUser(MultivaluedMap<String, String> formParams) {
@@ -133,7 +135,7 @@ public class UserManager {
 				Long userId = UserHandler.getInstance().insert(user);
 				userprofile.setUserid(userId);
 				UserProfileHandler.getInstance().insert(userprofile);
-				//store languages in userlanguagetable
+				//store languages in user language table
 				for(String keys : formParams.keySet()) {
 					if(keys.equalsIgnoreCase(Languages.LANGUAGEID)) {
 						for(String languageid : formParams.get(keys)) {
@@ -185,17 +187,20 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
+	
 	public Map<String, Object> authenticateUser(String authName, String password,
 			boolean isEmail) throws UserException {
 		Map<String, Object> loginresponse = new HashMap<String, Object>();
 		List<User> user = new ArrayList<User>();
 		try {
-			if (!isEmail) {
+			user = (!isEmail) ? UserHandler.getInstance().findWhereUsernameEquals(
+					authName) : UserHandler.getInstance().findWhereEmailEquals(authName);
+			/*if (!isEmail) {
 				user = UserHandler.getInstance().findWhereUsernameEquals(
 						authName);
 			} else {
 				user = UserHandler.getInstance().findWhereEmailEquals(authName);
-			}
+			}*/
 		} catch (UserException _e) {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
@@ -224,7 +229,7 @@ public class UserManager {
 	} 
 
 	/**
-	 * creating UserObjectMap for user and userprofile data
+	 * creating UserInfoMap from user and userprofile data
 	 */
 	public Map<String, Object> createUserInfoMap(User user) {
 		Map<String, Object> userInfo = new HashMap<String, Object>();
@@ -356,24 +361,27 @@ public class UserManager {
 	 * @throws UserException
 	 */
 	
-	public User changePassword(User user, String currentPassword, String newPassword)
-			throws UserException {
-		boolean oldPasswordResult = false;
-		if(BCrypt.checkpw(currentPassword, user.getPassword())) {
-		try {
-			oldPasswordResult = BCrypt.checkpw(newPassword, user.getPassword()) ? true : false;
-			if(!oldPasswordResult) {
-				user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-			} else {
-				System.out.println("Old password is matching");
-			}
-			UserHandler.getInstance().update(user.getUserid(), user);
-		} catch (UserException _e) {
-			throw new UserException("Update User Password Exception: "
-					+ _e.getMessage(), _e);
-		}
-		}
-		return user;
+	public Object changePassword(long userid, String currentPassword,
+			String newPassword) throws UserException {
+		Object result = null;
+		List<User> userInfoList = new ArrayList<User>();
+		userInfoList = UserHandler.getInstance().findWhereUseridEquals(userid);
+		for (User user : userInfoList) {
+			if (BCrypt.checkpw(currentPassword, user.getPassword())) {
+				try {
+					user.setPassword(BCrypt.hashpw(newPassword,
+								BCrypt.gensalt()));
+					UserHandler.getInstance().update(userid, user);
+					result = "200"; 
+					} catch (UserException _e) {
+						throw new UserException("Update User Password Exception: "
+								+ _e.getMessage(), _e);
+					}
+				} else {
+					result = "215";
+				}
+			} 
+		return result;
 	}// end of changePassword()
 
 	/**
@@ -386,12 +394,13 @@ public class UserManager {
 		Object error = null;
 		String newPassword = RandomStringUtils.random(8, true, true);
 		try {
-			if (!isEmail) {
+			user = (!isEmail) ? UserHandler.getInstance().findWhereUsernameEquals(authName) : UserHandler.getInstance().findWhereEmailEquals(authName);
+			/*if (!isEmail) {
 				user = UserHandler.getInstance().findWhereUsernameEquals(
 						authName);
 			} else {
 				user = UserHandler.getInstance().findWhereEmailEquals(authName);
-			}
+			}*/
 		} catch (UserException _e) {
 			throw new UserException("Reset user Password Exception: "
 					+ _e.getMessage(), _e);
@@ -414,14 +423,17 @@ public class UserManager {
 	 * 
 	 * throws UserException
 	 */
-	public UserProfile editProfile(Map<String, Object> profile) {
+	
+	// TODO userlevel, usertype,userlangugaes, status
+	// TODO timezone : diff table n handle using httprequest  
+	
+	public UserProfile editProfile(Map<String, Object> profile) throws FileException {
 		UserProfile userProfile = UserProfile.getInstance();
 		long userid = 0;
 		short usertype = 0;
 
 		if (profile.get(UserProfile.USERID) != null) {
 			userid = Long.parseLong(profile.get(UserProfile.USERID).toString());
-
 			usertype = (short) ((profile.get(UserProfile.USERTYPE) != null) 
 					? Short.parseShort(profile.get(UserProfile.USERTYPE).toString())
 					: com.qpeka.db.Constants.USERTYPE.READER.ordinal());
@@ -450,7 +462,6 @@ public class UserManager {
 
 				userProfile.setName(name);
 			}
-
 			// check and set Gender for UserProfile
 			if (profile.get(UserProfile.GENDER) != null) {
 				userProfile.setGender(GENDER.valueOf(profile.get(
@@ -484,7 +495,6 @@ public class UserManager {
 				} catch (CountryException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-
 				}
 				userProfile
 						.setNationality((short) nation.get(0).getCountryid());
@@ -505,8 +515,7 @@ public class UserManager {
 			// Set ProfilePic for UserProfile
 			if (profile.get(UserProfile.PROFILEPIC) != null) {
 				Files file = new Files();
-				file.setFilepath(profile.get(UserProfile.PROFILEPIC).toString());
-
+				file = FilesManager.getInstance().createFiles(userid, profile.get(UserProfile.PROFILEPIC).toString());
 				userProfile.setProfilepic(file.getFileid());
 			}
 
@@ -578,29 +587,27 @@ public class UserManager {
 
 				for (Category category : interestsList) {
 					userInterests.setCategoryid(category.getCategoryid());
-
 					try {
 						UserInterestsHandler.getInstance()
 								.insert(userInterests);
-					} catch (UserInterestsException e) {
+					} catch
+					
+					(UserInterestsException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 				userProfile.setInterests(new HashSet<Category>(interestsList));
-				
 			}
 
 			// Read Language
 			if (profile.get(UserProfile.RLANG) != null) {
 				Set<Languages> userLanguages = updateUserLanguages(userid,"read",profile.get(UserProfile.RLANG));
-
 				userProfile.setrLang(userLanguages);
 			}
 
 			// Written Language
 			if (profile.get(UserProfile.WLANG) != null) {
-			
 				Set<Languages> userLanguages = updateUserLanguages(userid,"write",profile.get(UserProfile.WLANG));
 				userProfile.setrLang(userLanguages);
 			}
@@ -736,10 +743,8 @@ public class UserManager {
 		UserLanguage userLang = UserLanguage.getInstance();
 		userLang.setUserid(userid);
 		userLang.setType(languageType);
-
 		for (Languages language : languageList) {
 			userLang.setLanguageid(language.getLanguageid());
-
 			try {
 				UserLanguageHandler.getInstance().insert(userLang);
 			} catch (UserLanguageException e) {
