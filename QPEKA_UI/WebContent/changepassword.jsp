@@ -36,7 +36,7 @@ function createUserObject(){
 			new password : <input type="password" name="newpassword" />
 		</p>
 		<p>
-			conform password : <input type="password" name="confirmpassword" />
+			UserId : <input type="text" name="userid" />
 		</p>
 		<p>
 		<input type = "submit" value="submit" >
