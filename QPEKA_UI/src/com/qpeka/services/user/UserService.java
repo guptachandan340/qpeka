@@ -2,7 +2,6 @@ package com.qpeka.services.user;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -10,10 +9,12 @@ import javax.ws.rs.Path;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
 import com.google.gson.Gson;
+import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.user.User;
+import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
 @Path("/user")
@@ -27,7 +28,7 @@ public class UserService {
 		String response = null;
 		Gson gson = new Gson();
 		Object error = null;
-		/*if (username.indexOf("@") != -1) {
+		/* if (username.indexOf("@") != -1) {
 			isEmail = true;
 		}*/
 		try {
@@ -53,7 +54,7 @@ public class UserService {
 		counter = UserManager.getInstance().updateLastLogin(lastaccess, userid, false);
 		if(counter > 0) {
 			// or return true;
-			return Response.status(200).entity(true).build();
+			return Response.status(200).entity("Successfully updated").build();
 		}
 		return null;
 	}
@@ -162,36 +163,90 @@ public class UserService {
 		return Response.status(200).entity(response).build();
 	}
 	
-	/*
+	
 	@POST
 	@Path("/changepassword")
-	public Response changePasswordService(
-			@FormParam("currentpassword") String currentPassword,
+	public Response changePasswordService(@FormParam("userid") long userid, @FormParam("currentpassword") String currentPassword,
 			@FormParam("newpassword") String newPassword) {
-		User user = new User();Gson gson = new Gson();
-		// TODO This user object will be passed from session
-		user.setUserid((long) 27);
-		//user.setUsername(" ");
-		user.setPassword("$2a$10$2XDpu7jbvqa79JehxN4rUumKgYNt0Hccvt6Hsmsgc6lRpmVhehpI.");
-		user.setEmail("jinalmashruwala@gmail.com");
-		user.setCreated(1375958659);
-		user.setLastaccess(0);
-		user.setLastlogin(0);
-		user.setStatus((short) 0);
-		user.setType((short) 0);
+		Gson gson = new Gson();
+		Object user = null;
 		String response = null;
-				try {
-					user = UserManager.getInstance().changePassword(user,currentPassword, newPassword);
-				} catch (UserException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (user != null) {
-						Gson gson = new Gson();
-						response = gson.toJson(user);
-					}
+		try {
+			user = UserManager.getInstance().changePassword(userid,currentPassword, newPassword);
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (user != null) {
+			response = gson.toJson(user);
+		}
 		return Response.status(200).entity(response).build();
 	}
-	*/
+	
+	/*
+	@POST
+	@Path("/editprofile")
+	@Consumes("application/x-www-form-urlencoded")
+	public Response editProfileService(MultivaluedMap <String, String> param) {
+		Map<String, Object> profile =new HashMap<String, Object>();
+		 UserProfile userprofile =null;
+		 	 
+		for(String keys : param.keySet()) {
+			for(String keyvalues : param.get(keys)) {
+				System.out.println("map key " + keys);
+				System.out.println("map value " + keyvalues);
+			
+				if(keys.equalsIgnoreCase(UserProfile.USERID)){
+						profile.put(UserProfile.USERID,keyvalues); 
+				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
+						profile.put(UserProfile.PENNAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(Name.FIRSTNAME)) {
+						profile.put(Name.FIRSTNAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(Name.MIDDLENAME)) {
+						profile.put(Name.MIDDLENAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(Name.LASTNAME)) {
+						profile.put(Name.LASTNAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.GENDER)) {
+						profile.put(UserProfile.GENDER,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.DOB)) {
+						profile.put(UserProfile.DOB,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.NATIONALITY)) {
+						profile.put(UserProfile.NATIONALITY,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.WEBSITE)) {
+						profile.put(UserProfile.WEBSITE,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.BIOGRAPHY)) {
+						profile.put(UserProfile.BIOGRAPHY,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.PROFILEPIC)) {
+						profile.put(UserProfile.PROFILEPIC,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
+					profile.put(UserProfile.PENNAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
+					profile.put(UserProfile.PENNAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
+					profile.put(UserProfile.PENNAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
+					profile.put(UserProfile.PENNAME,keyvalues);
+				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
+					profile.put(UserProfile.PENNAME,keyvalues);
+			
+			}
+			}
+		}
+		try {
+			userprofile = UserManager.getInstance().editProfile(profile);
+		} catch (FileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Gson gson = new Gson();
+		String json = gson.toJson(userprofile);
+		return Response.status(200).entity(json).build();  
+	    
+	} */                         
+	
+
+// TODO WS for each param of edit profile
+// TODO ws FOR SERVICE PROVIDERS
+
 }
 
