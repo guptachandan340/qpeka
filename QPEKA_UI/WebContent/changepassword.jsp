@@ -27,7 +27,7 @@ function createUserObject(){
  -->
 </head>
 <body>
-<form action="v1.0/user/changepassword" method="post" id = "my_form">
+<form action="v1.0/user/changepwd" method="post" id = "my_form">
        
 		<p>
 			Current Password : <input type="text" name="currentpassword" />
