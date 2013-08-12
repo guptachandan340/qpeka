@@ -12,7 +12,6 @@ import com.qpeka.db.Category;
 import com.qpeka.db.Constants;
 import com.qpeka.db.Constants.BADGES;
 import com.qpeka.db.Constants.GENDER;
-import com.qpeka.db.Constants.TYPE;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Languages;

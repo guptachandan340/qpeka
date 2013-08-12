@@ -4,23 +4,15 @@ import java.io.File;
 
 import java.util.ArrayList;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import com.qpeka.db.Category;
 import com.qpeka.db.Files;
-import com.qpeka.db.Languages;
-import com.qpeka.db.exceptions.CategoryException;
 import com.qpeka.db.exceptions.FileException;
-import com.qpeka.db.exceptions.LanguagesException;
 
-import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.FilesHandler;
-import com.qpeka.db.handler.LanguagesHandler;
 
 public class FilesManager {
 	public static FilesManager instance = null;
@@ -34,11 +26,10 @@ public class FilesManager {
 		return (instance == null ? (instance = new FilesManager()) : instance);
 	}
 
-	public Files createFiles(long fileId, long userId, String filepath) {
+	public Files createFiles(long userId, String filepath) {
 		Files files = Files.getInstance();
 		File file = new File(filepath); // Inbuilt File class usage
 		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-		files.setFileid(fileId);
 		files.setUserid(userId); // Set UserID
 		if (file.exists()) {
 			if (file.isFile()) {
@@ -86,9 +77,11 @@ public class FilesManager {
 	 * files.setTimestamp(timestamp); try {
 	 * FilesHandler.getInstance().insert(files); } catch (FileException e) { //
 	 * TODO Auto-generated catch block e.printStackTrace(); }
-	 * System.out.println(" file is created "); return files; }
+	 * System.out.println(" file is created "); 
+	 * return files; }
 	 */
 
+	
 	/* Check delete function with userid for user */
 	// Set file status to delete instead of deleting the files;
 	public boolean deleteFiles(long fileId) {
@@ -304,8 +297,8 @@ public class FilesManager {
 	/*
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		FilesManager.getInstance().deleteFiles(5);
-		FilesManager.getInstance().createFiles((long)5,(long)6,"/home/ankita/Desktop/cd2_lml13(www.songs.pk).mp3");
+		FilesManager.getInstance().deleteFiles(6);
+		FilesManager.getInstance().createFiles((long)27,"/home/ankita/Desktop/cd2_lml13(www.songs.pk).mp3");
 		System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));
 		System.out.println(FilesManager.getInstance().readFiles(6, "mp3", Files.FILETYPE));
 	  //  Map<String, Object> updateMap = new HashMap<String, Object>();

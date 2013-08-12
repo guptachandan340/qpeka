@@ -4,16 +4,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.qpeka.db.Category;
-import com.qpeka.db.Languages;
+
 import com.qpeka.db.exceptions.CategoryException;
-import com.qpeka.db.exceptions.LanguagesException;
+
 import com.qpeka.db.handler.CategoryHandler;
-import com.qpeka.db.handler.LanguagesHandler;
-
-
 public class CategoryManager {
 public static CategoryManager instance= null;
 
@@ -43,7 +39,7 @@ public Category createCategory(short categoryid,String type,String categoryField
 	return category;
 } 
 
-public boolean deleteCategory(short categoryid) {
+public boolean deleteCategory(short categoryid) {YrEkEVgD
 	try {
 		CategoryHandler.getInstance().delete(categoryid);
 		return true;
@@ -181,7 +177,7 @@ public Map<Short, Map.Entry<String, String>> readCategory(String type) {
 	return retrieveCategory(existingCategory);
 }
 
-	public Map<Short, Map.Entry<String, String>> retrieveCategory(
+public Map<Short, Map.Entry<String, String>> retrieveCategory(
 			List<Category> existingCategory) {
 		Map<Short, Map.Entry<String, String>> outerMap = new HashMap<Short, Map.Entry<String, String>>();
 		Map<String, String> innerMap = new HashMap<String, String>();
