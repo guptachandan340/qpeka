@@ -51,12 +51,19 @@ public class UserService {
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid,@FormParam("lastaccess") long lastaccess) {
 		short counter = 0;
+		Object error = null;
+		String response = null;
+		Gson gson = new Gson();
 		counter = UserManager.getInstance().updateLastLogin(lastaccess, userid, false);
 		if(counter > 0) {
-			// or return true;
-			return Response.status(200).entity("Successfully updated").build();
+			error = "Success : 200";
+			response = gson.toJson(error);
+			
+		} else {
+			error = "Error : 215";
+			response = gson.toJson(error);
 		}
-		return null;
+		return Response.status(200).entity(response).build();
 	}
 
 	@POST
