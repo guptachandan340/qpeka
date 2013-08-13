@@ -10,11 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
-import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.user.User;
-import com.qpeka.db.user.profile.Name;
-import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
 @Path("/user")
@@ -28,9 +25,6 @@ public class UserService {
 		String response = null;
 		Gson gson = new Gson();
 		Object error = null;
-		/* if (username.indexOf("@") != -1) {
-			isEmail = true;
-		}*/
 		try {
 			user = UserManager.getInstance().authenticateUser(username,
 					password, isEmail);
@@ -49,20 +43,27 @@ public class UserService {
 
 	@POST
 	@Path("/logout")
-	public Response logoutService(@FormParam("userid") long userid,@FormParam("lastaccess") long lastaccess) {
+	public Response logoutService(@FormParam("userid") long userid) {
 		short counter = 0;
-		counter = UserManager.getInstance().updateLastLogin(lastaccess, userid, false);
+		Object error = null;
+		String response = null;
+		Gson gson = new Gson();
+		counter = UserManager.getInstance().updateLastActivity(userid, false);
 		if(counter > 0) {
-			// or return true;
-			return Response.status(200).entity("Successfully updated").build();
+			error = "Success : 200";
+			response = gson.toJson(error);
+			
+		} else {
+			error = "Error : 215";
+			response = gson.toJson(error);
 		}
-		return null;
+		return Response.status(200).entity(response).build();
 	}
 
 	@POST
-	@Path("/registerpost")
+	@Path("/signup")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response registerpost(MultivaluedMap<String, String> formParams) {
+	public Response signupService(MultivaluedMap<String, String> formParams) {
 		User user = null;
 		String response = null;
 		Object error = null;
@@ -96,29 +97,7 @@ public class UserService {
 	}
 	
 	/*
-	@POST
-	@Path("/verifyemailexist")
-	public Response verifyEmailService(@FormParam("email") String email) {
-		String response = null;
-			try {
-				if (UserManager.getInstance().emailExists(email)) {
-					response = "Already Available in our System, Try with other";
-				} else {
-					response = "Available for you";
-				}
-			} catch (UserException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		else {
-			response = "Enter Email Id Properly";
-		}
-		return Response.status(200).entity(response).build();
-	}
-	*/
-	
-	
-	// This will be used for edit profile service
+	 * // This will be used for edit profile service
 	@POST
 	@Path("/verifyusernameexist")
 	public Response verifyUserNameService(@FormParam("username") String userName) {
@@ -136,10 +115,11 @@ public class UserService {
 		}
 		return Response.status(200).entity(response).build();
 	}
+	*/
 	
 	@POST
-	@Path("/resetpassword")
-	public Response resetPasswordService(@FormParam("authname") String authName) {
+	@Path("/resetpwd")
+	public Response resetPwdService(@FormParam("authname") String authName) {
 		Gson gson = new Gson();
 		String response = null;
 		boolean isEmail = false;;
@@ -165,8 +145,8 @@ public class UserService {
 	
 	
 	@POST
-	@Path("/changepassword")
-	public Response changePasswordService(@FormParam("userid") long userid, @FormParam("currentpassword") String currentPassword,
+	@Path("/changepwd")
+	public Response changePwdService(@FormParam("userid") long userid, @FormParam("currentpassword") String currentPassword,
 			@FormParam("newpassword") String newPassword) {
 		Gson gson = new Gson();
 		Object user = null;
