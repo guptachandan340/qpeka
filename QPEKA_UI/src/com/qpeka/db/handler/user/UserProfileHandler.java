@@ -996,6 +996,9 @@ public class UserProfileHandler extends AbstractHandler implements
 	protected void reset(UserProfile user) {
 		user.setUseridModified(false);
 		user.setPennameModified(false);
+		if(user.getName() == null) { 
+			user.setName(Name.getInstance());
+		}
 		user.getName().setFirstnameModified(false);
 		user.getName().setMiddlenameModified(false);
 		user.getName().setLastnameModified(false);
