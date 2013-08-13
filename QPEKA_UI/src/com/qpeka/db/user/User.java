@@ -3,6 +3,7 @@ package com.qpeka.db.user;
 import java.io.Serializable;
 
 import com.qpeka.db.Constants;
+import com.qpeka.managers.user.UserManager;
 
 public class User implements Serializable {
 
@@ -56,7 +57,7 @@ public class User implements Serializable {
 	 */
 	private String timezone = "";
 	// private String language = "";
-
+	private static User instance = null;
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
 	protected boolean useridModified = false;
@@ -71,7 +72,9 @@ public class User implements Serializable {
 	protected boolean timezoneModified = false;
 
 	// protected boolean languageModified = false;
-
+	public static User getInstance() {
+		return (instance == null ? (instance = new User()) : instance);
+	}
 	/*
 	 * Constructors
 	 */

@@ -1,7 +1,10 @@
 package com.qpeka.services.user;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -10,8 +13,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
+import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.user.User;
+import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
 @Path("/user")
@@ -167,12 +173,41 @@ public class UserService {
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response editProfileService(MultivaluedMap <String, String> param) {
-		Map<String, Object> profile =new HashMap<String, Object>();
-		 UserProfile userprofile =null;
-		 	 
-		for(String keys : param.keySet()) {
-			for(String keyvalues : param.get(keys)) {
+	public Response editProfileService(MultivaluedMap<String, String> formParams) {
+		 long userid = 0;
+		System.out.println(formParams.keySet());
+		 System.out.println(formParams.entrySet());
+		 Set<String> keySet = formParams.keySet();
+		    for(String key : keySet) {
+				if(key.equalsIgnoreCase(UserProfile.USERID)) {
+					List<String> formValue = formParams.get(key);
+					for(String value : formValue) {
+						if(value != "") {
+						 userid = Long.parseLong(value);
+						 System.out.println(userid);
+						} else {
+							System.out.println("space");
+						}
+					}
+				}
+		    }
+		 
+		 UserProfile userprofile = null;
+	   	 String response = "hello";
+		 Gson gson = new Gson();
+		/*try {
+			userprofile = UserManager.getInstance().editProfile(formParams);
+		} catch (FileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 if(userprofile != null) {
+				response = gson.toJson(userprofile);
+		 }*/
+		/*return Response.status(200).entity(response).build();
+	} */  
+		/*for(String keys : formParams.keySet()) {
+			for(String keyvalues : formParams.get(keys)) {
 				System.out.println("map key " + keys);
 				System.out.println("map value " + keyvalues);
 			
@@ -220,9 +255,9 @@ public class UserService {
 		}
 		Gson gson = new Gson();
 		String json = gson.toJson(userprofile);
-		return Response.status(200).entity(json).build();  
+		return Response.status(200).entity(json).build();*/ 
 	    
-	} */                         
+                 
 	
 
 // TODO WS for each param of edit profile
