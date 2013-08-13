@@ -15,42 +15,25 @@ import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
-
-import com.qpeka.db.Badges;
-import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.STATUS;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
-import com.qpeka.db.Country;
-import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
-import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.QpekaException;
-import com.qpeka.db.exceptions.user.UserBadgesException;
 import com.qpeka.db.exceptions.user.UserException;
-import com.qpeka.db.exceptions.user.UserInterestsException;
 import com.qpeka.db.exceptions.user.UserLanguageException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.AbstractHandler;
-import com.qpeka.db.handler.BadgesHandler;
-import com.qpeka.db.handler.CategoryHandler;
-import com.qpeka.db.handler.CountryHandler;
 import com.qpeka.db.handler.LanguagesHandler;
-import com.qpeka.db.handler.user.UserBadgesHandler;
 import com.qpeka.db.handler.user.UserHandler;
-import com.qpeka.db.handler.user.UserInterestsHandler;
 import com.qpeka.db.handler.user.UserLanguageHandler;
 import com.qpeka.db.handler.user.UserProfileHandler;
 import com.qpeka.db.user.User;
-import com.qpeka.db.user.profile.Address;
 import com.qpeka.db.user.profile.Name;
-import com.qpeka.db.user.profile.UserBadges;
-import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
-import com.qpeka.managers.FilesManager;
 import com.qpeka.security.bcrypt.BCrypt;
 
 public class UserManager {
@@ -79,68 +62,37 @@ public class UserManager {
 	 * @return
 	 */
 	public User registerUser(MultivaluedMap<String, String> formParams) {
+		
 		// Create User
-		User user = new User();
-		Name name = new Name();
+		User user = User.getInstance();
 		// Create User Profile
-		UserProfile userprofile = new UserProfile();
-		for(String keys : formParams.keySet()) {
-			if(keys.equalsIgnoreCase(Name.FIRSTNAME)) {
-				for(String firstname : formParams.get(keys)) {
-					name.setFirstname(firstname);
-				}
-			} else if(keys.equalsIgnoreCase(Name.LASTNAME)) {
-				for(String lastname : formParams.get(keys)) {
-					name.setLastname(lastname);
-				}
-			} else if(keys.equalsIgnoreCase(User.EMAIL)) {
-				for(String email : formParams.get(keys)) {
-					user.setEmail(email);
-				}
-			} else if(keys.equalsIgnoreCase(User.PASSWORD)) {
-				for(String password : formParams.get(keys)) {
-					user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-				}
-			} else if(keys.equalsIgnoreCase(UserProfile.GENDER)) {
-				for(String gender : formParams.get(keys)) {
-					userprofile.setGender(GENDER.valueOf(gender));
-				}
-			} else if(keys.equalsIgnoreCase(UserProfile.DOB)) {
-				for(String dob : formParams.get(keys)) {
-					DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-					try {
-						Date dateOfBirth = (Date)formatter.parse(dob);
-						userprofile.setDob(dateOfBirth);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} 
-				}
-			} else if(keys.equalsIgnoreCase(UserProfile.TNC)) {
-				for(String tnc : formParams.get(keys)) {
-					userprofile.setTnc(Short.parseShort(tnc));
-				}
+		UserProfile userProfile = UserProfile.getInstance();
+		if(userProfile.getName() == null) { 
+			userProfile.setName(Name.getInstance());
+		}
+		Set<String> keySet = formParams.keySet();
+		for(String key : keySet) {
+			List<String> userInfo = formParams.get(key);
+			for(String userInfoValue : userInfo) {
+				setUserInfo(key, userInfoValue, user, userProfile);
 			}
 		}
-		//user.setUsername(username);
-		user.setCreated(System.currentTimeMillis() / 1000);
-		user.setLastaccess(0);
-		user.setLastlogin(0);
-		user.setStatus((short) STATUS.DEFAULT.ordinal());
-		// Set name
-		userprofile.setName(name);
-
-		// Insert user to database;
-		try {
-				Long userId = UserHandler.getInstance().insert(user);
-				userprofile.setUserid(userId);
-				UserProfileHandler.getInstance().insert(userprofile);
+			user.setCreated(System.currentTimeMillis() / 1000);
+			user.setLastaccess(0);
+			user.setLastlogin(0);
+			user.setStatus((short) STATUS.DEFAULT.ordinal());
+			try {
+				// Insert user to database;
+				Long userid = UserHandler.getInstance().insert(user);
+				userProfile.setUserid(userid);
+				UserProfileHandler.getInstance().insert(userProfile);
 				//store languages in user language table
-				for(String keys : formParams.keySet()) {
-					if(keys.equalsIgnoreCase(Languages.LANGUAGEID)) {
-						for(String languageid : formParams.get(keys)) {
+				for(String key : keySet) {
+					if(key.equalsIgnoreCase(Languages.LANGUAGEID)) {
+						List<String> userLanguageId = formParams.get(key);
+						for(String languageid : userLanguageId) {
 							UserLanguage userlanguage = new UserLanguage();
-							userlanguage.setUserid(userId);
+							userlanguage.setUserid(userid);
 							userlanguage.setLanguageid(Short.parseShort(languageid));
 							UserLanguageHandler.getInstance().insert(userlanguage);
 						}
@@ -157,8 +109,35 @@ public class UserManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		return user;
-		}// end of registeruser()
+			return user;
+	}// end of registeruser()
+			
+	public void setUserInfo(String key, String value, User user, UserProfile userProfile) {
+			if(key.equalsIgnoreCase(Name.FIRSTNAME)) {
+				   userProfile.getName().setFirstname(value);
+					//name.setFirstname(value);
+			} else if(key.equalsIgnoreCase(Name.LASTNAME)) {
+					userProfile.getName().setLastname(value);
+					//name.setLastname(value);
+			} else if(key.equalsIgnoreCase(User.EMAIL)) {
+					user.setEmail(value);
+			} else if(key.equalsIgnoreCase(User.PASSWORD)) {
+					user.setPassword(BCrypt.hashpw(value, BCrypt.gensalt()));
+			} else if(key.equalsIgnoreCase(UserProfile.GENDER)) {
+					userProfile.setGender(GENDER.valueOf(value));
+			} else if(key.equalsIgnoreCase(UserProfile.DOB)) {
+					DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+					try {
+						Date dateOfBirth = (Date)formatter.parse(value);
+						userProfile.setDob(dateOfBirth);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+			} else if(key.equalsIgnoreCase(UserProfile.TNC)) {
+				   userProfile.setTnc(Short.parseShort(value));
+			}
+		}
 		 
 		
 	
@@ -235,47 +214,47 @@ public class UserManager {
 			e.printStackTrace();
 		}
 		if (user != null) {
-			userInfo.put(User.PROFILEID, user.getUserid());
+			userInfo.put((User.PROFILEID).toLowerCase(), user.getUserid());
 			if (user.getUsername() != null) {
-				userInfo.put(User.USERNAME, user.getUsername());
+				userInfo.put(User.USERNAME.toLowerCase(), user.getUsername());
 			} else {
-				userInfo.put(User.USERNAME, "");
+				userInfo.put(User.USERNAME.toLowerCase(), "");
 			}
 			if (user.getEmail() != null) {
-				userInfo.put(User.EMAIL, user.getEmail());
+				userInfo.put(User.EMAIL.toLowerCase(), user.getEmail());
 			} else {
-				userInfo.put(User.EMAIL, "");
+				userInfo.put(User.EMAIL.toLowerCase(), "");
 			}
 		}
 		if (userProfile != null) {
 			Name name = userProfile.get(0).getName();
 			if (name.getFirstname() != null) {
-				userInfo.put(Name.FIRSTNAME, name.getFirstname());
+				userInfo.put(Name.FIRSTNAME.toLowerCase(), name.getFirstname());
 			} else {
-				userInfo.put(Name.FIRSTNAME, "");
+				userInfo.put(Name.FIRSTNAME.toLowerCase(), "");
 			}
 			if (name.getFirstname() != null) {
-				userInfo.put(Name.LASTNAME, name.getLastname());
+				userInfo.put(Name.LASTNAME.toLowerCase(), name.getLastname());
 			} else {
-				userInfo.put(Name.LASTNAME, "");
+				userInfo.put(Name.LASTNAME.toLowerCase(), "");
 			}
 			if (userProfile.get(0).getPenname() != null) {
-				userInfo.put(UserProfile.PENNAME, userProfile.get(0)
+				userInfo.put(UserProfile.PENNAME.toLowerCase(), userProfile.get(0)
 						.getPenname());
 			} else {
-				userInfo.put(UserProfile.PENNAME, "");
+				userInfo.put(UserProfile.PENNAME.toLowerCase(), "");
 			}
 
 			if (userProfile.get(0).getGender() != null) {
-				userInfo.put(UserProfile.GENDER, userProfile.get(0).getGender());
+				userInfo.put(UserProfile.GENDER.toLowerCase(), userProfile.get(0).getGender());
 			} else {
-				userInfo.put(UserProfile.GENDER, "");
+				userInfo.put(UserProfile.GENDER.toLowerCase(), "");
 			}
 			if (userProfile.get(0).getProfilepic() > 0) {
-				userInfo.put(UserProfile.PROFILEPIC, userProfile.get(0)
+				userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), userProfile.get(0)
 						.getProfilepic());
 			} else {
-				userInfo.put(UserProfile.PROFILEPIC, "");
+				userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), "");
 			}
 		}
 		return userInfo;
@@ -414,14 +393,25 @@ public class UserManager {
 	 */
 	
 	// TODO userlevel, usertype,userlangugaes, status
-	// TODO timezone : diff table n handle using httprequest  
-	
-	public UserProfile editProfile(Map<String, Object> profile) throws FileException {
+		
+	public UserProfile editProfile(MultivaluedMap<String, String> formParams) throws FileException {
 		UserProfile userProfile = UserProfile.getInstance();
-		long userid = 0;
 		short usertype = 0;
-
-		if (profile.get(UserProfile.USERID) != null) {
+		long userid = 0;
+		System.out.println(formParams.keySet());
+	    System.out.println(formParams.entrySet());
+	    Set<String> keySet = formParams.keySet();
+	    for(String key : keySet) {
+			if(key.equalsIgnoreCase(UserProfile.USERID)) {
+				List<String> formValue = formParams.get(key);
+				for(String value : formValue) {
+					 userid = Long.parseLong(value);
+					 System.out.println(userid);
+				}
+			}
+	    }
+				
+		/*if (formParams.get(UserProfile.USERID) != null) {
 			userid = Long.parseLong(profile.get(UserProfile.USERID).toString());
 			usertype = (short) ((profile.get(UserProfile.USERTYPE) != null) 
 					? Short.parseShort(profile.get(UserProfile.USERTYPE).toString())
@@ -644,10 +634,9 @@ public class UserManager {
 				e.printStackTrace();
 			}
 		}
-
+*/
 		return userProfile;
-	}// end of edit Profile
-
+	}// end of edit Profile()
 	/**
 	 * Update user points
 	 * 

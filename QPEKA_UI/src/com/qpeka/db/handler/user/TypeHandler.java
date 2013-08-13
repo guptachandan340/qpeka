@@ -4,12 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.log4j.Logger;
-
 import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.TypeDao;
 import com.qpeka.db.exceptions.user.TypeException;
@@ -169,7 +168,7 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 			sql.append(") VALUES (");
 			sql.append(values);
 			sql.append(")");
-			stmt = conn.prepareStatement(sql.toString());
+			stmt = conn.prepareStatement(sql.toString(),Statement.RETURN_GENERATED_KEYS);
 			int index = 1;
 			if (type.isTypeidModified()) {
 				stmt.setShort(index++, type.getTypeid());
