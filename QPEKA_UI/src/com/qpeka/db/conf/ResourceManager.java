@@ -10,17 +10,38 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+
+
 public class ResourceManager {
 
-	private static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	private static String JDBC_URL = "jdbc:mysql://localhost/mysql";
+	private static String JDBC_DRIVER = null;
+	private static String JDBC_URL = null;
+	private static String JDBC_USER = null;
+	private static String JDBC_PASSWORD = null;
+    private static Driver driver = null;
+    private static InputStream is=null;
+	private static Properties p=null;
+    static{
+    	
+    	try
+		{    
+    		is = ResourceManager.class.getClassLoader().getResourceAsStream("mysql.properties");
+		     p = new Properties();
+		     p.load(is);
+            
+		}
+		catch(IOException ie)
+		{
+			ie.printStackTrace();
+		}
+    	
+}
 
-	private static String JDBC_USER = "root";
-	private static String JDBC_PASSWORD = "ankita";
-
-	private static Driver driver = null;
-
-	public static synchronized Connection getConnection() throws SQLException {
+    public static synchronized Connection getConnection() throws SQLException {
+    	JDBC_DRIVER = p.getProperty("db_driver");
+    	JDBC_URL = p.getProperty("db_url");
+    	JDBC_USER = p.getProperty("db_user");
+    	JDBC_PASSWORD = p.getProperty("db_password");
 		if (driver == null) {
 			try {
 				Class jdbcDriverClass = Class.forName(JDBC_DRIVER);
@@ -32,7 +53,7 @@ public class ResourceManager {
 			}
 		}
 
-		return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+		return DriverManager.getConnection(JDBC_URL,JDBC_USER,JDBC_PASSWORD);
 	}
 
 	public static void close(Connection conn) {
@@ -65,12 +86,15 @@ public class ResourceManager {
 	
 	public static void main(String[] args) {
 		Properties prop = new Properties();
+		/*
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();  
 		InputStream stream = loader.getResourceAsStream("mysql.properties");
+		*/
 		
 		try {
+			InputStream stream = ResourceManager.class.getClassLoader().getResourceAsStream("mysql.properties");
 			prop.load(stream);
-			System.out.println(prop.toString());
+			System.out.println(prop.getProperty("db_password"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,3 +102,4 @@ public class ResourceManager {
 	}
 
 }
+
