@@ -39,7 +39,7 @@ public Category createCategory(short categoryid,String type,String categoryField
 	return category;
 } 
 
-public boolean deleteCategory(short categoryid) {YrEkEVgD
+public boolean deleteCategory(short categoryid) {
 	try {
 		CategoryHandler.getInstance().delete(categoryid);
 		return true;
@@ -49,7 +49,6 @@ public boolean deleteCategory(short categoryid) {YrEkEVgD
 		return false;
 	}
 }
-
 
 	public short updateCategory(Map<String, Object> updatecategoryMap) {
 		short counter = 0;
