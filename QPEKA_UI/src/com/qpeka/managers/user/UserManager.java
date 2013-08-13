@@ -195,12 +195,6 @@ public class UserManager {
 		try {
 			user = (!isEmail) ? UserHandler.getInstance().findWhereUsernameEquals(
 					authName) : UserHandler.getInstance().findWhereEmailEquals(authName);
-			/*if (!isEmail) {
-				user = UserHandler.getInstance().findWhereUsernameEquals(
-						authName);
-			} else {
-				user = UserHandler.getInstance().findWhereEmailEquals(authName);
-			}*/
 		} catch (UserException _e) {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
@@ -210,8 +204,7 @@ public class UserManager {
 			if (user.get(0).getStatus() != 3 || user.get(0).getStatus() != 4) {
 				if (BCrypt.checkpw(password, user.get(0).getPassword())) {
 					// check whether counter is > 0 or not; if not then set error code.
-					updateLastLogin(System
-							.currentTimeMillis() / 1000, user.get(0)
+					updateLastActivity(user.get(0)
 							.getUserid(), true);
 					return createUserInfoMap(user.get(0));
 				} else {
@@ -291,7 +284,9 @@ public class UserManager {
 	/**
 	 * update lastlogin or lastaccess
 	 */
-	public short updateLastLogin(long lastaccess,long userid, boolean isLastLogin) {
+	public short updateLastActivity(long userid, boolean isLastLogin) {
+		long lastActivity = System
+				.currentTimeMillis() / 1000;
 		List<User> existingUser = new ArrayList<User>();
 		short counter = 0;
 		try {
@@ -304,9 +299,9 @@ public class UserManager {
 		// isLastLogin = false when incoming data is LastAccess
 		for(User user : existingUser) {
 			if(!isLastLogin) {
-				user.setLastaccess(lastaccess);
+				user.setLastaccess(lastActivity);
 			} else {
-				user.setLastlogin(lastaccess);
+				user.setLastlogin(lastActivity);
 			}
 			try {
 				counter += UserHandler.getInstance().update(userid, user);
@@ -395,12 +390,6 @@ public class UserManager {
 		String newPassword = RandomStringUtils.random(8, true, true);
 		try {
 			user = (!isEmail) ? UserHandler.getInstance().findWhereUsernameEquals(authName) : UserHandler.getInstance().findWhereEmailEquals(authName);
-			/*if (!isEmail) {
-				user = UserHandler.getInstance().findWhereUsernameEquals(
-						authName);
-			} else {
-				user = UserHandler.getInstance().findWhereEmailEquals(authName);
-			}*/
 		} catch (UserException _e) {
 			throw new UserException("Reset user Password Exception: "
 					+ _e.getMessage(), _e);
