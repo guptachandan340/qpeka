@@ -41,7 +41,7 @@ public class UserService {
 		if (user != null) {
 			response = gson.toJson(user);
 		} else {
-				error = "Error : 34";
+				error = "error : 34";
 				response = gson.toJson(error);
 		}
 		return Response.status(200).entity(response).build();
@@ -56,11 +56,11 @@ public class UserService {
 		Gson gson = new Gson();
 		counter = UserManager.getInstance().updateLastActivity(userid, false);
 		if(counter > 0) {
-			error = "Success : 200";
+			error = "success : 200";
 			response = gson.toJson(error);
 			
 		} else {
-			error = "Error : 215";
+			error = "error : 215";
 			response = gson.toJson(error);
 		}
 		return Response.status(200).entity(response).build();
@@ -72,7 +72,7 @@ public class UserService {
 	public Response signupService(MultivaluedMap<String, String> formParams) {
 		User user = null;
 		String response = null;
-		Object error = null;
+		Object serviceResult = null;
 		Gson gson = new Gson();
 		for (String keys : formParams.keySet()) {
 			if (keys.equalsIgnoreCase(User.EMAIL)) {
@@ -82,8 +82,8 @@ public class UserService {
 							user = UserManager.getInstance().registerUser(
 									formParams);
 						} else {
-							error = "Error : 34";
-							response = gson.toJson(error);
+							serviceResult = "error : 34";
+							response = gson.toJson(serviceResult);
 							return Response.status(200).entity(response).build();
 						}
 					} catch (UserException e) {
@@ -94,10 +94,11 @@ public class UserService {
 			}
 		}
 		if (user != null) {
-			response = gson.toJson(user);
+			serviceResult = "success : 200";
+			response = gson.toJson(serviceResult);
 		} else {
-			error = "Error : 215";
-			response = gson.toJson(error);
+			serviceResult = "error : 215";
+			response = gson.toJson(serviceResult);
 		}
 		return Response.status(200).entity(response).build();
 	}
@@ -143,7 +144,7 @@ public class UserService {
 		if(changedPassword != null) {
 				response = gson.toJson(changedPassword);
 		} else {
-			error = "Error : 215";
+			error = "error : 215";
 			response = gson.toJson(error);
 		}
 		return Response.status(200).entity(response).build();
@@ -169,20 +170,19 @@ public class UserService {
 		return Response.status(200).entity(response).build();
 	}
 	
-	/*
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response editProfileService(MultivaluedMap<String, String> formParams) {
 		 long userid = 0;
 		System.out.println(formParams.keySet());
-		 System.out.println(formParams.entrySet());
-		 Set<String> keySet = formParams.keySet();
+		System.out.println(formParams.entrySet());
+		Set<String> keySet = formParams.keySet();
 		    for(String key : keySet) {
 				if(key.equalsIgnoreCase(UserProfile.USERID)) {
 					List<String> formValue = formParams.get(key);
 					for(String value : formValue) {
-						if(value != "") {
+						if(value != null && !value.equals("")) {
 						 userid = Long.parseLong(value);
 						 System.out.println(userid);
 						} else {
@@ -204,8 +204,8 @@ public class UserService {
 		 if(userprofile != null) {
 				response = gson.toJson(userprofile);
 		 }*/
-		/*return Response.status(200).entity(response).build();
-	} */  
+		return Response.status(200).entity(response).build();
+	}   
 		/*for(String keys : formParams.keySet()) {
 			for(String keyvalues : formParams.get(keys)) {
 				System.out.println("map key " + keys);
