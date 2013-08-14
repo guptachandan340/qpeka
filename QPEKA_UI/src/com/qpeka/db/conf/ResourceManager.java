@@ -12,18 +12,38 @@ import java.util.Properties;
 
 public class ResourceManager {
 
-	private static String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-	private static String JDBC_URL = "jdbc:mysql://localhost/mysql";
-
-	private static String JDBC_USER = "root";
-	private static String JDBC_PASSWORD = "ankita";
-
+	private static String JDBC_DRIVER = null;
+	private static String JDBC_URL = null;
+	private static String JDBC_USER = null;
+	private static String JDBC_PASSWORD = null;
 	private static Driver driver = null;
+	private static InputStream is = null;
+	private static Properties p = null;
+
+	static {
+
+		try {
+			is = ResourceManager.class.getClassLoader().getResourceAsStream(
+					"mysql.properties");
+			p = new Properties();
+			p.load(is);
+			
+			// Assigning Properties values
+			JDBC_DRIVER = p.getProperty("db_driver");
+			JDBC_URL = p.getProperty("db_url");
+			JDBC_USER = p.getProperty("db_user");
+			JDBC_PASSWORD = p.getProperty("db_password");
+
+		} catch (IOException ie) {
+			ie.printStackTrace();
+		}
+
+	}
 
 	public static synchronized Connection getConnection() throws SQLException {
 		if (driver == null) {
 			try {
-				Class jdbcDriverClass = Class.forName(JDBC_DRIVER);
+				Class<?> jdbcDriverClass = Class.forName(JDBC_DRIVER);
 				driver = (Driver) jdbcDriverClass.newInstance();
 				DriverManager.registerDriver(driver);
 			} catch (Exception e) {
@@ -62,15 +82,19 @@ public class ResourceManager {
 		}
 
 	}
-	
+
 	public static void main(String[] args) {
 		Properties prop = new Properties();
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();  
-		InputStream stream = loader.getResourceAsStream("mysql.properties");
-		
+		/*
+		 * ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		 * InputStream stream = loader.getResourceAsStream("mysql.properties");
+		 */
+
 		try {
+			InputStream stream = ResourceManager.class.getClassLoader()
+					.getResourceAsStream("mysql.properties");
 			prop.load(stream);
-			System.out.println(prop.toString());
+			System.out.println(prop.getProperty("db_password"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
