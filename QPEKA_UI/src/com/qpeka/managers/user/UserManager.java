@@ -15,25 +15,42 @@ import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
+
+import com.qpeka.db.Badges;
+import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.STATUS;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
+import com.qpeka.db.Country;
+import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
+import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.QpekaException;
+import com.qpeka.db.exceptions.user.UserBadgesException;
 import com.qpeka.db.exceptions.user.UserException;
+import com.qpeka.db.exceptions.user.UserInterestsException;
 import com.qpeka.db.exceptions.user.UserLanguageException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.AbstractHandler;
+import com.qpeka.db.handler.BadgesHandler;
+import com.qpeka.db.handler.CategoryHandler;
+import com.qpeka.db.handler.CountryHandler;
 import com.qpeka.db.handler.LanguagesHandler;
+import com.qpeka.db.handler.user.UserBadgesHandler;
 import com.qpeka.db.handler.user.UserHandler;
+import com.qpeka.db.handler.user.UserInterestsHandler;
 import com.qpeka.db.handler.user.UserLanguageHandler;
 import com.qpeka.db.handler.user.UserProfileHandler;
 import com.qpeka.db.user.User;
+import com.qpeka.db.user.profile.Address;
 import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.UserBadges;
+import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
+import com.qpeka.managers.FilesManager;
 import com.qpeka.security.bcrypt.BCrypt;
 
 public class UserManager {
@@ -61,6 +78,7 @@ public class UserManager {
 	 * @param langugaes
 	 * @return
 	 */
+	
 	public User registerUser(MultivaluedMap<String, String> formParams) {
 
 		// Create User
@@ -399,33 +417,236 @@ public class UserManager {
 
 	public UserProfile editProfile(MultivaluedMap<String, String> formParams)
 			throws FileException {
-		UserProfile userProfile = UserProfile.getInstance();
-		short usertype = 0;
 		long userid = 0;
+		// Create User Profile
+		UserProfile userProfile = UserProfile.getInstance();
+		if (userProfile.getName() == null) {
+			userProfile.setName(Name.getInstance());
+		}
+		if (userProfile.getAddress() == null) {
+			userProfile.setAddress(Address.getInstance());
+		}
 		System.out.println(formParams.keySet());
 		System.out.println(formParams.entrySet());
 		Set<String> keySet = formParams.keySet();
-	    for(String key : keySet) {
-			if(key.equalsIgnoreCase(UserProfile.USERID)) {
+		for (String key : keySet) {
+			if (key.equalsIgnoreCase(UserProfile.USERID)) {
 				List<String> formUserid = formParams.get(key);
-				for(String value : formUserid) {
-					if(value != null && !value.equals("")) {
-					 userid = Long.parseLong(value);
-					 System.out.println(userid);
+				for (String value : formUserid) {
+					if (value != null && !value.equals("")) {
+						userid = Long.parseLong(value);
+						userProfile.setUserid(userid);
+						System.out.println(userid);
+						setEditedInfo(userid, formParams, userProfile);
 					} else {
 						System.out.println("space");
 					}
 				}
 			}
-	    }
+		}
+		return userProfile;
+	}
+
+	public void setEditedInfo(long userid,
+			MultivaluedMap<String, String> formParams, UserProfile userProfile) {
+		if (userid != 0) {
+			System.out.println(userid);
+			short usertype = 0;
+			Set<String> keySet = formParams.keySet();
+			for (String key : keySet) {
+				List<String> userInfo = formParams.get(key);
+				for (String userInfoValue : userInfo) {
+					System.out.println(userInfoValue);
+					if (userInfoValue != null
+							&& !userInfoValue.equalsIgnoreCase("")) {
+						if (key.equalsIgnoreCase(UserProfile.USERTYPE)) {
+							System.out.println(userInfoValue);
+							usertype = Short.parseShort(userInfoValue);
+						}
+						// Set Pen name
+						else if (key.equalsIgnoreCase(UserProfile.PENNAME)) {
+							System.out.println(userInfoValue);
+							userProfile.setPenname(userInfoValue);
+						}
+						else if (key.equalsIgnoreCase(Name.FIRSTNAME)) {
+							System.out.println(userInfoValue);
+							userProfile.getName().setFirstname(userInfoValue);
+							// name.setFirstname(value);
+						}
+						else if (key.equalsIgnoreCase(Name.MIDDLENAME)) {
+							System.out.println(userInfoValue);
+							userProfile.getName()
+									.setMiddlename((userInfoValue));
+							// name.setLastname(value);
+						}
+						else if (key.equalsIgnoreCase(Name.LASTNAME)) {
+							System.out.println(userInfoValue);
+							userProfile.getName().setLastname(userInfoValue);
+							// name.setLastname(value);
+						}
+						else if (key.equalsIgnoreCase(UserProfile.GENDER)) {
+							System.out.println(userInfoValue);
+							userProfile.setGender(GENDER.valueOf(userInfoValue
+									.toUpperCase()));
+						}
+						else if (key.equalsIgnoreCase(UserProfile.DOB)) {
+							DateFormat formatter = new SimpleDateFormat(
+									"yyyy-MM-dd");
+							try {
+								Date dateOfBirth = (Date) formatter
+										.parse(userInfoValue);
+								System.out.println(dateOfBirth);
+								userProfile.setDob(dateOfBirth);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						else if (key.equalsIgnoreCase(UserProfile.NATIONALITY)) {
+							List<Country> nation = null;
+							try {
+								nation = CountryHandler
+										.getInstance()
+										.findWhereShortnameEquals(userInfoValue);
+							} catch (CountryException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							if (nation != null) {
+								System.out.println(nation.get(0)
+										.getCountryid());
+								userProfile.setNationality(nation.get(0)
+										.getCountryid());
+							}
+						}
+						else if (key.equalsIgnoreCase(UserProfile.WEBSITE)) {
+							System.out.println(userInfoValue);
+							userProfile.setWebsite(userInfoValue);
+						}
+						else if (key.equalsIgnoreCase(UserProfile.BIOGRAPHY)) {
+							System.out.println(userInfoValue);
+							userProfile.setBiography(userInfoValue);
+						}
+						else if (key.equalsIgnoreCase(UserProfile.PROFILEPIC)) {
+							Files file = new Files();
+							System.out.println(userInfoValue);
+							file = FilesManager.getInstance().createFiles(
+									userid, userInfoValue);
+							userProfile.setProfilepic(file.getFileid());
+						}
+						else if (key.equalsIgnoreCase(Address.ADDRESSLINE1)) {
+							System.out.println(userInfoValue);
+							userProfile.getAddress().setAddressLine1(
+									userInfoValue);
+						}
+						else if (key.equalsIgnoreCase(Address.ADDRESSLINE2)) {
+							System.out.println(userInfoValue);
+							userProfile.getAddress().setAddressLine2(
+									userInfoValue);
+						}
+						/*
+						 * if(key.equalsIgnoreCase(Address.ADDRESSLINE3)) {
+						 * userProfile
+						 * .getAddress().setAddressLine3(userInfoValue); }
+						 */
+						else if (key.equalsIgnoreCase(Address.CITY)) {
+							System.out.println(userInfoValue);
+							userProfile.getAddress().setCity(userInfoValue);
+						}
+						else if (key.equalsIgnoreCase(Address.PINCODE)) {
+							System.out.println(userInfoValue);
+							userProfile.getAddress().setPincode(
+									Short.parseShort(userInfoValue));
+						}
+						else if (key.equalsIgnoreCase(Address.STATE)) {
+							System.out.println(userInfoValue);
+							userProfile.getAddress().setState(userInfoValue);
+						}
+						else if (key.equalsIgnoreCase(UserProfile.INTERESTS)) {
+							System.out.println(userInfoValue);
+							@SuppressWarnings("unchecked")
+							List<Category> interestsList = (List<Category>) getProfilePreferences(
+									"category", userInfoValue,
+									CategoryHandler.getInstance(), (short) 0);
+							UserInterests userInterests = UserInterests
+									.getInstance();
+							userInterests.setUserid(userid);
+							for (Category category : interestsList) {
+								userInterests.setCategoryid(category
+										.getCategoryid());
+								try {
+									UserInterestsHandler.getInstance().insert(
+											userInterests);
+								} catch (UserInterestsException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							userProfile.setInterests(new HashSet<Category>(
+									interestsList));
+						}
+						else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
+							System.out.println(userInfoValue);
+							Set<Languages> userLanguages = updateUserLanguages(
+									userid, "read", userInfoValue);
+							System.out.println(userLanguages);
+							userProfile.setrLang(userLanguages);
+						}
+						else if (key.equalsIgnoreCase(UserProfile.WLANG)) {
+							System.out.println(userInfoValue);
+							Set<Languages> userLanguages = updateUserLanguages(
+									userid, "read", userInfoValue);
+							System.out.println(userLanguages);
+							userProfile.setrLang(userLanguages);
+						} 
+						else if (key.equalsIgnoreCase(UserProfile.USERBADGES)) {
+							System.out.println(userInfoValue);
+							@SuppressWarnings("unchecked")
+							List<Badges> userBadgesList = (List<Badges>) getProfilePreferences(
+									"typeid = ? AND badge", userInfoValue,
+									BadgesHandler.getInstance(), usertype);
+							UserBadges userBadges = UserBadges.getInstance();
+							userBadges.setUserid(userid);
+							for (Badges badges : userBadgesList) {
+								userBadges.setBadgeid(badges.getBadgeid());
+								try {
+									UserBadgesHandler.getInstance().insert(
+											userBadges);
+								} catch (UserBadgesException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							userProfile.setUserbadges(new HashSet<Badges>());
+						} 
+					} else {
+						usertype = (short) com.qpeka.db.Constants.USERTYPE.READER
+								.ordinal();
+					}
+				}
+			}
+		}
+		// User Points if (profile.get(UserProfile.USERPOINTS) != null) {
+
+		// userProfile.getUserpoints();
+		// User Level userProfile.getUserlevel();
+		// User Type userProfile.getUsertype();
+		try {
+			UserProfileHandler.getInstance().update(userid, userProfile);
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 		/*
-		 * if (formParams.get(UserProfile.USERID) != null) { userid =
-		 * Long.parseLong(profile.get(UserProfile.USERID).toString()); usertype
-		 * = (short) ((profile.get(UserProfile.USERTYPE) != null) ?
+		 * if (formParams.get(UserProfile.USERID) != null) {
+		 *  userid = Long.parseLong(profile.get(UserProfile.USERID).toString());
+		 *  usertype = (short) ((profile.get(UserProfile.USERTYPE) != null) ?
 		 * Short.parseShort(profile.get(UserProfile.USERTYPE).toString()) :
 		 * com.qpeka.db.Constants.USERTYPE.READER.ordinal());
 		 * 
-		 * // Set Pen name if (profile.get(UserProfile.PENNAME) != null) {
+		 *  if (profile.get(UserProfile.PENNAME) != null) {
 		 * userProfile.setPenname(profile.get(UserProfile.PENNAME) .toString());
 		 * }
 		 * 
@@ -468,7 +689,11 @@ public class UserManager {
 		 * .toString()); }
 		 * 
 		 * // Set Biography for userProfile if
-		 * (profile.get(UserProfile.BIOGRAPHY) != null) {
+		 * (profile.get(UserProfile.BIOGRAPHY) != nul
+								 userProfile.setNationality(nation.get(0).getCountryid());
+							}
+						}
+		{
 		 * userProfile.setBiography(profile.get(UserProfile.BIOGRAPHY)
 		 * .toString()); }
 		 * 
@@ -568,8 +793,9 @@ public class UserManager {
 		 * catch (UserProfileException e) { // TODO Auto-generated catch block
 		 * e.printStackTrace(); } }
 		 */
-		return userProfile;
-	}// end of edit Profile()
+	/*	return userProfile;
+	}// end of edit Profile() 
+	*/
 
 	/**
 	 * Update user points
@@ -664,7 +890,6 @@ public class UserManager {
 				e.printStackTrace();
 			}
 		}
-
 		return (new HashSet<Languages>(languageList));
 	}
 
@@ -687,6 +912,7 @@ public class UserManager {
 			preferencesObjList.add(userType);
 		}
 
+		
 		preferencesObjList.add(convertCollectionToString(preferencesIt));
 
 		Object profilePreferences = null;
@@ -730,33 +956,101 @@ public class UserManager {
 	 */
 	public String convertCollectionToString(Iterator<String> collectionIt) {
 		StringBuilder collectionString = new StringBuilder();
-
 		// Create string of collection objects (comma separated)
 		while (collectionIt.hasNext()) {
 			if (collectionString.length() > 0) {
 				collectionString.append(", ");
 			}
-
-			collectionString.append(collectionIt.next().toString());
+		collectionString.append(collectionIt.next().toString());
 		}
-
 		return collectionString.toString();
 	}
 
-	/*
-	 * public static void main(String [] args) { UserManager userman = new
-	 * UserManager(); User user = new User("rahul", BCrypt.hashpw("rahul",
-	 * BCrypt.gensalt()), "srahul07.qpeka@gmail.com",
-	 * (System.currentTimeMillis()) / 1000, "East");
-	 * user.setUsernameModified(true); user.setPasswordModified(true);
-	 * user.setEmailModified(true); user.setCreatedModified(true);
-	 * user.setTimezoneModified(true);
-	 * 
-	 * try { UserHandler.getInstance().insert(user); } catch (UserException e1)
-	 * { // TODO Auto-generated catch block e1.printStackTrace(); } try { User
-	 * usr = userman.authenticateUser("rahul", "rahul", false);
-	 * System.out.println(usr.toString()); } catch (UserException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); } }
-	 */
 
+	 public static void main(String [] args) { 
+		 UserManager userman = new UserManager(); 
+		 /*User user = new User("rahul", BCrypt.hashpw("rahul", BCrypt.gensalt()), "srahul07.qpeka@gmail.com",(System.currentTimeMillis()) / 1000, "East");
+		 user.setUsernameModified(true); 
+		 user.setPasswordModified(true);
+		 user.setEmailModified(true); 
+		 user.setCreatedModified(true);
+		 user.setTimezoneModified(true);
+		 try { 
+			 UserHandler.getInstance().insert(user); 
+		 } catch (UserException e1) { 
+			 // TODO Auto-generated catch block 
+			 e1.printStackTrace(); 
+		}
+		 try { 
+			 Map<String, Object> usr = userman.authenticateUser("rahul", "rahul", false);
+			 System.out.println(usr.toString()); 
+		} catch (UserException e) { 
+			// TODO Auto-generated catch block e.printStackTrace(); 
+		}*/
+	
+	/*
+	 @SuppressWarnings({ "unchecked", "rawtypes" })
+	MultivaluedMap mp=new MultivaluedMap();
+	List<String> list1 = new ArrayList<String>();
+	list1.add("27");
+	mp.put("userid", list1);	 
+	List<String> list2 = new ArrayList<String>();
+	list2.add("writer");
+	mp.put("usertype", list2);	
+	List<String> list3 = new ArrayList<String>();
+	list3.add("jiyaMashru");
+	mp.put("penname", list3);	
+	List<String> list4 = new ArrayList<String>();
+	list4.add("jiya");
+	mp.put("firstname", list4);	
+	List<String> list5 = new ArrayList<String>();
+	list5.add("bharat");
+	mp.put("middlename", list5);	
+	List<String> list6 = new ArrayList<String>();
+	list6.add("mashru");
+	mp.put("lastname", list6);	
+	List<String> list7 = new ArrayList<String>();
+	list7.add("Female");
+	mp.put("gender", list7);	
+	List<String> list8 = new ArrayList<String>();
+	list8.add("1993-04-27");
+	mp.put("dob", list8);	
+	List<String> list9 = new ArrayList<String>();
+	list9.add("India");
+	mp.put("nationality", list9);	
+	List<String> list10 = new ArrayList<String>();
+	list10.add("jiyamashru@jinal.com");
+	mp.put("website", list10);	
+	List<String> list11 = new ArrayList<String>();
+	list11.add("yes its der");
+	mp.put("biography", list11);
+	List<String> list12 = new ArrayList<String>();
+	list12.add("/home/ankita/Downloads/30733d8.jpg");
+	mp.put("profilepic", list12);
+	List<String> list13 = new ArrayList<String>();
+	list13.add("A/12, New Ambica sadan");
+	mp.put("addressline1", list13);
+	List<String> list14 = new ArrayList<String>();
+	list14.add("Anand nagar, dahisar (east)");
+	mp.put("addressline2", list14);
+	List<String> list15 = new ArrayList<String>();
+	list15.add("mumbai");
+	mp.put("city", list15);
+	List<String> list16 = new ArrayList<String>();
+	list16.add("400068");
+	mp.put("pincode", list16);
+	List<String> list17 = new ArrayList<String>();
+	list17.add("maharashtra");
+	mp.put("state", list17);
+	List<String> list18 = new ArrayList<String>();
+	list18.add("India");
+	mp.put("country", list18);	
+	try {
+		System.out.println(userman.editProfile(mp));
+	} catch (FileException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}*/
+	}
+	 
 }// End of class UserManager.java

@@ -175,9 +175,7 @@ public class UserService {
 	@Consumes("application/x-www-form-urlencoded")
 	public Response editProfileService(MultivaluedMap<String, String> formParams) {
 		 long userid = 0;
-		System.out.println(formParams.keySet());
-		System.out.println(formParams.entrySet());
-		Set<String> keySet = formParams.keySet();
+		/*Set<String> keySet = formParams.keySet();
 		    for(String key : keySet) {
 				if(key.equalsIgnoreCase(UserProfile.USERID)) {
 					List<String> formValue = formParams.get(key);
@@ -190,12 +188,12 @@ public class UserService {
 						}
 					}
 				}
-		    }
+		    }*/
 		 
 		 UserProfile userprofile = null;
 	   	 String response = "hello";
 		 Gson gson = new Gson();
-		/*try {
+		 try {
 			userprofile = UserManager.getInstance().editProfile(formParams);
 		} catch (FileException e) {
 			// TODO Auto-generated catch block
@@ -203,7 +201,7 @@ public class UserService {
 		}
 		 if(userprofile != null) {
 				response = gson.toJson(userprofile);
-		 }*/
+		 }
 		return Response.status(200).entity(response).build();
 	}   
 		/*for(String keys : formParams.keySet()) {
