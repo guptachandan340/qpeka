@@ -325,7 +325,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 			}
 
 			if (address.isPincodeModified()) {
-				stmt.setShort(index++, address.getPincode());
+				stmt.setInt(index++, address.getPincode());
 			}
 
 			if (address.isTimestampModified()) {
@@ -515,7 +515,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 			}
 
 			if (address.isPincodeModified()) {
-				stmt.setShort(index++, address.getPincode());
+				stmt.setInt(index++, address.getPincode());
 			}
 
 			if (address.isTimestampModified()) {
