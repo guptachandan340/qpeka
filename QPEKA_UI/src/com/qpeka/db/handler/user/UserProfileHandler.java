@@ -502,7 +502,6 @@ public class UserProfileHandler extends AbstractHandler implements
 				if (modified) {
 					sql.append(", ");
 				}
-
 				sql.append("dob=?");
 				modified = true;
 			}
@@ -511,7 +510,6 @@ public class UserProfileHandler extends AbstractHandler implements
 				if (modified) {
 					sql.append(", ");
 				}
-
 				sql.append("nationality=?");
 				modified = true;
 			}
@@ -605,6 +603,7 @@ public class UserProfileHandler extends AbstractHandler implements
 			}
 
 			if (user.isNationalityModified()) {
+				System.out.println(user.getNationality());
 				stmt.setShort(index++, user.getNationality());
 			}
 

@@ -594,7 +594,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 					&& counter < sqlParams.size(); counter++) {
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
+			
 			rs = stmt.executeQuery();
 
 			// fetch the results

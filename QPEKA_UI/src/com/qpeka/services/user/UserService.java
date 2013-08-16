@@ -78,7 +78,7 @@ public class UserService {
 			if (keys.equalsIgnoreCase(User.EMAIL)) {
 				for (String email : formParams.get(keys)) {
 					try {
-						if (!UserManager.getInstance().emailExists(email)) {
+						if (!UserManager.getInstance().emailExists(email,true)) {
 							user = UserManager.getInstance().registerUser(
 									formParams);
 						} else {

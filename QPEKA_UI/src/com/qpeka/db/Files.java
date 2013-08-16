@@ -18,10 +18,12 @@ public class Files implements Serializable {
 	public static final String FILENAME = "filename";
 	public static final String FILEPATH = "filepath";
 	public static final String FILEMIME = "filemime";
+	public static final String EXTENSION = "extension";
 	public static final String FILESIZE = "filesize";
 	public static final String STATUS = "status";
 	public static final String TIMESTAMP = "timestamp";
-
+	
+	
 	/**
 	 * These attributes maps to the columns of the files table.
 	 */
@@ -31,9 +33,11 @@ public class Files implements Serializable {
 	private String filename;
 	private String filepath;
 	private String filemime;
+	private String extension;
 	private int filesize;
 	private int status;
 	private long timestamp;
+	
 
 	/**
 	 * These attributes represents whether the above attributes has been
@@ -45,6 +49,7 @@ public class Files implements Serializable {
 	protected boolean filenameModified = false;
 	protected boolean filepathModified = false;
 	protected boolean filemimeModified = false;
+	protected boolean extensionModified = false;
 	protected boolean filesizeModified = false;
 	protected boolean statusModified = false;
 	protected boolean timestampModified = false;
@@ -61,8 +66,7 @@ public class Files implements Serializable {
 	}
 
 	public Files(int fileid, int userid, String filetype, String filename,
-			String filepath, String filemime, int filesize, int status,
-			int timestamp) {
+			String filepath, String filemime, String extension, int filesize, int status, int timestamp) {
 		super();
 		this.fileid = fileid;
 		this.userid = userid;
@@ -70,6 +74,7 @@ public class Files implements Serializable {
 		this.filename = filename;
 		this.filepath = filepath;
 		this.filemime = filemime;
+		this.extension = extension;
 		this.filesize = filesize;
 		this.status = status;
 		this.timestamp = timestamp;
@@ -143,6 +148,15 @@ public class Files implements Serializable {
 	public void setFilemime(String filemime) {
 		this.filemime = filemime;
 		this.filemimeModified = true;
+	}
+	
+	public String getExtension() {
+		return extension;
+	}
+	
+	public void setExtension(String extension) {
+		this.extension = extension;
+		this.extensionModified = true;
 	}
 
 	public int getFilesize() {
@@ -222,6 +236,14 @@ public class Files implements Serializable {
 	public void setFilemimeModified(boolean filemimeModified) {
 		this.filemimeModified = filemimeModified;
 	}
+	
+	public boolean isExtensionModified() {
+		return extensionModified;
+	}
+	
+	public void setExtensionModified(boolean extensionModified) {
+		this.extensionModified = extensionModified;
+	}
 
 	public boolean isFilesizeModified() {
 		return filesizeModified;
@@ -238,7 +260,7 @@ public class Files implements Serializable {
 	public void setStatusModified(boolean statusModified) {
 		this.statusModified = statusModified;
 	}
-
+	
 	public boolean isTimestampModified() {
 		return timestampModified;
 	}
@@ -318,6 +340,16 @@ public class Files implements Serializable {
 		if (filemimeModified != _cast.filemimeModified) {
 			return false;
 		}
+		
+		if (extension == null ? _cast.extension != extension : !extension
+				.equals(_cast.extension)) {
+			return false;
+		}
+
+		if (extensionModified != _cast.extensionModified) {
+			return false;
+		}
+
 
 		if (filesize != _cast.filesize) {
 			return false;
@@ -334,7 +366,7 @@ public class Files implements Serializable {
 		if (statusModified != _cast.statusModified) {
 			return false;
 		}
-
+		
 		if (timestamp != _cast.timestamp) {
 			return false;
 		}
@@ -351,6 +383,7 @@ public class Files implements Serializable {
 	 * 
 	 * @return int
 	 */
+	
 	public int hashCode() {
 		int _hashCode = 0;
 		_hashCode = 29 * _hashCode + (int)fileid;
@@ -377,10 +410,16 @@ public class Files implements Serializable {
 		}
 
 		_hashCode = 29 * _hashCode + (filemimeModified ? 1 : 0);
+		if (extension != null) {
+			_hashCode = 29 * _hashCode + extension.hashCode();
+		}
+		_hashCode = 29 * _hashCode + (extensionModified ? 1 : 0);
+		
 		_hashCode = 29 * _hashCode + filesize; 
 		_hashCode = 29 * _hashCode + (filesizeModified ? 1 : 0);
 		_hashCode = 29 * _hashCode + status;
 		_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
+		
 		_hashCode = 29 * _hashCode + (int)timestamp;
 		_hashCode = 29 * _hashCode + (timestampModified ? 1 : 0);
 		return _hashCode;
@@ -400,10 +439,10 @@ public class Files implements Serializable {
 		ret.append(", " + FILENAME + "=" + filename);
 		ret.append(", " + FILEPATH + "=" + filepath);
 		ret.append(", " + FILEMIME + "=" + filemime);
+		ret.append(", " + EXTENSION + "=" + extension);
 		ret.append(", " + FILESIZE + "=" + filesize);
 		ret.append(", " + STATUS + "=" + status);
 		ret.append(", " + TIMESTAMP + "=" + timestamp);
-
 		return ret.toString();
 	}
 
