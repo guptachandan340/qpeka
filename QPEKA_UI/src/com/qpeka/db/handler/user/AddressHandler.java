@@ -38,7 +38,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 	 * queries
 	 */
 	protected final String SQL_SELECT = "SELECT addressid, "
-			+ "userid, line1, line2, line3, city, state, country, "
+			+ "userid, addressLine1, addressLine2, addressLine3, city, state, country, "
 			+ "pincode, timestamp FROM " + getTableName() + "";
 
 	/**
@@ -50,16 +50,16 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 	 * SQL INSERT statement for this table
 	 */
 	protected final String SQL_INSERT = "INSERT INTO " + getTableName()
-			+ " ( addressid, userid, line1, line2, "
-			+ "line3, city, state, country, pincode, timestamp ) "
+			+ " ( addressid, userid, addressLine1, addressLine2, "
+			+ "addressLine3, city, state, country, pincode, timestamp ) "
 			+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE " + getTableName()
-			+ " SET addressid = ?, userid = ?, line1 = ?, line2 = ?, "
-			+ "line3 = ?, city = ?, state = ?, country = ?, pincode = ?, "
+			+ " SET addressid = ?, userid = ?, addressLine1 = ?, addressLine2 = ?, "
+			+ "addressLine3 = ?, city = ?, state = ?, country = ?, pincode = ?, "
 			+ "timestamp = ? WHERE addressid = ?";
 
 	/**
@@ -81,17 +81,17 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 	/**
 	 * Index of column line1
 	 */
-	protected static final int COLUMN_LINE1 = 3;
+	protected static final int COLUMN_ADDRESSLINE1 = 3;
 
 	/**
 	 * Index of column line2
 	 */
-	protected static final int COLUMN_LINE2 = 4;
+	protected static final int COLUMN_ADDRESSLINE2 = 4;
 
 	/**
 	 * Index of column line3
 	 */
-	protected static final int COLUMN_LINE3 = 5;
+	protected static final int COLUMN_ADDRESSLINE3 = 5;
 
 	/**
 	 * Index of column city
@@ -199,7 +199,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 					values.append(", ");
 				}
 
-				sql.append("line1");
+				sql.append("addressLine1");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -210,7 +210,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 					values.append(", ");
 				}
 
-				sql.append("line2");
+				sql.append("addressLine2");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -221,7 +221,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 					values.append(", ");
 				}
 
-				sql.append("line3");
+				sql.append("addressLine3");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -336,7 +336,6 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 				logger.debug("Executing " + sql.toString() + " with values: "
 						+ address);
 			}
-
 			int rows = stmt.executeUpdate();
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
@@ -402,7 +401,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 					sql.append(", ");
 				}
 
-				sql.append("line1=?");
+				sql.append("addressLine1=?");
 				modified = true;
 			}
 
@@ -411,7 +410,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 					sql.append(", ");
 				}
 
-				sql.append("line2=?");
+				sql.append("addressLine2=?");
 				modified = true;
 			}
 
@@ -420,7 +419,7 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 					sql.append(", ");
 				}
 
-				sql.append("line3=?");
+				sql.append("addressLine3=?");
 				modified = true;
 			}
 
@@ -616,27 +615,27 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 	}
 
 	@Override
-	public List<Address> findWhereAddressLine1Equals(String line1)
+	public List<Address> findWhereAddressLine1Equals(String addressLine1)
 			throws AddressException {
 		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE line1 = ? ORDER BY line1",
-				Arrays.asList(new Object[] { line1 }));
+				+ " WHERE addressLine1 = ? ORDER BY addressLine1",
+				Arrays.asList(new Object[] { addressLine1 }));
 	}
 
 	@Override
-	public List<Address> findWhereAddressLine2Equals(String line2)
+	public List<Address> findWhereAddressLine2Equals(String addressLine2)
 			throws AddressException {
 		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE line2 = ? ORDER BY line2",
-				Arrays.asList(new Object[] { line2 }));
+				+ " WHERE addressLine2 = ? ORDER BY addressLine2",
+				Arrays.asList(new Object[] { addressLine2 }));
 	}
 
 	@Override
-	public List<Address> findWhereAddressLine3Equals(String line3)
+	public List<Address> findWhereAddressLine3Equals(String addressLine3)
 			throws AddressException {
 		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE line3 = ? ORDER BY line3",
-				Arrays.asList(new Object[] { line3 }));
+				+ " WHERE addressLine3 = ? ORDER BY addressLine3",
+				Arrays.asList(new Object[] { addressLine3 }));
 	}
 
 	@Override
@@ -745,7 +744,6 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
@@ -753,7 +751,6 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
-
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL);
 			}
@@ -767,9 +764,8 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 					&& counter < sqlParams.size(); counter++) {
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
 			rs = stmt.executeQuery();
-
+			
 			// fetch the results
 			return fetchMultiResults(rs);
 		} catch (Exception _e) {
@@ -820,13 +816,13 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 			throws SQLException {
 		address.setAddressid(rs.getInt(COLUMN_ADDRESSID));
 		address.setUserid(rs.getInt(COLUMN_USERID));
-		address.setAddressLine1(rs.getString(COLUMN_LINE1));
-		address.setAddressLine2(rs.getString(COLUMN_LINE2));
-		address.setAddressLine3(rs.getString(COLUMN_LINE3));
+		address.setAddressLine1(rs.getString(COLUMN_ADDRESSLINE1));
+		address.setAddressLine2(rs.getString(COLUMN_ADDRESSLINE2));
+		address.setAddressLine3(rs.getString(COLUMN_ADDRESSLINE3));
 		address.setCity(rs.getString(COLUMN_CITY));
 		address.setState(rs.getString(COLUMN_STATE));
 		address.setCountry(rs.getShort(COLUMN_COUNTRY));
-		address.setPincode(rs.getShort(COLUMN_PINCODE));
+		address.setPincode(rs.getInt(COLUMN_PINCODE));
 		address.setTimestamp(rs.getInt(COLUMN_TIMESTAMP));
 
 		reset(address);

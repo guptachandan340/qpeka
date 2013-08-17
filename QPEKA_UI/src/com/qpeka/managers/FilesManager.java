@@ -26,7 +26,7 @@ public class FilesManager {
 		return (instance == null ? (instance = new FilesManager()) : instance);
 	}
 
-	public Files createFiles(long userId, String filepath) {
+	public Files createFiles(long userId, String filetype, String filepath) {
 		Files files = Files.getInstance();
 		File file = new File(filepath); // Inbuilt File class usage
 		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
@@ -35,7 +35,8 @@ public class FilesManager {
 			if (file.isFile()) {
 				files.setFilename(file.getName().substring(0,
 						(file.getName().lastIndexOf("."))));
-				files.setFiletype(setFileType(file.getName()));
+				files.setFiletype(filetype);
+				files.setExtension(setFileType(file.getName()));
 
 				files.setFilepath(file.getParent()); // Set File Path
 				files.setFilesize((int) (file.length() / (1000 * 1000)));
@@ -60,7 +61,7 @@ public class FilesManager {
 		if (fileName.lastIndexOf(".") == -1) {
 			fileType = "Unknown";
 		} else {
-			fileType = fileName.substring(fileName.lastIndexOf(".") + 1,
+			fileType = fileName.substring(fileName.lastIndexOf(".") ,
 					(fileName.length()));
 		}
 		return fileType;
@@ -294,14 +295,14 @@ public class FilesManager {
 	 * @param args
 	 */
 
-	/*
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		FilesManager.getInstance().deleteFiles(6);
-		FilesManager.getInstance().createFiles((long)27,"/home/ankita/Desktop/cd2_lml13(www.songs.pk).mp3");
-		System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));
-		System.out.println(FilesManager.getInstance().readFiles(6, "mp3", Files.FILETYPE));
-	  //  Map<String, Object> updateMap = new HashMap<String, Object>();
+		//FilesManager.getInstance().deleteFiles(6);
+		FilesManager.getInstance().createFiles((long)42,"profilepic","/home/ankita/Downloads/Ankit final resume.docx");
+	//	System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));
+	//	System.out.println(FilesManager.getInstance().readFiles(6, "mp3", Files.FILETYPE));
+	//  Map<String, Object> updateMap = new HashMap<String, Object>();
 	//	updateMap.put("fileid", 3);
 	//	updateMap.put("filetype", "sql");
 	//	updateMap.put("filename", "qpeka");
@@ -311,5 +312,5 @@ public class FilesManager {
 		//System.out.println(filesManager.updateFiles(updateMap)); // Done
 	//	System.out.println(filesManager.updateFiles((short)1,(short)3,"fileid"));
 	}
-	*/
+	
 }

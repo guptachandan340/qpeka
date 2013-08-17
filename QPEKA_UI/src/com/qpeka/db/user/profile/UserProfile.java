@@ -276,7 +276,7 @@ public class UserProfile implements Serializable {
 
 	public void setNationality(short nationality) {
 		this.nationality = nationality;
-		this.nameModified = true;
+		this.nationalityModified = true;
 	}
 
 	public String getWebsite() {
