@@ -1,22 +1,20 @@
 package com.qpeka.services.user;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+
 import com.google.gson.Gson;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
+import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.user.User;
-import com.qpeka.db.user.profile.Name;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
@@ -27,6 +25,7 @@ public class UserService {
 	@Path("/login")
 	public Response loginService(@FormParam("username") String username,
 			@FormParam("password") String password, @FormParam("isEmail") boolean isEmail) {
+		
 		Map<String, Object> user = new HashMap<String, Object>();
 		String response = null;
 		Gson gson = new Gson();
@@ -72,19 +71,26 @@ public class UserService {
 	public Response signupService(MultivaluedMap<String, String> formParams) {
 		User user = null;
 		String response = null;
-		Object serviceResult = null;
+		Map<String, Object> serviceResult = new HashMap<String, Object>();
 		Gson gson = new Gson();
 		for (String keys : formParams.keySet()) {
 			if (keys.equalsIgnoreCase(User.EMAIL)) {
 				for (String email : formParams.get(keys)) {
 					try {
-						if (!UserManager.getInstance().emailExists(email,true)) {
+						if (!UserManager.getInstance().userExists(email,true)) {
 							user = UserManager.getInstance().registerUser(
 									formParams);
+							if (user != null) {
+								serviceResult.put("success", "200");
+								response = gson.toJson(serviceResult);
+							} else {
+								serviceResult.put("error", "215");
+								response = gson.toJson(serviceResult);
+							}
 						} else {
-							serviceResult = "error : 34";
+							serviceResult.put("error", "34");
 							response = gson.toJson(serviceResult);
-							return Response.status(200).entity(response).build();
+//							return Response.status(200).entity(response).build();
 						}
 					} catch (UserException e) {
 						// TODO Auto-generated catch block
@@ -93,13 +99,18 @@ public class UserService {
 				}
 			}
 		}
-		if (user != null) {
-			serviceResult = "success : 200";
+		/*if (user != null) {
+			serviceResult.put("success", "200");
 			response = gson.toJson(serviceResult);
 		} else {
-			serviceResult = "error : 215";
+			serviceResult.put("error", "215");
+			response = gson.toJson(serviceResult);
+		}*/
+		if(response == null) {
+			serviceResult.put("error", "500");
 			response = gson.toJson(serviceResult);
 		}
+		
 		return Response.status(200).entity(response).build();
 	}
 	
@@ -168,6 +179,29 @@ public class UserService {
 			response = gson.toJson(user);
 		}
 		return Response.status(200).entity(response).build();
+	}
+	
+	
+	@POST
+	@Path("/getProfile")
+	public Response getProfileService(@FormParam("userid") long userid) {
+		
+		String response = null;
+		UserProfile userProfile = null;
+		
+		try {
+			userProfile = UserManager.getInstance().getProfile(userid);
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(userProfile != null) {
+			response = (new Gson()).toJson(userProfile);
+		}
+		
+		return Response.status(200).entity(response).build();
+		
 	}
 	
 	@POST
