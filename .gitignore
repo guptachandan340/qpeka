@@ -4,3 +4,4 @@ QpekaWeb/build
 .classpath
 .project
 *.class
+*.properties
