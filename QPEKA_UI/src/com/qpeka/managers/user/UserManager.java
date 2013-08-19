@@ -1,6 +1,5 @@
 package com.qpeka.managers.user;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,13 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
+
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.poi.ss.formula.IStabilityClassifier;
 
-import com.mysql.jdbc.Constants;
-import com.qpeka.db.Badges;
 import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.STATUS;
@@ -33,19 +31,16 @@ import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.exceptions.user.AddressException;
-import com.qpeka.db.exceptions.user.UserBadgesException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.exceptions.user.UserInterestsException;
 import com.qpeka.db.exceptions.user.UserLanguageException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.AbstractHandler;
-import com.qpeka.db.handler.BadgesHandler;
 import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.CountryHandler;
 import com.qpeka.db.handler.FilesHandler;
 import com.qpeka.db.handler.LanguagesHandler;
 import com.qpeka.db.handler.user.AddressHandler;
-import com.qpeka.db.handler.user.UserBadgesHandler;
 import com.qpeka.db.handler.user.UserHandler;
 import com.qpeka.db.handler.user.UserInterestsHandler;
 import com.qpeka.db.handler.user.UserLanguageHandler;
@@ -53,7 +48,6 @@ import com.qpeka.db.handler.user.UserProfileHandler;
 import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.Address;
 import com.qpeka.db.user.profile.Name;
-import com.qpeka.db.user.profile.UserBadges;
 import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
@@ -73,7 +67,7 @@ public class UserManager {
 		return (instance == null ? (instance = new UserManager()) : instance);
 	}
 
-	 /* 
+	/*
 	 * @param firstName
 	 * @param lastName
 	 * @param email
@@ -142,6 +136,13 @@ public class UserManager {
 		return user;
 	}// end of registeruser()
 
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @param user
+	 * @param userProfile
+	 */
 	public void setUserInfo(String key, String value, User user,
 			UserProfile userProfile) {
 		if (key.equalsIgnoreCase(Name.FIRSTNAME)) {
@@ -157,8 +158,9 @@ public class UserManager {
 		} else if (key.equalsIgnoreCase(UserProfile.GENDER)) {
 			userProfile.setGender(GENDER.valueOf(value.toUpperCase()));
 		} else if (key.equalsIgnoreCase(UserProfile.DOB)) {
-			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 			try {
+				formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 				Date dateOfBirth = (Date) formatter.parse(value);
 				userProfile.setDob(dateOfBirth);
 				userProfile.setAge(deriveAge(dateOfBirth));
@@ -187,13 +189,13 @@ public class UserManager {
 	/**
 	 * Authenticate User
 	 * 
+	 * isEmail -> true if email isEmail -> false if username
+	 * 
 	 * @throws UserException
 	 */
-	
 	public Map<String, Object> authenticateUser(String authName,
 			String password, boolean isEmail) throws UserException {
-		// isEmail -> true if email
-		// isEmail -> false if username
+
 		Map<String, Object> loginresponse = new HashMap<String, Object>();
 		List<User> user = new ArrayList<User>();
 		try {
@@ -322,23 +324,28 @@ public class UserManager {
 	/**
 	 * Email or Username exists?
 	 * 
+	 * isAuthExist -> true if email isAUthExist -> false if username
+	 * 
 	 * @throws UserException
 	 */
-	
-	public boolean emailExists(String authName, boolean isAuthExist) throws UserException {
+
+	public boolean userExists(String authName, boolean isAuthExist)
+			throws UserException {
+
 		List<User> userList = new ArrayList<User>();
-		// isAuthExist -> true if email
-		// isAuthExist -> false if username
 		try {
-			userList = (!isAuthExist) ? UserHandler.getInstance().findWhereUsernameEquals(
-					authName) :	UserHandler.getInstance().findWhereEmailEquals(authName);
+			userList = (!isAuthExist) ? UserHandler.getInstance()
+					.findWhereUsernameEquals(authName) : UserHandler
+					.getInstance().findWhereEmailEquals(authName);
 		} catch (UserException _e) {
 			throw new UserException("User Authentication Exception: "
 					+ _e.getMessage(), _e);
 		}
 
-		// Returns false when userlist is empty else true (Email or Username exists)
-		// false -> email OR Username does not exists, true -> email or Username exists
+		// Returns false when userlist is empty else true (Email or Username
+		// exists)
+		// false -> email OR Username does not exists, true -> email or Username
+		// exists
 		return (!userList.isEmpty());
 	}// end of emailExists()
 
@@ -403,6 +410,24 @@ public class UserManager {
 	} // end of reset password()
 
 	/**
+	 * 
+	 * @param userid
+	 * @return
+	 * @throws UserProfileException 
+	 */
+	public UserProfile getProfile(long userid) throws UserProfileException {
+		UserProfile userProfile = UserProfile.getInstance();
+		
+		try{
+			userProfile = UserProfileHandler.getInstance().findByPrimaryKey(userid);
+		} catch (UserProfileException _e) {
+			// TODO Auto-generated catch block
+			throw new UserProfileException("Get profile exception: " + _e.getMessage(), _e);
+		}
+		
+		return userProfile;
+	}
+	/**
 	 * Edit profile
 	 * 
 	 * throws UserException
@@ -445,15 +470,16 @@ public class UserManager {
 			Set<String> keySet = formParams.keySet();
 			for (String key : keySet) {
 				List<String> userInfo = formParams.get(key);
-				
+
 				for (String userInfoValue : userInfo) {
 					if (userInfoValue != null
 							&& !userInfoValue.equalsIgnoreCase("")) {
 						if (key.equalsIgnoreCase(UserProfile.USERTYPE)) {
 							if (userInfoValue.equalsIgnoreCase(USERTYPE.READER
 									.toString())
-									|| userInfoValue.equalsIgnoreCase(USERTYPE.WRITER
-											.toString())
+									|| userInfoValue
+											.equalsIgnoreCase(USERTYPE.WRITER
+													.toString())
 									|| userInfoValue
 											.equalsIgnoreCase(USERTYPE.PUBLISHER
 													.toString())
@@ -517,8 +543,8 @@ public class UserManager {
 						} else if (key.equalsIgnoreCase(UserProfile.BIOGRAPHY)) {
 							userProfile.setBiography(userInfoValue);
 						} else if (key.equalsIgnoreCase(UserProfile.PROFILEPIC)) {
-							long fileid = hasProfilePic(userid,userInfoValue);
-							if(fileid != 0) {
+							long fileid = hasProfilePic(userid, userInfoValue);
+							if (fileid != 0) {
 								userProfile.setProfilepic(fileid);
 							}
 						} else if (key.equalsIgnoreCase(Address.ADDRESSLINE1)) {
@@ -552,8 +578,8 @@ public class UserManager {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							userProfile.getAddress().setCountry((short) nation.get(0)
-									.getCountryid());
+							userProfile.getAddress().setCountry(
+									(short) nation.get(0).getCountryid());
 						}
 					} else {
 						usertype = (short) com.qpeka.db.Constants.USERTYPE.READER
@@ -590,14 +616,14 @@ public class UserManager {
 					}
 				} else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
 					// Read Language if language is rLang {
-							Set<Languages> userLanguages = updateUserLanguages(
-									userid, "read", userInfo);
-							userProfile.setrLang(userLanguages);
+					Set<Languages> userLanguages = updateUserLanguages(userid,
+							"read", userInfo);
+					userProfile.setrLang(userLanguages);
 				} else if (key.equalsIgnoreCase(UserProfile.WLANG)) {
 					// Read Language if language is wLang {
-							Set<Languages> userLanguages = updateUserLanguages(
-									userid, "write", userInfo);
-							userProfile.setrLang(userLanguages);
+					Set<Languages> userLanguages = updateUserLanguages(userid,
+							"write", userInfo);
+					userProfile.setrLang(userLanguages);
 				}
 			}
 		}
@@ -613,20 +639,23 @@ public class UserManager {
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * Method to be called by setEditInfo method for editProfile
 	 * 
 	 * @param userid
 	 * @param address
 	 */
-	public void setUserAddress(long userid, Address address){
+	public void setUserAddress(long userid, Address address) {
 		List<Address> useridExist = null;
 		List<Object> readUseridObj = new ArrayList<Object>();
 		readUseridObj.add(userid);
 		try {
-			useridExist = AddressHandler.getInstance().findByDynamicWhere("userid IN (?)", readUseridObj);
-			if(!useridExist.isEmpty()) {
-				AddressHandler.getInstance().update((long) useridExist.get(0).getAddressid(), address);
+			useridExist = AddressHandler.getInstance().findByDynamicWhere(
+					"userid IN (?)", readUseridObj);
+			if (!useridExist.isEmpty()) {
+				AddressHandler.getInstance().update(
+						(long) useridExist.get(0).getAddressid(), address);
 			} else {
 				address.setUserid(userid);
 				AddressHandler.getInstance().insert(address);
@@ -635,7 +664,7 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**
@@ -643,30 +672,33 @@ public class UserManager {
 	 * 
 	 * @param userid
 	 * @param address
-	 * @return 
+	 * @return
 	 */
-	public long hasProfilePic(long userid, String userInfoValue){
+	public long hasProfilePic(long userid, String userInfoValue) {
 		Files file = new Files();
 		long fileid = 0;
 		List<Files> userPicExist = null;
 		List<Object> readUseridObj = new ArrayList<Object>();
 		readUseridObj.add(userid);
 		try {
-			userPicExist = FilesManager.getInstance().readFiles(userid, "profilepic", Files.FILETYPE);
-			if(!userPicExist.isEmpty()) {
-				FilesHandler.getInstance().update(userPicExist.get(0).getFileid(), file);
+			userPicExist = FilesManager.getInstance().readFiles(userid,
+					"profilepic", Files.FILETYPE);
+			if (!userPicExist.isEmpty()) {
+				FilesHandler.getInstance().update(
+						userPicExist.get(0).getFileid(), file);
 				fileid = userPicExist.get(0).getFileid();
 			} else {
-				file = FilesManager.getInstance().createFiles(
-						userid,"profilepic", userInfoValue);
+				file = FilesManager.getInstance().createFiles(userid,
+						"profilepic", userInfoValue);
 				fileid = file.getFileid();
 			}
 		} catch (FileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 		return fileid;
 	}
+
 	/*
 	 * if (formParams.get(UserProfile.USERID) != null) { userid =
 	 * Long.parseLong(profile.get(UserProfile.USERID).toString()); usertype =
@@ -894,7 +926,7 @@ public class UserManager {
 		@SuppressWarnings("unchecked")
 		List<Languages> languageList = (List<Languages>) getProfilePreferences(
 				"language", languageObj, LanguagesHandler.getInstance());
-		
+
 		UserLanguage userLang = UserLanguage.getInstance();
 		userLang.setUserid(userid);
 		userLang.setType(languageType);
@@ -922,20 +954,19 @@ public class UserManager {
 			AbstractHandler abstractHandler) {
 		List<String> preferenceSet = new ArrayList<String>();
 		preferenceSet.addAll((Collection<? extends String>) preferencesObj);
-		
+
 		Iterator<String> preferencesIt = preferenceSet.iterator();
 		List<Object> preferencesObjList = new ArrayList<Object>();
-/*		if (userType > 0) {
-			preferencesObjList.add(userType);
-		}
-*/
+		/*
+		 * if (userType > 0) { preferencesObjList.add(userType); }
+		 */
 		preferencesObjList.add(convertCollectionToString(preferencesIt));
-		
+
 		Object profilePreferences = null;
 		try {
 			profilePreferences = abstractHandler.findByDynamicWhere(whereSql
 					+ " IN (?)", preferencesObjList);
-			
+
 		} catch (QpekaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -970,7 +1001,7 @@ public class UserManager {
 	 * @return
 	 */
 	public String convertCollectionToString(Iterator<String> collectionIt) {
-		System.out.println("iterator to be converted " +collectionIt);
+		System.out.println("iterator to be converted " + collectionIt);
 		StringBuilder collectionString = new StringBuilder();
 		// Create string of collection objects (comma separated)
 		while (collectionIt.hasNext()) {
@@ -979,7 +1010,7 @@ public class UserManager {
 			}
 			collectionString.append(collectionIt.next().toString());
 		}
-		System.out.println("converted string : "+collectionString.toString());
+		System.out.println("converted string : " + collectionString.toString());
 		return collectionString.toString();
 	}
 
