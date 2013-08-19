@@ -35,7 +35,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT fileid, userid, filetype, filename, filepath, filemime, filesize, status, timestamp FROM "
+	protected final String SQL_SELECT = "SELECT fileid, userid, filetype, filename, filepath, filemime, extension, filesize, status, timestamp FROM "
 			+ getTableName() + "";
 
 	/**
@@ -48,14 +48,14 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 	 */
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
-			+ " ( fileid, userid, filetype, filename, filepath, filemime, filesize, status, timestamp ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			+ " ( fileid, userid, filetype, filename, filepath, filemime, extension, filesize, status, timestamp ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
-			+ " SET fileid = ?, userid = ?, filetype = ?, filename = ?, filepath = ?, filemime = ?, filesize = ?, status = ?, timestamp = ? WHERE fileid = ?";
+			+ " SET fileid = ?, userid = ?, filetype = ?, filename = ?, filepath = ?, filemime = ?, extension = ?, filesize = ?, status = ?, timestamp = ? WHERE fileid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -94,24 +94,29 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 	protected static final int COLUMN_FILEMIME = 6;
 
 	/**
+	 * Index of column extension
+	 */
+	protected static final int COLUMN_EXTENSION = 7;
+
+	/**
 	 * Index of column filesize
 	 */
-	protected static final int COLUMN_FILESIZE = 7;
+	protected static final int COLUMN_FILESIZE = 8;
 
 	/**
 	 * Index of column status
 	 */
-	protected static final int COLUMN_STATUS = 8;
+	protected static final int COLUMN_STATUS = 9;
 
 	/**
 	 * Index of column timestamp
 	 */
-	protected static final int COLUMN_TIMESTAMP = 9;
+	protected static final int COLUMN_TIMESTAMP = 10;
 
 	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 9;
+	protected static final int NUMBER_OF_COLUMNS = 10;
 
 	/**
 	 * Index of primary-key column fileid
@@ -221,6 +226,18 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 				modifiedCount++;
 			}
 
+			if (file.isExtensionModified()) {
+				if (modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+
+				sql.append("extension");
+				values.append("?");
+				modifiedCount++;
+			}
+
+			
 			if (file.isFilesizeModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
@@ -287,6 +304,10 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 
 			if (file.isFilemimeModified()) {
 				stmt.setString(index++, file.getFilemime());
+			}
+			
+			if (file.isExtensionModified()) {
+				stmt.setString(index++, file.getExtension());
 			}
 
 			if (file.isFilesizeModified()) {
@@ -401,6 +422,15 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 				sql.append("filemime=?");
 				modified = true;
 			}
+			
+			if (file.isExtensionModified()) {
+				if (modified) {
+					sql.append(", ");
+				}
+
+				sql.append("extension=?");
+				modified = true;
+			}
 
 			if (file.isFilesizeModified()) {
 				if (modified) {
@@ -464,6 +494,10 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 
 			if (file.isFilemimeModified()) {
 				stmt.setString(index++, file.getFilemime());
+			}
+			
+			if (file.isExtensionModified()) {
+				stmt.setString(index++, file.getExtension());
 			}
 
 			if (file.isFilesizeModified()) {
@@ -591,6 +625,14 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE filemime = ? ORDER BY filemime",
 				Arrays.asList(new Object[] { filemime }));
+	}
+	
+	@Override
+	public List<Files> findWhereExtensionEquals(String extension)
+			throws FileException {
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE extension = ? ORDER BY extension",
+				Arrays.asList(new Object[] { extension }));
 	}
 
 	@Override
@@ -759,6 +801,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		files.setFilename(rs.getString(COLUMN_FILENAME));
 		files.setFilepath(rs.getString(COLUMN_FILEPATH));
 		files.setFilemime(rs.getString(COLUMN_FILEMIME));
+		files.setExtension(rs.getString(COLUMN_EXTENSION));
 		files.setFilesize(rs.getInt(COLUMN_FILESIZE));
 		files.setStatus(rs.getInt(COLUMN_STATUS));
 		files.setTimestamp(rs.getLong(COLUMN_TIMESTAMP));
@@ -775,6 +818,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		files.setFilenameModified(false);
 		files.setFilepathModified(false);
 		files.setFilemimeModified(false);
+		files.setExtensionModified(false);
 		files.setFilesizeModified(false);
 		files.setStatusModified(false);
 		files.setTimestampModified(false);

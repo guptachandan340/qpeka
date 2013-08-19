@@ -29,7 +29,7 @@ public class Address implements Serializable {
 	private String city;
 	private String state;
 	private short country;
-	private short pincode;
+	private int pincode;
 	private long timestamp;
 
 	// These attributes represents whether the above attributes has been
@@ -57,7 +57,7 @@ public class Address implements Serializable {
 
 	public Address(String addressLine1, String addressLine2,
 			String addressLine3, String city, String state, short country,
-			short pincode) {
+			int pincode) {
 		super();
 		this.addressLine1 = addressLine1;
 		this.addressLine2 = addressLine2;
@@ -70,7 +70,7 @@ public class Address implements Serializable {
 
 	public Address(long userid, String addressLine1, String addressLine2,
 			String addressLine3, String city, String state, short country,
-			short pincode) {
+			int pincode) {
 		super();
 		this.userid = userid;
 		this.addressLine1 = addressLine1;
@@ -84,7 +84,7 @@ public class Address implements Serializable {
 
 	public Address(long addressid, long userid, String addressLine1,
 			String addressLine2, String addressLine3, String city,
-			String state, short country, short pincode) {
+			String state, short country, int pincode) {
 		super();
 		this.addressid = addressid;
 		this.userid = userid;
@@ -175,11 +175,11 @@ public class Address implements Serializable {
 		this.countryModified = true;
 	}
 
-	public short getPincode() {
+	public int getPincode() {
 		return pincode;
 	}
 
-	public void setPincode(short pincode) {
+	public void setPincode(int pincode) {
 		this.pincode = pincode;
 		this.pincodeModified = true;
 	}

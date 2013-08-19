@@ -65,6 +65,11 @@ public interface FilesDao {
 	public List<Files> findWhereFilemimeEquals(String filemime) throws FileException;
 
 	/** 
+	 * Returns all rows from the files table that match the criteria 'extension = :extension'.
+	 */
+	public List<Files> findWhereExtensionEquals(String extension) throws FileException;
+	
+	/** 
 	 * Returns all rows from the files table that match the criteria 'filesize = :filesize'.
 	 */
 	public List<Files> findWhereFilesizeEquals(long filesize) throws FileException;
@@ -98,5 +103,9 @@ public interface FilesDao {
 	 * Returns all rows from the files table that match the specified arbitrary SQL statement
 	 */
 	public List<Files> findByDynamicWhere(String sql, List<Object> sqlParams) throws FileException;
+
+	
+
+	
 	
 }
