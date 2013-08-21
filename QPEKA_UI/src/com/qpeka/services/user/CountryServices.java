@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import com.qpeka.managers.CountryManager;
 
-@Path("/countries")
+@Path("/user")
 public class CountryServices {
 
 
@@ -20,7 +20,7 @@ public class CountryServices {
 		Map<String, String> country = new HashMap<String, String>();
 		String response = null;
 		country = CountryManager.getInstance().retrieveCountry();
-		if(country != null) {
+		if(!country.isEmpty() && country != null) {
 			Gson gson = new Gson();
 			response = gson.toJson(country);
 		}

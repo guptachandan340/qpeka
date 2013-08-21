@@ -23,7 +23,6 @@ public class Files implements Serializable {
 	public static final String STATUS = "status";
 	public static final String TIMESTAMP = "timestamp";
 	
-	
 	/**
 	 * These attributes maps to the columns of the files table.
 	 */

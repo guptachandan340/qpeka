@@ -10,6 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections4.map.MultiValueMap;
+
 import com.google.gson.Gson;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
@@ -18,7 +20,7 @@ import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
-@Path("/user")
+@Path("-")
 public class UserService {
 	
 	@POST
@@ -37,7 +39,7 @@ public class UserService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (user != null) {
+		if (!user.isEmpty() && user != null) {
 			response = gson.toJson(user);
 		} else {
 				error = "error : 34";
@@ -185,19 +187,19 @@ public class UserService {
 	@POST
 	@Path("/getProfile")
 	public Response getProfileService(@FormParam("userid") long userid) {
-		
 		String response = null;
-		UserProfile userProfile = null;
-		
+		MultiValueMap<String, Object> userprofile = new MultiValueMap<String, Object>();
 		try {
-			userProfile = UserManager.getInstance().getProfile(userid);
+			userprofile = UserManager.getInstance().getProfile(userid);
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		if(userProfile != null) {
-			response = (new Gson()).toJson(userProfile);
+		if(!userprofile.isEmpty()) {
+			response = (new Gson()).toJson(userprofile);
+		} else {
+			response = "";
 		}
 		
 		return Response.status(200).entity(response).build();

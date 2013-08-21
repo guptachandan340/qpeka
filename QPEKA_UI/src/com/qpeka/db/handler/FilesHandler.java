@@ -723,6 +723,7 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+		
 
 		try {
 			// get the user-specified connection or get a connection from the
@@ -731,23 +732,20 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
-
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL);
 			}
-
+			
 			// prepare statement
 			stmt = conn.prepareStatement(SQL);
 			stmt.setMaxRows(maxRows);
-
 			// bind parameters
 			for (int counter = 0; sqlParams != null
 					&& counter < sqlParams.size(); counter++) {
+				System.out.println(sqlParams.get(counter));
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
 			rs = stmt.executeQuery();
-
 			// fetch the results
 			return fetchMultiResults(rs);
 		} catch (Exception _e) {

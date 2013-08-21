@@ -1,6 +1,5 @@
 package com.qpeka.services.user;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.POST;
@@ -11,16 +10,19 @@ import com.google.gson.Gson;
 import com.qpeka.db.Badges;
 import com.qpeka.managers.BadgesManager;
 
-@Path("/badges")
+@Path("/user")
 public class BadgeServices {
 
 	@POST
 	@Path("/readbadges")
 	public Response retrievingBadgeService() {
-		List<Badges> badges = new ArrayList<Badges>();
+		List<Badges> badges = null;
+		String response = null;
 		badges = BadgesManager.getInstance().readBadges();
-		Gson gson = new Gson();
-		String response = gson.toJson(badges);
+		if(!badges.isEmpty() && badges != null) {
+			Gson gson = new Gson();
+		    response = gson.toJson(badges);
+		}
 		return Response.status(200).entity(response).build();
 	}
 }

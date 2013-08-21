@@ -607,11 +607,11 @@ public class AddressHandler extends AbstractHandler implements AddressDao {
 	}
 
 	@Override
-	public List<Address> findWhereUseridEquals(int userid)
+	public List<Address> findWhereUseridEquals(long userid)
 			throws AddressException {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE userid = ? ORDER BY userid",
-				Arrays.asList(new Object[] { new Integer(userid) }));
+				Arrays.asList(new Object[] { new Long(userid) }));
 	}
 
 	@Override

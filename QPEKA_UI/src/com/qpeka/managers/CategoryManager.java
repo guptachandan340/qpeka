@@ -23,9 +23,8 @@ public static CategoryManager getInstance() {
 	return(instance == null ? instance = new CategoryManager() : instance);
 }
 
-public Category createCategory(short categoryid,String type,String categoryField,String genres,int points) {
+public Category createCategory(String type,String categoryField,String genres,int points) {
 	Category category = Category.getInstance();
-	category.setCategoryid(categoryid);
 	category.setType(type);
 	category.setCategory(categoryField);
 	category.setGenre(genres);
@@ -251,16 +250,17 @@ public Map<Short, Map<String, String>> retrieveCategory(List<Category> existingC
 /*
 	public static void main(String[] args) {
 		CategoryManager categoryManager = new CategoryManager();
-		categoryManager.deleteCategory((short)5);
-		categoryManager.createCategory((short)5,"Article","love","life",(short)5000);
+		//categoryManager.deleteCategory((short)5);
+		categoryManager.createCategory("book","Education","Children Learning",0);
+		
 	//	Map<String, Object> updateMap = new HashMap<String, Object>();
 	//	updateMap.put(Category.CATEGORYID, (short)1);
 	//	updateMap.put(Category.GENRE, "nonfictional");
 	//	categoryManager.updateCategory(updateMap);
-		System.out.println(categoryManager.readCategory((short)1));
-		System.out.println(categoryManager.readCategory());
-		System.out.println(categoryManager.readCategory("book"));
+		//System.out.println(categoryManager.readCategory((short)1));
+		//System.out.println(categoryManager.readCategory());
+		//System.out.println(categoryManager.readCategory("book"));
 		
 	}
-*/
+	*/
 }

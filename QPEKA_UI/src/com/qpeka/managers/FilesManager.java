@@ -39,7 +39,7 @@ public class FilesManager {
 				files.setExtension(setFileType(file.getName()));
 
 				files.setFilepath(file.getParent()); // Set File Path
-				files.setFilesize((int) (file.length() / (1000 * 1000)));
+				files.setFilesize((int) (file.length()));
 				files.setFilemime(mimeTypesMap.getContentType(file));
 				files.setStatus(0);
 				files.setTimestamp(System.currentTimeMillis() / 1000L);

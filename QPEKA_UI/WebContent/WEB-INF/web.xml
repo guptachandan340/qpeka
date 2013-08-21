@@ -30,7 +30,7 @@
 
 	<servlet-mapping>
   		<servlet-name>qpekaservices</servlet-name>
-  		<url-pattern>/v1.0/*</url-pattern>
+  		<url-pattern>/v0.1/*</url-pattern>
 	</servlet-mapping>
 
 <!-- 
