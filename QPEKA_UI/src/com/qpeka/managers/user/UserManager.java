@@ -1,5 +1,6 @@
 package com.qpeka.managers.user;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +57,7 @@ import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.FilesManager;
 import com.qpeka.security.bcrypt.BCrypt;
+import org.apache.commons.collections4.map.MultiValueMap;
 
 public class UserManager {
 	private static UserManager instance = null;
@@ -242,8 +244,8 @@ public class UserManager {
 	/**
 	 * creating UserInfoMap from user and userprofile data
 	 */
-	public Map<String, Object> createUserInfoMap(User user) {
-		Map<String, Object> userInfo = new HashMap<String, Object>();
+	public MultiValueMap<String, Object> createUserInfoMap(User user) {
+		MultiValueMap<String, Object> userInfo = new MultiValueMap<String, Object>();
 		List<UserProfile> userProfile = new ArrayList<UserProfile>();
 		try {
 			userProfile = UserProfileHandler.getInstance()
@@ -265,7 +267,7 @@ public class UserManager {
 				userInfo.put(User.EMAIL.toLowerCase(), "");
 			}
 		}
-		if (userProfile != null) {
+		if (!userProfile.isEmpty()) {
 			Name name = userProfile.get(0).getName();
 			if (name.getFirstname() != null) {
 				userInfo.put(Name.FIRSTNAME.toLowerCase(), name.getFirstname());
@@ -286,18 +288,175 @@ public class UserManager {
 
 			if (userProfile.get(0).getGender() != null) {
 				userInfo.put(UserProfile.GENDER.toLowerCase(),
-						userProfile.get(0).getGender());
+						userProfile.get(0).getGender().name().toLowerCase());
 			} else {
 				userInfo.put(UserProfile.GENDER.toLowerCase(), "");
 			}
 			if (userProfile.get(0).getProfilepic() > 0) {
-				userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), userProfile
-						.get(0).getProfilepic());
+				List<Files> file;
+				try {
+					file = FilesHandler.getInstance().findWhereFileidEquals(
+							userProfile.get(0).getProfilepic());
+					if (!file.isEmpty()) {
+						String filepath = file.get(0).getFilepath() + "/"
+								+ file.get(0).getFilename()
+								+ file.get(0).getExtension();
+						userInfo.put(UserProfile.PROFILEPIC.toLowerCase(),
+								filepath);
+					}
+				} catch (FileException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
 				userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), "");
 			}
 		}
 		return userInfo;
+	}
+
+	/*
+	 * Create EditedInfo Map dob nationality website biography level tnc
+	 */
+	public MultiValueMap<String, Object> createEditedInfoMap(User user) {
+		MultiValueMap<String, Object> userInfo = createUserInfoMap(user);
+		List<UserProfile> userProfile = null;
+		List<Address> userAddress = null;
+		if (UserProfile.getInstance().getName() == null) {
+			UserProfile.getInstance().setName(Name.getInstance());
+		}
+
+		try {
+			userProfile = UserProfileHandler.getInstance()
+					.findWhereUseridEquals(user.getUserid());
+			userAddress = AddressHandler.getInstance().findWhereUseridEquals(
+					user.getUserid());
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AddressException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (!userProfile.isEmpty() && userProfile != null) {
+			if (userProfile.get(0).getName().getMiddlename() != null) {
+				userInfo.put(Name.MIDDLENAME.toLowerCase(), userProfile.get(0)
+						.getName().getMiddlename());
+			} else {
+				userInfo.put(Name.MIDDLENAME.toLowerCase(), "");
+			}
+
+			if (userProfile.get(0).getDob() != null) {
+				DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+				format.setTimeZone(TimeZone.getTimeZone("UTC"));
+				String formatted = format.format(userProfile.get(0).getDob());
+				userInfo.put(UserProfile.DOB.toLowerCase(), formatted);
+			} else {
+				userInfo.put(UserProfile.DOB.toLowerCase(), "");
+			}
+			if (userProfile.get(0).getNationality() > 0) {
+				userInfo.put(UserProfile.NATIONALITY,
+						getCountryName(userProfile.get(0).getNationality()));
+			} else {
+				userInfo.put(UserProfile.NATIONALITY.toLowerCase(), "");
+			}
+			if (!userAddress.isEmpty() && userAddress != null) {
+				if (userAddress.get(0).getAddressLine1() != null) {
+					userInfo.put(Address.ADDRESSLINE1.toLowerCase(),
+							userAddress.get(0).getAddressLine1());
+				} else {
+					userInfo.put(Address.ADDRESSLINE1.toLowerCase(), "");
+				}
+
+				if (userAddress.get(0).getAddressLine2() != null) {
+					userInfo.put(Address.ADDRESSLINE2.toLowerCase(),
+							userAddress.get(0).getAddressLine2());
+				} else {
+					userInfo.put(Address.ADDRESSLINE2.toLowerCase(), "");
+				}
+
+				if (userAddress.get(0).getAddressLine3() != null) {
+					userInfo.put(Address.ADDRESSLINE3.toLowerCase(),
+							userAddress.get(0).getAddressLine3());
+				} else {
+					userInfo.put(Address.ADDRESSLINE3.toLowerCase(), "");
+				}
+
+				if (userAddress.get(0).getCity() != null) {
+					userInfo.put(Address.CITY.toLowerCase(), userAddress.get(0)
+							.getCity());
+				} else {
+					userInfo.put(Address.CITY.toLowerCase(), "");
+				}
+
+				if (userAddress.get(0).getState() != null) {
+					userInfo.put(Address.STATE.toLowerCase(), userAddress
+							.get(0).getState());
+				} else {
+					userInfo.put(Address.STATE.toLowerCase(), "");
+				}
+
+				if (userAddress.get(0).getCountry() > 0) {
+					userInfo.put(Address.COUNTRY.toLowerCase(),
+							getCountryName(userAddress.get(0).getCountry()));
+					;
+				} else {
+					userInfo.put(Address.COUNTRY.toLowerCase(), "");
+				}
+
+				if (userAddress.get(0).getPincode() >= 0) {
+					userInfo.put(Address.PINCODE.toLowerCase(), userAddress
+							.get(0).getPincode());
+				} else {
+					userInfo.put(Address.PINCODE.toLowerCase(), "");
+				}
+			}
+			if (userProfile.get(0).getBiography() != null) {
+				userInfo.put(UserProfile.BIOGRAPHY.toLowerCase(), userProfile
+						.get(0).getBiography());
+			} else {
+				userInfo.put(UserProfile.BIOGRAPHY.toLowerCase(), "");
+			}
+			if (userProfile.get(0).getWebsite() != null) {
+				userInfo.put(UserProfile.WEBSITE.toLowerCase(), userProfile
+						.get(0).getWebsite());
+			} else {
+				userInfo.put(UserProfile.WEBSITE.toLowerCase(), "");
+			}
+			if (userProfile.get(0).getUserlevel() != null) {
+				userInfo.put(UserProfile.USERLEVEL.toLowerCase(), userProfile
+						.get(0).getUserlevel());
+			} else {
+				userInfo.put(UserProfile.USERLEVEL.toLowerCase(), "");
+			}
+			if (userProfile.get(0).getTnc() != -1) {
+				userInfo.put(UserProfile.TNC.toLowerCase(), userProfile.get(0)
+						.getTnc());
+			} else {
+				userInfo.put(UserProfile.TNC.toLowerCase(), "");
+			}
+		} 
+		return userInfo;
+	}
+
+	/*
+	 * Being called by createEditedInfoMap method Read Nationality for
+	 * userprofile or Country for useraddress And return country name from
+	 * countryid
+	 * 
+	 * Parameter : countryid
+	 */
+	private String getCountryName(short countryid) {
+		// TODO Auto-generated method stub
+		List<Country> nationality = null;
+		try {
+			nationality = CountryHandler.getInstance()
+					.findWhereCountryidEquals(countryid);
+		} catch (CountryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return nationality.get(0).getShortname();
 	}
 
 	/**
@@ -425,19 +584,24 @@ public class UserManager {
 	 * @param userid
 	 * @return
 	 * @throws UserProfileException
+	 * 
 	 */
-	public UserProfile getProfile(long userid) throws UserProfileException {
-		UserProfile userProfile = UserProfile.getInstance();
-
+	public MultiValueMap<String, Object> getProfile(long userid)
+			throws UserProfileException {
+		User user = User.getInstance();
+		MultiValueMap<String, Object> profileInfo = new MultiValueMap<String, Object>();
 		try {
-			userProfile = UserProfileHandler.getInstance().findByPrimaryKey(
-					userid);
-		} catch (UserProfileException _e) {
+			user = UserHandler.getInstance().findByPrimaryKey(userid);
+			profileInfo = createEditedInfoMap(user);
+			if (profileInfo.isEmpty()) {
+				profileInfo.put("error", 215);
+			}
+		} catch (UserException _e) {
 			// TODO Auto-generated catch block
 			throw new UserProfileException("Get profile exception: "
 					+ _e.getMessage(), _e);
 		}
-		return userProfile;
+		return profileInfo;
 	}
 
 	/**
@@ -494,8 +658,8 @@ public class UserManager {
 			for (String key : keySet) {
 				List<String> userInfo = formParams.get(key);
 				if (!(key.equalsIgnoreCase(UserProfile.RLANG)
-						|| key.equalsIgnoreCase(UserProfile.WLANG)
-						|| key.equalsIgnoreCase(UserProfile.INTERESTS))) {
+						|| key.equalsIgnoreCase(UserProfile.WLANG) || key
+							.equalsIgnoreCase(UserProfile.INTERESTS))) {
 					for (String userInfoValue : userInfo) {
 						if (userInfoValue != null
 								&& !userInfoValue.equalsIgnoreCase("")) {
@@ -623,28 +787,34 @@ public class UserManager {
 					}
 				}
 				// Update User Interests
-				else if(key.equalsIgnoreCase(UserProfile.INTERESTS)) {
+				else if (key.equalsIgnoreCase(UserProfile.INTERESTS)) {
 					System.out.println(userInfo);
 					List<Object> userInfoList = new ArrayList<Object>();
 					List<Category> categoryList = new ArrayList<Category>();
-					
+
 					List<String> preferenceList = new ArrayList<String>();
-					preferenceList.addAll((Collection<? extends String>) userInfo);
+					preferenceList
+							.addAll((Collection<? extends String>) userInfo);
 
 					Iterator<String> preferencesIt = preferenceList.iterator();
 					/*
 					 * if (userType > 0) { preferencesObjList.add(userType); }
 					 */
-					
+
 					userInfoList.add(convertCollectionToString(preferencesIt));
 					System.out.println(userInfoList);
-					
+
 					try {
-						categoryList = CategoryHandler.getInstance().findByDynamicWhere("category IN (?)",userInfoList);
+						categoryList = CategoryHandler.getInstance()
+								.findByDynamicWhere("category IN (?)",
+										userInfoList);
 						System.out.println(categoryList);
-						Set<Object> categorySet = new HashSet<Object>(categoryList);
+						Set<Object> categorySet = new HashSet<Object>(
+								categoryList);
 						System.out.println(categorySet);
-						categoryList = CategoryHandler.getInstance().findByDynamicWhere("genre IN (?)", userInfoList);
+						categoryList = CategoryHandler.getInstance()
+								.findByDynamicWhere("genre IN (?)",
+										userInfoList);
 						System.out.println(categoryList);
 						Set<Object> genreSet = new HashSet<Object>(categoryList);
 						System.out.println(genreSet);
@@ -652,32 +822,27 @@ public class UserManager {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				    //interestList = (List<Category>) getProfilePreferences("category IN (?) union genre IN (?)", userInfo, CategoryHandler.getInstance()) ;
+					// interestList = (List<Category>)
+					// getProfilePreferences("category IN (?) union genre IN (?)",
+					// userInfo, CategoryHandler.getInstance()) ;
 					System.out.println("hiiiii");
 				}
-							/*@SuppressWarnings("unchecked")
-							List<Category> interestsList = (List<Category>) getProfilePreferences(
-									"category", userInfo,
-									CategoryHandler.getInstance());
-
-							UserInterests userInterests = UserInterests
-									.getInstance();
-							userInterests.setUserid(userid);
-
-							for (Category category : interestsList) {
-								userInterests.setCategoryid(category
-										.getCategoryid());
-								try {
-									UserInterestsHandler.getInstance().insert(
-											userInterests);
-								} catch (UserInterestsException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-							userProfile.setInterests(new HashSet<Category>(
-									interestsList));
-*/				 else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
+				/*
+				 * @SuppressWarnings("unchecked") List<Category> interestsList =
+				 * (List<Category>) getProfilePreferences( "category", userInfo,
+				 * CategoryHandler.getInstance());
+				 * 
+				 * UserInterests userInterests = UserInterests .getInstance();
+				 * userInterests.setUserid(userid);
+				 * 
+				 * for (Category category : interestsList) {
+				 * userInterests.setCategoryid(category .getCategoryid()); try {
+				 * UserInterestsHandler.getInstance().insert( userInterests); }
+				 * catch (UserInterestsException e) { // TODO Auto-generated
+				 * catch block e.printStackTrace(); } }
+				 * userProfile.setInterests(new HashSet<Category>(
+				 * interestsList));
+				 */else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
 					// Read Language if language is rLang {
 					System.out.println(userInfo);
 					Set<Languages> userLanguages = updateUserLanguages(userid,
@@ -687,12 +852,12 @@ public class UserManager {
 				} else if (key.equalsIgnoreCase(UserProfile.WLANG)) {
 					// Read Language if language is wLang {
 					System.out.println(userInfo);
-					
+
 					Set<Languages> userLanguages = updateUserLanguages(userid,
 							"writelanguage", userInfo);
 					System.out.println(userLanguages);
 					userProfile.setrLang(userLanguages);
-					
+
 				}
 			}
 		}
@@ -708,31 +873,32 @@ public class UserManager {
 			e.printStackTrace();
 		}
 	}
-/*
-	@SuppressWarnings("unchecked")
-	private Set<Category> updateUserInterests(long userid, Object categoryObj) {
-		Set<String> allCategorySet = new HashSet<String>();
-		allCategorySet.addAll((Collection<? extends String>) categoryObj);
-		Set<String> constants = new HashSet<String>();
-		
-		Iterator<String> categoryIt = allCategorySet.iterator();
-			
-		//List<Category> interestList = new ArrayList<Category>();
-		
-		while(categoryIt.hasNext()) {
-			short constantOrdinal = (short) CATEGORY.valueOf(categoryIt.next()).ordinal();
-			System.out.println(constantOrdinal);
-			System.out.println(CATEGORY.valueOf(categoryIt.next()).name());
-			if(constantOrdinal >= 0){
-				constants.add(CATEGORY.valueOf(categoryIt.next()).name())allCategorySet;
-			}
-		}
 
-		System.out.println(constants);
-		//interestList = (List<Category>) getProfilePreferences("category", categoryObj, CategoryHandler.getInstance());
-		return null;
-		
-	}*/
+	/*
+	 * @SuppressWarnings("unchecked") private Set<Category>
+	 * updateUserInterests(long userid, Object categoryObj) { Set<String>
+	 * allCategorySet = new HashSet<String>();
+	 * allCategorySet.addAll((Collection<? extends String>) categoryObj);
+	 * Set<String> constants = new HashSet<String>();
+	 * 
+	 * Iterator<String> categoryIt = allCategorySet.iterator();
+	 * 
+	 * //List<Category> interestList = new ArrayList<Category>();
+	 * 
+	 * while(categoryIt.hasNext()) { short constantOrdinal = (short)
+	 * CATEGORY.valueOf(categoryIt.next()).ordinal();
+	 * System.out.println(constantOrdinal);
+	 * System.out.println(CATEGORY.valueOf(categoryIt.next()).name());
+	 * if(constantOrdinal >= 0){
+	 * constants.add(CATEGORY.valueOf(categoryIt.next()).name())allCategorySet;
+	 * } }
+	 * 
+	 * System.out.println(constants); //interestList = (List<Category>)
+	 * getProfilePreferences("category", categoryObj,
+	 * CategoryHandler.getInstance()); return null;
+	 * 
+	 * }
+	 */
 
 	private void UpdateUserName(String userInfoValue, long userid) {
 		User user = User.getInstance();
@@ -1048,7 +1214,8 @@ public class UserManager {
 			System.out.println(userLang.getLanguageid());
 			try {
 				System.out.println(language);
-				System.out.println(UserLanguageHandler.getInstance().insert(userLang));
+				System.out.println(UserLanguageHandler.getInstance().insert(
+						userLang));
 			} catch (UserLanguageException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

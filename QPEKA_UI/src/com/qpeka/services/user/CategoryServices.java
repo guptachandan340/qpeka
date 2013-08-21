@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import com.qpeka.managers.CategoryManager;
 
-@Path("/category")
+@Path("/user")
 public class CategoryServices {
 
 	@POST
@@ -20,7 +20,7 @@ public class CategoryServices {
 		Map<Short, Map.Entry<String, String>> category = new HashMap<Short, Map.Entry<String, String>>();
 		String  response= null;
 		category = CategoryManager.getInstance().readCategory(categoryType);
-		if(category != null) {
+		if(!category.isEmpty() && category != null) {
 			Gson gson = new Gson();
 			response = gson.toJson(category);
 		}
