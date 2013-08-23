@@ -10,5 +10,7 @@ public class SystemConstants {
 	public static final String SRCBOOKFOLDER = "srcbookfolder";
 	public static final String USERCOVERIMGFILE = "usercoverimgfile";
 	public static final String SERVERSALT = "serversalt";
+	public static final String SENDEREMAIL = "senderEmail";
+	public static final String PASSWORD = "password";
 	
 }

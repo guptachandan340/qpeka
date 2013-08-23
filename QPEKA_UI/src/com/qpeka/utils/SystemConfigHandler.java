@@ -87,4 +87,14 @@ public class SystemConfigHandler
 	{
 		return props.getProperty("host");
 	}
+	
+	public String getSenderEmail()
+	{
+		return props.getProperty(SystemConstants.SENDEREMAIL);
+	}
+	
+	public String getPassword()
+	{
+		return props.getProperty(SystemConstants.PASSWORD);
+	}
 }

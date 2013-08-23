@@ -1,3 +1,4 @@
+<%@page import="com.qpeka.util.SystemConfigHandler"%>
 <%@page import="com.qpeka.util.Constants.MONTHS"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -14,6 +15,7 @@
 	rel='stylesheet' type='text/css'>
 <!-- Le styles -->
 <script src="bootstrap/js/jquery.js"></script>
+<script src="config.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
 <script src="bootstrap/js/bootstrap-modal.js"></script>
 <link href="bootstrap/css/bootstrap.css" rel="stylesheet"
@@ -67,9 +69,12 @@ h3 {
 
 <script type="text/javascript">
 var msg = '<%=request.getParameter("msg")%>';
+var err = '<%=request.getParameter("error")%>';
 	var notify = function() {
 		if (msg === 'success')
 			alert('User details stores successfully');
+		if (err === 'invalid_email')
+			alert('Invalid email entered please retry');
 	}
 </script>
 </head>
@@ -151,7 +156,7 @@ var msg = '<%=request.getParameter("msg")%>';
 					 <p> To promote our relations with authors we are giving all authors who agree to publish on our website before the launch of the website a Instant Upgrade to Level 2 on our launch. All you need to do is upload your details along with your works and that's all.</p>
 					 </div>
 					 <div class="span7" style="margin-top:60px";><!--add-->
-					 <form class="form-signin" action="http://landing-qpeka.rhcloud.com/QPEKA/register" method="post" enctype="multipart/form-data">
+					 <form class="form-signin" action="http://127.0.0.1:8080/QPEKA/register" method="post" enctype="multipart/form-data">
                         				 
                       <div class="control-group">
                       <div class="controls controls-row">
