@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.qpeka.db.Badges;
 import com.qpeka.managers.BadgesManager;
 
-@Path("/user")
+@Path("/user/badges")
 public class BadgeServices {
 
 	@POST

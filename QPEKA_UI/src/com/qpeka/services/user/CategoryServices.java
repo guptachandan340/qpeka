@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import com.qpeka.managers.CategoryManager;
 
-@Path("/user")
+@Path("/user/category")
 public class CategoryServices {
 
 	@POST

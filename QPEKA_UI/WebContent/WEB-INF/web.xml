@@ -26,7 +26,7 @@
            <servlet-name>qpekaservices</servlet-name>
            <url-pattern>/v0.1/*</url-pattern>
      </servlet-mapping>
-
+<!-- 
 	<filter>
 		<description>
 		</description>
@@ -200,6 +200,7 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/error.jsp</location>
 	</error-page>
+	 -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
