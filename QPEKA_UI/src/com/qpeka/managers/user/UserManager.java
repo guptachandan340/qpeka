@@ -467,7 +467,10 @@ public class UserManager {
 			if(type.equalsIgnoreCase("countryid")) {
 				nation = CountryHandler.getInstance()
 						.findWhereCountryidEquals((Short) countryIdentifier);
-			} else if(type.equalsIgnoreCase("countryName")) {
+				return nation.get(0).getShortname();
+			}
+			// if(type.equalsIgnoreCase("countryName")
+			else {
 				try {
 					// TODO using short name, ideal it
 					// should be
@@ -476,6 +479,7 @@ public class UserManager {
 					nation = CountryHandler.getInstance()
 							.findWhereShortnameEquals(
 									(String) countryIdentifier);
+					return nation.get(0).getCountryid();
 				} catch (CountryException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -484,7 +488,8 @@ public class UserManager {
 		} catch (CountryException e) {
 			e.printStackTrace();
 		}
-		return nation.get(0).getShortname();
+		return null;
+		
 	}
 
 	/**
@@ -669,7 +674,6 @@ public class UserManager {
 	public String setEditedInfo(long userid,
 			MultivaluedMap<String, String> formParams,
 			List<UserProfile> userList) {
-			short counter = 0;
 			String userProfileResult = null;
 			String userAddressResult = null;
 			String userInterestResult = null;
@@ -687,7 +691,6 @@ public class UserManager {
 				}
 				userProfile.setUserid(userid);
 				short usertype = 0;
-				List<Country> nation = null;
 				Set<String> keySet = formParams.keySet();
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
@@ -768,7 +771,7 @@ public class UserManager {
 								// Set/Update nationality
 								else if (key
 										.equalsIgnoreCase(UserProfile.NATIONALITY)) {
-									userProfile.setNationality((Short) getCountryIdentifiers(userInfoValue, "countryName"));
+									userProfile.setNationality(Short.parseShort(getCountryIdentifiers(userInfoValue, "countryName").toString()));
 								} 
 								// Set/Update Website
 								else if (key
@@ -823,7 +826,7 @@ public class UserManager {
 								else if (key
 										.equalsIgnoreCase(Address.COUNTRY)) {
 									userProfile.getAddress().setCountry(
-											(Short) getCountryIdentifiers(userInfoValue, "countryName"));
+											Short.parseShort(getCountryIdentifiers(userInfoValue, "countryName").toString()));
 								}
 							} else {
 								usertype = (short) com.qpeka.db.Constants.USERTYPE.UNSPECIFIED
@@ -865,12 +868,12 @@ public class UserManager {
 				}
 			}
 		}
-		if ((userProfileResult.equalsIgnoreCase("error : 215") || userProfileResult != null)
-				&& (userAddressResult.equalsIgnoreCase("error : 215") || userAddressResult != null)
-				&& (userInterestResult.equalsIgnoreCase("error : 215") || userInterestResult != null)
-				&& (userLanguageResult.equalsIgnoreCase("error : 215") || userLanguageResult != null)
-				&& (profilepicResult.equalsIgnoreCase("error : 215") || profilepicResult != null)
-				&& (userResult.equalsIgnoreCase("error : 215") || userResult != null)) {
+		if ((userProfileResult.equalsIgnoreCase("success : 200") || userProfileResult != null)
+				&& (userAddressResult.equalsIgnoreCase("success : 200") || userAddressResult != null)
+				&& (userInterestResult.equalsIgnoreCase("success : 200") || userInterestResult != null)
+				&& (userLanguageResult.equalsIgnoreCase("success : 200") || userLanguageResult != null)
+				&& (profilepicResult.equalsIgnoreCase("success : 200") || profilepicResult != null)
+				&& (userResult.equalsIgnoreCase("success : 200") || userResult != null)) {
 
 			result = "success : 200";
 		} else {

@@ -20,7 +20,7 @@ import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
-@Path("-")
+@Path("user")
 public class UserService {
 	
 	@POST
@@ -209,22 +209,6 @@ public class UserService {
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response editProfileService(MultivaluedMap<String, String> formParams) {
-		 long userid = 0;
-		/*Set<String> keySet = formParams.keySet();
-		    for(String key : keySet) {
-				if(key.equalsIgnoreCase(UserProfile.USERID)) {
-					List<String> formValue = formParams.get(key);
-					for(String value : formValue) {
-						if(value != null && !value.equals("")) {
-						 userid = Long.parseLong(value);
-						 System.out.println(userid);
-						} else {
-							System.out.println("space");
-						}
-					}
-				}
-		    }*/
-		 
 		 String response = null;
 		 Gson gson = new Gson();
 		 try {
@@ -234,59 +218,7 @@ public class UserService {
 			e.printStackTrace();
 		}
 		return Response.status(200).entity(gson.toJson(response)).build();
-	}   
-		/*for(String keys : formParams.keySet()) {
-			for(String keyvalues : formParams.get(keys)) {
-				System.out.println("map key " + keys);
-				System.out.println("map value " + keyvalues);
-			
-				if(keys.equalsIgnoreCase(UserProfile.USERID)){
-						profile.put(UserProfile.USERID,keyvalues); 
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-						profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(Name.FIRSTNAME)) {
-						profile.put(Name.FIRSTNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(Name.MIDDLENAME)) {
-						profile.put(Name.MIDDLENAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(Name.LASTNAME)) {
-						profile.put(Name.LASTNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.GENDER)) {
-						profile.put(UserProfile.GENDER,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.DOB)) {
-						profile.put(UserProfile.DOB,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.NATIONALITY)) {
-						profile.put(UserProfile.NATIONALITY,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.WEBSITE)) {
-						profile.put(UserProfile.WEBSITE,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.BIOGRAPHY)) {
-						profile.put(UserProfile.BIOGRAPHY,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PROFILEPIC)) {
-						profile.put(UserProfile.PROFILEPIC,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-			
-			}
-			}
-		}
-		try {
-			userprofile = UserManager.getInstance().editProfile(profile);
-		} catch (FileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Gson gson = new Gson();
-		String json = gson.toJson(userprofile);
-		return Response.status(200).entity(json).build();*/ 
-	    
-                 
+	}               
 	
 
 // TODO WS for each param of edit profile
