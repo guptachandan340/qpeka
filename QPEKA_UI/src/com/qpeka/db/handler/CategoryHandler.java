@@ -525,7 +525,47 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	@Override
 	public List<Category> findByDynamicWhere(String sql, List<Object> sqlParams)
 			throws CategoryException {
-		// declare variables
+		final boolean isConnSupplied = (userConn != null);
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;		
+		// get the user-specified connection or get a connection from the
+		// ResourceManager
+		try {
+			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			
+			// construct the SQL statement
+			final String SQL = SQL_SELECT + " WHERE " + sql;
+			//final String SQL = "SELECT categoryid, type, category, genre, points FROM qpeka.category where category IN ('Classic','Adult')";
+			if (logger.isDebugEnabled()) {
+				logger.debug("Executing " + SQL);
+			}
+			
+			// prepare statement
+			stmt = conn.prepareStatement(SQL);
+			stmt.setMaxRows(maxRows);
+	
+			// bind parameters
+			for (int counter = 0; (!sqlParams.isEmpty())
+					&& counter < sqlParams.size(); counter++) {
+				stmt.setObject(counter + 1, sqlParams.get(counter));
+			}
+		
+		rs = stmt.executeQuery();
+		// fetch the results
+		return fetchMultiResults(rs);
+	} catch (Exception _e) {
+		logger.error("Exception: " + _e.getMessage(), _e);
+		throw new CategoryException("Exception: " + _e.getMessage(), _e);
+	} finally {
+		ResourceManager.close(rs);
+		ResourceManager.close(stmt);
+		if (!isConnSupplied) {
+			ResourceManager.close(conn);
+		}
+	}
+	}
+		/*// declare variables
 		final boolean isConnSupplied = (userConn != null);
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -558,7 +598,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			// bind parameters
 			for (int counter = 0; sqlParams != null
 					&& counter < sqlParams.size(); counter++) {
-				System.out.println(sqlParams.get(counter));
+				//System.out.println(sqlParams.get(counter));
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
 			System.out.println("hello");
@@ -578,7 +618,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 				ResourceManager.close(conn);
 			}
 		}
-	}
+*/
+		
 
 	/**
 	 * Fetches a single row from the result set
@@ -600,13 +641,10 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	protected List<Category> fetchMultiResults(ResultSet rs)
 			throws SQLException {
 		List<Category> resultList = new ArrayList<Category>();
-		System.out.println(rs.next());
 		while (rs.next()) {
-			System.out.println("hello3");
 			Category category = new Category();
 			populateCategory(category, rs);
 			resultList.add(category);
-			System.out.println(resultList);
 		}
 		return resultList;
 	}
@@ -616,7 +654,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	 */
 	protected void populateCategory(Category category, ResultSet rs)
 			throws SQLException {
-		System.out.println("populatecategory");
 		category.setCategoryid(rs.getShort(COLUMN_CATEGORYID));
 		category.setType(rs.getString(COLUMN_TYPE));
 		category.setCategory(rs.getString(COLUMN_CATEGORY));

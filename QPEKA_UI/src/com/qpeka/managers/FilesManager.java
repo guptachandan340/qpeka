@@ -295,7 +295,7 @@ public class FilesManager {
 	 * @param args
 	 */
 
-	
+	/*
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//FilesManager.getInstance().deleteFiles(6);
@@ -312,5 +312,5 @@ public class FilesManager {
 		//System.out.println(filesManager.updateFiles(updateMap)); // Done
 	//	System.out.println(filesManager.updateFiles((short)1,(short)3,"fileid"));
 	}
-	
+	*/
 }
