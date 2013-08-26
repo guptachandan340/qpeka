@@ -21,13 +21,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
-import com.qpeka.db.Constants.CATEGORY;
-import com.qpeka.db.Constants.LANGUAGES;
-import com.qpeka.db.Constants.TYPE;
+import com.qpeka.book.converter.FileConverterUtils;
+import com.qpeka.book.converter.FileEncryptionUtils;
+import com.qpeka.db.book.store.PublisherHandler;
+import com.qpeka.db.book.store.WorkEncryptionHandler;
+import com.qpeka.db.book.store.tuples.Constants.CATEGORY;
+import com.qpeka.db.book.store.tuples.Constants.LANGUAGES;
+import com.qpeka.db.book.store.tuples.Constants.TYPE;
+import com.qpeka.db.book.store.tuples.Publisher;
 import com.qpeka.db.book.store.tuples.Work;
-import com.qpeka.db.handler.user.PublisherHandler;
-import com.qpeka.db.user.profile.type.Publisher;
-import com.qpeka.epub.provider.EpubProcessor;
 import com.qpeka.epub.provider.EpubProcessorNew;
 import com.qpeka.managers.WorkContentManager;
 import com.qpeka.utils.SystemConfigHandler;
@@ -225,10 +227,29 @@ public class WorkUploadServlet extends HttpServlet {
         	}
         	
         	cvr = new File(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile);
+        	System.out.println("[MANOJ] File = " + cvr.getName());
         	if(cvr != null && cvr.exists())
         	{
-        		EpubProcessorNew.processEpub(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile,
-        				SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+        		if(cvr.getName().endsWith("epub"))
+        		{
+	        		EpubProcessorNew.processEpub(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile,
+	        				SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+        		}
+        		else if(cvr.getName().endsWith("doc")) // handle DocCase
+        		{
+        			String src = FileConverterUtils.convertDocToEpub(cvr,title,language.toString());
+        			EpubProcessorNew.processEpub(src, SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+        		}
+        		else if(cvr.getName().endsWith("docx")) // handle DocCase
+        		{
+        			String src = FileConverterUtils.convertDocxToEpub(cvr,title,language.toString());
+        			EpubProcessorNew.processEpub(src, SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+        		}
+        		
+        		//Encrypt and save the file
+        		WorkEncryptionHandler.getInstance().addKey(_id, FileEncryptionUtils.generateKey(_id));
+        		
+        		
         		cvr.delete();
         	}
         	

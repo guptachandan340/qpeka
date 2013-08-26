@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import com.qpeka.managers.LanguagesManager;
 
-@Path("/languages")
+@Path("/user/languages")
 public class LanguageServices {
 
 	@GET
@@ -19,7 +19,7 @@ public class LanguageServices {
 		Map<Short, String> languages = new HashMap<Short, String>();
 		String response = null;
 		languages = LanguagesManager.getInstance().retrieveLangugage();
-		if(languages != null) {
+		if(!languages.isEmpty() && languages != null) {
 			Gson gson = new Gson();
 			response = gson.toJson(languages);
 		}

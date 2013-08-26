@@ -1,97 +1,206 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns="http://java.sun.com/xml/ns/javaee" 
-	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
- 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
- 			http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
- 	id="WebApp_ID" 
- 	version="3.0">
-	
-	<display-name>Qpeka</display-name>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>QPEKA</display-name>
+
 	<servlet>
-  		<servlet-name>qpekaservices</servlet-name>
-  		<servlet-class>
-  			com.sun.jersey.spi.container.servlet.ServletContainer
-  		</servlet-class>
+          <servlet-name>qpekaservices</servlet-name>
+            <servlet-class>
+                        com.sun.jersey.spi.container.servlet.ServletContainer
+            </servlet-class>
+  
+	    <init-param>
+                <param-name>com.sun.jersey.config.property.packages</param-name>
+                <param-value>com.qpeka.services</param-value>
+            </init-param>
+
+            <init-param>
+                    <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+	            <param-value>true</param-value>
+            </init-param>
+
    
-    <init-param>
-		<param-name>com.sun.jersey.config.property.packages</param-name>
-		<param-value>com.qpeka.services</param-value>
-	</init-param>
+            <load-on-startup>1</load-on-startup>
+      </servlet>
 
-	<init-param>
-    	<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-    	<param-value>true</param-value>
-	</init-param>
-
- 
-  		<load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet-mapping>
-  		<servlet-name>qpekaservices</servlet-name>
-  		<url-pattern>/v1.0/*</url-pattern>
-	</servlet-mapping>
-
+     <servlet-mapping>
+           <servlet-name>qpekaservices</servlet-name>
+           <url-pattern>/v0.1/*</url-pattern>
+     </servlet-mapping>
 <!-- 
-	<filter> <description> </description> <display-name>AuthFilter</display-name> 
-		<filter-name>AuthFilter</filter-name> <filter-class>com.qpeka.servlets.AuthFilter</filter-class> 
-		</filter> <filter-mapping> <filter-name>AuthFilter</filter-name> <url-pattern>/*</url-pattern> 
-		<dispatcher>REQUEST</dispatcher> <dispatcher>FORWARD</dispatcher> </filter-mapping> 
-		<listener> <listener-class>com.qpeka.managers.SessionExpiryListener</listener-class> 
-		</listener> <display-name>URIPatternMatching</display-name> 
-	-->
-
-	<!-- <servlet> <description> </description> <display-name>AuthServlet</display-name> 
-		<servlet-name>AuthServlet</servlet-name> <servlet-class>com.qpeka.api.AuthServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>UploadHandlerServlet</display-name> 
-		<servlet-name>UploadHandlerServlet</servlet-name> <servlet-class>com.qpeka.servlets.WorkUploadServlet</servlet-class> 
-		</servlet> <servlet-mapping> <servlet-name>AuthServlet</servlet-name> <url-pattern>/AuthServlet</url-pattern> 
-		</servlet-mapping> <servlet-mapping> <servlet-name>UploadHandlerServlet</servlet-name> 
-		<url-pattern>/upload</url-pattern> </servlet-mapping> <servlet> <description> 
-		</description> <display-name>ImageServlet</display-name> <servlet-name>ImageServlet</servlet-name> 
-		<servlet-class>com.qpeka.servlets.ImageServlet</servlet-class> </servlet> 
-		<servlet> <description> </description> <display-name>UserRegistrationServlet</display-name> 
-		<servlet-name>UserRegistrationServlet</servlet-name> <servlet-class>com.qpeka.servlets.UserRegistrationServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>ViewLogHandlerServlet</display-name> 
-		<servlet-name>ViewLogHandlerServlet</servlet-name> <servlet-class>com.qpeka.servlets.ViewLogHandlerServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>UserAuthServlet</display-name> 
-		<servlet-name>UserAuthServlet</servlet-name> <servlet-class>com.qpeka.servlets.UserAuthServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>WorkInfoServlet</display-name> 
-		<servlet-name>WorkInfoServlet</servlet-name> <servlet-class>com.qpeka.servlets.WorkInfoServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>EpubServlet</display-name> 
-		<servlet-name>EpubServlet</servlet-name> <servlet-class>com.qpeka.servlets.EpubServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>UserProfileManagerServlet</display-name> 
-		<servlet-name>UserProfileManagerServlet</servlet-name> <servlet-class>com.qpeka.servlets.UserProfileManagerServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>UserAssociationServlet</display-name> 
-		<servlet-name>UserAssociationServlet</servlet-name> <servlet-class>com.qpeka.servlets.UserAssociationServlet</servlet-class> 
-		</servlet> <servlet-mapping> <servlet-name>ImageServlet</servlet-name> <url-pattern>/image</url-pattern> 
-		</servlet-mapping> <servlet-mapping> <servlet-name>UserRegistrationServlet</servlet-name> 
-		<url-pattern>/register</url-pattern> </servlet-mapping> <servlet-mapping> 
-		<servlet-name>ViewLogHandlerServlet</servlet-name> <url-pattern>/viewlog</url-pattern> 
-		</servlet-mapping> <servlet-mapping> <servlet-name>UserAuthServlet</servlet-name> 
-		<url-pattern>/auth</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>WorkInfoServlet</servlet-name> 
-		<url-pattern>/work</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>EpubServlet</servlet-name> 
-		<url-pattern>/epub</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>UserProfileManagerServlet</servlet-name> 
-		<url-pattern>/profile</url-pattern> </servlet-mapping> <servlet-mapping> 
-		<servlet-name>UserAssociationServlet</servlet-name> <url-pattern>/association</url-pattern> 
-		</servlet-mapping> <servlet> <description></description> <display-name>ContentProviderServlet</display-name> 
-		<servlet-name>ContentProviderServlet</servlet-name> <servlet-class>com.qpeka.epub.provider.servlet.ContentProviderServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>PageViewLogger</display-name> 
-		<servlet-name>PageViewLogger</servlet-name> <servlet-class>com.qpeka.epub.provider.servlet.PageViewLogger</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>BookmarkServlet</display-name> 
-		<servlet-name>BookmarkServlet</servlet-name> <servlet-class>com.qpeka.servlets.BookmarkServlet</servlet-class> 
-		</servlet> <servlet> <description> </description> <display-name>GuestUserRegistrationServlet</display-name> 
-		<servlet-name>GuestUserRegistrationServlet</servlet-name> <servlet-class>com.qpeka.servlets.GuestUserRegistrationServlet</servlet-class> 
-		</servlet> <servlet-mapping> <servlet-name>ContentProviderServlet</servlet-name> 
-		<url-pattern>/epub</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>PageViewLogger</servlet-name> 
-		<url-pattern>/log</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>BookmarkServlet</servlet-name> 
-		<url-pattern>/bookmark</url-pattern> </servlet-mapping> <servlet-mapping> 
-		<servlet-name>GuestUserRegistrationServlet</servlet-name> <url-pattern>/GuestUserRegistrationServlet</url-pattern> 
-		</servlet-mapping> <error-page> <exception-type>java.lang.Throwable</exception-type> 
-		<location>/error.jsp</location> </error-page> 
-		-->
-		
+	<filter>
+		<description>
+		</description>
+		<display-name>AuthFilter</display-name>
+		<filter-name>AuthFilter</filter-name>
+		<filter-class>com.qpeka.servlets.AuthFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	<listener>
+		<listener-class>com.qpeka.managers.SessionExpiryListener</listener-class>
+	</listener>
+	<servlet>
+		<description>
+		</description>
+		<display-name>AuthServlet</display-name>
+		<servlet-name>AuthServlet</servlet-name>
+		<servlet-class>com.qpeka.api.AuthServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UploadHandlerServlet</display-name>
+		<servlet-name>UploadHandlerServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.WorkUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AuthServlet</servlet-name>
+		<url-pattern>/AuthServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UploadHandlerServlet</servlet-name>
+		<url-pattern>/upload</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ImageServlet</display-name>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.ImageServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UserRegistrationServlet</display-name>
+		<servlet-name>UserRegistrationServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.UserRegistrationServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>ViewLogHandlerServlet</display-name>
+		<servlet-name>ViewLogHandlerServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.ViewLogHandlerServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UserAuthServlet</display-name>
+		<servlet-name>UserAuthServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.UserAuthServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>WorkInfoServlet</display-name>
+		<servlet-name>WorkInfoServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.WorkInfoServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>EpubServlet</display-name>
+		<servlet-name>EpubServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.EpubServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UserProfileManagerServlet</display-name>
+		<servlet-name>UserProfileManagerServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.UserProfileManagerServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>UserAssociationServlet</display-name>
+		<servlet-name>UserAssociationServlet</servlet-name>
+		<servlet-class>com.qpeka.servlets.UserAssociationServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>/image</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserRegistrationServlet</servlet-name>
+		<url-pattern>/register</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ViewLogHandlerServlet</servlet-name>
+		<url-pattern>/viewlog</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserAuthServlet</servlet-name>
+		<url-pattern>/auth</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>WorkInfoServlet</servlet-name>
+		<url-pattern>/work</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>EpubServlet</servlet-name>
+		<url-pattern>/epub1</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserProfileManagerServlet</servlet-name>
+		<url-pattern>/profile</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserAssociationServlet</servlet-name>
+		<url-pattern>/association</url-pattern>
+	</servlet-mapping>
+	 <servlet>
+	    <description></description>
+	    <display-name>ContentProviderServlet</display-name>
+	    <servlet-name>ContentProviderServlet</servlet-name>
+	    <servlet-class>com.qpeka.epub.provider.servlet.ContentProviderServlet</servlet-class>
+	  </servlet>
+	 <servlet>
+	 	<description>
+	 	</description>
+	 	<display-name>PageViewLogger</display-name>
+	 	<servlet-name>PageViewLogger</servlet-name>
+	 	<servlet-class>com.qpeka.epub.provider.servlet.PageViewLogger</servlet-class>
+	 </servlet>
+	 <servlet>
+	 	<description>
+	 	</description>
+	 	<display-name>BookmarkServlet</display-name>
+	 	<servlet-name>BookmarkServlet</servlet-name>
+	 	<servlet-class>com.qpeka.servlets.BookmarkServlet</servlet-class>
+	 </servlet>
+	 <servlet>
+	 	<description>
+	 	</description>
+	 	<display-name>GuestUserRegistrationServlet</display-name>
+	 	<servlet-name>GuestUserRegistrationServlet</servlet-name>
+	 	<servlet-class>com.qpeka.servlets.GuestUserRegistrationServlet</servlet-class>
+	 </servlet>
+	  <servlet-mapping>
+	    <servlet-name>ContentProviderServlet</servlet-name>
+	    <url-pattern>/epub</url-pattern>
+	  </servlet-mapping>
+	  <servlet-mapping>
+	  	<servlet-name>PageViewLogger</servlet-name>
+	  	<url-pattern>/log</url-pattern>
+	  </servlet-mapping>
+	  <servlet-mapping>
+	  	<servlet-name>BookmarkServlet</servlet-name>
+	  	<url-pattern>/bookmark</url-pattern>
+	  </servlet-mapping>
+	  <servlet-mapping>
+	  	<servlet-name>GuestUserRegistrationServlet</servlet-name>
+	  	<url-pattern>/GuestUserRegistrationServlet</url-pattern>
+	  </servlet-mapping>
+	<error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/error.jsp</location>
+	</error-page>
+	 -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>

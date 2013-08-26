@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Random;
 
 public class SystemConfigHandler 
 {
@@ -47,5 +48,15 @@ public class SystemConfigHandler
 		return props.getProperty("host");
 	}
 	
+	public static void main(String[] args) {
+		
+		 Random rnd = new Random();
+		 for(int i = 0; i < 10;i++ )
+		 {
+			 int x =rnd.nextInt(10);
+			 if(x < 6)
+				 System.out.println("HIT");
+		 }
+	}
 	
 }

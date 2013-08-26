@@ -45,7 +45,7 @@ public interface AddressDao {
 	/** 
 	 * Returns all rows from the useraddress table that match the criteria 'userid = :userid'.
 	 */
-	public List<Address> findWhereUseridEquals(int userid) throws AddressException;
+	public List<Address> findWhereUseridEquals(long userid) throws AddressException;
 
 	/** 
 	 * Returns all rows from the useraddress table that match the criteria 'line1 = :line1'.
