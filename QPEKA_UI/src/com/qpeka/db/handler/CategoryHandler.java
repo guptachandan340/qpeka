@@ -354,13 +354,13 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			}
 
 			stmt.setShort(index++, categoryid);
-			short rows = (short)stmt.executeUpdate();
+			short rows = (short) stmt.executeUpdate();
 			reset(category);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
 			}
-		return rows;
+			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
@@ -393,7 +393,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 			stmt = conn.prepareStatement(SQL_DELETE);
 			stmt.setShort(1, categoryid);
-			 int rows = stmt.executeUpdate();
+			int rows = stmt.executeUpdate();
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
@@ -530,31 +530,42 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-
+		System.out.println(sql);
+		System.out.println(sqlParams);
+		
+		sql = "categoryid IN (?)";
+		sqlParams.clear();
+		sqlParams.add(4);
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
 			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
 
 			// construct the SQL statement
-			final String SQL = SQL_SELECT + " WHERE " + sql;
-
+		    final String SQL = SQL_SELECT + " WHERE " + sql;
+			//final String SQL = "SELECT categoryid, type, category, genre, points FROM qpeka.category where category IN ('horror', 'thriller', 'small child', 'technical', 'love', 'Fiction', 'NonFiction', 'Educational', 'Love')";
+			System.out.println(SQL);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL);
 			}
 
 			// prepare statement
 			stmt = conn.prepareStatement(SQL);
+			System.out.println(stmt);
 			stmt.setMaxRows(maxRows);
+			System.out.println(stmt.getMaxRows());
 
 			// bind parameters
 			for (int counter = 0; sqlParams != null
 					&& counter < sqlParams.size(); counter++) {
+				System.out.println(sqlParams.get(counter));
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
+			System.out.println("hello");
+			System.out.println(stmt.getResultSet());
 			rs = stmt.executeQuery();
-
+			System.out.println("hii0");
+			System.out.println(rs);
 			// fetch the results
 			return fetchMultiResults(rs);
 		} catch (Exception _e) {
@@ -566,7 +577,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
 	}
 
@@ -590,12 +600,14 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	protected List<Category> fetchMultiResults(ResultSet rs)
 			throws SQLException {
 		List<Category> resultList = new ArrayList<Category>();
+		System.out.println(rs.next());
 		while (rs.next()) {
+			System.out.println("hello3");
 			Category category = new Category();
 			populateCategory(category, rs);
 			resultList.add(category);
+			System.out.println(resultList);
 		}
-
 		return resultList;
 	}
 
@@ -604,6 +616,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	 */
 	protected void populateCategory(Category category, ResultSet rs)
 			throws SQLException {
+		System.out.println("populatecategory");
 		category.setCategoryid(rs.getShort(COLUMN_CATEGORYID));
 		category.setType(rs.getString(COLUMN_TYPE));
 		category.setCategory(rs.getString(COLUMN_CATEGORY));
@@ -625,9 +638,11 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 	/**
 	 * Get UserHandler object instance
+	 * 
 	 * @return instance of UserHandler
 	 */
 	public static CategoryHandler getInstance() {
-		return (instance == null ? (instance = new CategoryHandler()) : instance);
+		return (instance == null ? (instance = new CategoryHandler())
+				: instance);
 	}
 }

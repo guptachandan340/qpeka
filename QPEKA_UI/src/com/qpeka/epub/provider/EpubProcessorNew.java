@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.MediaType;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubReader;
 import nl.siegmann.epublib.epub.EpubWriter;
@@ -49,6 +50,8 @@ public class EpubProcessorNew {
 			cnt.setPgCount(cTemp.getPgCount());
 			doc.body().html(ele.html());
 			res.setData(doc.html().getBytes());
+			if(res.getMediaType() == null)
+				res.setMediaType(new MediaType("html", "html"));
 
 		}
 		EpubWriter wr = new EpubWriter();
@@ -198,7 +201,7 @@ public class EpubProcessorNew {
 //		System.out.println(StringEscapeUtils.unescapeHtml("&lt;page&gt;"));
 		//Tag t = Tag.valueOf("<page>");
 		//System.out.println(t);
-		processEpub("/home/manoj/5180cc95d35d399cb58da7d8.2.epub","/home/manoj/testRes.epub");
+		processEpub("/home/manoj/Pride and Prejudice.epub","/home/manoj/testRes.epub");
 //		String[] a = {"br","","","",""};
 //		EpubReader reader =  new EpubReader();
 //		Book b = reader.readEpub(new FileInputStream(new File("/home/manoj/5180cc95d35d399cb58da7d8.2.epub")));

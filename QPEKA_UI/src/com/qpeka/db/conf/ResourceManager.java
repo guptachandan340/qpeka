@@ -17,22 +17,21 @@ public class ResourceManager {
 	private static String JDBC_USER = null;
 	private static String JDBC_PASSWORD = null;
 	private static Driver driver = null;
-	private static InputStream is = null;
-	private static Properties p = null;
+	private static InputStream inputStream = null;
+	private static Properties properties = null;
 
 	static {
-
 		try {
-			is = ResourceManager.class.getClassLoader().getResourceAsStream(
-					"mysql.properties");
-			p = new Properties();
-			p.load(is);
-			
+			inputStream = ResourceManager.class.getClassLoader()
+					.getResourceAsStream("mysql.properties");
+			properties = new Properties();
+			properties.load(inputStream);
+
 			// Assigning Properties values
-			JDBC_DRIVER = p.getProperty("db_driver");
-			JDBC_URL = p.getProperty("db_url");
-			JDBC_USER = p.getProperty("db_user");
-			JDBC_PASSWORD = p.getProperty("db_password");
+			JDBC_DRIVER = properties.getProperty("db_driver");
+			JDBC_URL = properties.getProperty("db_url");
+			JDBC_USER = properties.getProperty("db_user");
+			JDBC_PASSWORD = properties.getProperty("db_password");
 
 		} catch (IOException ie) {
 			ie.printStackTrace();

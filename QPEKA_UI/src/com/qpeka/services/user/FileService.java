@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.qpeka.db.Files;
 import com.qpeka.managers.FilesManager;
 
-@Path("/files")
+@Path("/user/files")
 public class FileService {
 
 	@POST
@@ -28,7 +28,7 @@ public class FileService {
 			//filesIdentifiers.add(file);
 			
 		}
-		if(files != null) {
+		if(!files.isEmpty() && files != null) {
 			Gson gson = new Gson();
 			response = gson.toJson(files);
 		}
