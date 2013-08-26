@@ -298,9 +298,9 @@ public class UserManager {
 					file = FilesHandler.getInstance().findWhereFileidEquals(
 							userProfile.get(0).getProfilepic());
 					if (!file.isEmpty()) {
-						String filepath = file.get(0).getFilepath() + "/"
-								+ file.get(0).getFilename()
-								+ file.get(0).getExtension();
+						String filepath = file.get(0).getFilepath(); // + "/"
+//								+ file.get(0).getFilename()
+//								+ file.get(0).getExtension();
 						userInfo.put(UserProfile.PROFILEPIC.toLowerCase(),
 								filepath);
 					}
@@ -429,12 +429,12 @@ public class UserManager {
 			} else {
 				userInfo.put(UserProfile.USERLEVEL.toLowerCase(), "");
 			}
-			if (userProfile.get(0).getTnc() != -1) {
+			/*if (userProfile.get(0).getTnc() != -1) {
 				userInfo.put(UserProfile.TNC.toLowerCase(), userProfile.get(0)
 						.getTnc());
 			} else {
 				userInfo.put(UserProfile.TNC.toLowerCase(), "");
-			}
+			}*/
 		} 
 		return userInfo;
 	}
@@ -788,7 +788,6 @@ public class UserManager {
 				}
 				// Update User Interests
 				else if (key.equalsIgnoreCase(UserProfile.INTERESTS)) {
-					System.out.println(userInfo);
 					List<Object> userInfoList = new ArrayList<Object>();
 					List<Category> categoryList = new ArrayList<Category>();
 
@@ -802,22 +801,17 @@ public class UserManager {
 					 */
 
 					userInfoList.add(convertCollectionToString(preferencesIt));
-					System.out.println(userInfoList);
 
 					try {
 						categoryList = CategoryHandler.getInstance()
 								.findByDynamicWhere("category IN (?)",
 										userInfoList);
-						System.out.println(categoryList);
 						Set<Object> categorySet = new HashSet<Object>(
 								categoryList);
-						System.out.println(categorySet);
 						categoryList = CategoryHandler.getInstance()
 								.findByDynamicWhere("genre IN (?)",
 										userInfoList);
-						System.out.println(categoryList);
 						Set<Object> genreSet = new HashSet<Object>(categoryList);
-						System.out.println(genreSet);
 					} catch (CategoryException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -825,7 +819,6 @@ public class UserManager {
 					// interestList = (List<Category>)
 					// getProfilePreferences("category IN (?) union genre IN (?)",
 					// userInfo, CategoryHandler.getInstance()) ;
-					System.out.println("hiiiii");
 				}
 				/*
 				 * @SuppressWarnings("unchecked") List<Category> interestsList =
@@ -844,18 +837,14 @@ public class UserManager {
 				 * interestsList));
 				 */else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
 					// Read Language if language is rLang {
-					System.out.println(userInfo);
 					Set<Languages> userLanguages = updateUserLanguages(userid,
 							"readlanguage", userInfo);
-					System.out.println(userLanguages);
 					userProfile.setrLang(userLanguages);
 				} else if (key.equalsIgnoreCase(UserProfile.WLANG)) {
 					// Read Language if language is wLang {
-					System.out.println(userInfo);
 
 					Set<Languages> userLanguages = updateUserLanguages(userid,
 							"writelanguage", userInfo);
-					System.out.println(userLanguages);
 					userProfile.setrLang(userLanguages);
 
 				}
@@ -1202,26 +1191,19 @@ public class UserManager {
 		List<Languages> languageList = (List<Languages>) getProfilePreferences(
 				"language", languageObj, LanguagesHandler.getInstance());
 
-		System.out.println(languageList);
 		UserLanguage userLang = UserLanguage.getInstance();
 		userLang.setUserid(userid);
-		System.out.println(userLang.getUserid());
 		userLang.setType(languageType);
-		System.out.println(userLang.getType());
 		for (Languages language : languageList) {
-			System.out.println("hello");
 			userLang.setLanguageid(language.getLanguageid());
-			System.out.println(userLang.getLanguageid());
 			try {
-				System.out.println(language);
-				System.out.println(UserLanguageHandler.getInstance().insert(
-						userLang));
+				UserLanguageHandler.getInstance().insert(
+						userLang);
 			} catch (UserLanguageException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		System.out.println(new HashSet<Languages>(languageList));
 		return (new HashSet<Languages>(languageList));
 	}
 
@@ -1244,12 +1226,10 @@ public class UserManager {
 		 * if (userType > 0) { preferencesObjList.add(userType); }
 		 */
 		preferencesObjList.add(convertCollectionToString(preferencesIt));
-		System.out.println(preferencesObjList);
 		Object profilePreferences = null;
 		try {
 			profilePreferences = abstractHandler.findByDynamicWhere(whereSql
 					+ " IN (?)", preferencesObjList);
-			System.out.println(profilePreferences);
 
 		} catch (QpekaException e) {
 			// TODO Auto-generated catch block
@@ -1285,7 +1265,6 @@ public class UserManager {
 	 * @return
 	 */
 	public String convertCollectionToString(Iterator<String> collectionIt) {
-		System.out.println("iterator to be converted " + collectionIt);
 		StringBuilder collectionString = new StringBuilder();
 		// Create string of collection objects (comma separated)
 		while (collectionIt.hasNext()) {
@@ -1294,7 +1273,6 @@ public class UserManager {
 			}
 			collectionString.append(collectionIt.next().toString());
 		}
-		System.out.println("converted string : " + collectionString.toString());
 		return collectionString.toString();
 	}
 

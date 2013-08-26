@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import com.qpeka.managers.LanguagesManager;
 
-@Path("/user")
+@Path("/user/languages")
 public class LanguageServices {
 
 	@GET

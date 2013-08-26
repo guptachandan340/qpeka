@@ -39,8 +39,8 @@ public class MongoAccessor
 		JSONObject json = null;
 		try
 		{
-			//props.load(MongoAccessor.class.getClassLoader().getResourceAsStream("mongo.properties"));
-			props.load(new FileInputStream(new File("/home/manoj/QPEKA/qpeka/QPEKA_UI/WebContent/WEB-INF/classes/mongo.properties")));
+			props.load(MongoAccessor.class.getClassLoader().getResourceAsStream("mongo.properties"));
+			//props.load(new FileInputStream(new File("/home/manoj/QPEKA/qpeka/QPEKA_UI/WebContent/WEB-INF/classes/mongo.properties")));
 			host = props.getProperty("host");
 			port = Integer.parseInt(props.getProperty("port"));
 			json = new JSONObject(props.getProperty("connectionOptions"));

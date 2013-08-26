@@ -20,7 +20,7 @@ import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
-@Path("-")
+@Path("/user")
 public class UserService {
 	
 	@POST
@@ -227,7 +227,7 @@ public class UserService {
 		    }*/
 		 
 		 UserProfile userprofile = null;
-	   	 String response = "hello";
+	   	 String response = "";
 		 Gson gson = new Gson();
 		 try {
 			userprofile = UserManager.getInstance().editProfile(formParams);
