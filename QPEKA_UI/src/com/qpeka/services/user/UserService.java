@@ -20,7 +20,7 @@ import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
 
-@Path("/user")
+@Path("-")
 public class UserService {
 	
 	@POST
@@ -112,7 +112,6 @@ public class UserService {
 			serviceResult.put("error", "500");
 			response = gson.toJson(serviceResult);
 		}
-		
 		return Response.status(200).entity(response).build();
 	}
 	
@@ -226,19 +225,15 @@ public class UserService {
 				}
 		    }*/
 		 
-		 UserProfile userprofile = null;
-	   	 String response = "";
+		 String response = null;
 		 Gson gson = new Gson();
 		 try {
-			userprofile = UserManager.getInstance().editProfile(formParams);
+			response = UserManager.getInstance().editProfile(formParams);
 		} catch (FileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 if(userprofile != null) {
-				response = gson.toJson(userprofile);
-		 }
-		return Response.status(200).entity(response).build();
+		return Response.status(200).entity(gson.toJson(response)).build();
 	}   
 		/*for(String keys : formParams.keySet()) {
 			for(String keyvalues : formParams.get(keys)) {

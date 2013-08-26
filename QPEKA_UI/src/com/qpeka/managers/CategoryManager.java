@@ -1,9 +1,11 @@
 package com.qpeka.managers;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.qpeka.db.Category;
 
@@ -99,15 +101,20 @@ public boolean deleteCategory(short categoryid) {
 		return counter;
 	}
 
-public List<Category> readCategory() {
+public Set<String> readCategory() {
 	List<Category> categories = null;
+	Set<String> uniqueCategoryGenre = new HashSet<String>();
 	try {
 		categories = CategoryHandler.getInstance().findAll();
+		for(Category category : categories) {
+			uniqueCategoryGenre.add(category.getCategory());
+			uniqueCategoryGenre.add(category.getGenre());
+		}
 	} catch (CategoryException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	return categories;
+	return uniqueCategoryGenre;
 }
 
 public List<Category> readCategory(short categoryid) {
@@ -192,6 +199,7 @@ public Map<Short, Map.Entry<String, String>> retrieveCategory(
 		}
 		return outerMap;
 	}
+
 //@SuppressWarnings("unchecked")
 /*	public Map<Short, Map<String, String>> retrieveCategory(
 			List<Category> existingCategory) {
@@ -247,20 +255,21 @@ public Map<Short, Map<String, String>> retrieveCategory(List<Category> existingC
 	/**
 	 * @param argsl
 	 */
-/*
+
 	public static void main(String[] args) {
 		CategoryManager categoryManager = new CategoryManager();
 		//categoryManager.deleteCategory((short)5);
-		categoryManager.createCategory("book","Education","Children Learning",0);
+		//categoryManager.createCategory("book","Education","Children Learning",0);
 		
-	//	Map<String, Object> updateMap = new HashMap<String, Object>();
+	//Map<String, Object> updateMap = new HashMap<String, Object>();
 	//	updateMap.put(Category.CATEGORYID, (short)1);
 	//	updateMap.put(Category.GENRE, "nonfictional");
 	//	categoryManager.updateCategory(updateMap);
+		System.out.println(categoryManager.readCategory());
 		//System.out.println(categoryManager.readCategory((short)1));
 		//System.out.println(categoryManager.readCategory());
 		//System.out.println(categoryManager.readCategory("book"));
 		
 	}
-	*/
+	
 }
