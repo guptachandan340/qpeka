@@ -1,6 +1,7 @@
 package com.qpeka.services.user;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -19,6 +20,7 @@ import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.user.UserManager;
+import com.qpeka.services.Errors.ServiceError;
 
 @Path("user")
 public class UserService {
@@ -208,16 +210,21 @@ public class UserService {
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
+	
 	public Response editProfileService(MultivaluedMap<String, String> formParams) {
+		 List<ServiceError> sError = null;
 		 String response = null;
-		 Gson gson = new Gson();
 		 try {
-			response = UserManager.getInstance().editProfile(formParams);
+			   sError = UserManager.getInstance().editProfile(formParams);
+			   if(!sError.isEmpty() && sError != null) {
+				   response = (new Gson()).toJson(sError);
+			   } else 
+				   response = "hello";
 		} catch (FileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return Response.status(200).entity(gson.toJson(response)).build();
+		return Response.status(200).entity(response).build();
 	}               
 	
 

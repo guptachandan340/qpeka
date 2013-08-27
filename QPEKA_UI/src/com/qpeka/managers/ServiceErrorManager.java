@@ -23,9 +23,10 @@ public static ServiceErrorManager instance = null;
 	}
 
 	// Create badges
-	public ServiceError createServiceError(int status, String name,
+	public ServiceError createServiceError(short errorid, int status, String name,
 			String message) {
 		ServiceError serviceError = ServiceError.getInstance();
+		serviceError.setErrorid(errorid);
 		serviceError.setStatus(status);
 		serviceError.setName(name);
 		serviceError.setMessage(message);
@@ -132,19 +133,19 @@ public static ServiceErrorManager instance = null;
 		return counter;
 	}
 
-	
+	/*
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//System.out.println(ServiceErrorManager.getInstance().deleteServiceError((short) 1));
-		System.out.println(ServiceErrorManager.getInstance().createServiceError(215, "bad authentication", "username not found"));
+		System.out.println(ServiceErrorManager.getInstance().deleteServiceError((short) 1));
+		System.out.println(ServiceErrorManager.getInstance().createServiceError((short)1,215, "bad authentication", "username not found"));
 			
 		Map<String, Object> update1 = new HashMap<String, Object>();
 		update1.put("errorid", 1);
 		update1.put("status", 201);
 		update1.put("name", "bad request");
 		update1.put("message", "bad");
-		//System.out.println(ServiceErrorManager.getInstance().updateServiceError(update1)); 
-		System.out.println(ServiceErrorManager.getInstance().readBadges(215)); 
-		System.out.println(ServiceErrorManager.getInstance().readBadges("bad authentication"));
-		}	
+		System.out.println(ServiceErrorManager.getInstance().updateServiceError(update1)); 
+		System.out.println(ServiceErrorManager.getInstance().readBadges(201)); 
+		System.out.println(ServiceErrorManager.getInstance().readBadges("bad request"));
+		}*/	
 }

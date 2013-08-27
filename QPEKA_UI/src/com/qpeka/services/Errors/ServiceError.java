@@ -16,9 +16,9 @@ public class ServiceError implements Serializable {
 
 	// These attributes maps to the columns of the user table.
 		private short errorid = 0;
-		private int status = 0;
-		private String name = "";
-		private String message = "";
+		private int status = 200;
+		private String name = "OK";
+		private String message;
 	
 		private static ServiceError instance = null;
 		// These attributes represents whether the above attributes has been
@@ -68,6 +68,7 @@ public class ServiceError implements Serializable {
 	 */
 	public void setErrorid(short errorid) {
 		this.errorid = errorid;
+		this.erroridModified = true;
 	}
 
 	/**
@@ -82,6 +83,7 @@ public class ServiceError implements Serializable {
 	 */
 	public void setStatus(int status) {
 		this.status = status;
+		this.statusModified = true;
 	}
 	/**
 	 * @return the Name
@@ -95,6 +97,7 @@ public class ServiceError implements Serializable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+		this.nameModified = true;
 	}
 
 	/**
@@ -109,25 +112,26 @@ public class ServiceError implements Serializable {
 	 */
 	public void setMessage(String message) {
 		this.message = message;
+		this.messageModified = true;
 	}
 
 	/*
 	 * Getters and setters for attribute modified status
 	 */
 	
-	public boolean iserroridModified() {
+	public boolean isErroridModified() {
 		return erroridModified;
 	}
 
-	public void seterroridModified(boolean erroridModified) {
+	public void setErroridModified(boolean erroridModified) {
 		this.erroridModified = erroridModified;
 	}
 	
-	public boolean isstatusModified() {
+	public boolean isStatusModified() {
 		return statusModified;
 	}
 
-	public void setstatusModified(boolean statusModified) {
+	public void setStatusModified(boolean statusModified) {
 		this.statusModified = statusModified;
 	}
 	

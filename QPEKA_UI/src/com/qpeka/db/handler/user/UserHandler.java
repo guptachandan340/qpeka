@@ -36,7 +36,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT userid, username, password, email, "
+	protected final String SQL_SELECT = "SELECT userid, penname, password, email, "
 			+ "created, lastaccess, lastlogin, status, type, timezone FROM "
 			+ getTableName() + "";
 
@@ -50,7 +50,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 */
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
-			+ " ( userid, username, password, email, created, lastaccess, lastlogin, "
+			+ " ( userid, penname, password, email, created, lastaccess, lastlogin, "
 			+ "status, type, timezone ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
@@ -58,7 +58,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 */
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
-			+ " SET userid = ?, username = ?, password = ?, email = ?, created = ?, lastaccess = ?, "
+			+ " SET userid = ?, penname = ?, password = ?, email = ?, created = ?, lastaccess = ?, "
 			+ "lastlogin = ?, status = ?, type = ?, timezone = ? WHERE userid = ?";
 
 	/**
@@ -75,7 +75,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	/**
 	 * Index of column username
 	 */
-	protected static final int COLUMN_USERNAME = 2;
+	protected static final int COLUMN_PENNAME = 2;
 
 	/**
 	 * Index of column password
@@ -177,13 +177,13 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				modifiedCount++;
 			}
 
-			if (user.isUsernameModified()) {
+			if (user.isPennameModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
 				}
 
-				sql.append("username");
+				sql.append("penname");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -291,8 +291,8 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				stmt.setLong(index++, user.getUserid());
 			}
 
-			if (user.isUsernameModified()) {
-				stmt.setString(index++, user.getUsername());
+			if (user.isPennameModified()) {
+				stmt.setString(index++, user.getPenname());
 			}
 
 			if (user.isPasswordModified()) {
@@ -382,12 +382,12 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				modified = true;
 			}
 
-			if (user.isUsernameModified()) {
+			if (user.isPennameModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
 
-				sql.append("username=?");
+				sql.append("penname=?");
 				modified = true;
 			}
 
@@ -480,8 +480,8 @@ public class UserHandler extends AbstractHandler implements UserDao {
 				stmt.setLong(index++, user.getUserid());
 			}
 
-			if (user.isUsernameModified()) {
-				stmt.setString(index++, user.getUsername());
+			if (user.isPennameModified()) {
+				stmt.setString(index++, user.getPenname());
 			}
 
 			if (user.isPasswordModified()) {
@@ -596,11 +596,11 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	}
 
 	@Override
-	public List<User> findWhereUsernameEquals(String username)
+	public List<User> findWherePennameEquals(String penname)
 			throws UserException {
 		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE username = ? ORDER BY username",
-				Arrays.asList(new Object[] { username }));
+				+ " WHERE penname = ? ORDER BY penname",
+				Arrays.asList(new Object[] { penname }));
 	}
 
 	@Override
@@ -801,7 +801,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 */
 	protected void populateUser(User user, ResultSet rs) throws SQLException {
 		user.setUserid(rs.getLong(COLUMN_USERID));
-		user.setUsername(rs.getString(COLUMN_USERNAME));
+		user.setPenname(rs.getString(COLUMN_PENNAME));
 		user.setPassword(rs.getString(COLUMN_PASSWORD));
 		user.setEmail(rs.getString(COLUMN_EMAIL));
 		user.setCreated(rs.getLong(COLUMN_CREATED));
@@ -819,7 +819,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 	 */
 	protected void reset(User user) {
 		user.setUseridModified(false);
-		user.setUsernameModified(false);
+		user.setPennameModified(false);
 		user.setPasswordModified(false);
 		user.setEmailModified(false);
 		user.setCreatedModified(false);
