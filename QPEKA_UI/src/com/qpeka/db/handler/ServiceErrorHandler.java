@@ -126,7 +126,6 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
@@ -136,7 +135,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			StringBuffer values = new StringBuffer();
 			sql.append("INSERT INTO " + getTableName() + " (");
 			int modifiedCount = 0;
-			if(serviceError.iserroridModified()) {
+			if(serviceError.isErroridModified()) {
 				if(modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
@@ -145,8 +144,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				values.append("?");
 				modifiedCount++;
 			}
-			
-			if(serviceError.isstatusModified()) {
+			if(serviceError.isStatusModified()) {
 				if(modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
@@ -154,8 +152,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				sql.append("status");
 				values.append("?");
 				modifiedCount++;
-			}
-			
+			}			
 			if(serviceError.isNameModified()) {
 				if(modifiedCount > 0) {
 					sql.append(", ");
@@ -174,7 +171,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				sql.append("message");
 				values.append("?");
 				modifiedCount++;
-			}
+			} 
 
 			if (modifiedCount == 0) {
 				// nothing to insert
@@ -184,14 +181,15 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			sql.append(") VALUES (");
 			sql.append(values);
 			sql.append(")");
+			
 			stmt = conn.prepareStatement(sql.toString(),
 					Statement.RETURN_GENERATED_KEYS);
 			int index = 1;
-			if (serviceError.iserroridModified()) {
+			if (serviceError.isErroridModified()) {
 				stmt.setShort(index++, serviceError.getErrorid());
 			}
 
-			if (serviceError.isstatusModified()) {
+			if (serviceError.isStatusModified()) {
 				stmt.setInt(index++, serviceError.getStatus());
 			}
 
@@ -249,7 +247,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
 			boolean modified = false;
-			if (serviceError.iserroridModified()) {
+			if (serviceError.isErroridModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
@@ -258,7 +256,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				modified = true;
 			}
 
-			if (serviceError.isstatusModified()) {
+			if (serviceError.isStatusModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
@@ -298,11 +296,11 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 
 			stmt = conn.prepareStatement(sql.toString());
 			int index = 1;
-			if (serviceError.iserroridModified()) {
+			if (serviceError.isErroridModified()) {
 				stmt.setShort(index++, serviceError.getErrorid());
 			}
 
-			if (serviceError.isstatusModified()) {
+			if (serviceError.isStatusModified()) {
 				stmt.setInt(index++, serviceError.getStatus());
 			}
 
@@ -568,8 +566,8 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	 * Resets the modified attributes in the DTO
 	 */
 	protected void reset(ServiceError serviceError) {
-		serviceError.seterroridModified(false);
-		serviceError.setstatusModified(false);
+		serviceError.setErroridModified(false);
+		serviceError.setStatusModified(false);
 		serviceError.setNameModified(false);
 		serviceError.setMessageModified(false);
 	}

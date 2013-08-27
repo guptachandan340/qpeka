@@ -53,11 +53,6 @@ public interface UserProfileDao {
 	public List<UserProfile> findWhereUseridEquals(long userid) throws UserProfileException;
 
 	/** 
-	 * Returns all rows from the userprofile table that match the criteria 'penname = :penname'.
-	 */
-	public List<UserProfile> findWherePennameEquals(String penname) throws UserProfileException;
-
-	/** 
 	 * Returns all rows from the userprofile table that match the criteria 'firstname = :firstname'.
 	 */
 	public List<UserProfile> findWhereFirstnameEquals(String firstname) throws UserProfileException;
