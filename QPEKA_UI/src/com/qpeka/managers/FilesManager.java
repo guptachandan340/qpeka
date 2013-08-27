@@ -38,7 +38,7 @@ public class FilesManager {
 				files.setFiletype(filetype);
 				files.setExtension(setFileType(file.getName()));
 
-				files.setFilepath(file.getParent()); // Set File Path
+				files.setFilepath(filepath); // Set File Path
 				files.setFilesize((int) (file.length()));
 				files.setFilemime(mimeTypesMap.getContentType(file));
 				files.setStatus(0);
