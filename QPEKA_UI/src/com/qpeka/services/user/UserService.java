@@ -126,7 +126,7 @@ public class UserService {
 		}
 		
 		if(!response.isEmpty()) {
-			return Response.status(200).entity(response).build();
+			return Response.status(200).entity(new Gson().toJson(response)).build();
 		} else {
 			return Response.status(200).entity("").build();
 		}		

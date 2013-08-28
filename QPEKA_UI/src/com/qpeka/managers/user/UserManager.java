@@ -446,6 +446,7 @@ public class UserManager {
 	 * @throws UserProfileException
 	 * 
 	 */
+	
 	public MultiValueMap<String, Object> getProfile(long userid)
 			throws UserProfileException {
 		User user = User.getInstance();
