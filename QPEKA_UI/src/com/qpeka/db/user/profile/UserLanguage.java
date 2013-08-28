@@ -5,6 +5,10 @@ import java.io.Serializable;
 
 public class UserLanguage implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String USERID = "userid";
 	public static final String LANGUAGEID = "languageid";
 	public static final String TYPE = "type";
