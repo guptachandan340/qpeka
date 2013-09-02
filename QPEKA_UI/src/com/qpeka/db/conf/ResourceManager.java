@@ -1,7 +1,6 @@
 package com.qpeka.db.conf;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -10,11 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import com.qpeka.managers.FilesManager;
 
 public class ResourceManager {
-
-	public static ResourceManager instance = null;
+	
 	private static String JDBC_DRIVER = null;
 	private static String JDBC_URL = null;
 	private static String JDBC_USER = null;
@@ -109,7 +106,4 @@ public class ResourceManager {
 	public static void main(String[] args) {
 		 ClassLoader loader = Thread.currentThread().getContextClassLoader();
 	}
-
-	
-
 }

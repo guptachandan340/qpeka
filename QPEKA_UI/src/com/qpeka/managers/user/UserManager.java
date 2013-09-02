@@ -19,6 +19,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
 
+import com.mongodb.util.Hash;
 import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.STATUS;
@@ -123,6 +124,7 @@ public class UserManager {
 				}
 			}
 		}
+		createPenName(userProfile, user);
 		user.setCreated(System.currentTimeMillis() / 1000);
 		user.setLastaccess(0);
 		user.setLastlogin(0);
@@ -207,49 +209,51 @@ public class UserManager {
 		} 
 	}
 	
-
-	/*private void createPenName(UserProfile userProfile, User user) {
-		Set<Object> penNameSet = new HashSet<Object>();
-		List<User> li = new ArrayList<User>();
+	private void createPenName(UserProfile userProfile, User user) {
+		
+		char[] patternChar;
+		patternChar = "._".toCharArray();
+		List<User> users = new ArrayList<User>();
 		List<Object> penNameComb = new ArrayList<Object>();
-		// penNameComb.add(user.getEmail().substring(0,
-		// user.getEmail().indexOf("@")));
-		// efficient code by creating array
-		penNameComb.add("ankitaMalani");
-		penNameComb.add(userProfile.getName().getFirstname() + ""
+		Set<String> penNamedbSet = new HashSet<String>();
+		
+		// Create pennameList with Combination of fname and lname
+		
+		penNameComb.add(userProfile.getName().getFirstname()
 				+ userProfile.getName().getLastname());
-		penNameComb.add(userProfile.getName().getFirstname() + "."
-				+ userProfile.getName().getLastname());
-		penNameComb.add(userProfile.getName().getFirstname() + "_"
-				+ userProfile.getName().getLastname());
-		penNameComb.add(userProfile.getName().getLastname() + ""
+		penNameComb.add(userProfile.getName().getLastname()
 				+ userProfile.getName().getFirstname());
-		penNameComb.add(userProfile.getName().getLastname() + "."
-				+ userProfile.getName().getFirstname());
-		penNameComb.add(userProfile.getName().getLastname() + "_"
-				+ userProfile.getName().getFirstname());
-		System.out.println(penNameComb);
-
+		for (int i = 0; i < patternChar.length; i++) {
+			penNameComb.add(userProfile.getName().getFirstname()
+					+ patternChar[i] + userProfile.getName().getLastname());
+			penNameComb.add(userProfile.getName().getLastname()
+					+ patternChar[i] + userProfile.getName().getFirstname());
+		}
+		// Convert penNameList to hashSet
+		Set<Object> penNameCombSet = new HashSet<Object>(penNameComb);
+	
+		// TODO findbyDynamicSelect() to find only penname.gave error getLong() not matching with String
+		
+		// retrieve user object from databases to check whether penExist
 		try {
-			System.out.println(buildQuery("penname", penNameComb.size()));
-			li = UserHandler.getInstance().findByDynamicWhere(
+			users = UserHandler.getInstance().findByDynamicWhere(
 					buildQuery("penname", penNameComb.size()), penNameComb);
-
-			System.out.println(li);
-			for (User penNameList : li) {
-				penNameSet.add(penNameList.getPenname());
-				// chk here only for each object n compare n add
-				System.out.println(penNameList.getPenname().equalsIgnoreCase(
-						penNameComb.get(0).toString()));
-				// System.out.println(penNameComb.containsAll(penNameSet));
-				Map<String, Object> mp = new HashMap<String, Object>();
+					
+			// Adding only penname to HashSet
+			for (User userList : users) {
+				penNamedbSet.add(userList.getPenname());
 			}
-
+			
+			// Use A - ( A AND B) i.e remove common elements
+			penNameCombSet.removeAll(penNamedbSet);
+			
+			// Set first uncommon element to user object
+			user.setPenname((penNameCombSet.iterator().next()).toString());
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}*/
+	}
 
 	/**
 	 * METHOD FOR REGISTER AND EDIT PROFILE MODULE
@@ -1265,15 +1269,15 @@ public class UserManager {
 	
 	public static void main(String[] args) {
 		UserManager usermgr = UserManager.getInstance();
-		User user = User.getInstance();
+	/*	User user = User.getInstance();
 		UserProfile userProfile = UserProfile.getInstance();
 		if (userProfile.getName() == null) {
 			userProfile.setName(Name.getInstance());
 		}
-		userProfile.getName().setFirstname("ankita");
+		userProfile.getName().setFirstname("mehul");
 		userProfile.getName().setLastname("malani");
-		user.setEmail("anki546.malani@gmail.com");
-		//usermgr.createPenName(userProfile, user);
+		user.setEmail("mehulmalani16@yahoo.com ");
+		usermgr.createPenName(userProfile, user);*/
 		/*List<String> interests = new ArrayList<String>();
 		ServiceResponse sResponse = ServiceResponse.getInstance();
 		interests.add("Adult");

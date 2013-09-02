@@ -793,7 +793,6 @@ public class UserHandler extends AbstractHandler implements UserDao {
 			populateUser(user, rs);
 			resultList.add(user);
 		}
-
 		return resultList;
 	}
 
