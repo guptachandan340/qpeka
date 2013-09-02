@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.Calendar;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -30,6 +28,7 @@ import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.CategoryException;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
@@ -250,8 +249,8 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-*/
+	}*/
+
 	/**
 	 * METHOD FOR REGISTER AND EDIT PROFILE MODULE
 	 * 
@@ -378,8 +377,8 @@ public class UserManager {
 				try {
 					file = FilesHandler.getInstance().findWhereFileidEquals(
 							userProfile.get(0).getProfilepic());
-					if (!file.isEmpty()) {
-						userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), file
+					if (!file.isEmpty() && file != null) {
+						userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), ResourceManager.getFILE_PROFILEPIC()+file
 								.get(0).getFilepath());
 					}
 				} catch (FileException e) {
@@ -532,7 +531,6 @@ public class UserManager {
 		if (UserProfile.getInstance().getName() == null) {
 			UserProfile.getInstance().setName(Name.getInstance());
 		}
-
 		try {
 			userProfile = UserProfileHandler.getInstance()
 					.findWhereUseridEquals(user.getUserid());
@@ -919,8 +917,8 @@ public class UserManager {
 				fileid = userPicExist.get(0).getFileid();
 			}
 		} else {
-			if(FilesManager.getInstance().InsertFiles(userid,
-					"profilepic", userInfoValue) != null) {
+			file = FilesManager.getInstance().InsertFiles(userid, "profilepic", userInfoValue);
+			if(file != null) {
 				fileid = file.getFileid();
 			}
 		}
