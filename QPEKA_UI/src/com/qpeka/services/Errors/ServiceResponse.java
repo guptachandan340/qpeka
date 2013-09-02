@@ -2,7 +2,7 @@ package com.qpeka.services.Errors;
 
 import java.io.Serializable;
 
-public class ServiceError implements Serializable {
+public class ServiceResponse implements Serializable {
 	
 	/**
 	 * 
@@ -20,7 +20,7 @@ public class ServiceError implements Serializable {
 		private String name = "OK";
 		private String message;
 	
-		private static ServiceError instance = null;
+		private static ServiceResponse instance = null;
 		// These attributes represents whether the above attributes has been
 		// modified since being read from the database.
 		
@@ -29,15 +29,15 @@ public class ServiceError implements Serializable {
 		protected boolean nameModified = false;
 		protected boolean messageModified = false;
 		
-		public static ServiceError getInstance() {
-			return (instance == null ? (instance = new ServiceError()) : instance);
+		public static ServiceResponse getInstance() {
+			return (instance == null ? (instance = new ServiceResponse()) : instance);
 		}
 	 
-	public ServiceError() {
+	public ServiceResponse() {
 		super();
 	}
 	
-	public ServiceError(short errorid, int status, String name, String message) { 
+	public ServiceResponse(short errorid, int status, String name, String message) { 
 		super();
 		this.errorid = errorid;
 		this.name = name;
@@ -45,7 +45,7 @@ public class ServiceError implements Serializable {
 		this.message = message;
 	}
 	
-	public ServiceError(int status, String name) { 
+	public ServiceResponse(int status, String name) { 
 		super();
 		this.name = name;
 		this.status = status;
@@ -197,10 +197,10 @@ public class ServiceError implements Serializable {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof ServiceError)) {
+		if (!(obj instanceof ServiceResponse)) {
 			return false;
 		}
-		ServiceError other = (ServiceError) obj;
+		ServiceResponse other = (ServiceResponse) obj;
 		if (errorid != other.errorid) {
 			return false;
 		}
@@ -245,7 +245,7 @@ public class ServiceError implements Serializable {
 	public String toString() {
 		StringBuffer ret = new StringBuffer();
 
-		ret.append("ServiceError: ");
+		ret.append("ServiceResponse: ");
 		ret.append(ERRORID + "=" + errorid);
 		ret.append(", " + STATUS + "=" + status);
 		ret.append(", " + NAME + "=" + name);
@@ -257,7 +257,7 @@ public class ServiceError implements Serializable {
 	/*
 	public static void main(String[] args) {
 		
-		ServiceError se = new ServiceError(1, 215, "bad authentication request", "username not found");
+		ServiceResponse se = new ServiceResponse(1, 215, "bad authentication request", "username not found");
 
 		System.out.println(se.hashCode());
 		System.out.println(se.toString());

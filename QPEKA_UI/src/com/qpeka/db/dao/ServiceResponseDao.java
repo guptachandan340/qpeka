@@ -2,18 +2,18 @@ package com.qpeka.db.dao;
 
 import java.util.List;
 import com.qpeka.db.exceptions.QpekaException;
-import com.qpeka.services.Errors.ServiceError;
+import com.qpeka.services.Errors.ServiceResponse;
 
-public interface ServiceErrorDao {
+public interface ServiceResponseDao {
 	/**
 	 * Inserts a new row in the badges table.
 	 */
-	public short insert(ServiceError serviceError) throws QpekaException;
+	public short insert(ServiceResponse serviceResponse) throws QpekaException;
 
 	/**
 	 * Updates a single row in the badges table.
 	 */
-	public short update(short errorid, ServiceError serviceError) throws QpekaException;
+	public short update(short errorid, ServiceResponse serviceResponse) throws QpekaException;
 
 	/**
 	 * Deletes a single row in the badges table.
@@ -21,41 +21,41 @@ public interface ServiceErrorDao {
 	public void delete(short errorid) throws QpekaException;
 
 	/**
-	 * Returns the rows from the ServiceError table that matches the specified
+	 * Returns the rows from the ServiceResponse table that matches the specified
 	 * primary-key value.
 	 */
-	public ServiceError findByPrimaryKey(short errorid) throws QpekaException;
+	public ServiceResponse findByPrimaryKey(short errorid) throws QpekaException;
 
 	/**
-	 * Returns all rows from the ServiceError table that match the criteria ''.
+	 * Returns all rows from the ServiceResponse table that match the criteria ''.
 	 */
-	public List<ServiceError> findAll() throws QpekaException;
+	public List<ServiceResponse> findAll() throws QpekaException;
 
 	/**
-	 * Returns all rows from the ServiceError table that match the criteria 'errorid =
+	 * Returns all rows from the ServiceResponse table that match the criteria 'errorid =
 	 * :errorid'.
 	 */
-	public List<ServiceError> findWhereErroridEquals(short errorid)
+	public List<ServiceResponse> findWhereErroridEquals(short errorid)
 			throws QpekaException;
 	
 	/**
-	 * Returns all rows from the ServiceError table that match the criteria 'status =
+	 * Returns all rows from the ServiceResponse table that match the criteria 'status =
 	 * :status'.
 	 */
-	public List<ServiceError> findWhereStatus(int status) throws QpekaException;
+	public List<ServiceResponse> findWhereStatus(int status) throws QpekaException;
 	
 	/**
-	 * Returns all rows from the ServiceError table that match the criteria 'name =
+	 * Returns all rows from the ServiceResponse table that match the criteria 'name =
 	 * :name'.
 	 */
-	public List<ServiceError> findWherenameEquals(String name)
+	public List<ServiceResponse> findWherenameEquals(String name)
 			throws QpekaException;
 
 	/**
-	 * Returns all rows from the ServiceError table that match the criteria 'message =
+	 * Returns all rows from the ServiceResponse table that match the criteria 'message =
 	 * :messages'.
 	 */
-	public List<ServiceError> findWhereMessageEquals(String message)
+	public List<ServiceResponse> findWhereMessageEquals(String message)
 			throws QpekaException;
 
 	/**
@@ -69,16 +69,16 @@ public interface ServiceErrorDao {
 	public int getMaxRows();
 
 	/**
-	 * Returns all rows from the ServiceError table that match the specified arbitrary
+	 * Returns all rows from the ServiceResponse table that match the specified arbitrary
 	 * SQL statement
 	 */
-	public List<ServiceError> findByDynamicSelect(String sql, List<Object> sqlParams)
+	public List<ServiceResponse> findByDynamicSelect(String sql, List<Object> sqlParams)
 			throws QpekaException;
 
 	/**
 	 * Returns all rows from the badges table that match the specified arbitrary
 	 * SQL statement
 	 */
-	public List<ServiceError> findByDynamicWhere(String sql, List<Object> sqlParams)
+	public List<ServiceResponse> findByDynamicWhere(String sql, List<Object> sqlParams)
 			throws QpekaException;
 }

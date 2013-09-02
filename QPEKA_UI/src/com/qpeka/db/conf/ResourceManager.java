@@ -16,6 +16,7 @@ public class ResourceManager {
 	private static String JDBC_URL = null;
 	private static String JDBC_USER = null;
 	private static String JDBC_PASSWORD = null;
+	private static String FILE_PROFILEPIC = null;
 	private static Driver driver = null;
 	private static InputStream inputStream = null;
 	private static Properties properties = null;
@@ -36,7 +37,6 @@ public class ResourceManager {
 		} catch (IOException ie) {
 			ie.printStackTrace();
 		}
-
 	}
 
 	public static synchronized Connection getConnection() throws SQLException {
@@ -79,25 +79,33 @@ public class ResourceManager {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-
+	}
+	
+	public static String getProfilePic() {
+		try {
+			inputStream = ResourceManager.class.getClassLoader()
+					.getResourceAsStream("system.properties");
+			properties = new Properties();
+			properties.load(inputStream);
+			
+			FILE_PROFILEPIC = properties.getProperty("profilePicFolder");
+			System.out.println(FILE_PROFILEPIC);
+		} catch (IOException ie) {
+			ie.printStackTrace();
+		}
+		// Assigning Properties values
+		return FILE_PROFILEPIC; 	
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Properties prop = new Properties();
-		/*
+		
 		 * ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		 * InputStream stream = loader.getResourceAsStream("mysql.properties");
-		 */
+		 
 
-		try {
-			InputStream stream = ResourceManager.class.getClassLoader()
-					.getResourceAsStream("mysql.properties");
-			prop.load(stream);
-			System.out.println(prop.getProperty("db_password"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	InputStream stream = ResourceManager.class.getClassLoader()
+			.getResourceAsStream("mysql.properties");
+	}*/
 
 }

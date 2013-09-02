@@ -1,47 +1,43 @@
 package com.qpeka.managers;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qpeka.db.Badges;
-import com.qpeka.db.exceptions.BadgesException;
 import com.qpeka.db.exceptions.QpekaException;
-import com.qpeka.db.handler.BadgesHandler;
-import com.qpeka.db.handler.ServiceErrorHandler;
-import com.qpeka.services.Errors.ServiceError;
+import com.qpeka.db.handler.ServiceResponseHandler;
+import com.qpeka.services.Errors.ServiceResponse;
 
-public class ServiceErrorManager {
+public class ServiceResponseManager {
 
-public static ServiceErrorManager instance = null;
+public static ServiceResponseManager instance = null;
 	
-	public ServiceErrorManager() {
+	public ServiceResponseManager() {
 		super();
 	}
-	public static ServiceErrorManager getInstance() {
-		return (instance == null ? instance = new ServiceErrorManager() : instance);
+	public static ServiceResponseManager getInstance() {
+		return (instance == null ? instance = new ServiceResponseManager() : instance);
 	}
 
 	// Create badges
-	public ServiceError createServiceError(short errorid, int status, String name,
+	public ServiceResponse createServiceResponse(short errorid, int status, String name,
 			String message) {
-		ServiceError serviceError = ServiceError.getInstance();
-		serviceError.setErrorid(errorid);
-		serviceError.setStatus(status);
-		serviceError.setName(name);
-		serviceError.setMessage(message);
+		ServiceResponse serviceResponse = ServiceResponse.getInstance();
+		serviceResponse.setErrorid(errorid);
+		serviceResponse.setStatus(status);
+		serviceResponse.setName(name);
+		serviceResponse.setMessage(message);
 		try {
-			ServiceErrorHandler.getInstance().insert(serviceError);
+			ServiceResponseHandler.getInstance().insert(serviceResponse);
 		} catch (QpekaException e) {
 			e.printStackTrace();
 		}
-		return serviceError;
+		return serviceResponse;
 	}
 
 	// Delete Badges
-	public boolean deleteServiceError(short errorid) {
+	public boolean deleteServiceResponse(short errorid) {
 		try {
-			ServiceErrorHandler.getInstance().delete(errorid);
+			ServiceResponseHandler.getInstance().delete(errorid);
 			return true;
 		} catch (QpekaException e) {
 			e.printStackTrace();
@@ -50,21 +46,21 @@ public static ServiceErrorManager instance = null;
 		
 	}
 	
-	//Reading all badges
-	public List<ServiceError> readServiceError() {
-		List<ServiceError> serviceError = null;
+	//Reading all ServiceResponses
+	public List<ServiceResponse> readServiceResponse() {
+		List<ServiceResponse> serviceResponse = null;
 		try {
-			serviceError = ServiceErrorHandler.getInstance().findAll();
+			serviceResponse = ServiceResponseHandler.getInstance().findAll();
 		} catch (QpekaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return serviceError;
+		return serviceResponse;
 	} 
-
+/*
 	//@Overloading
 	//Reading through name
-		public List<ServiceError> readBadges(String name) {
+		public List<ServiceError> readServiceError(String name) {
 			List<ServiceError> seriveError = null;
 			try {
 				seriveError = ServiceErrorHandler.getInstance().findWherenameEquals(name);;
@@ -73,29 +69,41 @@ public static ServiceErrorManager instance = null;
 			}
 			return seriveError;
 		}
-
+*/
 	//@Overloading
 	//Reading through status
-	public List<ServiceError> readBadges(int status) {
-		List<ServiceError> seriveError = null;
+	public Map<String, Object> readServiceResponse(int status) {
+		List<ServiceResponse> ExistingserviceResponse = null;
 		try {
-			seriveError = ServiceErrorHandler.getInstance().findWhereStatus(status);
+			ExistingserviceResponse = ServiceResponseHandler.getInstance().findWhereStatus(status);
+			
 		} catch (QpekaException e) {
 			e.printStackTrace();
 		}
-		return seriveError;
+		return retrieveServiceResponse(ExistingserviceResponse);
 	}
 
+	private Map<String, Object> retrieveServiceResponse(
+			List<ServiceResponse> existingserviceResponse) {
+		// TODO Auto-generated method stub
+		Map<String, Object> sResponse = new HashMap<String, Object>();
+		for(ServiceResponse serviceResponse : existingserviceResponse) {
+			sResponse.put(ServiceResponse.STATUS, serviceResponse.getStatus());
+			sResponse.put(ServiceResponse.NAME, serviceResponse.getName());
+			sResponse.put(ServiceResponse.MESSAGE, serviceResponse.getMessage());
+		}
+		return sResponse;
+	}
 	// Updating ServiceError;
-	public short updateServiceError(Map<String, Object> updateServiceErrorMap) {
+	public short updateServiceResponse(Map<String, Object> updateServiceResponseMap) {
 		short counter = 0;
-		if (updateServiceErrorMap.get(ServiceError.ERRORID) != null) {
-			List<ServiceError> existingServiceError = null;
+		if (updateServiceResponseMap.get(ServiceResponse.ERRORID) != null) {
+			List<ServiceResponse> existingServiceResponse = null;
 			try {
 				// Retrieving badges from database based on BadgeId
-				existingServiceError = ServiceErrorHandler.getInstance()
+				existingServiceResponse = ServiceResponseHandler.getInstance()
 						.findWhereErroridEquals(
-								Short.parseShort(updateServiceErrorMap.get(ServiceError.ERRORID)
+								Short.parseShort(updateServiceResponseMap.get(ServiceResponse.ERRORID)
 										.toString()));
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
@@ -104,25 +112,25 @@ public static ServiceErrorManager instance = null;
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (existingServiceError != null) {
-				for (ServiceError serviceError : existingServiceError) {
-					if (updateServiceErrorMap.get(ServiceError.STATUS) != null) {
-						serviceError.setStatus(Integer.parseInt(updateServiceErrorMap.get(
-								ServiceError.STATUS).toString()));
+			if (existingServiceResponse != null) {
+				for (ServiceResponse serviceError : existingServiceResponse) {
+					if (updateServiceResponseMap.get(ServiceResponse.STATUS) != null) {
+						serviceError.setStatus(Integer.parseInt(updateServiceResponseMap.get(
+								ServiceResponse.STATUS).toString()));
 					}
 
-					if (updateServiceErrorMap.get(ServiceError.NAME) != null) {
-						serviceError.setName(updateServiceErrorMap.get(ServiceError.NAME).toString());
+					if (updateServiceResponseMap.get(ServiceResponse.NAME) != null) {
+						serviceError.setName(updateServiceResponseMap.get(ServiceResponse.NAME).toString());
 					}
 
-					if (updateServiceErrorMap.get(ServiceError.MESSAGE) != null) {
-						serviceError.setMessage(updateServiceErrorMap
-								.get(ServiceError.MESSAGE).toString());
+					if (updateServiceResponseMap.get(ServiceResponse.MESSAGE) != null) {
+						serviceError.setMessage(updateServiceResponseMap
+								.get(ServiceResponse.MESSAGE).toString());
 					}
 
 					try {
-						counter += ServiceErrorHandler.getInstance().update(
-								Short.parseShort(updateServiceErrorMap.get(ServiceError.ERRORID)
+						counter += ServiceResponseHandler.getInstance().update(
+								Short.parseShort(updateServiceResponseMap.get(ServiceResponse.ERRORID)
 										.toString()), serviceError);
 					} catch (QpekaException e) {
 						e.printStackTrace();
@@ -133,19 +141,18 @@ public static ServiceErrorManager instance = null;
 		return counter;
 	}
 
-	/*
-	public static void main(String[] args) {
+	
+	/*public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println(ServiceErrorManager.getInstance().deleteServiceError((short) 1));
-		System.out.println(ServiceErrorManager.getInstance().createServiceError((short)1,215, "bad authentication", "username not found"));
+		System.out.println(ServiceResponseManager.getInstance().deleteServiceResponse((short) 1));
+		System.out.println(ServiceResponseManager.getInstance().createServiceResponse((short)1,200, "Success", "Success"));
 			
 		Map<String, Object> update1 = new HashMap<String, Object>();
-		update1.put("errorid", 1);
-		update1.put("status", 201);
+		update1.put("errorid", 4);
+		update1.put("status", 215);
 		update1.put("name", "bad request");
-		update1.put("message", "bad");
-		System.out.println(ServiceErrorManager.getInstance().updateServiceError(update1)); 
-		System.out.println(ServiceErrorManager.getInstance().readBadges(201)); 
-		System.out.println(ServiceErrorManager.getInstance().readBadges("bad request"));
-		}*/	
+		update1.put("message", "bad request");
+		System.out.println(ServiceResponseManager.getInstance().updateServiceResponse(update1)); 
+		System.out.println(ServiceResponseManager.getInstance().readServiceResponse(215)); 
+		}*/
 }
