@@ -52,13 +52,11 @@ public class UserProfile implements Serializable {
 
 	// Account information
 	public static final String USERID = "userid";
-	public static final String USERNAME = "username";
 
 	/*
 	 * Profile Information
 	 */
 	// Personal Information
-	public static final String PENNAME = "penname";
 	public static final String NAME = "name";
 	public static final String GENDER = "gender";
 	public static final String DOB = "dob";
@@ -89,7 +87,6 @@ public class UserProfile implements Serializable {
 
 	// These attributes maps to the columns of the userprofile table.
 	private long userid;
-	private String penname = "";
 	private Name name = null;
 	private GENDER gender = Constants.GENDER.UNSPECIFIED;
 	private Date dob = new Date();
@@ -116,7 +113,6 @@ public class UserProfile implements Serializable {
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
 	protected boolean useridModified = false;
-	protected boolean pennameModified = false;
 	protected boolean nameModified = false;
 	protected boolean genderModified = false;
 	protected boolean dobModified = false;
@@ -160,7 +156,7 @@ public class UserProfile implements Serializable {
 		this.gender = gender;
 	}
 
-	public UserProfile(long userid, String penname, Name name,
+	public UserProfile(long userid, Name name,
 			com.qpeka.db.Constants.GENDER gender, Date dob, short age,
 			short nationality, String website, String biography,
 			int profilepic, short tnc, Address address, Set<Category> interests,
@@ -170,7 +166,6 @@ public class UserProfile implements Serializable {
 								// bookmarks) {
 		super();
 		this.userid = userid;
-		this.penname = penname;
 		// this.email = email;
 		this.name = name;
 		this.gender = gender;
@@ -192,12 +187,11 @@ public class UserProfile implements Serializable {
 		// this.bookmarks = bookmarks;
 	}
 
-	public UserProfile(long userid, String penname, Name name,
+	public UserProfile(long userid, Name name,
 			com.qpeka.db.Constants.GENDER gender, Date dob, short age,
 			short nationality, String website, String biography, int profilepic, short tnc) {
 		super();
 		this.userid = userid;
-		this.penname = penname;
 		this.name = name;
 		this.gender = gender;
 		this.dob = dob;
@@ -223,15 +217,6 @@ public class UserProfile implements Serializable {
 	public void setUserid(long userid) {
 		this.userid = userid;
 		this.useridModified = true;
-	}
-
-	public String getPenname() {
-		return penname;
-	}
-
-	public void setPenname(String penname) {
-		this.penname = penname;
-		this.pennameModified = true;
 	}
 
 	public Name getName() {
@@ -406,14 +391,6 @@ public class UserProfile implements Serializable {
 
 	public void setUseridModified(boolean useridModified) {
 		this.useridModified = useridModified;
-	}
-
-	public boolean isPennameModified() {
-		return pennameModified;
-	}
-
-	public void setPennameModified(boolean pennameModified) {
-		this.pennameModified = pennameModified;
 	}
 
 	public boolean isNameModified() {
@@ -606,15 +583,6 @@ public class UserProfile implements Serializable {
 		// return false;
 		// }
 
-		if (penname == null ? _cast.penname != penname : !penname
-				.equals(penname)) {
-			return false;
-		}
-
-		if (pennameModified != _cast.pennameModified) {
-			return false;
-		}
-
 		if (name == null ? _cast.name != name : !name.equals(_cast.name)) {
 			return false;
 		}
@@ -786,8 +754,6 @@ public class UserProfile implements Serializable {
 
 		_hashCode = 29 * _hashCode + (int) userid;
 		// _hashCode = 29 * _hashCode + (useridModified ? 1 : 0);
-		_hashCode = 29 * _hashCode + penname.hashCode();
-		_hashCode = 29 * _hashCode + (pennameModified ? 1 : 0);
 		if (name != null) {
 			_hashCode = 29 * _hashCode + name.hashCode();
 		}
@@ -876,7 +842,6 @@ public class UserProfile implements Serializable {
 
 		ret.append("Userprofile: ");
 		ret.append(USERID + "=" + userid);
-		ret.append(", " + PENNAME + "=" + penname);
 		ret.append(", " + NAME + "=" + name.toString());
 		ret.append(", " + GENDER + "=" + gender);
 		ret.append(", " + DOB + "=" + dob.toString());

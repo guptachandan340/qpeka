@@ -21,10 +21,10 @@ public class LanguagesManager {
 		return (instance == null ? (instance = new LanguagesManager()) : instance);
 	}
 
-	public Languages createLanguages(short languageid, String language,
+	public Languages createLanguages(String language,
 			String name, short aNative, short direction, short enabled) {
+		
 		Languages languages = Languages.getInstance();
-		languages.setLanguageid(languageid);
 		languages.setLanguage(language);
 		languages.setName(name);
 		languages.setANative(aNative);
@@ -227,18 +227,18 @@ public class LanguagesManager {
 	 * @param args
 	 */
 	
-/*
-	public static void main(String[] args) {
+
+	/*public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		LanguagesManager languagesManager = new LanguagesManager();
-		System.out.println(languagesManager.deleteLanguages((short) 3));
-		System.out.println(languagesManager.createLanguages((short) 3, "ENGLISH", "ENGLISH US",
-				(short)4, (short) 0, (short) 0));
+		System.out.println(languagesManager.deleteLanguages((short) 1));
+		System.out.println(languagesManager.createLanguages("GUJARATI", "GUJARATI",
+				(short)6, (short)0, (short) 0));
 		System.out.println(languagesManager.retrieveLangugage());
-		//System.out.println(languagesManager.readLanguages((short) 6,
+		System.out.println(languagesManager.readLanguages((short) 6,
 				"languageid"));
 		System.out
-				//.println(languagesManager.readLanguages((short) 0, "enabled"));
+				.println(languagesManager.readLanguages((short) 0, "enabled"));
 		System.out.println(languagesManager.readLanguages(
 				"ENGLISH SOUTH AMERICA", "name"));
 		System.out.println(languagesManager.readLanguages("INDIA",Languages.ANATIVE)
@@ -252,6 +252,6 @@ public class LanguagesManager {
 		update.put("direction", (short) 1);
 		update.put("enabled", (short) 0);
 		System.out.println(languagesManager.updateLanguages(update));
-	}
-	*/
+		
+	}*/
 }

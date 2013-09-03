@@ -1,6 +1,8 @@
 package com.qpeka.services.user;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -17,10 +19,11 @@ import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.user.User;
-import com.qpeka.db.user.profile.UserProfile;
+import com.qpeka.managers.ServiceResponseManager;
 import com.qpeka.managers.user.UserManager;
+import com.qpeka.services.Errors.ServiceResponse;
 
-@Path("/user")
+@Path("user")
 public class UserService {
 	
 	@POST
@@ -28,71 +31,39 @@ public class UserService {
 	public Response loginService(@FormParam("username") String username,
 			@FormParam("password") String password, @FormParam("isEmail") boolean isEmail) {
 		
-		Map<String, Object> user = new HashMap<String, Object>();
-		String response = null;
-		Gson gson = new Gson();
-		Object error = null;
+		Map<String, Object> response = new HashMap<String, Object>();
 		try {
-			user = UserManager.getInstance().authenticateUser(username,
+			response = UserManager.getInstance().authenticateUser(username,
 					password, isEmail);
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (!user.isEmpty() && user != null) {
-			response = gson.toJson(user);
-		} else {
-				error = "error : 34";
-				response = gson.toJson(error);
-		}
-		return Response.status(200).entity(response).build();
+		return Response.status(200).entity(new Gson().toJson(response)).build();
 	}
 
 	@POST
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid) {
-		short counter = 0;
-		Object error = null;
-		String response = null;
-		Gson gson = new Gson();
-		counter = UserManager.getInstance().updateLastActivity(userid, false);
-		if(counter > 0) {
-			error = "success : 200";
-			response = gson.toJson(error);
-			
-		} else {
-			error = "error : 215";
-			response = gson.toJson(error);
-		}
-		return Response.status(200).entity(response).build();
+		Map<String, Object> response = null;
+		response = UserManager.getInstance().updateLastActivity(userid, false);
+		return Response.status(200).entity(new Gson().toJson(response)).build();
 	}
 
 	@POST
 	@Path("/signup")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response signupService(MultivaluedMap<String, String> formParams) {
-		User user = null;
-		String response = null;
-		Map<String, Object> serviceResult = new HashMap<String, Object>();
-		Gson gson = new Gson();
+		Map<String, Object> sresponse = null;
 		for (String keys : formParams.keySet()) {
 			if (keys.equalsIgnoreCase(User.EMAIL)) {
 				for (String email : formParams.get(keys)) {
 					try {
 						if (!UserManager.getInstance().userExists(email,true)) {
-							user = UserManager.getInstance().registerUser(
+							sresponse = UserManager.getInstance().registerUser(
 									formParams);
-							if (user != null) {
-								serviceResult.put("success", "200");
-								response = gson.toJson(serviceResult);
-							} else {
-								serviceResult.put("error", "215");
-								response = gson.toJson(serviceResult);
-							}
 						} else {
-							serviceResult.put("error", "34");
-							response = gson.toJson(serviceResult);
-//							return Response.status(200).entity(response).build();
+							sresponse = ServiceResponseManager.getInstance().readServiceResponse(34);
 						}
 					} catch (UserException e) {
 						// TODO Auto-generated catch block
@@ -101,50 +72,14 @@ public class UserService {
 				}
 			}
 		}
-		/*if (user != null) {
-			serviceResult.put("success", "200");
-			response = gson.toJson(serviceResult);
-		} else {
-			serviceResult.put("error", "215");
-			response = gson.toJson(serviceResult);
-		}*/
-		if(response == null) {
-			serviceResult.put("error", "500");
-			response = gson.toJson(serviceResult);
-		}
-		
-		return Response.status(200).entity(response).build();
+		return Response.status(200).entity(new Gson().toJson(sresponse)).build();
 	}
-	
-	/*
-	 * // This will be used for edit profile service
-	@POST
-	@Path("/verifyusernameexist")
-	public Response verifyUserNameService(@FormParam("username") String userName) {
-		// boolean emailStatus = true;
-		String response= null;
-		try {
-			if (UserManager.getInstance().usernameExists(userName)) {
-				response = "Already Available in our System, Try with other";
-			} else {
-				response = "Available for you";
-			}
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.status(200).entity(response).build();
-	}
-	*/
 	
 	@POST
 	@Path("/resetpwd")
 	public Response resetPwdService(@FormParam("authname") String authName) {
-		Gson gson = new Gson();
-		String response = null;
 		boolean isEmail = false;;
 		String changedPassword = null;
-		Object error = null;
 		if (authName.indexOf("@") != -1) {
 			isEmail = true;
 		}
@@ -154,144 +89,68 @@ public class UserService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(changedPassword != null) {
-				response = gson.toJson(changedPassword);
+		if (changedPassword != null) {
+			return Response.status(200)
+					.entity(new Gson().toJson(changedPassword)).build();
 		} else {
-			error = "error : 215";
-			response = gson.toJson(error);
+			return Response
+					.status(200)
+					.entity(new Gson().toJson(ServiceResponseManager.getInstance()
+							.readServiceResponse(215))).build();
 		}
-		return Response.status(200).entity(response).build();
 	}
-	
-	
+
 	@POST
 	@Path("/changepwd")
 	public Response changePwdService(@FormParam("userid") long userid, @FormParam("currentpassword") String currentPassword,
 			@FormParam("newpassword") String newPassword) {
-		Gson gson = new Gson();
-		Object user = null;
-		String response = null;
+		Map<String, Object> response = new HashMap<String, Object>();
 		try {
-			user = UserManager.getInstance().changePassword(userid,currentPassword, newPassword);
+			response = UserManager.getInstance().changePassword(userid,currentPassword, newPassword);
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (user != null) {
-			response = gson.toJson(user);
-		}
-		return Response.status(200).entity(response).build();
+		return Response.status(200).entity(new Gson().toJson(response)).build();
 	}
-	
 	
 	@POST
 	@Path("/getProfile")
 	public Response getProfileService(@FormParam("userid") long userid) {
-		String response = null;
-		MultiValueMap<String, Object> userprofile = new MultiValueMap<String, Object>();
+		MultiValueMap<String, Object> response = new MultiValueMap<String, Object>();
 		try {
-			userprofile = UserManager.getInstance().getProfile(userid);
+			response = UserManager.getInstance().getProfile(userid);
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		if(!userprofile.isEmpty()) {
-			response = (new Gson()).toJson(userprofile);
+		if(!response.isEmpty()) {
+			return Response.status(200).entity(new Gson().toJson(response)).build();
 		} else {
-			response = "";
-		}
-		
-		return Response.status(200).entity(response).build();
-		
+			return Response.status(200).entity("").build();
+		}		
 	}
 	
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
+	
 	public Response editProfileService(MultivaluedMap<String, String> formParams) {
-		 long userid = 0;
-		/*Set<String> keySet = formParams.keySet();
-		    for(String key : keySet) {
-				if(key.equalsIgnoreCase(UserProfile.USERID)) {
-					List<String> formValue = formParams.get(key);
-					for(String value : formValue) {
-						if(value != null && !value.equals("")) {
-						 userid = Long.parseLong(value);
-						 System.out.println(userid);
-						} else {
-							System.out.println("space");
-						}
-					}
-				}
-		    }*/
-		 
-		 UserProfile userprofile = null;
-	   	 String response = "";
-		 Gson gson = new Gson();
+		 Map<String, Object> sResponse = null;
+		 String response = null;
 		 try {
-			userprofile = UserManager.getInstance().editProfile(formParams);
+			   sResponse = UserManager.getInstance().editProfile(formParams);
+			   if(!sResponse.isEmpty() && sResponse != null) {
+				   response = (new Gson()).toJson(sResponse);
+			   } else 
+				   response = "hello";
 		} catch (FileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 if(userprofile != null) {
-				response = gson.toJson(userprofile);
-		 }
 		return Response.status(200).entity(response).build();
-	}   
-		/*for(String keys : formParams.keySet()) {
-			for(String keyvalues : formParams.get(keys)) {
-				System.out.println("map key " + keys);
-				System.out.println("map value " + keyvalues);
-			
-				if(keys.equalsIgnoreCase(UserProfile.USERID)){
-						profile.put(UserProfile.USERID,keyvalues); 
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-						profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(Name.FIRSTNAME)) {
-						profile.put(Name.FIRSTNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(Name.MIDDLENAME)) {
-						profile.put(Name.MIDDLENAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(Name.LASTNAME)) {
-						profile.put(Name.LASTNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.GENDER)) {
-						profile.put(UserProfile.GENDER,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.DOB)) {
-						profile.put(UserProfile.DOB,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.NATIONALITY)) {
-						profile.put(UserProfile.NATIONALITY,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.WEBSITE)) {
-						profile.put(UserProfile.WEBSITE,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.BIOGRAPHY)) {
-						profile.put(UserProfile.BIOGRAPHY,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PROFILEPIC)) {
-						profile.put(UserProfile.PROFILEPIC,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-				} else if(keys.equalsIgnoreCase(UserProfile.PENNAME)) {
-					profile.put(UserProfile.PENNAME,keyvalues);
-			
-			}
-			}
-		}
-		try {
-			userprofile = UserManager.getInstance().editProfile(profile);
-		} catch (FileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Gson gson = new Gson();
-		String json = gson.toJson(userprofile);
-		return Response.status(200).entity(json).build();*/ 
-	    
-                 
+	}               
 	
 
 // TODO WS for each param of edit profile

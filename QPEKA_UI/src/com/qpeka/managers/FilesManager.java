@@ -4,6 +4,7 @@ import java.io.File;
 
 import java.util.ArrayList;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,45 +27,21 @@ public class FilesManager {
 		return (instance == null ? (instance = new FilesManager()) : instance);
 	}
 
-	public Files createFiles(long userId, String filetype, String filepath) {
+	public Files InsertFiles(long userId, String filetype, String filepath) {
 		Files files = Files.getInstance();
-		File file = new File(filepath); // Inbuilt File class usage
-		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-		files.setUserid(userId); // Set UserID
-		if (file.exists()) {
-			if (file.isFile()) {
-				files.setFilename(file.getName().substring(0,
-						(file.getName().lastIndexOf("."))));
-				files.setFiletype(filetype);
-				files.setExtension(setFileType(file.getName()));
-
-				files.setFilepath(file.getParent()); // Set File Path
-				files.setFilesize((int) (file.length()));
-				files.setFilemime(mimeTypesMap.getContentType(file));
-				files.setStatus(0);
-				files.setTimestamp(System.currentTimeMillis() / 1000L);
-			}
+		if(createFileFields(filepath, files) != null) {
+			files.setUserid(userId); // Set UserID
+			files.setFiletype(filetype);
 			try {
 				FilesHandler.getInstance().insert(files);
 			} catch (FileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else {
-			System.out.println("File is not available on specified path.");
-		}
 		return files;
-	}
-
-	private String setFileType(String fileName) {
-		String fileType;
-		if (fileName.lastIndexOf(".") == -1) {
-			fileType = "Unknown";
 		} else {
-			fileType = fileName.substring(fileName.lastIndexOf(".") ,
-					(fileName.length()));
+			return null;
 		}
-		return fileType;
 	}
 
 	/*
@@ -123,6 +100,53 @@ public class FilesManager {
 			}
 		}
 		return counter;
+	}
+
+	public short updateFiles(long fileid, String filepath) {
+		short counter = 0;
+		Files files = Files.getInstance();
+		createFileFields(filepath, files);
+		files.setFileid(fileid);
+			try {
+				counter += FilesHandler.getInstance().update(fileid, files);
+			} catch (FileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return counter;
+	}
+	
+	private Files createFileFields(String filepath, Files files) {
+		File file = new File(filepath); // Inbuilt File class usage
+		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+		if (file.exists()) {
+			if (file.isFile()) {
+				files.setFilename(file.getName().substring(0,
+						(file.getName().lastIndexOf("."))));
+				//files.setFiletype(filetype);
+				files.setExtension(setFileType(file.getName()));
+
+				files.setFilepath(filepath); // Set File Path
+				files.setFilesize((int) (file.length()));
+				files.setFilemime(mimeTypesMap.getContentType(file));
+				files.setStatus(0);
+				files.setTimestamp(System.currentTimeMillis() / 1000L);
+			}
+		return files;
+		} else {
+			return null;
+		}
+	}
+	
+	private String setFileType(String fileName) {
+		String fileType;
+		if (fileName.lastIndexOf(".") == -1) {
+			fileType = "Unknown";
+		} else {
+			fileType = fileName.substring(fileName.lastIndexOf(".") ,
+					(fileName.length()));
+		}
+		return fileType;
 	}
 
 	// @overloading
@@ -295,22 +319,21 @@ public class FilesManager {
 	 * @param args
 	 */
 
-	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//FilesManager.getInstance().deleteFiles(6);
-		FilesManager.getInstance().createFiles((long)42,"profilepic","/home/ankita/Downloads/Ankit final resume.docx");
-	//	System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));
-	//	System.out.println(FilesManager.getInstance().readFiles(6, "mp3", Files.FILETYPE));
-	//  Map<String, Object> updateMap = new HashMap<String, Object>();
-	//	updateMap.put("fileid", 3);
-	//	updateMap.put("filetype", "sql");
-	//	updateMap.put("filename", "qpeka");
-	//	updateMap.put("filepath", "/home/ankita/desktop");
+		//System.out.println(FilesManager.getInstance().InsertFiles((long)1,"profilepic","/home/ankita/Downloads/Ankit final resume.docx"));
+		//System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));
+		//System.out.println(FilesManager.getInstance().readFiles(6, "mp3", Files.FILETYPE));
+	   // Map<String, Object> updateMap = new HashMap<String, Object>();
+		//updateMap.put("fileid", 1);
+	 	//updateMap.put("filetype", "sql");
+		//updateMap.put("filename", "qpeka");
+	 	//updateMap.put("filepath", "/home/ankita/Desktop/ankita pics/IMG-20130814-WA0001.jpg");
 		//updateMap.put("filesize", 3333);
+	 	//System.out.println(FilesManager.getInstance().updateFiles((long)1, "/home/ankita/Desktop/ankita pics/IMG-20130814-WA0001.jpg"));
 		
 		//System.out.println(filesManager.updateFiles(updateMap)); // Done
 	//	System.out.println(filesManager.updateFiles((short)1,(short)3,"fileid"));
 	}
-	
 }
