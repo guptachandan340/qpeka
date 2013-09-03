@@ -265,7 +265,7 @@ If you have any questions regarding these Terms of Use, please contact Oracle at
 							  </div>
 							 
 							  <div class="control-group">
-							    <label class="control-label" for="aName">Author Name</label>
+							    <label>Author Name</label>
 							    <div class="controls">
 							      <input type="text" name="aName" id="aName" placeholder="Author Name">
 							      <input type="hidden" name="authorId" id="authorId" value="<%=request.getParameter("aid")%>">
