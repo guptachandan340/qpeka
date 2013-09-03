@@ -19,9 +19,9 @@ import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.user.User;
-import com.qpeka.managers.ServiceErrorManager;
+import com.qpeka.managers.ServiceResponseManager;
 import com.qpeka.managers.user.UserManager;
-import com.qpeka.services.Errors.ServiceError;
+import com.qpeka.services.Errors.ServiceResponse;
 
 @Path("user")
 public class UserService {
@@ -45,7 +45,7 @@ public class UserService {
 	@POST
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid) {
-		List<ServiceError> response = null;
+		Map<String, Object> response = null;
 		response = UserManager.getInstance().updateLastActivity(userid, false);
 		return Response.status(200).entity(new Gson().toJson(response)).build();
 	}
@@ -54,16 +54,16 @@ public class UserService {
 	@Path("/signup")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response signupService(MultivaluedMap<String, String> formParams) {
-		List<ServiceError> response = null;
+		Map<String, Object> sresponse = null;
 		for (String keys : formParams.keySet()) {
 			if (keys.equalsIgnoreCase(User.EMAIL)) {
 				for (String email : formParams.get(keys)) {
 					try {
 						if (!UserManager.getInstance().userExists(email,true)) {
-							response = UserManager.getInstance().registerUser(
+							sresponse = UserManager.getInstance().registerUser(
 									formParams);
 						} else {
-							response = ServiceErrorManager.getInstance().readBadges(34);
+							sresponse = ServiceResponseManager.getInstance().readServiceResponse(34);
 						}
 					} catch (UserException e) {
 						// TODO Auto-generated catch block
@@ -72,7 +72,7 @@ public class UserService {
 				}
 			}
 		}
-		return Response.status(200).entity(new Gson().toJson(response)).build();
+		return Response.status(200).entity(new Gson().toJson(sresponse)).build();
 	}
 	
 	@POST
@@ -95,8 +95,8 @@ public class UserService {
 		} else {
 			return Response
 					.status(200)
-					.entity(new Gson().toJson(ServiceErrorManager.getInstance()
-							.readBadges(215))).build();
+					.entity(new Gson().toJson(ServiceResponseManager.getInstance()
+							.readServiceResponse(215))).build();
 		}
 	}
 
@@ -104,14 +104,14 @@ public class UserService {
 	@Path("/changepwd")
 	public Response changePwdService(@FormParam("userid") long userid, @FormParam("currentpassword") String currentPassword,
 			@FormParam("newpassword") String newPassword) {
-		List<ServiceError> response = new ArrayList<ServiceError>();
+		Map<String, Object> response = new HashMap<String, Object>();
 		try {
 			response = UserManager.getInstance().changePassword(userid,currentPassword, newPassword);
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return Response.status(200).entity(response).build();
+		return Response.status(200).entity(new Gson().toJson(response)).build();
 	}
 	
 	@POST
@@ -137,12 +137,12 @@ public class UserService {
 	@Consumes("application/x-www-form-urlencoded")
 	
 	public Response editProfileService(MultivaluedMap<String, String> formParams) {
-		 List<ServiceError> sError = null;
+		 Map<String, Object> sResponse = null;
 		 String response = null;
 		 try {
-			   sError = UserManager.getInstance().editProfile(formParams);
-			   if(!sError.isEmpty() && sError != null) {
-				   response = (new Gson()).toJson(sError);
+			   sResponse = UserManager.getInstance().editProfile(formParams);
+			   if(!sResponse.isEmpty() && sResponse != null) {
+				   response = (new Gson()).toJson(sResponse);
 			   } else 
 				   response = "hello";
 		} catch (FileException e) {

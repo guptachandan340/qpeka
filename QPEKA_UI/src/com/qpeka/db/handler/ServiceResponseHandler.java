@@ -12,11 +12,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.conf.ResourceManager;
-import com.qpeka.db.dao.ServiceErrorDao;
+import com.qpeka.db.dao.ServiceResponseDao;
 import com.qpeka.db.exceptions.QpekaException;
-import com.qpeka.services.Errors.ServiceError;
+import com.qpeka.services.Errors.ServiceResponse;
 
-public class ServiceErrorHandler extends AbstractHandler implements ServiceErrorDao{
+public class ServiceResponseHandler extends AbstractHandler implements ServiceResponseDao{
 
 	/**
 	 * The factory class for this DAO has two versions of the create() method -
@@ -28,9 +28,9 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	protected java.sql.Connection userConn;
 
 	protected static final Logger logger = Logger
-			.getLogger(ServiceErrorHandler.class);
+			.getLogger(ServiceResponseHandler.class);
 	
-	public static ServiceErrorHandler instance = null;
+	public static ServiceResponseHandler instance = null;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
@@ -95,17 +95,17 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	 */
 	protected static final int PK_COLUMN_ERRORID = 1;
 
-    public ServiceErrorHandler() {
+    public ServiceResponseHandler() {
 		super();
 	}
     
-    public ServiceErrorHandler(Connection userConn, int maxRows) {
+    public ServiceResponseHandler(Connection userConn, int maxRows) {
 		super();
 		this.userConn = userConn;
 		this.maxRows = maxRows;
 	}
 
-	public ServiceErrorHandler(Connection userConn) {
+	public ServiceResponseHandler(Connection userConn) {
 		super();
 		this.userConn = userConn;
 	}
@@ -116,10 +116,10 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	 * @return String
 	 */
 	public String getTableName() {
-		return "qpeka.serviceerror";
+		return "qpeka.serviceresponse";
 	}
 	
-	public short insert(ServiceError serviceError) throws QpekaException {
+	public short insert(ServiceResponse serviceResponse) throws QpekaException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -135,7 +135,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			StringBuffer values = new StringBuffer();
 			sql.append("INSERT INTO " + getTableName() + " (");
 			int modifiedCount = 0;
-			if(serviceError.isErroridModified()) {
+			if(serviceResponse.isErroridModified()) {
 				if(modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
@@ -144,7 +144,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				values.append("?");
 				modifiedCount++;
 			}
-			if(serviceError.isStatusModified()) {
+			if(serviceResponse.isStatusModified()) {
 				if(modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
@@ -153,7 +153,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				values.append("?");
 				modifiedCount++;
 			}			
-			if(serviceError.isNameModified()) {
+			if(serviceResponse.isNameModified()) {
 				if(modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
@@ -163,7 +163,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				modifiedCount++;
 			}
 
-			if (serviceError.isMessageModified()) {
+			if (serviceResponse.isMessageModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
@@ -185,25 +185,25 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			stmt = conn.prepareStatement(sql.toString(),
 					Statement.RETURN_GENERATED_KEYS);
 			int index = 1;
-			if (serviceError.isErroridModified()) {
-				stmt.setShort(index++, serviceError.getErrorid());
+			if (serviceResponse.isErroridModified()) {
+				stmt.setShort(index++, serviceResponse.getErrorid());
 			}
 
-			if (serviceError.isStatusModified()) {
-				stmt.setInt(index++, serviceError.getStatus());
+			if (serviceResponse.isStatusModified()) {
+				stmt.setInt(index++, serviceResponse.getStatus());
 			}
 
-			if (serviceError.isNameModified()) {
-				stmt.setString(index++, serviceError.getName());
+			if (serviceResponse.isNameModified()) {
+				stmt.setString(index++, serviceResponse.getName());
 			}
 
-			if (serviceError.isMessageModified()) {
-				stmt.setString(index++, serviceError.getMessage());
+			if (serviceResponse.isMessageModified()) {
+				stmt.setString(index++, serviceResponse.getMessage());
 			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + sql.toString() + " with values: "
-						+ serviceError);
+						+ serviceResponse);
 			}
 
 			int rows = stmt.executeUpdate();
@@ -215,11 +215,11 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			// retrieve values from auto-increment columns
 			rs = stmt.getGeneratedKeys();
 			if (rs != null && rs.next()) {
-				serviceError.setErrorid(rs.getShort(1));
+				serviceResponse.setErrorid(rs.getShort(1));
 			}
 
-			reset(serviceError);
-			return serviceError.getErrorid();
+			reset(serviceResponse);
+			return serviceResponse.getErrorid();
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new QpekaException("Exception: " + _e.getMessage(), _e);
@@ -232,7 +232,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	}
 	
 	@Override
-	public short update(short errorid, ServiceError serviceError) throws QpekaException {
+	public short update(short errorid, ServiceResponse serviceResponse) throws QpekaException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -247,7 +247,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
 			boolean modified = false;
-			if (serviceError.isErroridModified()) {
+			if (serviceResponse.isErroridModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
@@ -256,7 +256,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				modified = true;
 			}
 
-			if (serviceError.isStatusModified()) {
+			if (serviceResponse.isStatusModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
@@ -265,7 +265,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				modified = true;
 			}
 
-			if (serviceError.isNameModified()) {
+			if (serviceResponse.isNameModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
@@ -274,7 +274,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 				modified = true;
 			}
 
-			if (serviceError.isMessageModified()) {
+			if (serviceResponse.isMessageModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
@@ -291,30 +291,30 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 			sql.append(" WHERE errorid=?");
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + sql.toString() + " with values: "
-						+ serviceError);
+						+ serviceResponse);
 			}
 
 			stmt = conn.prepareStatement(sql.toString());
 			int index = 1;
-			if (serviceError.isErroridModified()) {
-				stmt.setShort(index++, serviceError.getErrorid());
+			if (serviceResponse.isErroridModified()) {
+				stmt.setShort(index++, serviceResponse.getErrorid());
 			}
 
-			if (serviceError.isStatusModified()) {
-				stmt.setInt(index++, serviceError.getStatus());
+			if (serviceResponse.isStatusModified()) {
+				stmt.setInt(index++, serviceResponse.getStatus());
 			}
 
-			if (serviceError.isNameModified()) {
-				stmt.setString(index++, serviceError.getName());
+			if (serviceResponse.isNameModified()) {
+				stmt.setString(index++, serviceResponse.getName());
 			}
 
-			if (serviceError.isMessageModified()) {
-				stmt.setString(index++, serviceError.getMessage());
+			if (serviceResponse.isMessageModified()) {
+				stmt.setString(index++, serviceResponse.getMessage());
 			}
 
 			stmt.setInt(index++, errorid);
 			short rows = (short) stmt.executeUpdate();
-			reset(serviceError);
+			reset(serviceResponse);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
@@ -368,20 +368,20 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	}
 
 	@Override
-	public ServiceError findByPrimaryKey(short errorid) throws QpekaException {
-		List<ServiceError> ret = findByDynamicSelect(SQL_SELECT
+	public ServiceResponse findByPrimaryKey(short errorid) throws QpekaException {
+		List<ServiceResponse> ret = findByDynamicSelect(SQL_SELECT
 				+ " WHERE errorid = ?",
 				Arrays.asList(new Object[] { new Short(errorid) }));
 		return ret.size() == 0 ? null : ret.get(0);
 	}
 
 	@Override
-	public List<ServiceError> findAll() throws QpekaException {
+	public List<ServiceResponse> findAll() throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT + " ORDER BY errorid", null);
 	}
 
 	@Override
-	public List<ServiceError> findWhereErroridEquals(short errorid)
+	public List<ServiceResponse> findWhereErroridEquals(short errorid)
 			throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE errorid = ? ORDER BY errorid",
@@ -389,14 +389,14 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	}
 
 	@Override
-	public List<ServiceError> findWhereStatus(int status) throws QpekaException {
+	public List<ServiceResponse> findWhereStatus(int status) throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE status = ? ORDER BY status",
 				Arrays.asList(new Object[] { new Integer(status) }));
 	}
 
 	@Override
-	public List<ServiceError> findWherenameEquals(String name)
+	public List<ServiceResponse> findWherenameEquals(String name)
 			throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE name = ? ORDER BY name",
@@ -404,7 +404,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	}
 
 	@Override
-	public List<ServiceError> findWhereMessageEquals(String message)
+	public List<ServiceResponse> findWhereMessageEquals(String message)
 			throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE message = ? ORDER BY message",
@@ -430,7 +430,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	}
 	
 	@Override
-	public List<ServiceError> findByDynamicSelect(String sql, List<Object> sqlParams)
+	public List<ServiceResponse> findByDynamicSelect(String sql, List<Object> sqlParams)
 			throws QpekaException {
 		// declare variables
 				final boolean isConnSupplied = (userConn != null);
@@ -477,7 +477,7 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 		}
 	
 	@Override
-	public List<ServiceError> findByDynamicWhere(String sql, List<Object> sqlParams)
+	public List<ServiceResponse> findByDynamicWhere(String sql, List<Object> sqlParams)
 			throws QpekaException {
 		// declare variables
 				final boolean isConnSupplied = (userConn != null);
@@ -527,11 +527,11 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	/**
 	 * Fetches a single row from the result set
 	 */
-	protected ServiceError fetchSingleResult(ResultSet rs) throws SQLException {
+	protected ServiceResponse fetchSingleResult(ResultSet rs) throws SQLException {
 		if (rs.next()) {
-			ServiceError serviceError = new ServiceError();
-			populateServiceError(serviceError, rs);
-			return serviceError;
+			ServiceResponse serviceResponse = new ServiceResponse();
+			populateServiceResponse(serviceResponse, rs);
+			return serviceResponse;
 		} else {
 			return null;
 		}
@@ -541,43 +541,43 @@ public class ServiceErrorHandler extends AbstractHandler implements ServiceError
 	/**
 	 * Fetches multiple rows from the result set
 	 */
-	protected List<ServiceError> fetchMultiResults(ResultSet rs) throws SQLException {
-		List<ServiceError> resultList = new ArrayList<ServiceError>();
+	protected List<ServiceResponse> fetchMultiResults(ResultSet rs) throws SQLException {
+		List<ServiceResponse> resultList = new ArrayList<ServiceResponse>();
 		while (rs.next()) {
-			ServiceError serviceError = new ServiceError();
-			populateServiceError(serviceError, rs);
-			resultList.add(serviceError);
+			ServiceResponse serviceResponse = new ServiceResponse();
+			populateServiceResponse(serviceResponse, rs);
+			resultList.add(serviceResponse);
 		}
 		return resultList;
 	}
 	/**
 	 * Populates a DTO with data from a ResultSet
 	 */
-	protected void populateServiceError(ServiceError serviceError, ResultSet rs)
+	protected void populateServiceResponse(ServiceResponse serviceResponse, ResultSet rs)
 			throws SQLException {
-		serviceError.setErrorid(rs.getShort(COLUMN_ERRORID));
-		serviceError.setStatus(rs.getInt(COLUMN_STATUS));
-		serviceError.setName(rs.getString(COLUMN_NAME));
-		serviceError.setMessage(rs.getString(COLUMN_MESSAGE));
-		reset(serviceError);
+		serviceResponse.setErrorid(rs.getShort(COLUMN_ERRORID));
+		serviceResponse.setStatus(rs.getInt(COLUMN_STATUS));
+		serviceResponse.setName(rs.getString(COLUMN_NAME));
+		serviceResponse.setMessage(rs.getString(COLUMN_MESSAGE));
+		reset(serviceResponse);
 	}
 
 	/**
 	 * Resets the modified attributes in the DTO
 	 */
-	protected void reset(ServiceError serviceError) {
-		serviceError.setErroridModified(false);
-		serviceError.setStatusModified(false);
-		serviceError.setNameModified(false);
-		serviceError.setMessageModified(false);
+	protected void reset(ServiceResponse serviceResponse) {
+		serviceResponse.setErroridModified(false);
+		serviceResponse.setStatusModified(false);
+		serviceResponse.setNameModified(false);
+		serviceResponse.setMessageModified(false);
 	}
 	
 	/**
-	 * Get ServiceErrorHandler object instance
-	 * @return instance of ServiceErrorHandler
+	 * Get ServiceResponseHandler object instance
+	 * @return instance of ServiceResponseHandler
 	 */
-	public static ServiceErrorHandler getInstance() {
-		return (instance == null ? instance = new ServiceErrorHandler() : instance);
+	public static ServiceResponseHandler getInstance() {
+		return (instance == null ? instance = new ServiceResponseHandler() : instance);
 	}
 
 }

@@ -15,19 +15,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.RandomStringUtils;
 
+import com.mongodb.util.Hash;
 import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.STATUS;
+import com.qpeka.db.Constants.TYPE;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
 import com.qpeka.db.Languages;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.CategoryException;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
@@ -55,9 +57,9 @@ import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.FilesManager;
-import com.qpeka.managers.ServiceErrorManager;
+import com.qpeka.managers.ServiceResponseManager;
 import com.qpeka.security.bcrypt.BCrypt;
-import com.qpeka.services.Errors.ServiceError;
+import com.qpeka.services.Errors.ServiceResponse;
 
 import org.apache.commons.collections4.map.MultiValueMap;
 
@@ -95,10 +97,10 @@ public class UserManager {
 	 * 
 	 * @return
 	 */
-
-	public List<ServiceError> registerUser(
+	
+	public Map<String, Object> registerUser(
 			MultivaluedMap<String, String> formParams) {
-		ServiceError sError = ServiceError.getInstance();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
 		// Create User
 		User user = User.getInstance();
 		// Create User Profile
@@ -106,6 +108,9 @@ public class UserManager {
 		if (userProfile.getName() == null) {
 			userProfile.setName(Name.getInstance());
 		}
+		user.setType((short) TYPE.AUTHENTIC.ordinal());
+		//user.setType((short) TYPE.valueOf("AUTHENTIC".toUpperCase()).ordinal());
+		
 		Set<String> keySet = formParams.keySet();
 		for (String key : keySet) {
 			List<String> userInfo = formParams.get(key);
@@ -114,10 +119,12 @@ public class UserManager {
 					if (userInfoValue != null
 							&& !userInfoValue.equalsIgnoreCase("")) {
 						registerUserInfo(key, userInfoValue, user, userProfile);
+						//createPenName(userProfile);
 					}
 				}
 			}
 		}
+		createPenName(userProfile, user);
 		user.setCreated(System.currentTimeMillis() / 1000);
 		user.setLastaccess(0);
 		user.setLastlogin(0);
@@ -126,23 +133,23 @@ public class UserManager {
 			// Insert user to database;
 			Long userid = UserHandler.getInstance().insert(user);
 			if (userid > 0) {
-				sError.setStatus(200);
+				sResponse.setStatus(200);
 				userProfile.setUserid(userid);
 				if (UserProfileHandler.getInstance().insert(userProfile) > 0) {
-					sError.setStatus(200);
+					sResponse.setStatus(200);
 					// store languages in user language table
 					for (String key : keySet) {
 						if (key.equalsIgnoreCase(Languages.LANGUAGE)) {
 							List<String> languages = formParams.get(key);
 							userProfile.setrLang(updateUserLanguages(userid,
-									"read", languages, sError));
+									"read", languages, sResponse));
 						}
 					}
 				} else {
-					sError.setStatus(215);
+					sResponse.setStatus(215);
 				}
 			} else {
-				sError.setStatus(215);
+				sResponse.setStatus(215);
 			}
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
@@ -151,7 +158,7 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ServiceErrorManager.getInstance().readBadges(sError.getStatus());
+		return ServiceResponseManager.getInstance().readServiceResponse(sResponse.getStatus());
 	}// end of registeruser()
 
 	/*
@@ -182,6 +189,8 @@ public class UserManager {
 			user.setEmail(value);
 		} else if (key.equalsIgnoreCase(User.PASSWORD)) {
 			user.setPassword(BCrypt.hashpw(value, BCrypt.gensalt()));
+		} else if(key.equalsIgnoreCase(User.TYPE)) {
+			 user.setType((short) TYPE.valueOf(value.toUpperCase()).ordinal());
 		} else if (key.equalsIgnoreCase(UserProfile.GENDER)) {
 			userProfile.setGender(GENDER.valueOf(value.toUpperCase()));
 		} else if (key.equalsIgnoreCase(UserProfile.DOB)) {
@@ -192,9 +201,57 @@ public class UserManager {
 				userProfile.setDob(dateOfBirth);
 				userProfile.setAge(deriveAge(dateOfBirth));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
+				// TODO Auto-generated catch blocks
 				e.printStackTrace();
 			}
+		} else if(key.equalsIgnoreCase(UserProfile.TNC)) {
+			userProfile.setTnc(Short.parseShort(value));
+		} 
+	}
+	
+	private void createPenName(UserProfile userProfile, User user) {
+		
+		char[] patternChar;
+		patternChar = "._".toCharArray();
+		List<User> users = new ArrayList<User>();
+		List<Object> penNameComb = new ArrayList<Object>();
+		Set<String> penNamedbSet = new HashSet<String>();
+		
+		// Create pennameList with Combination of fname and lname
+		
+		penNameComb.add(userProfile.getName().getFirstname()
+				+ userProfile.getName().getLastname());
+		penNameComb.add(userProfile.getName().getLastname()
+				+ userProfile.getName().getFirstname());
+		for (int i = 0; i < patternChar.length; i++) {
+			penNameComb.add(userProfile.getName().getFirstname()
+					+ patternChar[i] + userProfile.getName().getLastname());
+			penNameComb.add(userProfile.getName().getLastname()
+					+ patternChar[i] + userProfile.getName().getFirstname());
+		}
+		// Convert penNameList to hashSet
+		Set<Object> penNameCombSet = new HashSet<Object>(penNameComb);
+	
+		// TODO findbyDynamicSelect() to find only penname.gave error getLong() not matching with String
+		
+		// retrieve user object from databases to check whether penExist
+		try {
+			users = UserHandler.getInstance().findByDynamicWhere(
+					buildQuery("penname", penNameComb.size()), penNameComb);
+					
+			// Adding only penname to HashSet
+			for (User userList : users) {
+				penNamedbSet.add(userList.getPenname());
+			}
+			
+			// Use A - ( A AND B) i.e remove common elements
+			penNameCombSet.removeAll(penNamedbSet);
+			
+			// Set first uncommon element to user object
+			user.setPenname((penNameCombSet.iterator().next()).toString());
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -241,7 +298,7 @@ public class UserManager {
 	public Map<String, Object> authenticateUser(String authName,
 			String password, boolean isEmail) throws UserException {
 
-		ServiceError sError = ServiceError.getInstance();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
 		Map<String, Object> loginresponse = new HashMap<String, Object>();
 		List<User> user = new ArrayList<User>();
 		try {
@@ -261,16 +318,16 @@ public class UserManager {
 					updateLastActivity(user.get(0).getUserid(), true);
 					return createUserInfoMap(user.get(0));
 				} else {
-					sError.setStatus(215);
+					sResponse.setStatus(215);
 				}
 			} else {
-				sError.setStatus(64);
+				sResponse.setStatus(64);
 			}
 		} else {
-			sError.setStatus(215);
+			sResponse.setStatus(215);
 		}
-		loginresponse.put("Service Error: ", ServiceErrorManager.getInstance()
-				.readBadges(sError.getStatus()));
+		loginresponse.put("Service Error: ", ServiceResponseManager.getInstance()
+				.readServiceResponse(sResponse.getStatus()));
 		return loginresponse;
 	}
 
@@ -324,8 +381,8 @@ public class UserManager {
 				try {
 					file = FilesHandler.getInstance().findWhereFileidEquals(
 							userProfile.get(0).getProfilepic());
-					if (!file.isEmpty()) {
-						userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), file
+					if (!file.isEmpty() && file != null) {
+						userInfo.put(UserProfile.PROFILEPIC.toLowerCase(), ResourceManager.getFILE_PROFILEPIC()+file
 								.get(0).getFilepath());
 					}
 				} catch (FileException e) {
@@ -342,11 +399,11 @@ public class UserManager {
 	/**
 	 * update lastlogin or lastaccess
 	 */
-	public List<ServiceError> updateLastActivity(long userid,
+	public Map<String, Object> updateLastActivity(long userid,
 			boolean isLastLogin) {
 		long lastActivity = System.currentTimeMillis() / 1000;
 		List<User> existingUser = new ArrayList<User>();
-		ServiceError sError = ServiceError.getInstance();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
 		try {
 			existingUser = UserHandler.getInstance().findWhereUseridEquals(
 					userid);
@@ -365,9 +422,9 @@ public class UserManager {
 				}
 				try {
 					if (UserHandler.getInstance().update(userid, user) != -1) {
-						sError.setStatus(200);
+						sResponse.setStatus(200);
 					} else {
-						sError.setStatus(215);
+						sResponse.setStatus(215);
 					}
 				} catch (UserException e) {
 					// TODO Auto-generated catch block
@@ -375,7 +432,7 @@ public class UserManager {
 				}
 			}
 		}
-		return ServiceErrorManager.getInstance().readBadges(sError.getStatus());
+		return ServiceResponseManager.getInstance().readServiceResponse(sResponse.getStatus());
 	}
 
 	/***************************** UPDATE PASSWORD MODULE ********************************/
@@ -385,9 +442,9 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public List<ServiceError> changePassword(long userid,
+	public Map<String, Object> changePassword(long userid,
 			String currentPassword, String newPassword) throws UserException {
-		ServiceError sError = ServiceError.getInstance();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
 		List<User> userInfoList = new ArrayList<User>();
 		userInfoList = UserHandler.getInstance().findWhereUseridEquals(userid);
 		for (User user : userInfoList) {
@@ -396,16 +453,16 @@ public class UserManager {
 					user.setPassword(BCrypt.hashpw(newPassword,
 							BCrypt.gensalt()));
 					UserHandler.getInstance().update(userid, user);
-					sError.setStatus(200);
+					sResponse.setStatus(200);
 				} catch (UserException _e) {
 					throw new UserException("Update User Password Exception: "
 							+ _e.getMessage(), _e);
 				}
 			} else {
-				sError.setStatus(215);
+				sResponse.setStatus(215);
 			}
 		}
-		return ServiceErrorManager.getInstance().readBadges(sError.getStatus());
+		return ServiceResponseManager.getInstance().readServiceResponse(sResponse.getStatus());
 	}// end of changePassword()
 
 	/**
@@ -450,15 +507,15 @@ public class UserManager {
 	public MultiValueMap<String, Object> getProfile(long userid)
 			throws UserProfileException {
 		User user = User.getInstance();
-		ServiceError sError = ServiceError.getInstance();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
 		MultiValueMap<String, Object> profileInfo = new MultiValueMap<String, Object>();
 		try {
 			user = UserHandler.getInstance().findByPrimaryKey(userid);
 			profileInfo = createProfileInfoMap(user);
 			if (profileInfo.isEmpty()) {
-				sError.setStatus(215);
-				profileInfo.put("Error : ", ServiceErrorManager.getInstance()
-						.readBadges(sError.getStatus()));
+				sResponse.setStatus(215);
+				profileInfo.put("Error", ServiceResponseManager.getInstance()
+						.readServiceResponse(sResponse.getStatus()));
 			}
 		} catch (UserException _e) {
 			// TODO Auto-generated catch block
@@ -478,7 +535,6 @@ public class UserManager {
 		if (UserProfile.getInstance().getName() == null) {
 			UserProfile.getInstance().setName(Name.getInstance());
 		}
-
 		try {
 			userProfile = UserProfileHandler.getInstance()
 					.findWhereUseridEquals(user.getUserid());
@@ -580,12 +636,12 @@ public class UserManager {
 			} else {
 				userInfo.put(UserProfile.WEBSITE.toLowerCase(), "");
 			}
-			if (userProfile.get(0).getUserlevel() != null) {
+			/*if (userProfile.get(0).getUserlevel() != null) {
 				userInfo.put(UserProfile.USERLEVEL.toLowerCase(), userProfile
 						.get(0).getUserlevel());
 			} else {
 				userInfo.put(UserProfile.USERLEVEL.toLowerCase(), "");
-			}
+			}*/
 		}
 		return userInfo;
 	}
@@ -638,10 +694,10 @@ public class UserManager {
 
 	// TODO userlevel, usertype, status
 
-	public List<ServiceError> editProfile(
+	public Map<String, Object> editProfile(
 			MultivaluedMap<String, String> formParams) throws FileException {
 		long userid = 0;
-		ServiceError sError = ServiceError.getInstance();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
 		List<UserProfile> userList = null;
 		Set<String> keySet = formParams.keySet();
 		for (String key : keySet) {
@@ -658,19 +714,19 @@ public class UserManager {
 							e.printStackTrace();
 						}
 						if (!userList.isEmpty()) {
-							setEditedInfo(userid, formParams, userList, sError);
+							setEditedInfo(userid, formParams, userList, sResponse);
 						}
 					}
 				}
 			}
 		}
-		return ServiceErrorManager.getInstance().readBadges(sError.getStatus());
+		return ServiceResponseManager.getInstance().readServiceResponse(sResponse.getStatus());
 
 	}
 
-	public ServiceError setEditedInfo(long userid,
+	public ServiceResponse setEditedInfo(long userid,
 			MultivaluedMap<String, String> formParams,
-			List<UserProfile> userList, ServiceError sError) {
+			List<UserProfile> userList, ServiceResponse sResponse) {
 		if (userid != 0) {
 			for (UserProfile userProfile : userList) {
 				if (userProfile.getName() == null) {
@@ -691,7 +747,7 @@ public class UserManager {
 									&& !userInfoValue.equalsIgnoreCase("")) {
 								// Set/Update User Name
 								if (key.equalsIgnoreCase(User.PENNAME)) {
-									UpdatePenName(userInfoValue, userid, sError);
+									UpdatePenName(userInfoValue, userid, sResponse);
 								}
 								// Set/Update Pen name
 								/*
@@ -759,7 +815,7 @@ public class UserManager {
 								else if (key
 										.equalsIgnoreCase(UserProfile.PROFILEPIC)) {
 									hasProfilePic(userid, userInfoValue,
-											userProfile, sError);
+											userProfile, sResponse);
 
 								}
 								// Set/Update AddressLine1
@@ -812,15 +868,15 @@ public class UserManager {
 					// Update User Interests
 					else if (key.equalsIgnoreCase(UserProfile.INTERESTS)) {
 						userProfile.setInterests(updateUserInterests(userInfo,
-								userid, sError));
+								userid, sResponse));
 					} else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
 						// Read Language if language is rLang {
 						userProfile.setrLang(updateUserLanguages(userid,
-								"read", userInfo, sError));
+								"read", userInfo, sResponse));
 					} else if (key.equalsIgnoreCase(UserProfile.WLANG)) {
 						// Read Language if language is wLang {
 						userProfile.setwLang(updateUserLanguages(userid,
-								"write", userInfo, sError));
+								"write", userInfo, sResponse));
 					}
 				}
 				// User Points if (profile.get(UserProfile.USERPOINTS) != null)
@@ -829,24 +885,20 @@ public class UserManager {
 				// User Level userProfile.getUserlevel();
 				// User Type userProfile.getUsertype();
 				try {
-					if(!UserProfile.getInstance().equals(userProfile)) {
 						if (UserProfileHandler.getInstance().update(userid,
 								userProfile) > 0) {
-							sError.setStatus(200);
+							sResponse.setStatus(200);
 						} else {
-							sError.setStatus(215);
+							sResponse.setStatus(215);
 						}
-						updateUserAddress(userid, userProfile.getAddress(), sError);
-					} else {
-						sError.setStatus(215);
-					}
+						updateUserAddress(userid, userProfile.getAddress(), sResponse);
 				} catch (UserProfileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
-		return sError;
+		return sResponse;
 	}
 
 	/**
@@ -857,51 +909,44 @@ public class UserManager {
 	 * @return
 	 */
 	public void hasProfilePic(long userid, String userInfoValue,
-			UserProfile userProfile, ServiceError sError) {
+			UserProfile userProfile, ServiceResponse sResponse) {
 		Files file = Files.getInstance();
 		long fileid = 0;
 		List<Files> userPicExist = null;
-		//file.setFilepath(userInfoValue);
-		try {
-			userPicExist = FilesManager.getInstance().readFiles(userid,
-					"profilepic", Files.FILETYPE);
-			if (!userPicExist.isEmpty()) {
-				if (FilesHandler.getInstance().update(
-						userPicExist.get(0).getFileid(), file) != -1) {
-					fileid = userPicExist.get(0).getFileid();
-				}
-			} else {
-				file = FilesManager.getInstance().createFiles(userid,
-						"profilepic", userInfoValue);
-				if (file != null) {
-					fileid = file.getFileid();
-				}
+		userPicExist = FilesManager.getInstance().readFiles(userid,
+				"profilepic", Files.FILETYPE);
+		if (!userPicExist.isEmpty()) {
+			if (FilesManager.getInstance().updateFiles(
+					userPicExist.get(0).getFileid(), userInfoValue) != -1) {
+				fileid = userPicExist.get(0).getFileid();
 			}
-			if (fileid > 0) {
-				sError.setStatus(200);
-				userProfile.setProfilepic(fileid);
-			} else {
-				sError.setStatus(215);
+		} else {
+			file = FilesManager.getInstance().InsertFiles(userid, "profilepic", userInfoValue);
+			if(file != null) {
+				fileid = file.getFileid();
 			}
-		} catch (FileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}
+		if (fileid > 0) {
+			sResponse.setStatus(200);
+			userProfile.setProfilepic(fileid);
+		} else {
+			sResponse.setStatus(215);
 		}
 	}
 
 	private void UpdatePenName(String userInfoValue, long userid,
-			ServiceError sError) {
+			ServiceResponse sResponse) {
 		User user = User.getInstance();
 		try {
 			if (!UserManager.getInstance().userExists(userInfoValue, false)) {
 				user.setPenname(userInfoValue);
 				if (UserHandler.getInstance().update(userid, user) >= 0) {
-					sError.setStatus(200);
+					sResponse.setStatus(200);
 				} else {
-					sError.setStatus(215);
+					sResponse.setStatus(215);
 				}
 			} else {
-				sError.setStatus(34);
+				sResponse.setStatus(34);
 			}
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
@@ -916,7 +961,7 @@ public class UserManager {
 	 * @param address
 	 */
 	public void updateUserAddress(long userid, Address address,
-			ServiceError sError) {
+			ServiceResponse sResponse) {
 		short counter = 0;
 		List<Address> useridExist = null;
 		List<Object> readUseridObj = new ArrayList<Object>();
@@ -933,9 +978,9 @@ public class UserManager {
 				AddressHandler.getInstance().insert(address);
 			}
 			if (counter >= 0) {
-				sError.setStatus(200);
+				sResponse.setStatus(200);
 			} else {
-				sError.setStatus(215);
+				sResponse.setStatus(215);
 			}
 		} catch (AddressException e) {
 			// TODO Auto-generated catch block
@@ -944,7 +989,7 @@ public class UserManager {
 	}
 
 	public Set<Category> updateUserInterests(List<String> userInfo,
-			long userid, ServiceError sError) {
+			long userid, ServiceResponse sResponse) {
 		List<Object> editedInfoList = new ArrayList<Object>();
 		List<Category> categories = null;
 		List<Category> genre = null;
@@ -972,10 +1017,10 @@ public class UserManager {
 							userInterests);
 				}
 				if (userInterests != null) {
-					sError.setStatus(200);
+					sResponse.setStatus(200);
 					return uniqueSet;
 				} else {
-					sError.setStatus(215);
+					sResponse.setStatus(215);
 				}
 			}
 		} catch (CategoryException e) {
@@ -997,10 +1042,10 @@ public class UserManager {
 	 * @return Set of languages used by user
 	 */
 	public Set<Languages> updateUserLanguages(long userid, String languageType,
-			List<String> userInfo, ServiceError sError) {
+			List<String> userInfo, ServiceResponse sResponse) {
 		List<Object> editedLanguages = new ArrayList<Object>();
 		List<Languages> languageList = null;
-		for (String lang : userInfo) {
+		for (String lang : userInfo) {	
 			editedLanguages.add(lang);
 		}
 		try {
@@ -1019,12 +1064,14 @@ public class UserManager {
 					}
 				}
 				if (userlang != null) {
-					sError.setStatus(200);
+					sResponse.setStatus(200);
 					return (new HashSet<Languages>(languageList));
 				} else {
-					sError.setStatus(215);
+					sResponse.setStatus(215);
 				}
-			}
+			} else {
+				// TODO if no languages exists in database then ?
+			} 
 		} catch (UserLanguageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1221,20 +1268,29 @@ public class UserManager {
 	/***************************** MAIN MODULE ********************************/
 	
 	public static void main(String[] args) {
-		UserManager usermgr = new UserManager();
-		List<String> interests = new ArrayList<String>();
-		ServiceError sError = ServiceError.getInstance();
+		UserManager usermgr = UserManager.getInstance();
+	/*	User user = User.getInstance();
+		UserProfile userProfile = UserProfile.getInstance();
+		if (userProfile.getName() == null) {
+			userProfile.setName(Name.getInstance());
+		}
+		userProfile.getName().setFirstname("mehul");
+		userProfile.getName().setLastname("malani");
+		user.setEmail("mehulmalani16@yahoo.com ");
+		usermgr.createPenName(userProfile, user);*/
+		/*List<String> interests = new ArrayList<String>();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
 		interests.add("Adult");
 		interests.add("Classic");
 		interests.add("Fiction");
 		interests.add("Children Learning");
 		System.out.println(usermgr.updateUserInterests(interests, (long) 1,
-				sError));
+				sResponse));
 
 		List<String> lang = new ArrayList<String>();
 		lang.add("MARATHI");
 		lang.add("HINDI");
 		lang.add("ENGLISH");
-		usermgr.updateUserLanguages((long) 1, "write", lang, sError);
+		usermgr.updateUserLanguages((long) 1, "write", lang, sResponse);*/
 	}
 }// End of class UserManager.java

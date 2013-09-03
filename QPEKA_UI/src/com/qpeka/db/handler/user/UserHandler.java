@@ -654,6 +654,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE type = ? ORDER BY type",
 				Arrays.asList(new Object[] { new Short(type) }));
+		
 	}
 
 	@Override
@@ -792,7 +793,6 @@ public class UserHandler extends AbstractHandler implements UserDao {
 			populateUser(user, rs);
 			resultList.add(user);
 		}
-
 		return resultList;
 	}
 
