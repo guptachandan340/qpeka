@@ -1,7 +1,6 @@
 package com.qpeka.db.conf;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -10,33 +9,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ResourceManager {
 
+public class ResourceManager {
+	
 	private static String JDBC_DRIVER = null;
 	private static String JDBC_URL = null;
 	private static String JDBC_USER = null;
 	private static String JDBC_PASSWORD = null;
+	private static String FILE_PROFILEPIC = null;
 	private static Driver driver = null;
-	private static InputStream inputStream = null;
-	private static Properties properties = null;
-
+	private static Properties mysqlProperties = null;
+	private static Properties filesProperties = null;
+	
 	static {
 		try {
-			inputStream = ResourceManager.class.getClassLoader()
-					.getResourceAsStream("mysql.properties");
-			properties = new Properties();
-			properties.load(inputStream);
+			// Creating properties for mysql.properties file
+			mysqlProperties = new Properties();
+			mysqlProperties.load(ResourceManager.class.getClassLoader()
+					.getResourceAsStream("mysql.properties"));
+			
+			// Creating properties for system.properties file
+			filesProperties = new Properties();
+			filesProperties.load(ResourceManager.class.getClassLoader()
+					.getResourceAsStream("system.properties"));
 
-			// Assigning Properties values
-			JDBC_DRIVER = properties.getProperty("db_driver");
-			JDBC_URL = properties.getProperty("db_url");
-			JDBC_USER = properties.getProperty("db_user");
-			JDBC_PASSWORD = properties.getProperty("db_password");
-
+			// Assigning mysql Properties values
+			JDBC_DRIVER = mysqlProperties.getProperty("db_driver");
+			JDBC_URL = mysqlProperties.getProperty("db_url");
+			JDBC_USER = mysqlProperties.getProperty("db_user");
+			JDBC_PASSWORD = mysqlProperties.getProperty("db_password");
+			
+			// Assigning system Properties values
+			setFILE_PROFILEPIC(filesProperties.getProperty("profilePicFolder"));
+			
 		} catch (IOException ie) {
 			ie.printStackTrace();
 		}
-
 	}
 
 	public static synchronized Connection getConnection() throws SQLException {
@@ -79,25 +87,23 @@ public class ResourceManager {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
+	}
+	
+	/**
+	 * @return the fILE_PROFILEPIC
+	 */
+	public static String getFILE_PROFILEPIC() {
+		return FILE_PROFILEPIC;
+	}
 
+	/**
+	 * @param fILE_PROFILEPIC the file_Profilepic to set
+	 */
+	public static void setFILE_PROFILEPIC(String file_Profilepic) {
+		FILE_PROFILEPIC = file_Profilepic;
 	}
 
 	public static void main(String[] args) {
-		Properties prop = new Properties();
-		/*
-		 * ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		 * InputStream stream = loader.getResourceAsStream("mysql.properties");
-		 */
-
-		try {
-			InputStream stream = ResourceManager.class.getClassLoader()
-					.getResourceAsStream("mysql.properties");
-			prop.load(stream);
-			System.out.println(prop.getProperty("db_password"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		 ClassLoader loader = Thread.currentThread().getContextClassLoader();
 	}
-
 }

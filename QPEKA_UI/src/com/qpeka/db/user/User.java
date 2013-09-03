@@ -13,7 +13,7 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 5342974486315750933L;
 
 	public static final String PROFILEID = "userid";
-	public static final String USERNAME = "username";
+	public static final String PENNAME = "penname";
 	public static final String PASSWORD = "password";
 	public static final String EMAIL = "email";
 	public static final String CREATED = "created";
@@ -25,7 +25,7 @@ public class User implements Serializable {
 
 	// These attributes maps to the columns of the user table.
 	private long userid = 0;
-	private String username = "";
+	private String penname = "";
 	private String password = "";
 	private String email = "";
 	/**
@@ -61,7 +61,7 @@ public class User implements Serializable {
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
 	protected boolean useridModified = false;
-	protected boolean usernameModified = false;
+	protected boolean pennameModified = false;
 	protected boolean passwordModified = false;
 	protected boolean emailModified = false;
 	protected boolean createdModified = false;
@@ -82,10 +82,10 @@ public class User implements Serializable {
 		super();
 	}
 
-	public User(String username, String password, String email, long created,
+	public User(String penname, String password, String email, long created,
 			String timezone) { // , String language
 		super();
-		this.username = username;
+		this.penname = penname;
 		this.password = password;
 		this.email = email;
 		this.created = created;
@@ -93,16 +93,16 @@ public class User implements Serializable {
 		// this.language = language;
 	}
 
-	public User(long userid, String username, String password) {
+	public User(long userid, String penname, String password) {
 		super();
 		this.userid = userid;
-		this.username = username;
+		this.penname = penname;
 		this.password = password;
 	}
 
-	public User(String username, String password) {
+	public User(String penname, String password) {
 		super();
-		this.username = username;
+		this.penname = penname;
 		this.password = password;
 	}
 
@@ -118,13 +118,13 @@ public class User implements Serializable {
 		this.useridModified = true;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getPenname() {
+		return penname;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-		this.usernameModified = true;
+	public void setPenname(String penname) {
+		this.penname = penname;
+		this.pennameModified = true;
 	}
 
 	public String getPassword() {
@@ -210,12 +210,12 @@ public class User implements Serializable {
 		this.useridModified = useridModified;
 	}
 
-	public boolean isUsernameModified() {
-		return usernameModified;
+	public boolean isPennameModified() {
+		return pennameModified;
 	}
 
-	public void setUsernameModified(boolean usernameModified) {
-		this.usernameModified = usernameModified;
+	public void setPennameModified(boolean pennameModified) {
+		this.pennameModified = pennameModified;
 	}
 
 	public boolean isPasswordModified() {
@@ -314,12 +314,12 @@ public class User implements Serializable {
 			return false;
 		}
 
-		if (username == null ? _cast.username != username : !username
-				.equals(_cast.username)) {
+		if (penname == null ? _cast.penname != penname : !penname
+				.equals(_cast.penname)) {
 			return false;
 		}
 
-		if (usernameModified != _cast.usernameModified) {
+		if (pennameModified != _cast.pennameModified) {
 			return false;
 		}
 
@@ -402,11 +402,11 @@ public class User implements Serializable {
 
 		_hashCode = 29 * _hashCode + userid;
 		_hashCode = 29 * _hashCode + (useridModified ? 1 : 0);
-		if (username != null) {
-			_hashCode = 29 * _hashCode + username.hashCode();
+		if (penname != null) {
+			_hashCode = 29 * _hashCode + penname.hashCode();
 		}
 
-		_hashCode = 29 * _hashCode + (usernameModified ? 1 : 0);
+		_hashCode = 29 * _hashCode + (pennameModified ? 1 : 0);
 		if (password != null) {
 			_hashCode = 29 * _hashCode + password.hashCode();
 		}
@@ -446,7 +446,7 @@ public class User implements Serializable {
 
 		ret.append("User: ");
 		ret.append(PROFILEID + "=" + userid);
-		ret.append(", " + USERNAME + "=" + username);
+		ret.append(", " + PENNAME + "=" + penname);
 		ret.append(", " + PASSWORD + "=" + password);
 		ret.append(", " + EMAIL + "=" + email);
 		ret.append(", " + CREATED + "=" + created);

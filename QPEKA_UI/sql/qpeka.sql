@@ -129,7 +129,7 @@ CREATE TABLE `files` (
   KEY `timestamp` (`timestamp`),
   KEY `files_ibfk_1` (`userid`),
   CONSTRAINT `files_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,6 +138,7 @@ CREATE TABLE `files` (
 
 LOCK TABLES `files` WRITE;
 /*!40000 ALTER TABLE `files` DISABLE KEYS */;
+INSERT INTO `files` VALUES (1,1,'profilepic','IMG-20130814-WA0001','/home/ankita/Desktop/ankita pics/IMG-20130814-WA0001.jpg','image/jpeg','.jpg',94319,0,1377855676),(2,2,'profilepic','30733d8','/home/ankita/Downloads/30733d8.jpg','image/jpeg','.jpg',8869,0,1378105526),(3,3,'profilepic','30733d8','/home/ankita/Downloads/30733d8.jpg','image/jpeg','.jpg',8869,0,1378110711);
 /*!40000 ALTER TABLE `files` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,7 +160,7 @@ CREATE TABLE `languages` (
   KEY `language` (`language`),
   KEY `list` (`name`),
   KEY `native` (`native`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -168,7 +169,34 @@ CREATE TABLE `languages` (
 
 LOCK TABLES `languages` WRITE;
 /*!40000 ALTER TABLE `languages` DISABLE KEYS */;
+INSERT INTO `languages` VALUES (1,'MARATHI','MARATHI',1,0,1),(2,'HINDI','HINDI',7,1,1),(3,'ENGLISH','ENGLISH',2,1,0),(4,'GUJARATI','GUJARATI',6,0,0);
 /*!40000 ALTER TABLE `languages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `serviceresponse`
+--
+
+DROP TABLE IF EXISTS `serviceresponse`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `serviceresponse` (
+  `errorid` smallint(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL DEFAULT '200',
+  `name` varchar(64) NOT NULL DEFAULT 'ok',
+  `message` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`errorid`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `serviceresponse`
+--
+
+LOCK TABLES `serviceresponse` WRITE;
+/*!40000 ALTER TABLE `serviceresponse` DISABLE KEYS */;
+INSERT INTO `serviceresponse` VALUES (1,200,'Success','Success'),(2,64,'suspended','Account is suspended'),(3,34,'already registered','already registered'),(4,215,'bad request','bad request');
+/*!40000 ALTER TABLE `serviceresponse` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -209,7 +237,7 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `userid` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(200) DEFAULT NULL,
+  `penname` varchar(200) DEFAULT NULL,
   `password` varchar(64) NOT NULL DEFAULT '',
   `email` varchar(100) NOT NULL DEFAULT '',
   `created` int(11) NOT NULL DEFAULT '0',
@@ -220,8 +248,8 @@ CREATE TABLE `user` (
   `timezone` varchar(8) DEFAULT NULL,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  UNIQUE KEY `username` (`penname`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -230,6 +258,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'ankitaMalani','$2a$10$hhkQ4s6bUmTmZskLT.kvcO.tROLQGdkvTliNN4hKlTWh5NZ7nCTcW','anki546.malani@gmail.com',1377614876,0,1377686976,0,0,NULL),(2,'JinalMashruwala','$2a$10$k.CKAzF/OLcRGl0zPR/liO9jvQJkF8TD.CCFnmhOB1K5sFhHf8GXC','jinalmashruwala@gmail.com',1378104731,0,0,0,1,NULL),(3,'mehulmalani','$2a$10$RjUUfx5q7m8NurSnKsqem.tB17zFRI3TxDVlTPU/uCY8Iq1R9VLOe','mehulmalani16@yahoo.com',1378110233,0,0,0,2,NULL),(4,NULL,'$2a$10$Xe.oPtaieXCpHIUIrLRLCubiUGoXCBNScf4eacFVbeZ6iMzoQJ/dq','jagrutiMalani@gmailcom',1378111807,0,0,0,0,NULL),(5,NULL,'$2a$10$2uWpOYeZaqyTXFmevaiePuRT1sThFjOfFAiSI/HqBdjSmn1nAsilK','neville.desouza@gmail.com',1378112018,0,0,0,1,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -256,7 +285,7 @@ CREATE TABLE `useraddress` (
   KEY `useraddress_ibfk_2` (`country`),
   CONSTRAINT `useraddress_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`),
   CONSTRAINT `useraddress_ibfk_2` FOREIGN KEY (`country`) REFERENCES `country` (`countryid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -265,6 +294,7 @@ CREATE TABLE `useraddress` (
 
 LOCK TABLES `useraddress` WRITE;
 /*!40000 ALTER TABLE `useraddress` DISABLE KEYS */;
+INSERT INTO `useraddress` VALUES (1,1,'A/12, New ambica sadan','anand nagar, dahisar (east)',NULL,'Mumbai','Maharashtra',102,400068,1377690382),(2,2,'A/102,,ambica sadan','blue galaxy, dahisar',NULL,'Mumbai','Maharashtra',102,400068,1378108295),(3,3,'A/12, New ambica sadan','anand nagar, dahisar (east)',NULL,'Mumbai','Maharashtra',102,400068,1378110711);
 /*!40000 ALTER TABLE `useraddress` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -344,6 +374,7 @@ CREATE TABLE `userinterests` (
 
 LOCK TABLES `userinterests` WRITE;
 /*!40000 ALTER TABLE `userinterests` DISABLE KEYS */;
+INSERT INTO `userinterests` VALUES (1,1),(3,1),(1,2),(2,2),(3,2),(1,3),(2,3),(3,3),(1,4),(3,4),(1,5),(3,5),(1,6),(2,6),(3,6),(1,7),(3,7),(1,8),(3,8),(1,9),(3,9),(1,10),(3,10),(1,11),(3,11),(1,12),(3,12),(1,13),(3,13),(1,14),(3,14),(1,15),(3,15),(3,16),(1,17),(2,17),(3,19),(1,21),(2,21),(1,38),(2,38),(1,39),(2,39),(3,39),(3,40),(1,41),(2,41),(1,63),(2,63);
 /*!40000 ALTER TABLE `userinterests` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -368,6 +399,7 @@ CREATE TABLE `userlanguage` (
 
 LOCK TABLES `userlanguage` WRITE;
 /*!40000 ALTER TABLE `userlanguage` DISABLE KEYS */;
+INSERT INTO `userlanguage` VALUES (3,1,'write'),(3,2,'read'),(3,3,'read'),(3,4,'read'),(3,4,'write'),(4,1,'read'),(4,2,'read'),(4,3,'read'),(5,2,'read'),(5,4,'read');
 /*!40000 ALTER TABLE `userlanguage` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -407,7 +439,6 @@ DROP TABLE IF EXISTS `userprofile`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `userprofile` (
   `userid` int(11) NOT NULL,
-  `penname` varchar(30) DEFAULT NULL,
   `firstname` varchar(30) DEFAULT NULL,
   `middlename` varchar(30) DEFAULT NULL,
   `lastname` varchar(30) DEFAULT NULL,
@@ -434,6 +465,7 @@ CREATE TABLE `userprofile` (
 
 LOCK TABLES `userprofile` WRITE;
 /*!40000 ALTER TABLE `userprofile` DISABLE KEYS */;
+INSERT INTO `userprofile` VALUES (1,'Ankita','parshottam','Malani','Female',650831400,102,'ankita@ankita.com','yes its der',1,0,0),(2,'jinal','bharat1','mashru','Female',678306600,102,'jinal@jinal.com','fffdsfdf',2,0,1),(3,'MEHUL','PARSHOTAM','MALANI','Male',779653800,102,'VVCXCX','yes its der',3,0,1),(4,'jagruti',NULL,'malani','Female',810345600,NULL,NULL,NULL,NULL,0,1),(5,'neville',NULL,'dsouza','Male',723513600,NULL,NULL,NULL,NULL,0,1);
 /*!40000 ALTER TABLE `userprofile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -474,4 +506,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-08-21 20:23:54
+/bin/bash: q: command not found

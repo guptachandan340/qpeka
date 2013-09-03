@@ -39,7 +39,7 @@ public interface UserDao {
 	/** 
 	 * Returns all rows from the user table that match the criteria 'username = :username'.
 	 */
-	public List<User> findWhereUsernameEquals(String username) throws UserException;
+	public List<User> findWherePennameEquals(String username) throws UserException;
 
 	/** 
 	 * Returns all rows from the user table that match the criteria 'password = :password'.

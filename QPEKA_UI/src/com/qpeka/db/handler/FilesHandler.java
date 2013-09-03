@@ -742,7 +742,6 @@ public class FilesHandler extends AbstractHandler implements FilesDao {
 			// bind parameters
 			for (int counter = 0; sqlParams != null
 					&& counter < sqlParams.size(); counter++) {
-				System.out.println(sqlParams.get(counter));
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
 			rs = stmt.executeQuery();

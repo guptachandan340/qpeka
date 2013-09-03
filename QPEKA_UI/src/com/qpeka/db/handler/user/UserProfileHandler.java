@@ -43,7 +43,7 @@ public class UserProfileHandler extends AbstractHandler implements
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT userid, penname, firstname, "
+	protected final String SQL_SELECT = "SELECT userid, firstname, "
 			+ "middlename, lastname, gender, dob, nationality, website, biography, profilepic, level, tnc FROM "
 			+ getTableName() + "";
 
@@ -57,15 +57,15 @@ public class UserProfileHandler extends AbstractHandler implements
 	 */
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
-			+ " ( userid, penname, firstname, middlename, lastname, gender, "
-			+ "dob, nationality, website, biography, level, profilepic, tnc) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+			+ " ( userid, firstname, middlename, lastname, gender, "
+			+ "dob, nationality, website, biography, level, profilepic, tnc) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
-			+ " SET userid = ?, penname = ?, firstname = ?, middlename = ?, "
+			+ " SET userid = ?, firstname = ?, middlename = ?, "
 			+ "lastname = ?, gender = ?, dob = ?, nationality = ?, website = ?, biography = ?, profilepic = ?, level = ? tnc = ? WHERE userid = ?";
 
 	/**
@@ -78,71 +78,67 @@ public class UserProfileHandler extends AbstractHandler implements
 	 * Index of column userid
 	 */
 	protected static final int COLUMN_USERID = 1;
-
-	/**
-	 * Index of column penname
-	 */
-	protected static final int COLUMN_PENNAME = 2;
+	
 
 	/**
 	 * Index of column firstname
 	 */
-	protected static final int COLUMN_FIRSTNAME = 3;
+	protected static final int COLUMN_FIRSTNAME = 2;
 
 	/**
 	 * Index of column middlename
 	 */
-	protected static final int COLUMN_MIDDLENAME = 4;
+	protected static final int COLUMN_MIDDLENAME = 3;
 
 	/**
 	 * Index of column lastname
 	 */
-	protected static final int COLUMN_LASTNAME = 5;
+	protected static final int COLUMN_LASTNAME = 4;
 
 	/**
 	 * Index of column gender
 	 */
-	protected static final int COLUMN_GENDER = 6;
+	protected static final int COLUMN_GENDER = 5;
 
 	/**
 	 * Index of column dob
 	 */
-	protected static final int COLUMN_DOB = 7;
+	protected static final int COLUMN_DOB = 6;
 
 	/**
 	 * Index of column nationality
 	 */
-	protected static final int COLUMN_NATIONALITY = 8;
+	protected static final int COLUMN_NATIONALITY = 7;
 
 	/**
 	 * Index of column website
 	 */
-	protected static final int COLUMN_WEBSITE = 9;
+	protected static final int COLUMN_WEBSITE = 8;
 
 	/**
 	 * Index of column biography
 	 */
-	protected static final int COLUMN_BIOGRAPHY = 10;
+	protected static final int COLUMN_BIOGRAPHY = 9;
 
 	/**
 	 * Index of column profilepic
 	 */
-	protected static final int COLUMN_PROFILEPIC = 11;
+	protected static final int COLUMN_PROFILEPIC = 10;
 
 	/**
 	 * Index of column level
 	 */
-	protected static final int COLUMN_LEVEL = 12;
+	protected static final int COLUMN_LEVEL = 11;
 
 	/**
 	 * Index of column TNC
 	 */
-	protected static final int COLUMN_TNC = 13;
+	protected static final int COLUMN_TNC = 12;
 	
 	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 13;
+	protected static final int NUMBER_OF_COLUMNS = 12;
 
 	/**
 	 * Index of primary-key column userid
@@ -191,17 +187,6 @@ public class UserProfileHandler extends AbstractHandler implements
 				}
 
 				sql.append("userid");
-				values.append("?");
-				modifiedCount++;
-			}
-
-			if (user.isPennameModified()) {
-				if (modifiedCount > 0) {
-					sql.append(", ");
-					values.append(", ");
-				}
-
-				sql.append("penname");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -344,10 +329,6 @@ public class UserProfileHandler extends AbstractHandler implements
 				stmt.setLong(index++, user.getUserid());
 			}
 
-			if (user.isPennameModified()) {
-				stmt.setString(index++, user.getPenname());
-			}
-
 			if (user.isNameModified()) {
 				if (user.getName().isFirstnameModified()) {
 					stmt.setString(index++, user.getName().getFirstname());
@@ -448,15 +429,6 @@ public class UserProfileHandler extends AbstractHandler implements
 				}
 
 				sql.append("userid=?");
-				modified = true;
-			}
-
-			if (user.isPennameModified()) {
-				if (modified) {
-					sql.append(", ");
-				}
-
-				sql.append("penname=?");
 				modified = true;
 			}
 
@@ -576,10 +548,6 @@ public class UserProfileHandler extends AbstractHandler implements
 				stmt.setLong(index++, user.getUserid());
 			}
 
-			if (user.isPennameModified()) {
-				stmt.setString(index++, user.getPenname());
-			}
-
 			if (user.isNameModified()) {
 				if (user.getName().isFirstnameModified()) {
 					stmt.setString(index++, user.getName().getFirstname());
@@ -603,7 +571,6 @@ public class UserProfileHandler extends AbstractHandler implements
 			}
 
 			if (user.isNationalityModified()) {
-				System.out.println(user.getNationality());
 				stmt.setShort(index++, user.getNationality());
 			}
 
@@ -730,14 +697,6 @@ public class UserProfileHandler extends AbstractHandler implements
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE userid = ? ORDER BY userid",
 				Arrays.asList(new Object[] { new Long(userid) }));
-	}
-
-	@Override
-	public List<UserProfile> findWherePennameEquals(String penname)
-			throws UserProfileException {
-		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE penname = ? ORDER BY penname",
-				Arrays.asList(new Object[] { penname }));
 	}
 
 	@Override
@@ -968,7 +927,6 @@ public class UserProfileHandler extends AbstractHandler implements
 	protected void populateUserProfile(UserProfile user, ResultSet rs)
 			throws SQLException {
 		user.setUserid(rs.getInt(COLUMN_USERID));
-		user.setPenname(rs.getString(COLUMN_PENNAME));
 		if(user.getName() == null) { 
 			user.setName(Name.getInstance());
 		}
@@ -994,7 +952,6 @@ public class UserProfileHandler extends AbstractHandler implements
 	 */
 	protected void reset(UserProfile user) {
 		user.setUseridModified(false);
-		user.setPennameModified(false);
 		if(user.getName() == null) { 
 			user.setName(Name.getInstance());
 		}
@@ -1049,7 +1006,7 @@ public class UserProfileHandler extends AbstractHandler implements
 		// Address address = new Address("India", "India", "", "Thane",
 		// "Maharashtra", "India", 400603);
 		Date dob = new Date();
-		UserProfile user = new UserProfile(1, "Rauline", name,
+		UserProfile user = new UserProfile(1, name,
 				GENDER.valueOf("Male"), dob, up.deriveAge(dob), (short) 102,
 				"rahulshelke.com", biography, 1,(short)1);
 		// "/home/rahul/Pictures/Webcam/2013-06-10-123500.jpg"
