@@ -17,7 +17,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 import com.qpeka.db.Constants;
-import com.qpeka.db.Constants.AUTHORTYPE;
+import com.qpeka.db.Constants.AUTHOR;
 import com.qpeka.db.Constants.CATEGORY;
 import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.LANGUAGES;
@@ -530,12 +530,13 @@ public class WorksHandler {
 	
 	public static void main(String[] args) throws JSONException {
 		
+		/*
 		com.qpeka.db.Constants.CATEGORY.valueOf("ART");
 		
 		for(int i = 0; i<10;i++)
 		{
-		Author a = new Author("", new Name("Mark"+i, "Donald"+i, "Shane"+i), GENDER.MALE, new Date(), "INDIAN", "", "He is an awsome writer"+i, "http://google.com/mark", CATEGORY.ART,
-				AUTHORTYPE.LEVEL1);
+		Author a = new Author("", new Name("Mark"+i, "Donald"+i, "Shane"+i), GENDER.MALE, new Date(), "INDIAN", "", "He is an awsome writer"+i, "http://google.com/mark", CATEGORY.CHILDREN,
+				AUTHOR.FRESH);
 		
 		String aid = AuthorHandler.getInstance().addAuthor(a);
 		
@@ -545,7 +546,7 @@ public class WorksHandler {
 		Work w = new Work("", "Marks work"+1, aid, "", CATEGORY.ART, WORKTYPE.BOOK, 100, metadata, "AWSOME BOOK"+i, LANGUAGES.ENGLISH, false);
 		
 		WorksHandler.getInstance().addWork(w);
-		}
+		} */
 //		String[] titles = {"Harry Potter" , "Pride & Prejudice" , "Gone with the wind"};
 //		String[] authorIds = {"5055fa47c4e7aaf93796c90a" , "5055fa47c4e7aaf93796c90d" , "5055fa47c4e7aaf93796c90f" , "5055fa47c4e7aaf93796c907" , "5055fa47c4e7aaf93796c906"};
 //		String[] publisherIds = {"50560049c4e7a9cad3686ed1","50560049c4e7a9cad3686ed4","50560049c4e7a9cad3686ed6"};
