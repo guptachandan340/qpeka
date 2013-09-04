@@ -1,17 +1,13 @@
 package com.qpeka.db.book.store;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.mongodb.Mongo;
 import com.mongodb.MongoOptions;
 import com.mongodb.ServerAddress;
-
 public class MongoAccessor 
 {
 	private static MongoAccessor instance = new MongoAccessor();
@@ -22,7 +18,6 @@ public class MongoAccessor
 	}
 	
 	private Mongo mongo = null;
-	
 	public Mongo getMongo() {
 		return mongo;
 	}

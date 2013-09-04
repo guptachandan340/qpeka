@@ -1,15 +1,14 @@
-package com.qpeka.servlets;
+package com.qpeka.services.user;
+
 import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -17,6 +16,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
+
 import com.qpeka.book.converter.FileConverterUtils;
 import com.qpeka.book.converter.FileEncryptionUtils;
 import com.qpeka.db.Constants.CATEGORY;
@@ -29,28 +29,15 @@ import com.qpeka.db.user.profile.type.Publisher;
 import com.qpeka.epub.provider.EpubProcessorNew;
 import com.qpeka.managers.WorkContentManager;
 import com.qpeka.utils.SystemConfigHandler;
-public class WorkUploadServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-   
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public WorkUploadServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
-	}
+@Path("/user/work")
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+public class WorkUploadService {
+	@POST
+	@Path("/upload")
+	
+	public Response workUpload(@Context HttpServletRequest request){
+		String response = null;
 		boolean create = false;
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		//file upload part 
@@ -185,7 +172,7 @@ public class WorkUploadServlet extends HttpServlet {
 	                    	
 	                    	if(name.equalsIgnoreCase("publisherName")){
 	                    		publisherName = value;
-	                    	   System.out.println("publishernam"+publisherName);}
+	                    	   System.out.println("publisherid"+publisherId);}
 	                    	
 	                    	if(name.equalsIgnoreCase("pday")){
 	                    		pday = Integer.parseInt(value);
@@ -246,7 +233,7 @@ public class WorkUploadServlet extends HttpServlet {
         	
         	File cvr = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+ "/"+coverPage);
         	if(cvr != null && cvr.exists())
-        	{      
+        	{
         		File idedFile = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+ "/"+_id+".jpg");
         		FileUtils.copyFile(cvr, idedFile);	
         		cvr.delete();
@@ -278,40 +265,18 @@ public class WorkUploadServlet extends HttpServlet {
         		
         		cvr.delete();
         	}
-        	
-        	response.setContentType("application/json");
-        	JSONObject resp = new JSONObject();
-        	resp.put("result", "success");
-        	resp.put("_id", _id);
-        	
-        	Writer wr = response.getWriter();
-        	wr.write(resp.toString()); 
-        	wr.flush();
-        	
-        	return;
-        	
-        	
+        response="sucsess";	
+        		
         }
         catch (Exception e) {
 			e.printStackTrace();
 		}
+        return Response.status(200).entity(response).build();	
+     
 	}
-	
-	private static long getDate(int month , int year , int date)
-	{
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.MONTH, month-1);  
-		c.set(Calendar.DAY_OF_MONTH, date);  
-		c.set(Calendar.YEAR, year);
-		Date dt = c.getTime();
-		System.out.println(dt.toString());
-		return dt.getTime();
-	}
-	
-	public static void main(String[] args) {
 		
-		long l = getDate(12,1987,23);
 		
-		System.out.println(new Date(l));
-	}
+		
+		
+        
 }

@@ -1,9 +1,7 @@
 package com.qpeka.db.book.store.tuples;
-
 import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.qpeka.db.Constants;
@@ -251,7 +249,7 @@ public class Work {
 			dbObj.put(ID, new ObjectId(_id));
 		
 		dbObj.put(TITLE, title);
-		dbObj.put(AUTHORID, new ObjectId(authorId));
+		dbObj.put(AUTHORID, authorId);//new ObjectId(authorId));
 		dbObj.put(COVERPAGEFILE, coverPageFile);
 		dbObj.put(EDITION, edition);
 		dbObj.put(CATEGORY, category.toString());
