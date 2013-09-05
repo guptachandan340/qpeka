@@ -6,6 +6,10 @@ import com.qpeka.db.handler.CategoryHandler;
 
 public class Genre implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2504970655008686968L;
 	public static final String GENREID = "genreid";
 	public static final String CATEGORYID = "categoryid";
 	public static final String GENRE = "genre";
@@ -54,7 +58,7 @@ public class Genre implements Serializable {
 	 * Getters and setters for attributes
 	 */
 	public short getGenreid() {
-		return categoryid;
+		return genreid;
 	}
 
 	public void setGenreid(short genreid) {

@@ -57,8 +57,8 @@ private static UserManager instance = null;
 		
 		UserProfile u = new UserProfile(userName, "", new Name(firstName, middleName, lastName), gender, email, addr, interests, level, new ArrayList<BookMark>(),
 				age, dob, nationality, imageFile , phone, userType);
-		u.setrLang(rLang);
-		u.setwLang(wLang);
+		u.setRLang(rLang);
+		u.setWLang(wLang);
 		u.setDesc(desc);
 		u.setPenName(penName);
 		
@@ -89,8 +89,8 @@ private static UserManager instance = null;
 		
 		UserProfile u = new UserProfile(userName, "", new Name(firstName, middleName, lastName), gender, email, addr, interests, level, new ArrayList<BookMark>(),
 				age, dob, nationality, imageFile , phone, userType);
-		u.setrLang(rLang);
-		u.setwLang(wLang);
+		u.setRLang(rLang);
+		u.setWLang(wLang);
 		u.setDesc(desc);
 		u.setPenName(penName);
 		

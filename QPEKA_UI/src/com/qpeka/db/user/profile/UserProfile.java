@@ -8,12 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import com.qpeka.db.Badges;
-import com.qpeka.db.Category;
 import com.qpeka.db.Constants;
 import com.qpeka.db.Constants.BADGES;
 import com.qpeka.db.Constants.GENDER;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
+import com.qpeka.db.Genre;
 import com.qpeka.db.Languages;
 
 /*
@@ -101,7 +101,7 @@ public class UserProfile implements Serializable {
 
 	private Address address = new Address();
 
-	private Set<Category> interests = new HashSet<Category>();
+	private Set<Genre> interests = new HashSet<Genre>();
 	private Set<Languages> rLang = new HashSet<Languages>();
 	private Set<Languages> wLang = new HashSet<Languages>();
 
@@ -159,7 +159,7 @@ public class UserProfile implements Serializable {
 	public UserProfile(long userid, Name name,
 			com.qpeka.db.Constants.GENDER gender, Date dob, short age,
 			short nationality, String website, String biography,
-			int profilepic, short tnc, Address address, Set<Category> interests,
+			int profilepic, short tnc, Address address, Set<Genre> interests,
 			Set<Languages> rLang, Set<Languages> wLang, Set<Badges> userbadges,
 			Map<String, Integer> userpoints, USERLEVEL userlevel,
 			USERTYPE usertype) {// , List<BookMark>
@@ -310,29 +310,29 @@ public class UserProfile implements Serializable {
 		this.addressModified = true;
 	}
 
-	public Set<Category> getInterests() {
+	public Set<Genre> getInterests() {
 		return interests;
 	}
 
-	public void setInterests(Set<Category> interests) {
+	public void setInterests(Set<Genre> interests) {
 		this.interests = interests;
 		this.interestsModified = true;
 	}
 
-	public Set<Languages> getrLang() {
+	public Set<Languages> getRLang() {
 		return rLang;
 	}
 
-	public void setrLang(Set<Languages> rLang) {
+	public void setRLang(Set<Languages> rLang) {
 		this.rLang = rLang;
 		this.rLangModified = true;
 	}
 
-	public Set<Languages> getwLang() {
+	public Set<Languages> getWLang() {
 		return wLang;
 	}
 
-	public void setwLang(Set<Languages> wLang) {
+	public void setWLang(Set<Languages> wLang) {
 		this.wLang = wLang;
 		this.wLangModified = true;
 	}

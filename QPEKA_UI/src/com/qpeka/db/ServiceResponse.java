@@ -1,4 +1,4 @@
-package com.qpeka.services.Errors;
+package com.qpeka.db;
 
 import java.io.Serializable;
 
