@@ -15,7 +15,6 @@ import com.qpeka.db.Category;
 import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.CategoryDao;
 import com.qpeka.db.exceptions.CategoryException;
-import com.qpeka.db.handler.user.UserHandler;
 
 public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
@@ -37,7 +36,7 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT categoryid, type, category, genre, points FROM "
+	protected final String SQL_SELECT = "SELECT categoryid, type, category FROM "
 			+ getTableName() + "";
 
 	/**
@@ -49,15 +48,14 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	 * SQL INSERT statement for this table
 	 */
 	protected final String SQL_INSERT = "INSERT INTO " + getTableName()
-			+ " ( categoryid, type, category, genre, points ) "
-			+ "VALUES ( ?, ?, ?, ?, ? )";
+			+ " ( categoryid, type, category ) "
+			+ "VALUES ( ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE " + getTableName()
-			+ " SET categoryid = ?, type = ?, category = ?, genre = ?, "
-			+ "points = ? WHERE categoryid = ?";
+			+ " SET categoryid = ?, type = ?, category = ? WHERE categoryid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -81,19 +79,9 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 	protected static final int COLUMN_CATEGORY = 3;
 
 	/**
-	 * Index of column genre
-	 */
-	protected static final int COLUMN_GENRE = 4;
-
-	/**
-	 * Index of column points
-	 */
-	protected static final int COLUMN_POINTS = 5;
-
-	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 5;
+	protected static final int NUMBER_OF_COLUMNS = 3;
 
 	/**
 	 * Index of primary-key column categoryid
@@ -175,28 +163,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 				modifiedCount++;
 			}
 
-			if (category.isGenreModified()) {
-				if (modifiedCount > 0) {
-					sql.append(", ");
-					values.append(", ");
-				}
-
-				sql.append("genre");
-				values.append("?");
-				modifiedCount++;
-			}
-
-			if (category.isPointsModified()) {
-				if (modifiedCount > 0) {
-					sql.append(", ");
-					values.append(", ");
-				}
-
-				sql.append("points");
-				values.append("?");
-				modifiedCount++;
-			}
-
 			if (modifiedCount == 0) {
 				// nothing to insert
 				throw new IllegalStateException("Nothing to insert");
@@ -218,14 +184,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 			if (category.isCategoryModified()) {
 				stmt.setString(index++, category.getCategory());
-			}
-
-			if (category.isGenreModified()) {
-				stmt.setString(index++, category.getGenre());
-			}
-
-			if (category.isPointsModified()) {
-				stmt.setInt(index++, category.getPoints());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -302,24 +260,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 				modified = true;
 			}
 
-			if (category.isGenreModified()) {
-				if (modified) {
-					sql.append(", ");
-				}
-
-				sql.append("genre=?");
-				modified = true;
-			}
-
-			if (category.isPointsModified()) {
-				if (modified) {
-					sql.append(", ");
-				}
-
-				sql.append("points=?");
-				modified = true;
-			}
-
 			if (!modified) {
 				// nothing to update
 				return -1;
@@ -343,14 +283,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 			if (category.isCategoryModified()) {
 				stmt.setString(index++, category.getCategory());
-			}
-
-			if (category.isGenreModified()) {
-				stmt.setString(index++, category.getGenre());
-			}
-
-			if (category.isPointsModified()) {
-				stmt.setInt(index++, category.getPoints());
 			}
 
 			stmt.setShort(index++, categoryid);
@@ -407,7 +339,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
 	}
 
@@ -446,22 +377,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE category = ? ORDER BY category",
 				Arrays.asList(new Object[] { category }));
-	}
-
-	@Override
-	public List<Category> findWhereGenreEquals(String genre)
-			throws CategoryException {
-		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE genre = ? ORDER BY genre",
-				Arrays.asList(new Object[] { genre }));
-	}
-
-	@Override
-	public List<Category> findWherePointsEquals(int points)
-			throws CategoryException {
-		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE points = ? ORDER BY points",
-				Arrays.asList(new Object[] { new Integer(points) }));
 	}
 
 	@Override
@@ -657,8 +572,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		category.setCategoryid(rs.getShort(COLUMN_CATEGORYID));
 		category.setType(rs.getString(COLUMN_TYPE));
 		category.setCategory(rs.getString(COLUMN_CATEGORY));
-		category.setGenre(rs.getString(COLUMN_GENRE));
-		category.setPoints(rs.getInt(COLUMN_POINTS));
 		reset(category);
 	}
 
@@ -669,8 +582,6 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		category.setCategoryidModified(false);
 		category.setTypeModified(false);
 		category.setCategoryModified(false);
-		category.setGenreModified(false);
-		category.setPointsModified(false);
 	}
 
 	/**

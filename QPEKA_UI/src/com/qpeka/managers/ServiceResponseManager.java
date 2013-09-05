@@ -3,9 +3,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qpeka.db.ServiceResponse;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.handler.ServiceResponseHandler;
-import com.qpeka.services.Errors.ServiceResponse;
 
 public class ServiceResponseManager {
 

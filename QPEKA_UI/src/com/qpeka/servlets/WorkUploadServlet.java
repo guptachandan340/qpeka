@@ -1,6 +1,7 @@
 package com.qpeka.servlets;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,7 +52,8 @@ public class WorkUploadServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		boolean create = false;
+		
+	/*	boolean create = false;
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		//file upload part 
 	    String filePath = "";
@@ -294,7 +296,12 @@ public class WorkUploadServlet extends HttpServlet {
         }
         catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
+		response.setContentType("text/html");
+
+	      // Actual logic goes here.
+	      PrintWriter out = response.getWriter();
+	      out.println("hi");
 	}
 	
 	private static long getDate(int month , int year , int date)

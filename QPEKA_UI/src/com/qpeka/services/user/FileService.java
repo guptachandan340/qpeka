@@ -1,6 +1,7 @@
 package com.qpeka.services.user;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -18,16 +19,10 @@ public class FileService {
 	// pass userObject instead of userId
 	@Path("/readbyuserfiles")
 	public Response retrievingFileService(@FormParam("userid") long userid, @FormParam("FileType") String filetype) {
-		List<Files> files = null;
-		List<Files> filesIdentifiers = null;
+		Map<String, Entry<String, String>> files = null;
 		String response = null;
 		files = FilesManager.getInstance().readFiles(userid,filetype,Files.FILETYPE);
-		System.out.println(files);
-		for(Files file : files) {
-		//	file = 
-			//filesIdentifiers.add(file);
-			
-		}
+	
 		if(!files.isEmpty() && files != null) {
 			Gson gson = new Gson();
 			response = gson.toJson(files);

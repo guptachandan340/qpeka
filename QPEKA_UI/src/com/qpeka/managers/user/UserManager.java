@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.ws.rs.core.MultivaluedMap;
@@ -28,9 +29,12 @@ import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
 import com.qpeka.db.Country;
 import com.qpeka.db.Files;
+import com.qpeka.db.Genre;
 import com.qpeka.db.Languages;
+import com.qpeka.db.ServiceResponse;
 import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.CategoryException;
+import com.qpeka.db.exceptions.GenreException;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.LanguagesException;
@@ -44,6 +48,7 @@ import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.CountryHandler;
 import com.qpeka.db.handler.FilesHandler;
+import com.qpeka.db.handler.GenreHandler;
 import com.qpeka.db.handler.LanguagesHandler;
 import com.qpeka.db.handler.user.AddressHandler;
 import com.qpeka.db.handler.user.UserHandler;
@@ -56,10 +61,10 @@ import com.qpeka.db.user.profile.Name;
 import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
+import com.qpeka.managers.CategoryManager;
 import com.qpeka.managers.FilesManager;
 import com.qpeka.managers.ServiceResponseManager;
 import com.qpeka.security.bcrypt.BCrypt;
-import com.qpeka.services.Errors.ServiceResponse;
 
 import org.apache.commons.collections4.map.MultiValueMap;
 
@@ -141,7 +146,7 @@ public class UserManager {
 					for (String key : keySet) {
 						if (key.equalsIgnoreCase(Languages.LANGUAGE)) {
 							List<String> languages = formParams.get(key);
-							userProfile.setrLang(updateUserLanguages(userid,
+							userProfile.setRLang(updateUserLanguages(userid,
 									"read", languages, sResponse));
 						}
 					}
@@ -213,7 +218,6 @@ public class UserManager {
 		
 		char[] patternChar;
 		patternChar = "._".toCharArray();
-		List<User> users = new ArrayList<User>();
 		List<Object> penNameComb = new ArrayList<Object>();
 		Set<String> penNamedbSet = new HashSet<String>();
 		
@@ -234,13 +238,11 @@ public class UserManager {
 	
 		// TODO findbyDynamicSelect() to find only penname.gave error getLong() not matching with String
 		
-		// retrieve user object from databases to check whether penExist
-		try {
-			users = UserHandler.getInstance().findByDynamicWhere(
-					buildQuery("penname", penNameComb.size()), penNameComb);
-					
+		// retrieve user object from databases to check whether penNameExist
+		try {					
 			// Adding only penname to HashSet
-			for (User userList : users) {
+			for (User userList : UserHandler.getInstance().findByDynamicWhere(
+					buildQuery("penname", penNameComb.size()), penNameComb)) {
 				penNamedbSet.add(userList.getPenname());
 			}
 			
@@ -326,7 +328,7 @@ public class UserManager {
 		} else {
 			sResponse.setStatus(215);
 		}
-		loginresponse.put("Service Error: ", ServiceResponseManager.getInstance()
+		loginresponse.put("ServiceResponse :", ServiceResponseManager.getInstance()
 				.readServiceResponse(sResponse.getStatus()));
 		return loginresponse;
 	}
@@ -524,6 +526,24 @@ public class UserManager {
 		}
 		return profileInfo;
 	}
+	
+	/**
+	 * 
+	 * @param userid
+	 * @return
+	 * @throws UserProfileException
+	 * 
+	 */
+	
+	/*public MultiValueMap<String, Object> getOwnProfile(long userid)
+			throws UserProfileException {
+		User user = User.getInstance();
+		ServiceResponse sResponse = ServiceResponse.getInstance();
+		MultiValueMap<String, Object> profileInfo = new MultiValueMap<String, Object>();
+		
+		return null;
+	
+	}*/
 
 	/*
 	 * Create EditedInfo Map dob nationality website biography level tnc
@@ -547,6 +567,7 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		if (!userProfile.isEmpty() && userProfile != null) {
 			if (userProfile.get(0).getName().getMiddlename() != null) {
 				userInfo.put(Name.MIDDLENAME.toLowerCase(), userProfile.get(0)
@@ -563,14 +584,14 @@ public class UserManager {
 			} else {
 				userInfo.put(UserProfile.DOB.toLowerCase(), "");
 			}
-			if (userProfile.get(0).getNationality() > 0) {
+		/*	if (userProfile.get(0).getNationality() > 0) {
 				userInfo.put(
 						UserProfile.NATIONALITY,
 						getCountryIdentifiers(userProfile.get(0)
 								.getNationality(), "countryid"));
 			} else {
 				userInfo.put(UserProfile.NATIONALITY.toLowerCase(), "");
-			}
+			}*/
 			if (!userAddress.isEmpty() && userAddress != null) {
 				if (userAddress.get(0).getAddressLine1() != null) {
 					userInfo.put(Address.ADDRESSLINE1.toLowerCase(),
@@ -636,14 +657,82 @@ public class UserManager {
 			} else {
 				userInfo.put(UserProfile.WEBSITE.toLowerCase(), "");
 			}
-			/*if (userProfile.get(0).getUserlevel() != null) {
-				userInfo.put(UserProfile.USERLEVEL.toLowerCase(), userProfile
-						.get(0).getUserlevel());
+
+			if (userProfile.get(0).getInterests() != null) {
+				getUserInterests(user.getUserid(),userInfo);
 			} else {
-				userInfo.put(UserProfile.USERLEVEL.toLowerCase(), "");
-			}*/
+				userInfo.put(UserProfile.INTERESTS.toLowerCase(), userProfile
+						.get(0).getInterests());
+			}
+			
+			if (userProfile.get(0).getRLang() != null) {
+				getLanguages(user.getUserid(),userInfo,"read");
+			} else {
+				userInfo.put(UserProfile.RLANG.toLowerCase(), userProfile
+						.get(0).getRLang());
+			}
+			
+			if (userProfile.get(0).getWLang() != null) {
+				getLanguages(user.getUserid(),userInfo,"write");
+			} else {
+				userInfo.put(UserProfile.WLANG.toLowerCase(), userProfile
+						.get(0).getWLang());
+			}
 		}
 		return userInfo;
+	}
+
+	private void getLanguages(long userid,
+			MultiValueMap<String, Object> userInfo, String langType) {
+		
+		List<Object> readFilesobj = new ArrayList<Object>();
+		readFilesobj.add(userid);
+		readFilesobj.add(langType);
+		try {
+			for(UserLanguage uLanguage : UserLanguageHandler
+					.getInstance()
+					.findByDynamicWhere("userid = ? AND type = ?", readFilesobj)) {
+				for (Languages lang : LanguagesHandler.getInstance()
+						.findWhereLanguageidEquals(uLanguage.getLanguageid())) {
+					 
+					//TODO ask for efficiency; returning entire language set or comparing String is more efficient
+					if(langType.equalsIgnoreCase("read")) {
+						userInfo.put(UserProfile.RLANG, lang.getLanguage());
+					} else {
+						userInfo.put(UserProfile.WLANG, lang.getLanguage());
+					}
+				}
+			}
+		} catch (UserLanguageException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (LanguagesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void getUserInterests(long userid, MultiValueMap<String, Object> userInfo) {
+		Set<String> s = new HashSet<String>();
+		try {
+			for (UserInterests uInterests : UserInterestsHandler.getInstance()
+					.findWhereUseridEquals(userid)) {
+				for(Genre g : GenreHandler.getInstance()
+						.findWhereGenreidEquals(uInterests.getGenreid())) {
+					// Add genre to Set to remove duplicates
+					s.add(g.getGenre());
+				}
+			}
+		} catch (UserInterestsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (GenreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for(String s1 : s) {
+			userInfo.put(UserProfile.INTERESTS.toLowerCase(), s1);
+		}
 	}
 
 	/*
@@ -871,11 +960,11 @@ public class UserManager {
 								userid, sResponse));
 					} else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
 						// Read Language if language is rLang {
-						userProfile.setrLang(updateUserLanguages(userid,
+						userProfile.setRLang(updateUserLanguages(userid,
 								"read", userInfo, sResponse));
 					} else if (key.equalsIgnoreCase(UserProfile.WLANG)) {
 						// Read Language if language is wLang {
-						userProfile.setwLang(updateUserLanguages(userid,
+						userProfile.setWLang(updateUserLanguages(userid,
 								"write", userInfo, sResponse));
 					}
 				}
@@ -912,13 +1001,13 @@ public class UserManager {
 			UserProfile userProfile, ServiceResponse sResponse) {
 		Files file = Files.getInstance();
 		long fileid = 0;
-		List<Files> userPicExist = null;
+		Map<String, Entry<String, String>> userPicExist = null;
 		userPicExist = FilesManager.getInstance().readFiles(userid,
 				"profilepic", Files.FILETYPE);
 		if (!userPicExist.isEmpty()) {
 			if (FilesManager.getInstance().updateFiles(
-					userPicExist.get(0).getFileid(), userInfoValue) != -1) {
-				fileid = userPicExist.get(0).getFileid();
+					Long.parseLong(userPicExist.get(Files.FILEID).toString()), userInfoValue) != -1) {
+				fileid = Long.parseLong(userPicExist.get(Files.FILEID).toString());
 			}
 		} else {
 			file = FilesManager.getInstance().InsertFiles(userid, "profilepic", userInfoValue);
@@ -988,41 +1077,45 @@ public class UserManager {
 		}
 	}
 
-	public Set<Category> updateUserInterests(List<String> userInfo,
+	public Set<Genre> updateUserInterests(List<String> userInfo,
 			long userid, ServiceResponse sResponse) {
 		List<Object> editedInfoList = new ArrayList<Object>();
 		List<Category> categories = null;
-		List<Category> genre = null;
-
-		// Constructing unique category set
-		Set<Category> uniqueSet = new HashSet<Category>();
-		for (String category : userInfo) {
-			editedInfoList.add(category);
+		Set<Genre> genreDbSet = null;
+		for (String uInfo : userInfo) {
+			editedInfoList.add(uInfo);
 		}
 		try {
-			genre = CategoryHandler.getInstance().findByDynamicWhere(
-					buildQuery("genre", userInfo.size()), editedInfoList);
+			genreDbSet = new HashSet<Genre>(GenreHandler.getInstance().findByDynamicWhere(
+					buildQuery("genre", userInfo.size()), editedInfoList));
+
 			categories = CategoryHandler.getInstance().findByDynamicWhere(
 					buildQuery("category", userInfo.size()), editedInfoList);
 
-			uniqueSet.addAll(genre);
-			uniqueSet.addAll(categories);
-			if (!uniqueSet.isEmpty() && uniqueSet != null) {
+			// Constructing unique category set
+			for (Category category : categories) {
+				genreDbSet.addAll(GenreHandler.getInstance()
+						.findWhereCategoryidEquals(category.getCategoryid()));
+			}
+			
+			if(!genreDbSet.isEmpty() && genreDbSet != null) {
 				UserInterests userInterests = UserInterests.getInstance();
-
-				for (Category category : uniqueSet) {
+				for (Genre genre : genreDbSet) {
 					userInterests.setUserid(userid);
-					userInterests.setCategoryid(category.getCategoryid());
+					userInterests.setGenreid(genre.getGenreid());
 					userInterests = UserInterestsHandler.getInstance().insert(
 							userInterests);
 				}
 				if (userInterests != null) {
 					sResponse.setStatus(200);
-					return uniqueSet;
+					return genreDbSet;
 				} else {
 					sResponse.setStatus(215);
 				}
 			}
+		} catch (GenreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (CategoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1030,7 +1123,7 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return uniqueSet;
+		return genreDbSet;
 	}
 
 	/**
@@ -1284,13 +1377,20 @@ public class UserManager {
 		interests.add("Classic");
 		interests.add("Fiction");
 		interests.add("Children Learning");
-		System.out.println(usermgr.updateUserInterests(interests, (long) 1,
-				sResponse));
-
-		List<String> lang = new ArrayList<String>();
+		usermgr.updateUserInterests(interests, (long) 1,
+				sResponse);
+*/
+	/*	List<String> lang = new ArrayList<String>();
 		lang.add("MARATHI");
 		lang.add("HINDI");
 		lang.add("ENGLISH");
-		usermgr.updateUserLanguages((long) 1, "write", lang, sResponse);*/
-	}
+		usermgr.updateUserLanguages((long) 1, "write", lang, sResponse);
+	*/	
+		try {
+			System.out.println(UserManager.getInstance().getProfile((long)1));
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
 }// End of class UserManager.java

@@ -54,14 +54,9 @@ DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
   `categoryid` smallint(6) NOT NULL AUTO_INCREMENT,
   `type` enum('book','short story','poem','article') DEFAULT 'book',
-  `category` varchar(50) NOT NULL DEFAULT '',
-  `genre` varchar(50) NOT NULL DEFAULT '',
-  `points` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`categoryid`),
-  UNIQUE KEY `category` (`category`,`genre`),
-  KEY `category_2` (`category`),
-  KEY `genre` (`genre`)
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
+  `category` varchar(50) NOT NULL,
+  PRIMARY KEY (`categoryid`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +65,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'book','Fiction','Adult',0),(2,'book','Fiction','Classic',0),(3,'book','Fiction','Fantasy',0),(4,'book','Fiction','Crime',0),(5,'book','Fiction','Mistry',0),(6,'book','Fiction','Historical',0),(7,'book','Fiction','Romance',0),(8,'book','Fiction','Drama',0),(9,'book','Fiction','SciFi',0),(10,'book','Fiction','Horror',0),(11,'book','Fiction','Picture Books',0),(12,'book','Fiction','Rhytmic Books',0),(13,'book','Fiction','Folklore',0),(14,'book','Fiction','Fables',0),(15,'book','Fiction','Fairytales',0),(16,'book','Non-Fiction','Adult',0),(17,'book','Non-Fiction','Classic',0),(18,'book','Non-Fiction','Crime',0),(19,'book','Non-Fiction','Mistry',0),(21,'book','Non-Fiction','Historical',0),(22,'book','Non-Fiction','Romance',0),(23,'book','Non-Fiction','Drama',0),(24,'book','Non-Fiction','Biography',0),(25,'book','Non-Fiction','Autobiography',0),(26,'book','Non-Fiction','Business',0),(27,'book','Non-Fiction','Environment',0),(28,'book','Non-Fiction','Health',0),(29,'book','Non-Fiction','Personal Development',0),(30,'book','Non-Fiction','Politics',0),(31,'book','Non-Fiction','Philosophy',0),(32,'book','Non-Fiction','Society',0),(33,'book','Non-Fiction','Science',0),(34,'book','Non-Fiction','Technology',0),(35,'book','Non-Fiction','Cultural',0),(36,'book','Non-Fiction','Arts',0),(37,'book','Non-Fiction','Picture Books',0),(38,'book','Childrens Book','Classic',0),(39,'book','Childrens Book','Fantasy',0),(40,'book','Childrens Book','Mistry',0),(41,'book','Childrens Book','Historical',0),(42,'book','Childrens Book','Romance',0),(43,'book','Childrens Book','Drama',0),(44,'book','Childrens Book','SciFi',0),(45,'book','Childrens Book','Biography',0),(46,'book','Childrens Book','Autobiography',0),(47,'book','Childrens Book','Environment',0),(48,'book','Childrens Book','Health',0),(49,'book','Childrens Book','Personal Development',0),(50,'book','Childrens Book','Philosophy',0),(51,'book','Childrens Book','Society',0),(52,'book','Childrens Book','Science',0),(53,'book','Childrens Book','Technology',0),(54,'book','Childrens Book','Cultural',0),(55,'book','Childrens Book','Arts',0),(56,'book','Childrens Book','Picture Books',0),(57,'book','Childrens Book','Rhytmic Books',0),(58,'book','Childrens Book','Baby Learning',0),(59,'book','Childrens Book','Folklore',0),(60,'book','Childrens Book','Fables',0),(61,'book','Childrens Book','Fairytales',0),(62,'book','Childrens Book','Children Learning',0),(63,'book','Education','Historical',0),(64,'book','Education','Biography',0),(65,'book','Education','Autobiography',0),(66,'book','Education','Business',0),(67,'book','Education','Environment',0),(68,'book','Education','Health',0),(69,'book','Education','Personal Development',0),(70,'book','Education','Politics',0),(71,'book','Education','Philosophy',0),(72,'book','Education','Society',0),(73,'book','Education','Science',0),(74,'book','Education','Technology',0),(75,'book','Education','Cultural',0),(76,'book','Education','Arts',0),(77,'book','Education','Picture Books',0),(78,'book','Education','Rhytmic Books',0),(79,'book','Education','Baby Learning',0),(80,'book','Education','Children Learning',0);
+INSERT INTO `category` VALUES (1,'book','Childrens Book'),(2,'book','Education'),(3,'book','Fiction'),(4,'book','Non-Fiction');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,7 +124,7 @@ CREATE TABLE `files` (
   KEY `timestamp` (`timestamp`),
   KEY `files_ibfk_1` (`userid`),
   CONSTRAINT `files_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,8 +133,36 @@ CREATE TABLE `files` (
 
 LOCK TABLES `files` WRITE;
 /*!40000 ALTER TABLE `files` DISABLE KEYS */;
-INSERT INTO `files` VALUES (1,1,'profilepic','IMG-20130814-WA0001','/home/ankita/Desktop/ankita pics/IMG-20130814-WA0001.jpg','image/jpeg','.jpg',94319,0,1377855676),(2,2,'profilepic','30733d8','/home/ankita/Downloads/30733d8.jpg','image/jpeg','.jpg',8869,0,1378105526),(3,3,'profilepic','30733d8','/home/ankita/Downloads/30733d8.jpg','image/jpeg','.jpg',8869,0,1378110711);
+INSERT INTO `files` VALUES (1,1,'profilepic','IMG-20130814-WA0001','/home/ankita/Desktop/ankita pics/IMG-20130814-WA0001.jpg','image/jpeg','.jpg',94319,0,1377855676),(2,2,'profilepic','30733d8','/home/ankita/Downloads/30733d8.jpg','image/jpeg','.jpg',8869,0,1378105526),(3,3,'profilepic','30733d8','/home/ankita/Downloads/30733d8.jpg','image/jpeg','.jpg',8869,0,1378110711),(4,6,'profilepic','IMG-20130814-WA0008','/home/ankita/Desktop/ankita pics/IMG-20130814-WA0008.jpg','image/jpeg','.jpg',129850,0,1378135115);
 /*!40000 ALTER TABLE `files` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `genre`
+--
+
+DROP TABLE IF EXISTS `genre`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `genre` (
+  `genreid` smallint(6) NOT NULL AUTO_INCREMENT,
+  `categoryid` smallint(6) NOT NULL,
+  `genre` varchar(50) NOT NULL DEFAULT '',
+  `points` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`genreid`),
+  KEY `categoryid_fk` (`categoryid`),
+  CONSTRAINT `categoryid_fk` FOREIGN KEY (`categoryid`) REFERENCES `category` (`categoryid`)
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `genre`
+--
+
+LOCK TABLES `genre` WRITE;
+/*!40000 ALTER TABLE `genre` DISABLE KEYS */;
+INSERT INTO `genre` VALUES (1,3,'Adult',0),(2,3,'Classic',0),(3,3,'Fantasy',0),(4,3,'Crime',0),(5,3,'Mistry',0),(6,3,'Historical',0),(7,3,'Romance',0),(8,3,'Drama',0),(9,3,'SciFi',0),(10,3,'Horror',0),(11,3,'Picture Books',0),(12,3,'Rhytmic Books',0),(13,3,'Folklore',0),(14,3,'Fables',0),(15,3,'Fairytales',0),(16,4,'Adult',0),(17,4,'Classic',0),(18,4,'Crime',0),(19,4,'Mistry',0),(20,4,'Historical',0),(21,4,'Romance',0),(22,4,'Drama',0),(23,4,'Biography',0),(24,4,'Autobiography',0),(25,4,'Business',0),(26,4,'Environment',0),(27,4,'Health',0),(28,4,'Personal Development',0),(29,4,'Politics',0),(30,4,'Philosophy',0),(31,4,'Society',0),(32,4,'Science',0),(33,4,'Technology',0),(34,4,'Cultural',0),(35,4,'Arts',0),(36,4,'Picture Books',0),(37,1,'Classic',0),(38,1,'Fantasy',0),(39,1,'Mistry',0),(40,1,'Historical',0),(41,1,'Romance',0),(42,1,'Drama',0),(43,1,'SciFi',0),(44,1,'Biography',0),(45,1,'Autobiography',0),(46,1,'Environment',0),(47,1,'Health',0),(48,1,'Personal Development',0),(49,1,'Philosophy',0),(50,1,'Society',0),(51,1,'Science',0),(52,1,'Technology',0),(53,1,'Cultural',0),(54,1,'Arts',0),(55,1,'Picture Books',0),(56,1,'Rhytmic Books',0),(57,1,'Baby Learning',0),(58,1,'Folklore',0),(59,1,'Fables',0),(60,1,'Fairytales',0),(61,1,'Children Learning',0),(62,2,'Historical',0),(63,2,'Biography',0),(64,2,'Autobiography',0),(65,2,'Business',0),(66,2,'Environment',0),(67,2,'Health',0),(68,2,'Personal Development',0),(69,2,'Politics',0),(70,2,'Philosophy',0),(71,2,'Society',0),(72,2,'Science',0),(73,2,'Technology',0),(74,2,'Cultural',0),(75,2,'Arts',0),(76,2,'Picture Books',0),(77,2,'Rhytmic Books',0),(78,2,'Baby Learning',0),(79,2,'Children Learning',0);
+/*!40000 ALTER TABLE `genre` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -249,7 +272,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`userid`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `username` (`penname`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -258,7 +281,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'ankitaMalani','$2a$10$hhkQ4s6bUmTmZskLT.kvcO.tROLQGdkvTliNN4hKlTWh5NZ7nCTcW','anki546.malani@gmail.com',1377614876,0,1377686976,0,0,NULL),(2,'JinalMashruwala','$2a$10$k.CKAzF/OLcRGl0zPR/liO9jvQJkF8TD.CCFnmhOB1K5sFhHf8GXC','jinalmashruwala@gmail.com',1378104731,0,0,0,1,NULL),(3,'mehulmalani','$2a$10$RjUUfx5q7m8NurSnKsqem.tB17zFRI3TxDVlTPU/uCY8Iq1R9VLOe','mehulmalani16@yahoo.com',1378110233,0,0,0,2,NULL),(4,NULL,'$2a$10$Xe.oPtaieXCpHIUIrLRLCubiUGoXCBNScf4eacFVbeZ6iMzoQJ/dq','jagrutiMalani@gmailcom',1378111807,0,0,0,0,NULL),(5,NULL,'$2a$10$2uWpOYeZaqyTXFmevaiePuRT1sThFjOfFAiSI/HqBdjSmn1nAsilK','neville.desouza@gmail.com',1378112018,0,0,0,1,NULL);
+INSERT INTO `user` VALUES (1,'ankitaMalani','$2a$10$GejpOGWWmsDvVOsmDmX1/Om.Kuqm57uZz0CMTwNsVGpuucRVKEPJO','anki546.malani@gmail.com',1377614876,0,1378376083,0,0,NULL),(2,'JinalMashruwala','$2a$10$k.CKAzF/OLcRGl0zPR/liO9jvQJkF8TD.CCFnmhOB1K5sFhHf8GXC','jinalmashruwala@gmail.com',1378104731,0,1378375917,0,1,NULL),(3,'mehulmalani','$2a$10$RjUUfx5q7m8NurSnKsqem.tB17zFRI3TxDVlTPU/uCY8Iq1R9VLOe','mehulmalani16@yahoo.com',1378110233,0,0,0,2,NULL),(4,NULL,'$2a$10$Xe.oPtaieXCpHIUIrLRLCubiUGoXCBNScf4eacFVbeZ6iMzoQJ/dq','jagrutiMalani@gmailcom',1378111807,0,0,0,0,NULL),(5,NULL,'$2a$10$2uWpOYeZaqyTXFmevaiePuRT1sThFjOfFAiSI/HqBdjSmn1nAsilK','neville.desouza@gmail.com',1378112018,0,0,0,1,NULL),(6,'punit.mashru','$2a$10$Lt0UcyEtryQtnMlMQ.BLmeVnfcanAzA100yP2p8awY92kOYZtLsdC','punit@gmail.com',1378134825,0,0,0,1,NULL),(7,'hjvhvhgvhvgh','$2a$10$/afQaihzdR2TtoScXWUbmuQIRvbDk3fIC4g568E9fNnc/5NsGYCXK','vhjv@vhvhjuvh.com',1378378182,0,0,0,1,NULL),(8,'vhvhv_vgcghcv','$2a$10$CJugsxoVYDa8sgWZ1TxsF.o9aqK9GJXV42YKJPdJsj4vAzLU.IIHW',' ghdvdv@gmail.com',1378378769,0,0,0,1,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -285,7 +308,7 @@ CREATE TABLE `useraddress` (
   KEY `useraddress_ibfk_2` (`country`),
   CONSTRAINT `useraddress_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`),
   CONSTRAINT `useraddress_ibfk_2` FOREIGN KEY (`country`) REFERENCES `country` (`countryid`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +317,7 @@ CREATE TABLE `useraddress` (
 
 LOCK TABLES `useraddress` WRITE;
 /*!40000 ALTER TABLE `useraddress` DISABLE KEYS */;
-INSERT INTO `useraddress` VALUES (1,1,'A/12, New ambica sadan','anand nagar, dahisar (east)',NULL,'Mumbai','Maharashtra',102,400068,1377690382),(2,2,'A/102,,ambica sadan','blue galaxy, dahisar',NULL,'Mumbai','Maharashtra',102,400068,1378108295),(3,3,'A/12, New ambica sadan','anand nagar, dahisar (east)',NULL,'Mumbai','Maharashtra',102,400068,1378110711);
+INSERT INTO `useraddress` VALUES (1,1,'A/12, New ambica sadan','anand nagar, dahisar (east)',NULL,'Mumbai','Maharashtra',102,400068,1377690382),(2,2,'A/102,,ambica sadan','blue galaxy, dahisar',NULL,'Mumbai','Maharashtra',102,400068,1378108295),(3,3,'A/12, New ambica sadan','anand nagar, dahisar (east)',NULL,'Mumbai','Maharashtra',102,400068,1378110711),(4,6,'A/12, New ambica sadan','blue galaxy, dahisar',NULL,'Mumbai','Maharashtra',102,400068,1378135115);
 /*!40000 ALTER TABLE `useraddress` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -359,12 +382,12 @@ DROP TABLE IF EXISTS `userinterests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `userinterests` (
-  `userid` int(11) NOT NULL DEFAULT '0',
-  `categoryid` smallint(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`userid`,`categoryid`),
-  KEY `categoryid` (`categoryid`),
+  `userid` int(11) NOT NULL,
+  `genreid` smallint(6) NOT NULL,
+  PRIMARY KEY (`userid`,`genreid`),
+  KEY `genreid` (`genreid`),
   CONSTRAINT `userinterests_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`userid`),
-  CONSTRAINT `userinterests_ibfk_2` FOREIGN KEY (`categoryid`) REFERENCES `category` (`categoryid`)
+  CONSTRAINT `userinterests_ibfk_2` FOREIGN KEY (`genreid`) REFERENCES `genre` (`genreid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -374,7 +397,7 @@ CREATE TABLE `userinterests` (
 
 LOCK TABLES `userinterests` WRITE;
 /*!40000 ALTER TABLE `userinterests` DISABLE KEYS */;
-INSERT INTO `userinterests` VALUES (1,1),(3,1),(1,2),(2,2),(3,2),(1,3),(2,3),(3,3),(1,4),(3,4),(1,5),(3,5),(1,6),(2,6),(3,6),(1,7),(3,7),(1,8),(3,8),(1,9),(3,9),(1,10),(3,10),(1,11),(3,11),(1,12),(3,12),(1,13),(3,13),(1,14),(3,14),(1,15),(3,15),(3,16),(1,17),(2,17),(3,19),(1,21),(2,21),(1,38),(2,38),(1,39),(2,39),(3,39),(3,40),(1,41),(2,41),(1,63),(2,63);
+INSERT INTO `userinterests` VALUES (1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,37),(1,61),(1,79);
 /*!40000 ALTER TABLE `userinterests` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -399,7 +422,7 @@ CREATE TABLE `userlanguage` (
 
 LOCK TABLES `userlanguage` WRITE;
 /*!40000 ALTER TABLE `userlanguage` DISABLE KEYS */;
-INSERT INTO `userlanguage` VALUES (3,1,'write'),(3,2,'read'),(3,3,'read'),(3,4,'read'),(3,4,'write'),(4,1,'read'),(4,2,'read'),(4,3,'read'),(5,2,'read'),(5,4,'read');
+INSERT INTO `userlanguage` VALUES (1,1,'read'),(1,1,'write'),(1,2,'read'),(1,2,'write'),(1,3,'read'),(1,4,'write'),(3,1,'write'),(3,2,'read'),(3,3,'read'),(3,4,'read'),(3,4,'write'),(4,1,'read'),(4,2,'read'),(4,3,'read'),(5,2,'read'),(5,4,'read'),(6,1,'read'),(6,2,'read'),(6,2,'write'),(6,3,'write'),(6,4,'read'),(8,2,'read'),(8,3,'read'),(8,4,'read');
 /*!40000 ALTER TABLE `userlanguage` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -465,7 +488,7 @@ CREATE TABLE `userprofile` (
 
 LOCK TABLES `userprofile` WRITE;
 /*!40000 ALTER TABLE `userprofile` DISABLE KEYS */;
-INSERT INTO `userprofile` VALUES (1,'Ankita','parshottam','Malani','Female',650831400,102,'ankita@ankita.com','yes its der',1,0,0),(2,'jinal','bharat1','mashru','Female',678306600,102,'jinal@jinal.com','fffdsfdf',2,0,1),(3,'MEHUL','PARSHOTAM','MALANI','Male',779653800,102,'VVCXCX','yes its der',3,0,1),(4,'jagruti',NULL,'malani','Female',810345600,NULL,NULL,NULL,NULL,0,1),(5,'neville',NULL,'dsouza','Male',723513600,NULL,NULL,NULL,NULL,0,1);
+INSERT INTO `userprofile` VALUES (1,'Ankita','parshottam','Malani','Female',650831400,102,'ankita@ankita.com','yes its der',1,0,0),(2,'jinal','bharat1','mashru','Female',678306600,102,'jinal@jinal.com','fffdsfdf',2,0,1),(3,'MEHUL','PARSHOTAM','MALANI','Male',779653800,102,'VVCXCX','yes its der',3,0,1),(4,'jagruti',NULL,'malani','Female',810345600,NULL,NULL,NULL,NULL,0,1),(5,'neville',NULL,'dsouza','Male',723513600,NULL,NULL,NULL,NULL,0,1),(6,'punit','bharat','mashruwala','Male',760991400,102,'punit.mashru','hjbjv',4,0,1),(8,'vgcghcv',NULL,'vhvhv','Male',723513600,NULL,NULL,NULL,NULL,0,1);
 /*!40000 ALTER TABLE `userprofile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -506,4 +529,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-/bin/bash: q: command not found
+-- Dump completed on 2013-09-05 16:39:27

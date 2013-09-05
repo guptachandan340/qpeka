@@ -1,8 +1,6 @@
 package com.qpeka.services.user;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -21,7 +19,6 @@ import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.user.User;
 import com.qpeka.managers.ServiceResponseManager;
 import com.qpeka.managers.user.UserManager;
-import com.qpeka.services.Errors.ServiceResponse;
 
 @Path("user")
 public class UserService {
