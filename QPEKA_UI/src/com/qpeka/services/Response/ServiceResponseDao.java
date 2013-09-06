@@ -1,8 +1,7 @@
-package com.qpeka.db.dao;
+package com.qpeka.services.Response;
 
 import java.util.List;
 
-import com.qpeka.db.ServiceResponse;
 import com.qpeka.db.exceptions.QpekaException;
 
 public interface ServiceResponseDao {

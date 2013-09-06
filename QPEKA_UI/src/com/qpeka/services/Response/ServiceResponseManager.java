@@ -1,11 +1,10 @@
-package com.qpeka.managers;
+package com.qpeka.services.Response;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qpeka.db.ServiceResponse;
 import com.qpeka.db.exceptions.QpekaException;
-import com.qpeka.db.handler.ServiceResponseHandler;
 
 public class ServiceResponseManager {
 
@@ -73,7 +72,7 @@ public static ServiceResponseManager instance = null;
 	//@Overloading
 	//Reading through status
 	public Map<String, Object> readServiceResponse(int status) {
-		List<ServiceResponse> ExistingserviceResponse = null;
+		List<ServiceResponse> ExistingserviceResponse = new ArrayList<ServiceResponse>();
 		try {
 			ExistingserviceResponse = ServiceResponseHandler.getInstance().findWhereStatus(status);
 			
