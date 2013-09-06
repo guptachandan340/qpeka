@@ -1,5 +1,9 @@
 QPEKA_UI/build
+QPEKA_UI/.classpath
+QPEKA_UI/.settings
 QpekaWeb/build
+QpekaWeb/.classpath
+QpekaWeb/.settings
 .settings
 .classpath
 .project

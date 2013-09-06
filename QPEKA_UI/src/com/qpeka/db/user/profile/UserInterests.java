@@ -3,13 +3,13 @@ package com.qpeka.db.user.profile;
 public class UserInterests {
 	
 	public static final String USERID = "userid";
-	public static final String CATEGORYID = "categoryid";
+	public static final String GENREID = "genreid";
 	
 	private long userid;
-	private short categoryid;
+	private short genreid;
 	
 	protected boolean useridModified = false;
-	protected boolean categoryidModified = false;
+	protected boolean genreidModified = false;
 	
 	public static UserInterests instance = null;
 	
@@ -17,10 +17,10 @@ public class UserInterests {
 		super();
 	}
 
-	public UserInterests(long userid, short categoryid) {
+	public UserInterests(long userid, short genreid) {
 		super();
 		this.userid = userid;
-		this.categoryid = categoryid;
+		this.genreid = genreid;
 	}
 
 	public long getUserid() {
@@ -32,13 +32,13 @@ public class UserInterests {
 		this.useridModified = true;
 	}
 
-	public short getCategoryid() {
-		return categoryid;
+	public short getGenreid() {
+		return genreid;
 	}
 
-	public void setCategoryid(short categoryid) {
-		this.categoryid = categoryid;
-		this.categoryidModified = true;
+	public void setGenreid(short genreid) {
+		this.genreid = genreid;
+		this.genreidModified = true;
 	}
 
 	public boolean isUseridModified() {
@@ -49,12 +49,12 @@ public class UserInterests {
 		this.useridModified = useridModified;
 	}
 
-	public boolean isCategoryidModified() {
-		return categoryidModified;
+	public boolean isGenreidModified() {
+		return genreidModified;
 	}
 
-	public void setCategoryidModified(boolean categoryidModified) {
-		this.categoryidModified = categoryidModified;
+	public void setGenreidModified(boolean genreidModified) {
+		this.genreidModified = genreidModified;
 	}
 	
 	
@@ -87,11 +87,11 @@ public class UserInterests {
 			return false;
 		}
 		
-		if (categoryid != _cast.categoryid) {
+		if (genreid != _cast.genreid) {
 			return false;
 		}
 		
-		if (categoryidModified != _cast.categoryidModified) {
+		if (genreidModified != _cast.genreidModified) {
 			return false;
 		}
 		
@@ -108,8 +108,8 @@ public class UserInterests {
 		int _hashCode = 0;
 		_hashCode = (int) (29 * _hashCode + userid);
 		_hashCode = 29 * _hashCode + (useridModified ? 1 : 0);
-		_hashCode = 29 * _hashCode + (int) categoryid;
-		_hashCode = 29 * _hashCode + (categoryidModified ? 1 : 0);
+		_hashCode = 29 * _hashCode + (int) genreid;
+		_hashCode = 29 * _hashCode + (genreidModified ? 1 : 0);
 		return _hashCode;
 	}
 	
@@ -131,7 +131,7 @@ public class UserInterests {
 		StringBuffer ret = new StringBuffer();
 		ret.append( "Userinterests: " );
 		ret.append( USERID + "=" + userid );
-		ret.append( ", " + CATEGORYID + "=" + categoryid );
+		ret.append( ", " + GENREID + "=" + genreid );
 		return ret.toString();
 	}
 	

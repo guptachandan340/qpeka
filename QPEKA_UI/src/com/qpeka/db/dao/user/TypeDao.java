@@ -51,6 +51,14 @@ public interface TypeDao {
 	 */
 	public List<Type> findWhereTypenameEquals(String typename)
 			throws TypeException;
+	
+	/**
+	 * Returns all rows from the usertype table that match the criteria
+	 * 'typeIdentifier = :typeIdentifier'.
+	 */
+	public List<Type> findWhereTypeidentifierEquals(String typeidentifier)
+			throws TypeException;
+
 
 	/**
 	 * Sets the value of maxRows

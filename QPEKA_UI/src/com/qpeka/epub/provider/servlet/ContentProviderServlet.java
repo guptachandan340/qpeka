@@ -61,7 +61,7 @@ public class ContentProviderServlet extends HttpServlet {
 			Book book = epubReader.readEpub(new FileInputStream(file));
 			Writer w = response.getWriter();
 			
-			response.setContentType("text/xml");
+			response.setContentType("text/xml;charset=UTF-8");
 			w.write(new String(book.getOpfResource().getData()));
 			w.flush();
 		}

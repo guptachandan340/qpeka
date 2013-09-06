@@ -2,35 +2,35 @@ package com.qpeka.managers;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.qpeka.db.Category;
+import com.qpeka.db.Genre;
 
 import com.qpeka.db.exceptions.CategoryException;
+import com.qpeka.db.exceptions.GenreException;
 
 import com.qpeka.db.handler.CategoryHandler;
+import com.qpeka.db.handler.GenreHandler;
+
 public class CategoryManager {
-public static CategoryManager instance= null;
+	public static CategoryManager instance= null;
 
+	public CategoryManager() {
+		super();
+	}
+	
+	public static CategoryManager getInstance() {
+		return(instance == null ? instance = new CategoryManager() : instance);
+	}
 
-
-public CategoryManager() {
-	super();
-}
-
-public static CategoryManager getInstance() {
-	return(instance == null ? instance = new CategoryManager() : instance);
-}
-
-public Category createCategory(String type,String categoryField,String genres,int points) {
+	public Category createCategory(String type,String categoryField) {
 	Category category = Category.getInstance();
 	category.setType(type);
 	category.setCategory(categoryField);
-	category.setGenre(genres);
-	category.setPoints(points);
+	
 	try {
 		CategoryHandler.getInstance().insert(category);
 	} catch (CategoryException e) {
@@ -79,10 +79,6 @@ public boolean deleteCategory(short categoryid) {
 								.toString());
 					}
 
-					if (updatecategoryMap.get(Category.GENRE) != null) {
-						category.setGenre(updatecategoryMap.get(Category.GENRE)
-								.toString());
-					}
 					try {
 						counter += CategoryHandler.getInstance().update(
 								Short.parseShort(updatecategoryMap.get(
@@ -101,15 +97,52 @@ public boolean deleteCategory(short categoryid) {
 		return counter;
 	}
 
+// find all category and genre in the database
 public Set<String> readCategory() {
 	List<Category> categories = null;
+	List<Genre> genries = null;
 	Set<String> uniqueCategoryGenre = new HashSet<String>();
 	try {
 		categories = CategoryHandler.getInstance().findAll();
+		genries = GenreHandler.getInstance().findAll();
+		
 		for(Category category : categories) {
 			uniqueCategoryGenre.add(category.getCategory());
-			uniqueCategoryGenre.add(category.getGenre());
 		}
+		for(Genre genre : genries) {
+			uniqueCategoryGenre.add(genre.getGenre());
+		}
+		
+	} catch (GenreException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (CategoryException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return uniqueCategoryGenre;
+}
+
+// read category by type
+public Set<String> readCategoryByType(String type) {
+	List<Category> categories = null;
+	Set<Genre> genries = new HashSet<Genre>();
+	Set<String> uniqueCategoryGenre = new HashSet<String>();
+	
+	try {
+		categories = CategoryHandler.getInstance().findWhereTypeEquals(
+				type);
+		for(Category cat : categories) {
+			genries.addAll(GenreHandler.getInstance().findWhereCategoryidEquals(cat.getCategoryid()));
+			uniqueCategoryGenre.add(cat.getCategory());
+		}
+		for(Genre g : genries) {
+			uniqueCategoryGenre.add(g.getGenre());
+		}
+		
+	} catch (GenreException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	} catch (CategoryException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -129,62 +162,48 @@ public List<Category> readCategory(short categoryid) {
 }
 	
 	// READ CATEGORY THROUGH CATEGORY OR TYPE
-	public List<Category> readCategory(String categoryIdentifier,
+	public Map<String, Object> readCategory(String categoryIdentifier,
 			String categoryIdentifierString) {
-		List<Category> categories = null;
+		Map<String, Object> categoryMap = new HashMap<String, Object>();
 		// Read through Category
 		if (categoryIdentifierString.equalsIgnoreCase(Category.CATEGORY)) {
 			try {
-				categories = CategoryHandler.getInstance()
-						.findWhereCategoryEquals(categoryIdentifier);
+				categoryMap.put(categoryIdentifier, CategoryHandler.getInstance()
+						.findWhereCategoryEquals(categoryIdentifier));
 			} catch (CategoryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} 
 		// Read Categories through type
-		else if(categoryIdentifierString.equalsIgnoreCase(Category.GENRE)){
-			try {
-				categories = CategoryHandler.getInstance().findWhereTypeEquals(
-						categoryIdentifier);
-			} catch (CategoryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		else if(categoryIdentifierString.equalsIgnoreCase(Category.TYPE)){
+				categoryMap.put(categoryIdentifier, readCategoryByType(categoryIdentifier));
 		} else {
-			return categories;
+			return null;
 		}
-		return categories;
+		return categoryMap;
 	}
-
-	//READ CATEGORY THROUGH POINTS
-public List<Category> readCategory(int points) {
-	List<Category> categories = null;
-	try {
-		categories= CategoryHandler.getInstance().findWherePointsEquals(points);
-	} catch (CategoryException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	return categories;
-}
+	
 
 /* Read category through category type */
-public Map<Short, Map.Entry<String, String>> readCategory(String type) {
-	//Map<Short, Map<String, String>> retrievedCategory = new HashMap<Short, Map<String,String>>();
+/*public Map<Short, Map.Entry<String, String>> readCategory(String type, String typeString) {
 	List<Category> existingCategory = null;
 	try {
-		existingCategory = CategoryHandler.getInstance().findWhereTypeEquals(type);
+		if(typeString.equalsIgnoreCase(Category.TYPE)) {
+			existingCategory = CategoryHandler.getInstance().findWhereTypeEquals(type);
+		}
 	} catch (CategoryException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 	return retrieveCategory(existingCategory);
 }
-
-public Map<Short, Map.Entry<String, String>> retrieveCategory(
+*/
+	
+//categoryid, category, genre : fully working module
+/*public Map<Short, Map.Entry<String, String>> retrieveCategory(
 			List<Category> existingCategory) {
-		Map<Short, Map.Entry<String, String>> outerMap = new HashMap<Short, Map.Entry<String, String>>();
+	Map<Short, Map.Entry<String, String>> outerMap = new HashMap<Short, Map.Entry<String, String>>();
 		Map<String, String> innerMap = new HashMap<String, String>();
 		for (Category category : existingCategory) {
 			innerMap.put(category.getCategory(), category.getGenre());
@@ -197,8 +216,8 @@ public Map<Short, Map.Entry<String, String>> retrieveCategory(
 				System.out.println(mapEntry);
 			}
 		}
-		return outerMap;
-	}
+		return null;
+	}*/
 
 //@SuppressWarnings("unchecked")
 /*	public Map<Short, Map<String, String>> retrieveCategory(
@@ -258,14 +277,14 @@ public Map<Short, Map<String, String>> retrieveCategory(List<Category> existingC
 
 	public static void main(String[] args) {
 		CategoryManager categoryManager = new CategoryManager();
-		//categoryManager.deleteCategory((short)5);
-		//categoryManager.createCategory("book","Education","Children Learning",0);
+		System.out.println(categoryManager.deleteCategory((short)10));
+		//categoryManager.createCategory("book","Non-Fiction");
 		
 	//Map<String, Object> updateMap = new HashMap<String, Object>();
 	//	updateMap.put(Category.CATEGORYID, (short)1);
 	//	updateMap.put(Category.GENRE, "nonfictional");
 	//	categoryManager.updateCategory(updateMap);
-		System.out.println(categoryManager.readCategory());
+		System.out.println(categoryManager.readCategory("book",Category.TYPE));
 		//System.out.println(categoryManager.readCategory((short)1));
 		//System.out.println(categoryManager.readCategory());
 		//System.out.println(categoryManager.readCategory("book"));

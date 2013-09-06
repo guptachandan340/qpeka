@@ -48,16 +48,6 @@ public interface CategoryDao {
 	public List<Category> findWhereCategoryEquals(String category) throws CategoryException;
 
 	/** 
-	 * Returns all rows from the category table that match the criteria 'genre = :genre'.
-	 */
-	public List<Category> findWhereGenreEquals(String genre) throws CategoryException;
-
-	/** 
-	 * Returns all rows from the category table that match the criteria 'points = :points'.
-	 */
-	public List<Category> findWherePointsEquals(int points) throws CategoryException;
-
-	/** 
 	 * Sets the value of maxRows
 	 */
 	public void setMaxRows(int maxRows);
@@ -76,5 +66,4 @@ public interface CategoryDao {
 	 * Returns all rows from the category table that match the specified arbitrary SQL statement
 	 */
 	public List<Category> findByDynamicWhere(String sql, List<Object> sqlParams) throws CategoryException;
-	
 }

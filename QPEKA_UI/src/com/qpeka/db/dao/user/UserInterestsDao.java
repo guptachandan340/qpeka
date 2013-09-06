@@ -27,9 +27,9 @@ public interface UserInterestsDao {
 
 	/**
 	 * Returns all rows from the userinterests table that match the criteria
-	 * 'userid = :userid AND categoryid = :categoryid'.
+	 * 'userid = :userid AND genreid = :genreid'.
 	 */
-	public UserInterests findByPrimaryKey(long userid, short categoryid)
+	public UserInterests findByPrimaryKey(long userid, short genreid)
 			throws UserInterestsException;
 
 	/**
@@ -46,9 +46,9 @@ public interface UserInterestsDao {
 
 	/**
 	 * Returns all rows from the userinterests table that match the criteria
-	 * 'categoryid = :categoryid'.
+	 * 'genreid = :genreid'.
 	 */
-	public List<UserInterests> findByCategory(short categoryid)
+	public List<UserInterests> findByGenre(short genreid)
 			throws UserInterestsException;
 
 	/**
@@ -62,7 +62,7 @@ public interface UserInterestsDao {
 	 * Returns all rows from the userinterests table that match the criteria
 	 * 'categoryid = :categoryid'.
 	 */
-	public List<UserInterests> findWhereCategoryidEquals(short categoryid)
+	public List<UserInterests> findWhereGenreidEquals(short genreid)
 			throws UserInterestsException;
 
 	/**

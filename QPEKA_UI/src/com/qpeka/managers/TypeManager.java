@@ -6,6 +6,7 @@ import com.qpeka.db.exceptions.user.TypeException;
 
 import com.qpeka.db.handler.user.TypeHandler;
 import com.qpeka.db.user.profile.Type;
+
 public class TypeManager {
 	public static TypeManager instance= null;
 
@@ -17,11 +18,12 @@ public class TypeManager {
 		return(instance == null ? instance = new TypeManager() : instance);
 	}
 	
-   public Type createType(short typeid,String type, String typename){
+   public Type createType(short typeid,String type, String typename, String typeidentifier){
 	      Type typeobj = Type.getInstance();
           typeobj.setTypeid(typeid);
           typeobj.setType(type);
           typeobj.setTypename(typename);
+          typeobj.setTypeidentifier(typeidentifier);
 	   try {
 			TypeHandler.getInstance().insert(typeobj);
 			
@@ -29,7 +31,6 @@ public class TypeManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
     	return typeobj;
     }
 	
@@ -70,6 +71,11 @@ public class TypeManager {
 						type.setTypename(updateTypeMap.get(Type.TYPENAME)
 								.toString());
 					}
+					
+					if(updateTypeMap.get(Type.TYPEIDENTIFIER) != null) {
+						type.setTypeidentifier(updateTypeMap.get(Type.TYPEIDENTIFIER).toString());
+					}
+					
 					try {
 						counter += TypeHandler.getInstance().update(
 								Short.parseShort(updateTypeMap.get(
@@ -116,7 +122,7 @@ public class TypeManager {
 	public static void main(String[] args) {
 	TypeManager tm = TypeManager.getInstance();
 	System.out.println(tm.deleteType((short)17));
-	System.out.println(tm.createType((short)17, "service prvider" , "Publisher"));
+	System.out.println(tm.createType((short)17, "service prvider" , "Publisher","Publisher"));
 	Map<String, Object> updateMap = new HashMap<String, Object>();
 	updateMap.put(Type.TYPEID, (short)14);
 	updateMap.put(Type.TYPE, "printers");
