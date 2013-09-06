@@ -1,4 +1,4 @@
-package com.qpeka.services.Errors;
+package com.qpeka.services.Response;
 
 import java.io.Serializable;
 

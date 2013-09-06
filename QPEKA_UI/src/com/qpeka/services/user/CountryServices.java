@@ -13,7 +13,6 @@ import com.qpeka.managers.CountryManager;
 @Path("/user/country")
 public class CountryServices {
 
-
 	@GET
 	@Path("/readcountries")
 	public Response retrievingCountryService() {

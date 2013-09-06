@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -258,7 +259,7 @@ public class FilesManager {
 
 	/* reading all fileds of file through userId and filetype */
 	
-	public List<Files> readFiles(long userId, String filetype,String filesAttribute) {
+	/*public List<Files> readFiles(long userId, String filetype,String filesAttribute) {
 		List<Files> existingFiles = null;
 		List<Object> readFilesobj = new ArrayList<Object>();
 		readFilesobj.add(userId);
@@ -275,8 +276,8 @@ public class FilesManager {
 		}
 		return existingFiles;
 	}
-
-	/*
+*/
+	
 	public Map<String, Map.Entry<String, String>> readFiles(long userId, String filetype,
 			String filesAttribute) {
 		List<Files> existingFiles = null;
@@ -321,6 +322,7 @@ public class FilesManager {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		System.out.println(FilesManager.getInstance().readFiles((long)1, "profilepic", Files.FILETYPE));
 		//FilesManager.getInstance().deleteFiles(6);
 		//System.out.println(FilesManager.getInstance().InsertFiles((long)1,"profilepic","/home/ankita/Downloads/Ankit final resume.docx"));
 		//System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));

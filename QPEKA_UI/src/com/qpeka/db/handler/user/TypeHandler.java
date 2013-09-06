@@ -15,6 +15,7 @@ import com.qpeka.db.exceptions.user.TypeException;
 import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.user.profile.Type;
 
+
 public class TypeHandler extends AbstractHandler implements TypeDao {
 
 	/**
@@ -34,7 +35,7 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT typeid, type, typename FROM "
+	protected final String SQL_SELECT = "SELECT typeid, type, typename, typeidentifier FROM "
 			+ getTableName() + "";
 
 	/**
@@ -46,13 +47,13 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 	 * SQL INSERT statement for this table
 	 */
 	protected final String SQL_INSERT = "INSERT INTO " + getTableName()
-			+ " ( typeid, type, typename ) VALUES ( ?, ?, ? )";
+			+ " ( typeid, type, typename,  typeidentifier ) VALUES ( ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE " + getTableName()
-			+ " SET typeid = ?, type = ?, typename = ? WHERE typeid = ?";
+			+ " SET typeid = ?, type = ?, typename = ?, typeidentifier = ? WHERE typeid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -76,9 +77,14 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 	protected static final int COLUMN_TYPENAME = 3;
 
 	/**
+	 * Index of column typeidentifier
+	 */
+	protected static final int COLUMN_TYPEIDENTIFIER = 4;
+
+	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 3;
+	protected static final int NUMBER_OF_COLUMNS = 4;
 
 	/**
 	 * Index of primary-key column typeid
@@ -159,6 +165,17 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 				values.append("?");
 				modifiedCount++;
 			}
+			
+			if(type.isTypeidentifierModified()) {
+				if(modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+				
+				sql.append("typeidentifier");
+				values.append("?");
+				modifiedCount++;				
+			}
 
 			if (modifiedCount == 0) {
 				// nothing to insert
@@ -180,6 +197,10 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 			if (type.isTypenameModified()) {
 				stmt.setString(index++, type.getTypename());
+			}
+			
+			if(type.isTypeidentifierModified()) {
+				stmt.setString(index++, type.getTypeidentifier());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -255,6 +276,15 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 				sql.append("typename=?");
 				modified = true;
 			}
+			
+			if(type.isTypeidentifierModified()) {
+				if(modified) {
+					sql.append(", ");
+				}
+				
+				sql.append("typeidentifier=?");
+				modified = true;				
+			}
 
 			if (!modified) {
 				// nothing to update
@@ -279,6 +309,10 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 			if (type.isTypenameModified()) {
 				stmt.setString(index++, type.getTypename());
+			}
+			
+			if(type.isTypeidentifierModified()) {
+				stmt.setString(index++, type.getTypeidentifier());
 			}
 
 			stmt.setShort(index++, typeid);
@@ -370,6 +404,14 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE typename = ? ORDER BY typename",
 				Arrays.asList(new Object[] { typename }));
+	}
+	
+	@Override
+	public List<Type> findWhereTypeidentifierEquals(String typeidentifier)
+			throws TypeException {
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE typeidentifier = ? ORDER BY typeidentifier",
+				Arrays.asList(new Object[] { typeidentifier }));
 	}
 
 	@Override
@@ -513,6 +555,7 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 		type.setTypeid(rs.getShort(COLUMN_TYPEID));
 		type.setType(rs.getString(COLUMN_TYPE));
 		type.setTypename(rs.getString(COLUMN_TYPENAME));
+		type.setTypeidentifier(rs.getString(COLUMN_TYPEIDENTIFIER));
 		reset(type);
 	}
 
@@ -523,6 +566,7 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 		type.setTypeidModified(false);
 		type.setTypeModified(false);
 		type.setTypenameModified(false);
+		type.setTypeidentifierModified(false);
 	}
 	
 	/**
@@ -532,5 +576,4 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 	public static TypeHandler getInstance() {
 		return (instance == null ? (instance = new TypeHandler()) : instance);
 	}
-
 }

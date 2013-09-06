@@ -37,7 +37,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT userid, categoryid FROM "
+	protected final String SQL_SELECT = "SELECT userid, genreid FROM "
 			+ getTableName() + "";
 
 	/**
@@ -49,20 +49,20 @@ public class UserInterestsHandler extends AbstractHandler implements
 	 * SQL INSERT statement for this table
 	 */
 	protected final String SQL_INSERT = "INSERT INTO " + getTableName()
-			+ " ( userid, categoryid ) VALUES ( ?, ? )";
+			+ " ( userid, genreid ) VALUES ( ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
-			+ " SET userid = ?, categoryid = ? WHERE userid = ? AND categoryid = ?";
+			+ " SET userid = ?, genreid = ? WHERE userid = ? AND genreid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
 	 */
 	protected final String SQL_DELETE = "DELETE FROM " + getTableName()
-			+ " WHERE userid = ? AND categoryid = ?";
+			+ " WHERE userid = ? AND genreid = ?";
 
 	/**
 	 * Index of column userid
@@ -70,9 +70,9 @@ public class UserInterestsHandler extends AbstractHandler implements
 	protected static final int COLUMN_USERID = 1;
 
 	/**
-	 * Index of column categoryid
+	 * Index of column genreid
 	 */
-	protected static final int COLUMN_CATEGORYID = 2;
+	protected static final int COLUMN_GENREID = 2;
 
 	/**
 	 * Number of columns
@@ -85,9 +85,9 @@ public class UserInterestsHandler extends AbstractHandler implements
 	protected static final int PK_COLUMN_USERID = 1;
 
 	/**
-	 * Index of primary-key column categoryid
+	 * Index of primary-key column genreid
 	 */
-	protected static final int PK_COLUMN_CATEGORYID = 2;
+	protected static final int PK_COLUMN_GENREID = 2;
 
 	public UserInterestsHandler() {
 		super();
@@ -143,13 +143,13 @@ public class UserInterestsHandler extends AbstractHandler implements
 				modifiedCount++;
 			}
 
-			if (userinterests.isCategoryidModified()) {
+			if (userinterests.isGenreidModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
 				}
 
-				sql.append("categoryid");
+				sql.append("genreid");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -168,8 +168,8 @@ public class UserInterestsHandler extends AbstractHandler implements
 				stmt.setLong(index++, userinterests.getUserid());
 			}
 
-			if (userinterests.isCategoryidModified()) {
-				stmt.setShort(index++, userinterests.getCategoryid());
+			if (userinterests.isGenreidModified()) {
+				stmt.setShort(index++, userinterests.getGenreid());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -224,12 +224,12 @@ public class UserInterestsHandler extends AbstractHandler implements
 				modified = true;
 			}
 
-			if (userinterests.isCategoryidModified()) {
+			if (userinterests.isGenreidModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
 
-				sql.append("categoryid=?");
+				sql.append("genreid=?");
 				modified = true;
 			}
 
@@ -238,7 +238,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 				return -1;
 			}
 
-			sql.append(" WHERE userid=? AND categoryid=?");
+			sql.append(" WHERE userid=? AND genreid=?");
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + sql.toString() + " with values: "
 						+ userinterests);
@@ -250,12 +250,12 @@ public class UserInterestsHandler extends AbstractHandler implements
 				stmt.setLong(index++, userinterests.getUserid());
 			}
 
-			if (userinterests.isCategoryidModified()) {
-				stmt.setShort(index++, userinterests.getCategoryid());
+			if (userinterests.isGenreidModified()) {
+				stmt.setShort(index++, userinterests.getGenreid());
 			}
 
 			stmt.setLong(index++, olduserinterests.getUserid());
-			stmt.setShort(index++, olduserinterests.getCategoryid());
+			stmt.setShort(index++, olduserinterests.getGenreid());
 			short rows = (short)stmt.executeUpdate();
 
 			reset(userinterests);
@@ -298,7 +298,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 
 			stmt = conn.prepareStatement(SQL_DELETE);
 			stmt.setLong(1, userinterests.getUserid());
-			stmt.setShort(2, userinterests.getCategoryid());
+			stmt.setShort(2, userinterests.getGenreid());
 			int rows = stmt.executeUpdate();
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
@@ -314,23 +314,22 @@ public class UserInterestsHandler extends AbstractHandler implements
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
 	}
 
 	@Override
-	public UserInterests findByPrimaryKey(long userid, short categoryid)
+	public UserInterests findByPrimaryKey(long userid, short genreid)
 			throws UserInterestsException {
 		List<UserInterests> ret = findByDynamicSelect(
-				SQL_SELECT + " WHERE userid = ? AND categoryid = ?",
+				SQL_SELECT + " WHERE userid = ? AND genreid = ?",
 				Arrays.asList(new Object[] { new Long(userid),
-						new Short(categoryid) }));
+						new Short( genreid ) }));
 		return ret.size() == 0 ? null : ret.get(0);
 	}
 
 	@Override
 	public List<UserInterests> findAll() throws UserInterestsException {
-		return findByDynamicSelect(SQL_SELECT + " ORDER BY userid, categoryid",
+		return findByDynamicSelect(SQL_SELECT + " ORDER BY userid, genreid",
 				null);
 	}
 
@@ -342,10 +341,10 @@ public class UserInterestsHandler extends AbstractHandler implements
 	}
 
 	@Override
-	public List<UserInterests> findByCategory(short categoryid)
+	public List<UserInterests> findByGenre(short genreid)
 			throws UserInterestsException {
-		return findByDynamicSelect(SQL_SELECT + " WHERE categoryid = ?",
-				Arrays.asList(new Object[] { new Short(categoryid) }));
+		return findByDynamicSelect(SQL_SELECT + " WHERE genreid = ?",
+				Arrays.asList(new Object[] { new Short(genreid) }));
 	}
 
 	@Override
@@ -357,11 +356,11 @@ public class UserInterestsHandler extends AbstractHandler implements
 	}
 
 	@Override
-	public List<UserInterests> findWhereCategoryidEquals(short categoryid)
+	public List<UserInterests> findWhereGenreidEquals(short genreid)
 			throws UserInterestsException {
 		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE categoryid = ? ORDER BY categoryid",
-				Arrays.asList(new Object[] { new Short(categoryid) }));
+				+ " WHERE genreid = ? ORDER BY genreid",
+				Arrays.asList(new Object[] { new Short(genreid) }));
 	}
 
 	@Override
@@ -507,7 +506,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 	protected void populateUserInterests(UserInterests userinterests,
 			ResultSet rs) throws SQLException {
 		userinterests.setUserid(rs.getInt(COLUMN_USERID));
-		userinterests.setCategoryid(rs.getShort(COLUMN_CATEGORYID));
+		userinterests.setGenreid(rs.getShort(COLUMN_GENREID));
 		reset(userinterests);
 	}
 
@@ -516,7 +515,7 @@ public class UserInterestsHandler extends AbstractHandler implements
 	 */
 	protected void reset(UserInterests userinterests) {
 		userinterests.setUseridModified(false);
-		userinterests.setCategoryidModified(false);
+		userinterests.setGenreidModified(false);
 	}
 	
 	/**

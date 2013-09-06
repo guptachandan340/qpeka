@@ -2,23 +2,35 @@ package com.qpeka.db.user.profile;
 
 import java.io.Serializable;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+
+import com.qpeka.db.Category;
+import com.qpeka.managers.TypeManager;
+
 public class Type implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String TYPEID = "typeid";
 	public static final String TYPE = "type";
 	public static final String TYPENAME = "typename";
+	public static final String TYPEIDENTIFIER = "typeidentifier";
 
 	// These attributes maps to the columns of the usertype table.
 	private short typeid;
 	private String type;
 	private String typename;
+	private String typeidentifier;
 
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
 	protected boolean typeidModified = false;
 	protected boolean typeModified = false;
 	protected boolean typenameModified = false;
-
+	protected boolean typeidentifierModified = false;
+	public static Type instance = null;
 	/*
 	 * Constructors
 	 */
@@ -32,13 +44,17 @@ public class Type implements Serializable {
 		this.typename = typename;
 	}
 
-	public Type(short typeid, String type, String typename) {
-		super();
+	public Type(short typeid, String type, String typename, String typeidentifier) {
+		super(); 
 		this.typeid = typeid;
 		this.type = type;
 		this.typename = typename;
+		this.typeidentifier = typeidentifier;
 	}
 
+	public static Type getInstance() {
+		return(instance == null ? instance = new Type() : instance);
+	}
 	/*
 	 * Getters and setters for attributes
 	 */
@@ -68,6 +84,15 @@ public class Type implements Serializable {
 		this.typename = typename;
 		this.typenameModified = true;
 	}
+	
+	public String getTypeidentifier() {
+		return typeidentifier;
+	}
+	
+	public void setTypeidentifier(String typeidentifier) {
+		this.typeidentifier = typeidentifier;
+		this.typeidentifierModified = true;
+	}
 
 	/*
 	 * Getters and setters for attribute modified status
@@ -94,6 +119,14 @@ public class Type implements Serializable {
 
 	public void setTypenameModified(boolean typenameModified) {
 		this.typenameModified = typenameModified;
+	}
+	
+	public boolean isTypeidentifierModified() {
+		return typeidentifierModified;
+	}
+
+	public void setTypeidentifierModified(boolean typeidentifierModified) {
+		this.typeidentifierModified = typeidentifierModified;
 	}
 
 	/**
@@ -141,6 +174,14 @@ public class Type implements Serializable {
 			return false;
 		}
 
+		if (typeidentifier == null ? _cast.typeidentifier != typeidentifier
+				: !typeidentifier.equals(_cast.typeidentifier)) {
+			return false;
+		}
+
+		if (typeidentifierModified != _cast.typeidentifierModified) {
+			return false;
+		}
 		return true;
 	}
 
@@ -163,6 +204,11 @@ public class Type implements Serializable {
 		}
 
 		_hashCode = 29 * _hashCode + (typenameModified ? 1 : 0);
+		if (typeidentifier != null) {
+			_hashCode = 29 * _hashCode + typeidentifier.hashCode();
+		}
+
+		_hashCode = 29 * _hashCode + (typeidentifierModified ? 1 : 0);
 		return _hashCode;
 	}
 
@@ -177,8 +223,10 @@ public class Type implements Serializable {
 		ret.append(TYPEID + "=" + typeid);
 		ret.append(", " + TYPE + "=" + type);
 		ret.append(", " + TYPENAME + "=" + typename);
+		ret.append(", " + TYPEIDENTIFIER + "=" + typeidentifier);
 		
 		return ret.toString();
 	}
+
 
 }
