@@ -1,16 +1,10 @@
 package com.qpeka.managers;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import com.qpeka.db.Category;
 import com.qpeka.db.Genre;
 import com.qpeka.db.exceptions.GenreException;
-import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.handler.GenreHandler;
 
 public class GenreManager {

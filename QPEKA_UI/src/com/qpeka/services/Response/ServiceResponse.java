@@ -1,4 +1,4 @@
-package com.qpeka.db;
+package com.qpeka.services.Response;
 
 import java.io.Serializable;
 

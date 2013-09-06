@@ -1,6 +1,5 @@
 package com.qpeka.services.user;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -17,8 +16,8 @@ import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.user.User;
-import com.qpeka.managers.ServiceResponseManager;
 import com.qpeka.managers.user.UserManager;
+import com.qpeka.services.Response.ServiceResponseManager;
 
 @Path("user")
 public class UserService {
@@ -26,25 +25,23 @@ public class UserService {
 	@POST
 	@Path("/login")
 	public Response loginService(@FormParam("username") String username,
-			@FormParam("password") String password, @FormParam("isEmail") boolean isEmail) {
-		
-		Map<String, Object> response = new HashMap<String, Object>();
-		try {
-			response = UserManager.getInstance().authenticateUser(username,
-					password, isEmail);
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.status(200).entity(new Gson().toJson(response)).build();
+			@FormParam("password") String password,
+			@FormParam("isEmail") boolean isEmail) throws UserException {
+
+		return Response
+				.status(200)
+				.entity(new Gson().toJson(UserManager.getInstance()
+						.authenticateUser(username, password, isEmail)))
+				.build();
 	}
 
 	@POST
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid) {
-		Map<String, Object> response = null;
-		response = UserManager.getInstance().updateLastActivity(userid, false);
-		return Response.status(200).entity(new Gson().toJson(response)).build();
+		return Response
+				.status(200)
+				.entity(new Gson().toJson(UserManager.getInstance()
+						.updateLastActivity(userid, false))).build();
 	}
 
 	@POST
@@ -57,7 +54,7 @@ public class UserService {
 				for (String email : formParams.get(keys)) {
 					try {
 						if (!UserManager.getInstance().userExists(email,true)) {
-							sresponse = UserManager.getInstance().registerUser(
+							sresponse = UserManager.getInstance().registerUser1(
 									formParams);
 						} else {
 							sresponse = ServiceResponseManager.getInstance().readServiceResponse(34);
@@ -99,16 +96,15 @@ public class UserService {
 
 	@POST
 	@Path("/changepwd")
-	public Response changePwdService(@FormParam("userid") long userid, @FormParam("currentpassword") String currentPassword,
-			@FormParam("newpassword") String newPassword) {
-		Map<String, Object> response = new HashMap<String, Object>();
-		try {
-			response = UserManager.getInstance().changePassword(userid,currentPassword, newPassword);
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.status(200).entity(new Gson().toJson(response)).build();
+	public Response changePwdService(@FormParam("userid") long userid,
+			@FormParam("currentpassword") String currentPassword,
+			@FormParam("newpassword") String newPassword) throws UserException {
+
+		return Response
+				.status(200)
+				.entity(new Gson().toJson(UserManager.getInstance()
+						.changePassword(userid, currentPassword, newPassword)))
+				.build();
 	}
 	
 	@POST
@@ -132,26 +128,21 @@ public class UserService {
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
+	public Response editProfileService(MultivaluedMap<String, String> formParams)
+			throws FileException {
+		Map<String, Object> sResponse = null;
+		sResponse = UserManager.getInstance().editProfile(formParams);
+		if (!sResponse.isEmpty() && sResponse != null) {
+			return Response.status(200).entity(new Gson().toJson(sResponse))
+					.build();
+		} else
+			return Response.status(200).entity(new Gson().toJson("")).build();
+	}
 	
-	public Response editProfileService(MultivaluedMap<String, String> formParams) {
-		 Map<String, Object> sResponse = null;
-		 String response = null;
-		 try {
-			   sResponse = UserManager.getInstance().editProfile(formParams);
-			   if(!sResponse.isEmpty() && sResponse != null) {
-				   response = (new Gson()).toJson(sResponse);
-			   } else 
-				   response = "hello";
-		} catch (FileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.status(200).entity(response).build();
-	}               
-	
+}
 
 // TODO WS for each param of edit profile
 // TODO ws FOR SERVICE PROVIDERS
 
-}
+
 

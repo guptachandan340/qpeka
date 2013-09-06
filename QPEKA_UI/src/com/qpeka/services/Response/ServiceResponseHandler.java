@@ -1,4 +1,4 @@
-package com.qpeka.db.handler;
+package com.qpeka.services.Response;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,10 +11,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.ServiceResponse;
 import com.qpeka.db.conf.ResourceManager;
-import com.qpeka.db.dao.ServiceResponseDao;
 import com.qpeka.db.exceptions.QpekaException;
+import com.qpeka.db.handler.AbstractHandler;
 
 public class ServiceResponseHandler extends AbstractHandler implements ServiceResponseDao{
 
