@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.activation.MimetypesFileTypeMap;
 
 import com.qpeka.db.Files;
+import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.FileException;
 
 import com.qpeka.db.handler.FilesHandler;
@@ -29,6 +30,7 @@ public class FilesManager {
 	}
 
 	public Files InsertFiles(long userId, String filetype, String filepath) {
+		
 		Files files = Files.getInstance();
 		if(createFileFields(filepath, files) != null) {
 			files.setUserid(userId); // Set UserID
@@ -118,7 +120,7 @@ public class FilesManager {
 	}
 	
 	private Files createFileFields(String filepath, Files files) {
-		File file = new File(filepath); // Inbuilt File class usage
+		File file = new File(ResourceManager.getQPEKA_IMAGES()+filepath); // Inbuilt File class usage
 		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
 		if (file.exists()) {
 			if (file.isFile()) {
