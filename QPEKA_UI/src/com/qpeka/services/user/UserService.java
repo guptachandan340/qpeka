@@ -1,5 +1,6 @@
 package com.qpeka.services.user;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -12,8 +13,14 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.map.MultiValueMap;
 
 import com.google.gson.Gson;
+import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
+import com.qpeka.db.exceptions.GenreException;
+import com.qpeka.db.exceptions.LanguagesException;
+import com.qpeka.db.exceptions.user.AddressException;
 import com.qpeka.db.exceptions.user.UserException;
+import com.qpeka.db.exceptions.user.UserInterestsException;
+import com.qpeka.db.exceptions.user.UserLanguageException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.user.User;
 import com.qpeka.managers.user.UserManager;
@@ -26,22 +33,40 @@ public class UserService {
 	@Path("/login")
 	public Response loginService(@FormParam("username") String username,
 			@FormParam("password") String password,
-			@FormParam("isEmail") boolean isEmail) throws UserException {
+			@FormParam("isEmail") boolean isEmail) {
 
+		Map<String, Object> response = new HashMap<String, Object>();
+		try {
+			response = UserManager.getInstance()
+					.authenticateUser(username, password, isEmail);
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return Response
 				.status(200)
-				.entity(new Gson().toJson(UserManager.getInstance()
-						.authenticateUser(username, password, isEmail)))
-				.build();
+				.entity(new Gson().toJson(response))
+				.build();	
 	}
 
 	@POST
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid) {
-		return Response
-				.status(200)
-				.entity(new Gson().toJson(UserManager.getInstance()
-						.updateLastActivity(userid, false))).build();
+		try {
+			// No need to set response for updateLastActivity
+			// Reason : We shouldn't let the user that we are tracking their
+			// lastaccess and lastlogin record.
+			// TODO set seesion and based on that return response Object
+			UserManager.getInstance().updateLastActivity(userid, false);
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response.status(200)
+				.entity(new Gson().toJson("successfully logged out")).build();
 	}
 
 	@POST
@@ -72,7 +97,7 @@ public class UserService {
 	@POST
 	@Path("/resetpwd")
 	public Response resetPwdService(@FormParam("authname") String authName) {
-		boolean isEmail = false;;
+		boolean isEmail = false;
 		String changedPassword = null;
 		if (authName.indexOf("@") != -1) {
 			isEmail = true;
@@ -98,38 +123,40 @@ public class UserService {
 	@Path("/changepwd")
 	public Response changePwdService(@FormParam("userid") long userid,
 			@FormParam("currentpassword") String currentPassword,
-			@FormParam("newpassword") String newPassword) throws UserException {
+			@FormParam("newpassword") String newPassword) {
 
-		return Response
+		Map<String, Object> response = new HashMap<String, Object>();
+		try {
+			response = UserManager.getInstance()
+					.changePassword(userid, currentPassword, newPassword);
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response 
 				.status(200)
-				.entity(new Gson().toJson(UserManager.getInstance()
-						.changePassword(userid, currentPassword, newPassword)))
+				.entity(new Gson().toJson(response))
 				.build();
 	}
 	
 	@POST
 	@Path("/getProfile")
-	public Response getProfileService(@FormParam("userid") long userid) {
-		MultiValueMap<String, Object> response = new MultiValueMap<String, Object>();
+	public Response getProfileService(@FormParam("userid") long userid) throws AddressException, CountryException, UserInterestsException, GenreException, UserLanguageException, LanguagesException {
+		Object response = new Object();
 		try {
 			response = UserManager.getInstance().getProfile(userid);
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(!response.isEmpty()) {
-			return Response.status(200).entity(new Gson().toJson(response)).build();
-		} else {
-			return Response.status(200).entity("").build();
-		}		
+		return Response.status(200).entity(new Gson().toJson(response)).build();
 	}
 	
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response editProfileService(MultivaluedMap<String, String> formParams)
-			throws FileException {
+			throws FileException, NumberFormatException, CountryException {
 		Map<String, Object> sResponse = null;
 		sResponse = UserManager.getInstance().editProfile(formParams);
 		if (!sResponse.isEmpty() && sResponse != null) {

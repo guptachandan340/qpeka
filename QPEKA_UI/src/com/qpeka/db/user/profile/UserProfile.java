@@ -74,8 +74,8 @@ public class UserProfile implements Serializable {
 	// Interests
 	public static final String INTERESTS = "interests";
 	// Languages
-	public static final String RLANG = "rLang";
-	public static final String WLANG = "wLang";
+	public static final String RLANG = "rlang";
+	public static final String WLANG = "wlang";
 	// QPeka User management information
 	public static final String USERBADGES = "userbadges";
 	public static final String USERTYPE = "usertype";

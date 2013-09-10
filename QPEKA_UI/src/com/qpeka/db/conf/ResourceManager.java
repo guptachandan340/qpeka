@@ -16,7 +16,7 @@ public class ResourceManager {
 	private static String JDBC_URL = null;
 	private static String JDBC_USER = null;
 	private static String JDBC_PASSWORD = null;
-	private static String FILE_PROFILEPIC = null;
+	private static String QPEKA_IMAGES = null;
 	private static Driver driver = null;
 	private static Properties mysqlProperties = null;
 	private static Properties filesProperties = null;
@@ -40,7 +40,7 @@ public class ResourceManager {
 			JDBC_PASSWORD = mysqlProperties.getProperty("db_password");
 			
 			// Assigning system Properties values
-			setFILE_PROFILEPIC(filesProperties.getProperty("profilePicFolder"));
+			setQPEKA_IMAGES(filesProperties.getProperty("QpekaImageFolder"));
 			
 		} catch (IOException ie) {
 			ie.printStackTrace();
@@ -92,15 +92,15 @@ public class ResourceManager {
 	/**
 	 * @return the fILE_PROFILEPIC
 	 */
-	public static String getFILE_PROFILEPIC() {
-		return FILE_PROFILEPIC;
+	public static String getQPEKA_IMAGES() {
+		return QPEKA_IMAGES;
 	}
 
 	/**
 	 * @param fILE_PROFILEPIC the file_Profilepic to set
 	 */
-	public static void setFILE_PROFILEPIC(String file_Profilepic) {
-		FILE_PROFILEPIC = file_Profilepic;
+	public static void setQPEKA_IMAGES(String QPEKA_ImageS) {
+		QPEKA_IMAGES = QPEKA_ImageS;
 	}
 
 	public static void main(String[] args) {
