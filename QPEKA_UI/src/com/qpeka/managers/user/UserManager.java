@@ -514,10 +514,38 @@ public class UserManager {
 					+ e.getMessage(), e);
 		}
 	}
-
-	/***************************** UPDATE PASSWORD MODULE ********************************/
 	
+
+	
+	/***************************** PASSWORD MODULE ********************************/
+	
+	/***
+	 * VERIFY PASSWORD
+	 *
+	 * @param userid
+	 * @throws UserException 
+	 * 
+	 */
+	public boolean verifyPassword(long userid, String password) throws UserException {
+		List<User> userList = null;
+		try {
+			userList = UserHandler.getInstance().findWhereUseridEquals(userid);
+		} catch (UserException _e) {
+			throw new UserException("Verify password Exception: "
+					+ _e.getMessage(), _e);
+		}
+
+		if (!userList.isEmpty() && userList != null) {
+			for (User user : userList) {
+				return BCrypt.checkpw(password, user.getPassword());
+			}
+		}
+		return false;
+	}
+
 	/**
+	 * UPDATE PASSWORD
+	 * 
 	 * Change account password -
 	 * 
 	 * @throws UserException
@@ -551,7 +579,8 @@ public class UserManager {
 	}// end of changePassword()
 
 	/**
-	 * Reset users password
+	 * 
+	 * RESET PASSWORD
 	 * 
 	 * @throws UserException
 	 */
@@ -578,6 +607,7 @@ public class UserManager {
 		}
 		return null;
 	} // end of reset password()
+	
 	
 	/***************************** DELETE ACCOUNT MODULE ********************************/
 
@@ -823,7 +853,6 @@ public class UserManager {
 				}
 			} else { 
 				// Set an empty map for language
-				// TODO ask bcoz evrytime it will return rlang for sure
 				userInfo.put(
 						langType.equalsIgnoreCase("read") ? UserProfile.RLANG
 								: UserProfile.WLANG, "");
@@ -1111,6 +1140,7 @@ public class UserManager {
 		return responseStatus;
 	}
 
+	
 	/**
 	 * Method to be called by setEditInfo method for editProfile
 	 * 

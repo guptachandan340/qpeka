@@ -184,6 +184,24 @@ public class UserService {
 			return Response.status(200).entity(new Gson().toJson("")).build();
 	}
 	
+	@POST
+	@Path("/verifypassword")
+	public Response verifyPasswordService(@FormParam("userid") long userid,
+			@FormParam("password") String password) {
+		try {
+			return Response
+					.status(200)
+					.entity(new Gson().toJson(UserManager.getInstance()
+							.verifyPassword(userid, password) ? ServiceResponseManager
+							.getInstance().readServiceResponse(200)
+							: ServiceResponseManager.getInstance()
+									.readServiceResponse(215))).build();
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(new Gson().toJson("")).build();
+	}
 }
 
 // TODO WS for each param of edit profile

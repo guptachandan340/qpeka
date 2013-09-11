@@ -66,7 +66,7 @@ public class TestUser {
 		System.out.println(UserManager.getInstance().updateUserLanguages(
 				(long) 1, "write", lang));
 
-		*//**************** Test getProfile module ****************************//*
+		//**************** Test getProfile module ****************************/
 
 		try {
 			System.out.println(UserManager.getInstance().getProfile((long) 1));
@@ -95,7 +95,7 @@ public class TestUser {
 		
 		//************************Test Delete User Module *************************************//*
 		
-		try {
+		/*try {
 			System.out.println(UserManager.getInstance().deleteUser(10));
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
@@ -113,15 +113,15 @@ public class TestUser {
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} */
+		} 
 		
-		/********************* Test Files Deleted module *************************/
+		*//********************* Test Files Deleted module *************************//*
 		
 		try {
 			System.out.println(FilesManager.getInstance().SetFilesDeleted(4));
 		} catch (FileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 }
