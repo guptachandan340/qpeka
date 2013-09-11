@@ -11,9 +11,9 @@ public class Address implements Serializable {
 
 	public static final String ADDRESSID = "addressid";
 	public static final String USERID = "userid";
-	public static final String ADDRESSLINE1 = "addressLine1";
-	public static final String ADDRESSLINE2 = "addressLine2";
-	public static final String ADDRESSLINE3 = "addressLine3";
+	public static final String ADDRESSLINE1 = "addressline1";
+	public static final String ADDRESSLINE2 = "addressline2";
+	public static final String ADDRESSLINE3 = "addressline3";
 	public static final String CITY = "city";
 	public static final String STATE = "state";
 	public static final String COUNTRY = "country";

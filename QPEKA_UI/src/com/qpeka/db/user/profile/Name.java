@@ -17,9 +17,9 @@ public class Name implements Serializable {
 	 */
 	private static final long serialVersionUID = -6418849114132369831L;
 
-	public static final String FIRSTNAME = "firstName";
-	public static final String MIDDLENAME = "middleName";
-	public static final String LASTNAME = "lastName";
+	public static final String FIRSTNAME = "firstname";
+	public static final String MIDDLENAME = "middlename";
+	public static final String LASTNAME = "lastname";
 
 	// These attributes maps to the firstname, middlename and lastname columns
 	// of the userprofile table.

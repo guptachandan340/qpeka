@@ -17,7 +17,7 @@ public static ServiceResponseManager instance = null;
 		return (instance == null ? instance = new ServiceResponseManager() : instance);
 	}
 
-	// Create badges
+	// Create Service Response
 	public ServiceResponse createServiceResponse(short errorid, int status, String name,
 			String message) {
 		ServiceResponse serviceResponse = ServiceResponse.getInstance();
@@ -33,7 +33,7 @@ public static ServiceResponseManager instance = null;
 		return serviceResponse;
 	}
 
-	// Delete Badges
+	// Delete Service Response
 	public boolean deleteServiceResponse(short errorid) {
 		try {
 			ServiceResponseHandler.getInstance().delete(errorid);
@@ -93,13 +93,14 @@ public static ServiceResponseManager instance = null;
 		}
 		return sResponse;
 	}
+	
 	// Updating ServiceError;
 	public short updateServiceResponse(Map<String, Object> updateServiceResponseMap) {
 		short counter = 0;
 		if (updateServiceResponseMap.get(ServiceResponse.ERRORID) != null) {
 			List<ServiceResponse> existingServiceResponse = null;
 			try {
-				// Retrieving badges from database based on BadgeId
+				// Retrieving Service Response from database based on BadgeId
 				existingServiceResponse = ServiceResponseHandler.getInstance()
 						.findWhereErroridEquals(
 								Short.parseShort(updateServiceResponseMap.get(ServiceResponse.ERRORID)

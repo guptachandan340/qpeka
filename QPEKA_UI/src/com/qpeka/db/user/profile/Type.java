@@ -2,11 +2,6 @@ package com.qpeka.db.user.profile;
 
 import java.io.Serializable;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
-
-import com.qpeka.db.Category;
-import com.qpeka.managers.TypeManager;
-
 public class Type implements Serializable {
 
 	/**
@@ -55,6 +50,7 @@ public class Type implements Serializable {
 	public static Type getInstance() {
 		return(instance == null ? instance = new Type() : instance);
 	}
+	
 	/*
 	 * Getters and setters for attributes
 	 */
