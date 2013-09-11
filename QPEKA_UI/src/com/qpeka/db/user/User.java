@@ -481,6 +481,5 @@ public class User implements Serializable {
 
 		System.out.println(u.hashCode());
 		System.out.println(u.toString());
-
 	}
 }

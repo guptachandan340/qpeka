@@ -11,11 +11,13 @@ import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import com.qpeka.db.Constants.STATUS;
 import com.qpeka.db.Files;
 import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.FileException;
 
 import com.qpeka.db.handler.FilesHandler;
+import com.qpeka.services.Response.ServiceResponseManager;
 
 public class FilesManager {
 	public static FilesManager instance = null;
@@ -62,9 +64,24 @@ public class FilesManager {
 	 * return files; }
 	 */
 
+	/***************************Files Delete Module *********************************/
 	
 	/* Check delete function with userid for user */
+	
 	// Set file status to delete instead of deleting the files;
+	public Map<String, Object> SetFilesDeleted(long fileid) throws FileException {
+		Files files = Files.getInstance();
+		files.setStatus(STATUS.DELETED.ordinal());
+		try {
+			return FilesHandler.getInstance().update(fileid, files) != -1 ? ServiceResponseManager
+					.getInstance().readServiceResponse(200)
+					: ServiceResponseManager.getInstance().readServiceResponse(215);
+		} catch (FileException e) {
+			throw new FileException("Files Deleted Exception : ");
+		}
+	}
+	
+	// Deleting Files from database
 	public boolean deleteFiles(long fileId) {
 		try {
 			FilesHandler.getInstance().delete(fileId);
@@ -75,6 +92,8 @@ public class FilesManager {
 			return false;
 		}
 	}
+	
+	/************************UPDATE FILES MODULE ***********************************/
 
 	// updating file status through FileId
 	public short updateFiles(short status, short fileid, String fileID) {

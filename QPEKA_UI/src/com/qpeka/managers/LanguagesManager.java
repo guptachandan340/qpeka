@@ -2,8 +2,10 @@ package com.qpeka.managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.qpeka.db.Languages;
 import com.qpeka.db.exceptions.LanguagesException;
@@ -207,19 +209,21 @@ public class LanguagesManager {
 		return languages;
 	}
 	
-	public Map<Short, String> retrieveLangugage() {
+	public Set<String> retrieveLangugage() {
 		List<Languages> existingLanguage = null;
-		Map<Short, String> languageIdentifierMap = new HashMap<Short, String>();
+		Set<String> langName = new HashSet<String>();
 			try {
 				existingLanguage = LanguagesHandler.getInstance().findAll();
-				for(Languages language : existingLanguage) {
-					languageIdentifierMap.put(language.getLanguageid(),language.getName());	
-				}
+				if(!existingLanguage.isEmpty() && existingLanguage != null) {
+					for(Languages language : existingLanguage) {
+						langName.add(language.getName());	
+					}
+				} 
 			} catch (LanguagesException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		return languageIdentifierMap;
+		return langName;
 	}
 	
 

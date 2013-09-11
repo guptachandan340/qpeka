@@ -1,6 +1,7 @@
 package com.qpeka.services.user;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -34,7 +35,6 @@ public class UserService {
 	public Response loginService(@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("isEmail") boolean isEmail) {
-
 		Map<String, Object> response = new HashMap<String, Object>();
 		try {
 			response = UserManager.getInstance()
@@ -72,23 +72,18 @@ public class UserService {
 	@POST
 	@Path("/signup")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response signupService(MultivaluedMap<String, String> formParams) {
+	public Response signupService(MultivaluedMap<String, String> formParams) throws UserException {
 		Map<String, Object> sresponse = null;
-		for (String keys : formParams.keySet()) {
-			if (keys.equalsIgnoreCase(User.EMAIL)) {
-				for (String email : formParams.get(keys)) {
-					try {
-						if (!UserManager.getInstance().userExists(email,true)) {
-							sresponse = UserManager.getInstance().registerUser1(
-									formParams);
-						} else {
-							sresponse = ServiceResponseManager.getInstance().readServiceResponse(34);
-						}
-					} catch (UserException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+		List<String> emailList = formParams.get(User.EMAIL);
+				for (String email : emailList) {
+			try {
+				sresponse = (!UserManager.getInstance().userExists(email, true)) ? UserManager
+						.getInstance().registerUser(formParams)
+						: ServiceResponseManager.getInstance()
+								.readServiceResponse(34);
+
+			} catch (UserException e) {
+				throw new UserException(" Registration Exception : ");
 			}
 		}
 		return Response.status(200).entity(new Gson().toJson(sresponse)).build();
@@ -108,15 +103,11 @@ public class UserService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (changedPassword != null) {
-			return Response.status(200)
-					.entity(new Gson().toJson(changedPassword)).build();
-		} else {
-			return Response
-					.status(200)
-					.entity(new Gson().toJson(ServiceResponseManager.getInstance()
-							.readServiceResponse(215))).build();
-		}
+		return Response.status(200)
+				.entity(new Gson()
+						.toJson(changedPassword != null ? changedPassword
+								: ServiceResponseManager.getInstance()
+										.readServiceResponse(215))).build();
 	}
 
 	@POST
@@ -140,22 +131,49 @@ public class UserService {
 	}
 	
 	@POST
-	@Path("/getProfile")
+	@Path("/getprofile")
 	public Response getProfileService(@FormParam("userid") long userid) throws AddressException, CountryException, UserInterestsException, GenreException, UserLanguageException, LanguagesException {
-		Object response = new Object();
 		try {
-			response = UserManager.getInstance().getProfile(userid);
+			return Response.status(200).entity(new Gson().toJson(UserManager.getInstance().getProfile(userid))).build();
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return Response.status(200).entity(new Gson().toJson(response)).build();
+		return Response.status(200).entity(new Gson().toJson("")).build();
 	}
 	
 	@POST
+	@Path("/viewownprofile")
+	public Response viewOwnProfileService(@FormParam("userid") long userid){
+		try {
+			return Response.status(200).entity(new Gson().toJson(UserManager.getInstance().viewOwnProfile(userid))).build();
+		} catch (UserProfileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(new Gson().toJson("")).build();
+	}
+	
+	@POST
+	@Path("/deleteuser")
+	public Response deleteUserService(@FormParam("userid") long userid){
+		try {
+			return Response
+					.status(200)
+					.entity(new Gson().toJson(UserManager.getInstance()
+							.deleteUser(userid))).build();
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(new Gson().toJson("")).build();
+	}
+	
+	//TODO test
+	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response editProfileService(MultivaluedMap<String, String> formParams)
+	public Response editBasicSocialProfileService(MultivaluedMap<String, String> formParams)
 			throws FileException, NumberFormatException, CountryException {
 		Map<String, Object> sResponse = null;
 		sResponse = UserManager.getInstance().editProfile(formParams);
@@ -166,6 +184,24 @@ public class UserService {
 			return Response.status(200).entity(new Gson().toJson("")).build();
 	}
 	
+	@POST
+	@Path("/verifypassword")
+	public Response verifyPasswordService(@FormParam("userid") long userid,
+			@FormParam("password") String password) {
+		try {
+			return Response
+					.status(200)
+					.entity(new Gson().toJson(UserManager.getInstance()
+							.verifyPassword(userid, password) ? ServiceResponseManager
+							.getInstance().readServiceResponse(200)
+							: ServiceResponseManager.getInstance()
+									.readServiceResponse(215))).build();
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Response.status(200).entity(new Gson().toJson("")).build();
+	}
 }
 
 // TODO WS for each param of edit profile
