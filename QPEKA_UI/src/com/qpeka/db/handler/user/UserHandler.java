@@ -808,7 +808,7 @@ public class UserHandler extends AbstractHandler implements UserDao {
 		user.setLastaccess(rs.getLong(COLUMN_LASTACCESS));
 		user.setLastlogin(rs.getLong(COLUMN_LASTLOGIN));
 		user.setStatus(rs.getShort(COLUMN_STATUS));
-		user.setStatus(rs.getShort(COLUMN_TYPE));
+		user.setType(rs.getShort(COLUMN_TYPE));
 		user.setTimezone(rs.getString(COLUMN_TIMEZONE));
 		// user.setLanguage( rs.getShort( COLUMN_LANGUAGE ) );
 		reset(user);
