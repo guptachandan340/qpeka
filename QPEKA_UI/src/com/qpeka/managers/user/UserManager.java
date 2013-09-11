@@ -1,5 +1,6 @@
 package com.qpeka.managers.user;
 
+import java.io.ObjectInputStream.GetField;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -100,7 +101,7 @@ public class UserManager {
 	 * @return
 	 */
 	
-	public Map<String, Object> registerUser(
+/*	public Map<String, Object> registerUser(
 			MultiValueMap<String, Object> formParams) {
 		// Create User
 		User user = User.getInstance();
@@ -115,12 +116,12 @@ public class UserManager {
 				userProfile);
 		
 		return null;
-		}
+		}*/
 	
 	
 
 
-	public Map<String, Object> registerUser1(
+	public Map<String, Object> registerUser(
 			MultivaluedMap<String, String> formParams) throws UserException {	
 		
 		// Create User
@@ -136,6 +137,7 @@ public class UserManager {
 		user.setStatus((short) STATUS.DEFAULT.ordinal());
 		user.setType((short) TYPE.AUTHENTIC.ordinal());
 	
+		//registerUserInfo(formParams, user, userProfile);
 		Set<String> keySet = formParams.keySet();
 		for (String key : keySet) {
 			if (!key.equalsIgnoreCase(Languages.LANGUAGE)) {
@@ -144,7 +146,7 @@ public class UserManager {
 					for (String userInfoValue : userInfo) {
 						if (userInfoValue != null
 								&& !userInfoValue.equalsIgnoreCase("")) {
-							registerUserInfo1(key, userInfoValue, user,
+							registerUserInfo(key, userInfoValue, user,
 									userProfile);
 						}
 					}
@@ -190,11 +192,14 @@ public class UserManager {
 	 * @param userProfile
 	 */
 	
-	private void registerUserInfo(MultiValueMap<String, Object> formParams,
+	/* Will be used in future during usage of guava library
+	 * 
+	 * 
+	 * private void registerUserInfo1(MultiValueMap<String, Object> formParams,
 			User user, UserProfile userProfile) {
 		System.out.println("hello");
 		
-		/*if(formParams.get(User.EMAIL) != null) {
+		if(formParams.get(User.EMAIL) != null) {
 			System.out.println(formParams.get(User.EMAIL));
 		}
 		long t1 = System.currentTimeMillis() / 1000;
@@ -212,10 +217,17 @@ public class UserManager {
 		
 		}
 		long t2 = System.currentTimeMillis() / 1000;
-		System.out.println(t2 - t1);*/
-	}
+		System.out.println(t2 - t1);
+	}*/
 	
-	public void registerUserInfo1(String key, String value, User user,
+	/*public void registerUserInfo(MultivaluedMap<String, String> formParam, User user,
+			UserProfile userProfile) {
+		if(!formParam.get(Name.FIRSTNAME).isEmpty() && formParam.get(Name.FIRSTNAME) != null) {
+			userProfile.getName().setFirstname(formParam.get(Name.FIRSTNAME).iterator().next());
+		}
+	}*/
+	
+	public void registerUserInfo(String key, String value, User user,
 			UserProfile userProfile) {
 		if (key.equalsIgnoreCase(Name.FIRSTNAME)) {
 			userProfile.getName().setFirstname(value);
@@ -244,17 +256,6 @@ public class UserManager {
 			userProfile.setTnc(Short.parseShort(value));
 		} 
 	}
-	
-	/**
-	 *  Being called by register, editProfile and getProfile
-	 *  
-	 * @return date format
-	 */
-	private DateFormat getFormatedDate() {
-		DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-		format.setTimeZone(TimeZone.getTimeZone("UTC"));
-		return format;
-	}
 
 	/**
 	 * Create penName
@@ -263,7 +264,7 @@ public class UserManager {
 	 * @param user
 	 * @throws UserException 
 	 */
-	private void createPenName(UserProfile userProfile, User user) throws UserException {
+	public void createPenName(UserProfile userProfile, User user) throws UserException {
 		char[] patternChar;
 		patternChar = "._".toCharArray();
 		List<Object> penNameComb = new ArrayList<Object>();
@@ -275,7 +276,6 @@ public class UserManager {
 			if (!UserManager.getInstance().userExists(email, false)) {
 				user.setPenname(email);
 			} else {
-				long t1 = System.nanoTime();
 				// Create pennameList with Combination of fname and lname
 				penNameComb.add(userProfile.getName().getFirstname()
 						+ userProfile.getName().getLastname());
@@ -313,8 +313,6 @@ public class UserManager {
 				if (!penNameComb.isEmpty()) {
 					user.setPenname(penNameComb.iterator().next().toString());
 				}
-				long t2 = System.nanoTime();
-				System.out.println(t2 - t1);
 			}
 		} catch (UserException e) {
 			throw new UserException(" Creating Pen Name Exception : ");
@@ -371,7 +369,7 @@ public class UserManager {
 		if (!userList.isEmpty() && userList != null) {
 			for (User user : userList) {
 				if (user.getStatus() != 4 && user.getStatus() != 3) {
-					if (BCrypt.checkpw(password, userList.get(0).getPassword())) {
+					if (BCrypt.checkpw(password, user.getPassword())) {
 						// No need to set response for updateLastActivity
 						// Reason : We shouldn't let the user that we are
 						// tracking their lastaccess and lastlogin record.
@@ -416,52 +414,82 @@ public class UserManager {
 							+ e.getMessage(), e);
 		}
 		if (user != null) {
-			userInfo.put((User.PROFILEID).toLowerCase(), user.getUserid());
+			userInfo.put((User.PROFILEID), user.getUserid());
 			// Set PenName
-			userInfo.put(User.PENNAME.toLowerCase(),
+			userInfo.put(User.PENNAME,
 					user.getPenname() != null ? user.getPenname() : "");
 			// Set Email
-			userInfo.put(User.EMAIL.toLowerCase(),
+			userInfo.put(User.EMAIL,
 					user.getEmail() != null ? user.getEmail() : "");
 		}
 		// TODO Set errorcode if obj or list is empty
 		if (!userprofile.isEmpty() && userprofile != null) {
 			for (UserProfile userProfile : userprofile) {
-				// get firstname
-				userInfo.put(Name.FIRSTNAME, (userProfile.getName()
-						.getFirstname() != null) ? userProfile.getName()
-						.getFirstname() : "");
-				// get Last Name
-				userInfo.put(Name.LASTNAME, (userProfile.getName()
-						.getLastname() != null) ? userProfile.getName()
-						.getLastname() : "");
+				// get first and last name
+				readFirstLastName(userInfo, userProfile);
 				// get Gender
 				userInfo.put(
 						UserProfile.GENDER,
 						(userProfile.getGender() != null) ? userProfile
 								.getGender() : userProfile.getGender());
 				// get profilepic
-				if (userProfile.getProfilepic() > 0) {
-					List<Files> files = null;
-					try {
-						files = FilesHandler.getInstance()
-								.findWhereFileidEquals(
-										userProfile.getProfilepic());
-						if (!files.isEmpty() && files != null) {
-							for (Files file : files) {
-								userInfo.put(UserProfile.PROFILEPIC,
-										file.getFilepath());
-							}
-						}
-					} catch (FileException e) {
-						throw new UserProfileException(
-								"Authentication Map generation Exception at profilepic : "
-										+ e.getMessage(), e);
-					}
-				}
+				readProfilePic(userInfo, userProfile);
 			}
 		}
 		return userInfo;
+	}
+	
+	
+	/**
+	 * Needed by Authenticate, getProfile and viewOwnProfile Module
+	 * (createInfoMap() and ViewOwnProfile()
+	 * 
+	 * @param userInfo
+	 * @param userProfile
+	 */ 
+	private void readProfilePic(MultiValueMap<String, Object> userInfo,
+			UserProfile userProfile) throws UserProfileException {
+		if (userProfile.getProfilepic() > 0) {
+			List<Files> files = null;
+			try {
+				files = FilesHandler.getInstance()
+						.findWhereFileidEquals( 
+								userProfile.getProfilepic());
+				if (!files.isEmpty() && files != null) {
+					for (Files file : files) {
+						userInfo.put(UserProfile.PROFILEPIC, file.getFilepath());
+					}
+				}
+			} catch (FileException e) {
+				throw new UserProfileException(
+						" Map generation Exception at profilepic : "
+								+ e.getMessage(), e);
+			}
+		} else {
+			userInfo.put(UserProfile.PROFILEPIC, "");
+		}
+		
+	}
+
+	/**
+	 * Needed by Authenticate, getProfile and viewOwnProfile Module
+	 * (createInfoMap() and ViewOwnProfile()
+	 * 
+	 * @param userInfo
+	 * @param userProfile
+	 */
+	private void readFirstLastName(MultiValueMap<String, Object> userInfo,
+			UserProfile userProfile) {
+		if (UserProfile.getInstance().getName() == null) {
+			UserProfile.getInstance().setName(Name.getInstance());
+		}
+		userInfo.put(Name.FIRSTNAME, (userProfile.getName()
+				.getFirstname() != null) ? userProfile.getName()
+				.getFirstname() : "");
+		// get Last Name
+		userInfo.put(Name.LASTNAME, (userProfile.getName()
+				.getLastname() != null) ? userProfile.getName()
+				.getLastname() : "");
 	}
 
 	/**
@@ -550,7 +578,27 @@ public class UserManager {
 		}
 		return null;
 	} // end of reset password()
+	
+	/***************************** DELETE ACCOUNT MODULE ********************************/
 
+	/**
+	 * 
+	 * @param userid
+	 * @throws UserException 
+	 */
+	
+	public Object deleteUser(long userid) throws UserException {
+		User user = User.getInstance();
+		user.setStatus((short) STATUS.DELETED.ordinal());
+		try {
+			return UserHandler.getInstance().update(userid, user) != -1 ? ServiceResponseManager
+					.getInstance().readServiceResponse(200)
+					: ServiceResponseManager.getInstance().readServiceResponse(
+							215);
+		} catch (UserException e) {
+			throw new UserException("Delete User Exception : ");
+		}
+	}
 	/***************************** GET PROFILE MODULE ********************************/
 	
 	/**
@@ -598,24 +646,38 @@ public class UserManager {
 	 * @param userid
 	 * @return
 	 * @throws UserProfileException
-	 * @throws AddressException 
-	 * @throws CountryException 
-	 * @throws GenreException 
-	 * @throws UserInterestsException 
-	 * @throws LanguagesException 
-	 * @throws UserLanguageException 
-	 * 
 	 */
 	
-	/*public MultiValueMap<String, Object> getOwnProfile(long userid)
+	public Map<String, Object> viewOwnProfile(long userid)
 			throws UserProfileException {
-		User user = User.getInstance();
-		ServiceResponse sResponse = ServiceResponse.getInstance();
 		MultiValueMap<String, Object> profileInfo = new MultiValueMap<String, Object>();
-		
-		return null;
-	
-	}*/
+		UserProfile userProfile;
+		try {
+			userProfile = UserProfileHandler.getInstance().findByPrimaryKey(
+					userid);
+		} catch (UserProfileException e) {
+			throw new UserProfileException("View Own Profile Exception : ");
+		}
+		if (userProfile != null) {
+			// Set Full Name
+			readFirstLastName(profileInfo, userProfile);
+			readMiddleName(profileInfo, userProfile);
+			// Set ProfilePic
+			readProfilePic(profileInfo, userProfile);
+			// Set Biography
+			readBiography(profileInfo, userProfile);
+			// TODO Set stats (earned points, read points)
+
+			/*
+			 * if(!profileInfo.isEmpty() && profileInfo != null) { return
+			 * profileInfo; }
+			 */
+		} else {
+			return ServiceResponseManager.getInstance()
+					.readServiceResponse(215);
+		}
+		return profileInfo;
+	}
 
 	/*
 	 * Create EditedInfo Map dob nationality website biography level tnc
@@ -625,9 +687,7 @@ public class UserManager {
 		MultiValueMap<String, Object> userInfo = createUserInfoMap(user);
 		List<UserProfile> userprofile = null;
 		List<Address> useraddress = null;
-		if (UserProfile.getInstance().getName() == null) {
-			UserProfile.getInstance().setName(Name.getInstance());
-		}
+		
 		if (UserProfile.getInstance().getAddress() == null) {
 			UserProfile.getInstance().setAddress(Address.getInstance());
 		}
@@ -647,9 +707,9 @@ public class UserManager {
 		if (!userprofile.isEmpty() && userprofile != null) {
 			for(UserProfile userProfile : userprofile) { 
 			//set middlename
-				userInfo.put(Name.MIDDLENAME, userProfile.getName().getMiddlename() != null ? userProfile.getName().getMiddlename() : "");
+			readMiddleName(userInfo, userProfile);
 			// Set DOB
-				userInfo.put(UserProfile.DOB,
+			userInfo.put(UserProfile.DOB,
 						userProfile.getDob() != null ? getFormatedDate()
 								.format(userProfile.getDob()) : "");
 			// Set Nationality
@@ -684,22 +744,57 @@ public class UserManager {
 				}
 			}
 			// Set biography
-			userInfo.put(UserProfile.BIOGRAPHY, userProfile.getBiography() != null ? userProfile.getBiography() : "");
+			readBiography(userInfo, userProfile);
+			
 			// Set Website
-			userInfo.put(UserProfile.WEBSITE, userProfile.getWebsite() != null ? userProfile.getWebsite() : "");
-			// Set UserInterests
-			getUserInterests(user.getUserid(), userInfo);
+			userInfo.put(
+						UserProfile.WEBSITE,
+						userProfile.getWebsite() != null ? userProfile
+								.getWebsite() : "");
+				// Set UserInterests
+			readUserInterests(user.getUserid(), userInfo);
 			// Set RLang
-			getLanguages(user.getUserid(), userInfo, "read");
+			readLanguages(user.getUserid(), userInfo, "read");
 			// Set WLang
-			getLanguages(user.getUserid(), userInfo, "write");
+			readLanguages(user.getUserid(), userInfo, "write");
 			}
 		}
 		return userInfo;
 	}
 
-	private void getLanguages(long userid,
-			MultiValueMap<String, Object> userInfo, String langType)
+	/**
+	 * Needed by Authenticate, getProfile and viewOwnProfile Module
+	 * (createInfoMap() and ViewOwnProfile()
+	 * 
+	 * @param userInfo
+	 * @param userProfile
+	 */
+	private void readBiography(MultiValueMap<String, Object> userInfo,
+			UserProfile userProfile) {
+		userInfo.put(UserProfile.BIOGRAPHY,
+				userProfile.getBiography() != null ? userProfile.getBiography()
+						: "");
+	}
+	
+	/**
+	 * Needed by Authenticate, getProfile and viewOwnProfile Module
+	 * (createInfoMap() and ViewOwnProfile()
+	 * 
+	 * @param userInfo
+	 * @param userProfile
+	 */
+	private void readMiddleName(MultiValueMap<String, Object> userInfo,
+			UserProfile userProfile) {
+		
+		if (UserProfile.getInstance().getName() == null) {
+			UserProfile.getInstance().setName(Name.getInstance());
+		}
+		userInfo.put(Name.MIDDLENAME,
+				userProfile.getName().getMiddlename() != null ? userProfile
+						.getName().getMiddlename() : "");
+	}
+
+	private void readLanguages(long userid, MultiValueMap<String, Object> userInfo, String langType)
 			throws UserLanguageException, LanguagesException {
 
 		List<Object> readFilesobj = new ArrayList<Object>();
@@ -742,7 +837,7 @@ public class UserManager {
 		}
 	}
 
-	private void getUserInterests(long userid, MultiValueMap<String, Object> userInfo) throws UserInterestsException, GenreException {
+	private void readUserInterests(long userid, MultiValueMap<String, Object> userInfo) throws UserInterestsException, GenreException {
 		Set<String> genreSet = new HashSet<String>();
 		try {
 			List<UserInterests> userInterests = UserInterestsHandler
@@ -821,6 +916,8 @@ public class UserManager {
 	 * @throws NumberFormatException 
 	 */
 
+	// TODO Edit profile for work published
+	
 	// TODO userlevel, usertype, status
 
 	public Map<String, Object> editProfile(
@@ -828,37 +925,30 @@ public class UserManager {
 		long userid = 0;
 		short responseStatus = 0;
 		List<UserProfile> userList = null;
-		Set<String> keySet = formParams.keySet();
-		for (String key : keySet) {
-			if (key.equalsIgnoreCase(UserProfile.USERID)) {
-				List<String> formUserid = formParams.get(key);
-				for (String value : formUserid) {
-					if (value != null && !value.equals("")) {
-						userid = Long.parseLong(value);
-						try {
-							userList = UserProfileHandler.getInstance()
-									.findWhereUseridEquals(userid);
-						} catch (UserProfileException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						if (!userList.isEmpty()) {
-							responseStatus = setEditedInfo(userid, formParams, userList);
-						}
-					}
+		List<String> formUserid = formParams.get(User.PROFILEID);
+		for (String value : formUserid) {
+			if (value != null && !value.equals("")) {
+				userid = Long.parseLong(value);
+				try {
+					userList = UserProfileHandler.getInstance()
+								.findWhereUseridEquals(userid);
+				} catch (UserProfileException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (!userList.isEmpty() && userList != null) {
+					responseStatus = setEditedInfo(userid, formParams);
 				}
 			}
 		}
 		return ServiceResponseManager.getInstance().readServiceResponse(responseStatus);
-
 	}
 
 	public short setEditedInfo(long userid,
-			MultivaluedMap<String, String> formParams,
-			List<UserProfile> userList) throws NumberFormatException, CountryException {
+			MultivaluedMap<String, String> formParams) throws NumberFormatException, CountryException {
 		short responseStatus = 0;
+		UserProfile userProfile = UserProfile.getInstance();
 		if (userid != 0) {
-			for (UserProfile userProfile : userList) {
 				if (userProfile.getName() == null) {
 					userProfile.setName(Name.getInstance());
 				}
@@ -879,12 +969,6 @@ public class UserManager {
 								if (key.equalsIgnoreCase(User.PENNAME)) {
 									responseStatus = UpdatePenName(userInfoValue, userid);
 								}
-								// Set/Update Pen name
-								/*
-								 * else if (key
-								 * .equalsIgnoreCase(UserProfile.PENNAME)) {
-								 * userProfile.setPenname(userInfoValue); }
-								 */
 								// Update first name
 								else if (key.equalsIgnoreCase(Name.FIRSTNAME)) {
 									userProfile.getName().setFirstname(
@@ -996,14 +1080,12 @@ public class UserManager {
 					// Update User Interests
 					else if (key.equalsIgnoreCase(UserProfile.INTERESTS)) {
 							updateUserInterests(userInfo, userid, userProfile);
-						/*userProfile.setInterests(updateUserInterests(userInfo,
-								userid, sResponse));*/
 					} else if (key.equalsIgnoreCase(UserProfile.RLANG)) {
-						// Read Language if language is rLang {
+						// update RLang
 						updateUserLanguages(userid,
 								"read", userInfo);
 					} else if (key.equalsIgnoreCase(UserProfile.WLANG)) {
-						// Read Language if language is wLang {
+						// update WLang
 						updateUserLanguages(userid,
 								"write", userInfo);
 					}
@@ -1025,7 +1107,6 @@ public class UserManager {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
 		}
 		return responseStatus;
 	}
@@ -1039,7 +1120,7 @@ public class UserManager {
 	 */
 	public short hasProfilePic(long userid, String userInfoValue,
 			UserProfile userProfile) {
-		Files file = null;
+		Files file = new Files();
 		long fileid = 0;
 		short responseStatus = 0;
 		Map<String, Entry<String, String>> userPicExist = null;
@@ -1279,6 +1360,7 @@ public class UserManager {
 		return userProfileList.get(0);
 	}
 
+	
 	/***************************** USERTYPE MODULE ********************************/
 	
 	public UserProfile updateUserType(long userid, USERTYPE usertype) {
@@ -1333,8 +1415,19 @@ public class UserManager {
 			return usertype;*/
 		
 	}
-	/***************************** AGE MODULE ********************************/
+	/***************************** DATE and AGE MODULE ********************************/
 
+	/**
+	 *  Being called by register, editProfile and getProfile
+	 *  
+	 * @return date format
+	 */
+	private DateFormat getFormatedDate() {
+		DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return format;
+	}
+	
 	/**
 	 * Compute age of a person
 	 */
@@ -1429,47 +1522,4 @@ public class UserManager {
 		return collectionString.toString();
 	}
 
-	/***************************** MAIN MODULE ********************************/
-	
-	public static void main(String[] args) {
-	
-	/*	MultiValueMap<String, Object> m = new MultiValueMap<String, Object>();
-		m.put(User.EMAIL, "anki@sffzvz.com");
-		m.put(User.EMAIL, null);
-		UserManager.getInstance().registerUser(m);*/
-		if (UserProfile.getInstance().getName() == null) {
-			UserProfile.getInstance().setName(Name.getInstance());
-		}
-		UserProfile.getInstance().getName().setFirstname("mehul");
-		UserProfile.getInstance().getName().setLastname("malani");
-		User.getInstance().setEmail("mehulmalani@yahoo.com ");
-		try {
-			UserManager.getInstance().createPenName(UserProfile.getInstance(), User.getInstance());
-		} catch (UserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(User.getInstance().getPenname());
-
-		/*List<String> interests = new ArrayList<String>();
-		UserProfile up = UserProfile.getInstance();
-		interests.add("Adult");
-		interests.add("Classic");
-		interests.add("Fiction");
-		interests.add("Children Learning");
-		usermgr.updateUserInterests(interests, (long) 1, up);*/
-		
-		/*List<String> lang = new ArrayList<String>();
-		lang.add("MARATHI");
-		lang.add("HINDI");
-		lang.add("ENGLISH");
-		System.out.println(UserManager.getInstance().updateUserLanguages((long) 1, "write", lang));*/
-		
-		/*try {
-			System.out.println(UserManager.getInstance().getProfile((long)1));
-		} catch (UserProfileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		}
 }// End of class UserManager.java
