@@ -31,7 +31,7 @@ public class FilesManager {
 		return (instance == null ? (instance = new FilesManager()) : instance);
 	}
 
-	public Files InsertFiles(long userId, String filetype, String filepath) {
+	public Files createFiles(long userId, String filetype, String filepath) {
 		
 		Files files = Files.getInstance();
 		if(createFileFields(filepath, files) != null) {

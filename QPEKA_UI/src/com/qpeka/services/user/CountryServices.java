@@ -7,22 +7,27 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.qpeka.managers.CountryManager;
 
 @Path("/user/country")
 public class CountryServices {
 
+	final Logger logger = Logger.getLogger(LanguageServices.class);
+	
 	@GET
 	@Path("/readcountries")
 	public Response retrievingCountryService() {
-		Map<String, String> country = new HashMap<String, String>();
-		String response = null;
-		country = CountryManager.getInstance().retrieveCountry();
+		Map<String, String> country = CountryManager.getInstance().retrieveCountry();
 		if(!country.isEmpty() && country != null) {
-			Gson gson = new Gson();
-			response = gson.toJson(country);
+			return Response.status(200).entity(new Gson().toJson(country)).build();
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Empty Country list");
+			}
+			return Response.status(200).entity(new Gson().toJson("")).build();
 		}
-		return Response.status(200).entity(response).build();
 	}
 }

@@ -5,6 +5,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.qpeka.db.user.profile.Type;
 import com.qpeka.managers.TypeManager;
@@ -12,38 +15,35 @@ import com.qpeka.managers.TypeManager;
 @Path("/user/type")
 public class TypeService {
 	
-	// Retrieve all row of UserType
+	final Logger logger = Logger.getLogger(TypeService.class);
+	
 	@GET
 	@Path("/readtype")
 	public Response retrievingTypeService() {
-		String response = null;
 		List<Type> type = TypeManager.getInstance().readType();
 		if (!type.isEmpty() && type != null) {
-			Gson gson = new Gson();
-			response = gson.toJson(type);
-		} else
-			response = "usertypes is not avilable";
-		return Response.status(200).entity(response).build();
+			return Response.status(200).entity(new Gson().toJson(type)).build();
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Empty User Type/ Not available");
+			}
+			return Response.status(200).entity(new Gson().toJson("")).build();
+		}
 	}
    
 	// Retrieve UserType By ID
 	@GET
 	@Path("/readtypebyid")
 	public Response retrievingTypeService(@QueryParam("typeid") String typeid) {
-		String response = null;
-		if (typeid.isEmpty()) {
-			response = "don't enter null value";
-		} else {
-			Type type = TypeManager.getInstance().readType(
+		Type type = TypeManager.getInstance().readType(
 					Short.parseShort(typeid));
-			if (type != null) {
-				Gson gson = new Gson();
-				response = gson.toJson(type);
-			} else
-				response = "usertype is not avilable";
+		if (type != null) {
+			return Response.status(200).entity(new Gson().toJson(type)).build();
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Empty User Type/ Not available");
+			}
+			return Response.status(200).entity(new Gson().toJson("")).build();
 		}
-		return Response.status(200).entity(response).build();
-
 	}
-
 }
