@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -20,7 +21,6 @@ public class CategoryServices {
 	@POST
 	@Path("/readcategorybytype")
 	public Response retrievingCategoryService(@FormParam("categorytype") String categoryType) {
-		System.out.println("hiiii");
 		Map<String, Object> category = new HashMap<String, Object>();
 		category = CategoryManager.getInstance().readCategory(categoryType, Category.TYPE);
 		if(!category.isEmpty() && category != null) {
@@ -29,7 +29,7 @@ public class CategoryServices {
 		return Response.status(200).entity("").build();
 	}
 	
-	@POST
+	@GET
 	@Path("/readAllcategory")
 	public Response readAllCategoryService() {
 		Set<String> category = new HashSet<String>();
