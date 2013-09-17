@@ -69,7 +69,7 @@ public class TestUser {
 		//**************** Test getProfile module ****************************/
 
 		try {
-			System.out.println(UserManager.getInstance().getProfile((long) 1));
+			System.out.println(UserManager.getInstance().getProfile((long) 12));
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
