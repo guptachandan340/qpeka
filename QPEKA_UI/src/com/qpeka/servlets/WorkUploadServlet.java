@@ -53,7 +53,7 @@ public class WorkUploadServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-	/*	boolean create = false;
+		boolean create = false;
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		//file upload part 
 	    String filePath = "";
@@ -260,8 +260,10 @@ public class WorkUploadServlet extends HttpServlet {
         	{
         		if(cvr.getName().endsWith("epub"))
         		{
+     
 	        		EpubProcessorNew.processEpub(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile,
 	        				SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+	        		System.out.println("epub process");
         		}
         		else if(cvr.getName().endsWith("doc")) // handle DocCase
         		{
@@ -275,7 +277,7 @@ public class WorkUploadServlet extends HttpServlet {
         		}
         		
         		//Encrypt and save the file
-        		WorkEncryptionHandler.getInstance().addKey(_id, FileEncryptionUtils.generateKey(_id));
+        		//WorkEncryptionHandler.getInstance().addKey(_id, FileEncryptionUtils.generateKey(_id));
         		
         		
         		cvr.delete();
@@ -296,7 +298,7 @@ public class WorkUploadServlet extends HttpServlet {
         }
         catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 		response.setContentType("text/html");
 
 	      // Actual logic goes here.

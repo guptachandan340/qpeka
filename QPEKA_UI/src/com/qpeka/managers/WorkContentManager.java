@@ -3,9 +3,7 @@ package com.qpeka.managers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.json.JSONObject;
-
 import com.qpeka.db.Constants.CATEGORY;
 import com.qpeka.db.Constants.LANGUAGES;
 import com.qpeka.db.Constants.WORKTYPE;
