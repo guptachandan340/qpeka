@@ -11,8 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections4.map.MultiValueMap;
-
 import com.google.gson.Gson;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
@@ -75,12 +73,12 @@ public class UserService {
 	public Response signupService(MultivaluedMap<String, String> formParams) throws UserException {
 		Map<String, Object> sresponse = null;
 		List<String> emailList = formParams.get(User.EMAIL);
-				for (String email : emailList) {
+			for (String email : emailList) {
 			try {
-				sresponse = (!UserManager.getInstance().userExists(email, true)) ? UserManager
+				sresponse = (!UserManager.getInstance().userExists(email, true) ? UserManager
 						.getInstance().registerUser(formParams)
 						: ServiceResponseManager.getInstance()
-								.readServiceResponse(34);
+								.readServiceResponse(34));
 
 			} catch (UserException e) {
 				throw new UserException(" Registration Exception : ");
@@ -132,9 +130,14 @@ public class UserService {
 	
 	@POST
 	@Path("/getprofile")
-	public Response getProfileService(@FormParam("userid") long userid) throws AddressException, CountryException, UserInterestsException, GenreException, UserLanguageException, LanguagesException {
+	public Response getProfileService(@FormParam("userid") long userid)
+			throws AddressException, CountryException, UserInterestsException,
+			GenreException, UserLanguageException, LanguagesException {
 		try {
-			return Response.status(200).entity(new Gson().toJson(UserManager.getInstance().getProfile(userid))).build();
+			return Response
+					.status(200)
+					.entity(new Gson().toJson(UserManager.getInstance()
+							.getProfile(userid))).build();
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -146,7 +149,10 @@ public class UserService {
 	@Path("/viewownprofile")
 	public Response viewOwnProfileService(@FormParam("userid") long userid){
 		try {
-			return Response.status(200).entity(new Gson().toJson(UserManager.getInstance().viewOwnProfile(userid))).build();
+			return Response
+					.status(200)
+					.entity(new Gson().toJson(UserManager.getInstance()
+							.viewOwnProfile(userid))).build();
 		} catch (UserProfileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -168,20 +174,25 @@ public class UserService {
 		}
 		return Response.status(200).entity(new Gson().toJson("")).build();
 	}
-	
-	//TODO test
+
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response editBasicSocialProfileService(MultivaluedMap<String, String> formParams)
 			throws FileException, NumberFormatException, CountryException {
 		Map<String, Object> sResponse = null;
-		sResponse = UserManager.getInstance().editProfile(formParams);
-		if (!sResponse.isEmpty() && sResponse != null) {
-			return Response.status(200).entity(new Gson().toJson(sResponse))
-					.build();
-		} else
-			return Response.status(200).entity(new Gson().toJson("")).build();
+		try {
+			 sResponse = UserManager.getInstance().editProfile(formParams);
+			if (!sResponse.isEmpty() && sResponse != null) {
+				return Response.status(200).entity(new Gson().toJson(sResponse)).build();
+			} else {
+					return Response.status(200).entity(new Gson().toJson("")).build();
+		}
+		} catch (UserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@POST

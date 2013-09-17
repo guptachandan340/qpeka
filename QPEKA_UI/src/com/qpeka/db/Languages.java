@@ -4,8 +4,12 @@ import java.io.Serializable;
 
 public class Languages implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5817098627344661453L;
 	public static final String LANGUAGEID = "languageid";
-	public static final String LANGUAGE = "language";
+	public static final String LANGUAGE = "languages";
 	public static final String NAME = "name";
 	public static final String ANATIVE = "anative";
 	public static final String DIRECTION = "direction";
