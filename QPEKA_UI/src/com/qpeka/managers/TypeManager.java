@@ -122,7 +122,7 @@ public class TypeManager {
 	public static void main(String[] args) {
 	TypeManager tm = TypeManager.getInstance();
 	System.out.println(tm.deleteType((short)17));
-	System.out.println(tm.createType((short)17, "service prvider" , "Publisher","Publisher"));
+	System.out.println(tm.createType((short)17, "service provider" , "Publisher","Publisher"));
 	Map<String, Object> updateMap = new HashMap<String, Object>();
 	updateMap.put(Type.TYPEID, (short)14);
 	updateMap.put(Type.TYPE, "printers");

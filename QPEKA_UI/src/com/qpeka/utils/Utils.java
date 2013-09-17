@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -87,7 +90,8 @@ public class Utils {
 			Properties props = System.getProperties();
 			props.put("mail.smtp.auth", "true");
 			props.put("mail.smtp.starttls.enable", "true");
-			props.put("mail.smtp.host", "smtpout.secureserver.net");
+			props.put("mail.smtp." +
+					"+++++++++++++++++++++host", "smtpout.secureserver.net");
 			props.put("mail.smtp.port", "80");
 			props.put("mail.user", from);
 			props.put("mail.password", password);
@@ -117,7 +121,18 @@ public class Utils {
 			System.out.println("Failed to send Email : " + e.getMessage());
 
 		}
-
+	}
+	
+	/************************** GET DATE MODULE *****************************/
+	/**
+	 *  Being called by register, editProfile and getProfile in UserManager
+	 *  
+	 * @return date format
+	 */
+	public static DateFormat getFormatedDate() {
+		DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return format;
 	}
 
 	public static void main(String[] args) {
