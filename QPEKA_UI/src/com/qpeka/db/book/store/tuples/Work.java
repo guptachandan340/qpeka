@@ -61,7 +61,7 @@ public class Work {
 	private String title = "";
 	private String authorId = "";
 	private String coverPageFile = "";
-	private CATEGORY category = com.qpeka.db.Constants.CATEGORY.FACTS;
+	private CATEGORY category = com.qpeka.db.Constants.CATEGORY.CHILDREN;
 	private WORKTYPE type = Constants.WORKTYPE.BOOK;
 	private int numPages = 0;
 	private JSONObject metaData = new JSONObject();
