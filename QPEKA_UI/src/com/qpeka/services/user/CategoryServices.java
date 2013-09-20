@@ -37,9 +37,9 @@ public class CategoryServices {
 	}
 	
 	@GET
-	@Path("/readAllcategory")
+	@Path("/readuniquecategorytype")
 	public Response readAllCategoryService() {
-		Set<String> category = CategoryManager.getInstance().readCategory();
+		Set<Object> category = CategoryManager.getInstance().readCategoryDistictType();
 		if(!category.isEmpty() && category != null) {
 			return Response.status(200).entity(new Gson().toJson(category)).build();
 		} else {
@@ -48,5 +48,5 @@ public class CategoryServices {
 			}
 			return Response.status(200).entity(new Gson().toJson("")).build();
 		}
-	}
+	}	
 }

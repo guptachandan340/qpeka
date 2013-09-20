@@ -20,6 +20,7 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jersey-bundle-1.17.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-collections4-4.0-alpha1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/guava-14.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>

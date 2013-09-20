@@ -215,7 +215,7 @@ public class Genre implements Serializable {
 	public String toString()
 	{
 		StringBuffer ret = new StringBuffer();
-		ret.append( "Category: " );
+		ret.append( "Genre: " );
 		ret.append(GENREID + "=" + genreid);
 		ret.append(", " + CATEGORYID + "=" + categoryid );
 		ret.append( ", " + GENRE + "=" + genre );

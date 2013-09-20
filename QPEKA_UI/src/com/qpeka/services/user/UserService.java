@@ -18,6 +18,7 @@ import com.qpeka.db.exceptions.GenreException;
 import com.qpeka.db.exceptions.LanguagesException;
 import com.qpeka.db.exceptions.user.AddressException;
 import com.qpeka.db.exceptions.user.UserException;
+import com.qpeka.db.exceptions.user.UserFieldVisibilityException;
 import com.qpeka.db.exceptions.user.UserInterestsException;
 import com.qpeka.db.exceptions.user.UserLanguageException;
 import com.qpeka.db.exceptions.user.UserProfileException;
@@ -132,7 +133,7 @@ public class UserService {
 	@Path("/getprofile")
 	public Response getProfileService(@FormParam("userid") long userid)
 			throws AddressException, CountryException, UserInterestsException,
-			GenreException, UserLanguageException, LanguagesException {
+			GenreException, UserLanguageException, LanguagesException, UserFieldVisibilityException {
 		try {
 			return Response
 					.status(200)
@@ -179,8 +180,8 @@ public class UserService {
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response editBasicSocialProfileService(MultivaluedMap<String, String> formParams)
-			throws FileException, NumberFormatException, CountryException {
-		Map<String, Object> sResponse = null;
+			throws FileException, NumberFormatException, CountryException, UserFieldVisibilityException {
+		List<Map<String, Object>> sResponse = null;
 		try {
 			 sResponse = UserManager.getInstance().editProfile(formParams);
 			if (!sResponse.isEmpty() && sResponse != null) {

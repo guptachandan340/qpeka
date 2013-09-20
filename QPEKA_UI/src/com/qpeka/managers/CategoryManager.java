@@ -150,6 +150,23 @@ public Set<String> readCategoryByType(String type) {
 	return uniqueCategoryGenre;
 }
 
+public Set<Object> readCategoryDistictType() {
+	List<Category> existingCatgory = null;
+	Set<Object> distictCategorySet = new HashSet<Object>();
+	try {
+		existingCatgory = CategoryHandler.getInstance().findAll();
+	} catch (CategoryException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	if(!existingCatgory.isEmpty() && existingCatgory != null) {
+		for(Category category : existingCatgory) {
+			distictCategorySet.add(category.getType());
+		}
+	}
+	return distictCategorySet;
+}
+
 public List<Category> readCategory(short categoryid) {
 	List<Category> categories = null;
 	try {
@@ -277,9 +294,8 @@ public Map<Short, Map<String, String>> retrieveCategory(List<Category> existingC
 
 	public static void main(String[] args) {
 		CategoryManager categoryManager = new CategoryManager();
-		System.out.println(categoryManager.deleteCategory((short)10));
+		//System.out.println(categoryManager.deleteCategory((short)10));
 		//categoryManager.createCategory("book","Non-Fiction");
-		
 	//Map<String, Object> updateMap = new HashMap<String, Object>();
 	//	updateMap.put(Category.CATEGORYID, (short)1);
 	//	updateMap.put(Category.GENRE, "nonfictional");

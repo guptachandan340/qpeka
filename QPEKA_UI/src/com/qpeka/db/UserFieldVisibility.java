@@ -1,5 +1,7 @@
 package com.qpeka.db;
 
+import com.qpeka.db.Constants.VISIBILITY;
+
 public class UserFieldVisibility {
 
 	public static final String VISIBILITYID = "visibilityid";
@@ -11,7 +13,7 @@ public class UserFieldVisibility {
 		private long visibilityid;
 		private long userid;
 		private String fieldName;
-		private short status = 1;
+		private VISIBILITY status = Constants.VISIBILITY.PRIVATE;
 		
 		// These attributes represents whether the above attributes has been
 		// modified since being read from the database.
@@ -29,7 +31,7 @@ public class UserFieldVisibility {
 			super();
 		}
 		
-		public UserFieldVisibility(long visibilityid, long userid, String fieldName, Short status) {
+		public UserFieldVisibility(long visibilityid, long userid, String fieldName, VISIBILITY status) {
 			super();
 			this.setVisibilityid(visibilityid);
 			this.setUserid(userid);
@@ -72,16 +74,17 @@ public class UserFieldVisibility {
 			this.fieldNameModified = true;
 		}
 
-		public short getStatus() {
+		public VISIBILITY getStatus() {
 			return status;
 		}
 
-		public void setStatus(short status) {
+		public void setStatus(VISIBILITY status) {
 			this.status = status;
 			this.statusModified = true;
 		}
 		
-		/** Getter and Setter for Attributes modified
+		/*
+		 * * Getter and Setter for Attributes modified
 		 */
 		
 		public boolean isVisibilityidModified() {
@@ -163,9 +166,11 @@ public class UserFieldVisibility {
 				return false;
 			}
 			
-			if (status != _cast.status) {
+			if (status == null ? _cast.status != status
+					: !status.equals(_cast.status)) {
 				return false;
 			}
+			
 			
 			if (statusModified != _cast.statusModified) {
 				return false;
@@ -192,9 +197,11 @@ public class UserFieldVisibility {
 
 			_hashCode = 29 * _hashCode + (fieldNameModified ? 1 : 0);
 			
-			_hashCode = (29 * _hashCode + status);
-			_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
+			if (status != null) {
+				_hashCode = 29 * _hashCode + status.hashCode();
+			}
 
+			_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
 			return _hashCode;
 		}
 
