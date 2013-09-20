@@ -1,5 +1,6 @@
 package com.qpeka.managers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -177,7 +178,28 @@ public List<Category> readCategory(short categoryid) {
 	}
 	return categories;
 }
-	
+
+	// READ CATEGORY THROUGH CATEGORY OR TYPE
+	public Set<String> readOnlyFromCategory(String categoryIdentifier,
+			String categoryString) {
+		Set<String> uniqueSet = new HashSet<String>();
+		if (categoryString.equalsIgnoreCase(Category.TYPE)) {
+			List<Category> categories = new ArrayList<Category>();
+			try {
+				categories = CategoryHandler.getInstance().findWhereTypeEquals(
+						categoryIdentifier);
+			} catch (CategoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (!categories.isEmpty() && categories != null) {
+				for (Category category : categories) {
+					uniqueSet.add(category.getCategory());
+				}
+			}
+		}
+		return uniqueSet;
+	}
 	// READ CATEGORY THROUGH CATEGORY OR TYPE
 	public Map<String, Object> readCategory(String categoryIdentifier,
 			String categoryIdentifierString) {

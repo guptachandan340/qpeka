@@ -22,8 +22,8 @@ public class CategoryServices {
 			.getLogger(CategoryServices.class);
 	
 	@POST
-	@Path("/readcategorybytype")
-	public Response retrievingCategoryService(@FormParam("categorytype") String categoryType) {
+	@Path("/readcategorygenrebytype")
+	public Response retrievingCategoryGenreService(@FormParam("categorytype") String categoryType) {
 		Map<String, Object> category = CategoryManager
 				.getInstance().readCategory(categoryType, Category.TYPE);
 		if(!category.isEmpty() && category != null) {
@@ -49,4 +49,19 @@ public class CategoryServices {
 			return Response.status(200).entity(new Gson().toJson("")).build();
 		}
 	}	
+	
+	@POST
+	@Path("/readcategorybytype")
+	public Response retrievingCategoryService(@FormParam("categorytype") String categoryType) {
+		Set<String> category= CategoryManager
+				.getInstance().readOnlyFromCategory(categoryType, Category.TYPE);
+		if(!category.isEmpty() && category != null) {
+			return Response.status(200).entity(new Gson().toJson(category)).build();
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Empty Category");
+			}
+			return Response.status(200).entity(new Gson().toJson("")).build();
+		}
+	}
 }

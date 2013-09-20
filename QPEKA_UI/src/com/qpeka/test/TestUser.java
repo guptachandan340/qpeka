@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Multiset;
+import com.qpeka.db.Category;
 import com.qpeka.db.Constants.VISIBILITY;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
@@ -22,9 +23,11 @@ import com.qpeka.db.exceptions.user.UserFieldVisibilityException;
 import com.qpeka.db.exceptions.user.UserInterestsException;
 import com.qpeka.db.exceptions.user.UserLanguageException;
 import com.qpeka.db.exceptions.user.UserProfileException;
+import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.Name;
 import com.qpeka.db.user.profile.UserProfile;
+import com.qpeka.managers.CategoryManager;
 import com.qpeka.managers.FilesManager;
 import com.qpeka.managers.user.UserManager;
 
@@ -168,5 +171,7 @@ public class TestUser {
 		Multimap<String, Object> ok = Multimaps.forMap(a);
 		ok.put("okay", 1);
 		System.out.println(ok);*/
+		
+		
 	}
 }
