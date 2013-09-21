@@ -1,6 +1,5 @@
 <html>
 <body>
-	<h1>EditProfile FROM</h1>
 	
 	<!-- 
 	userid ,usertype, pen name , fname, mname, lnmae, gender, dob, nationality, website, biography
@@ -12,10 +11,7 @@
 	<form action="v0.1/user/editprofile" method="post">
 		<p>
 			id: <input type="text" name="userid" />
-		</p>
-		<p>
-			penname : <input type="text" name="penname" />
-		</p>
+		</p>       		
 		<p>
 		    first name: <input type="text" name="firstName" />
 		</p>
@@ -25,48 +21,46 @@
 		<p>
 			last name: <input type="text" name="lastName" />
 		</p>
+		
+		<select name="fullnameCheck"  multiple="multiple" size="9">
+        	<option value="PUBLIC">PUBLIC</option>
+        	<option value="PRIVATE">PRIVATE</option>
+        </select>
+        
+        <p>
+			Email : <input type="text" name="email" />
+		</p>
+		<select name="emailCheck"  multiple="multiple" size="9">
+        	<option value="PUBLIC">PUBLIC</option>
+        	<option value="PRIVATE">PRIVATE</option>
+        </select>
+        
+        <p>
+			DOB : <input type="text" name="dob" />
+		</p>
+		
+		<p>
+		<select name="dobCheck"  multiple="multiple" size="9">
+        	<option value="PUBLIC">PUBLIC</option>
+        	<option value="PRIVATE">PRIVATE</option>
+        </select>
+        </p>
+		
 		<p>
 			Gender :  <input type="text" name="gender" />
 		</p>
 		<p>
-			DOB : <input type="text" name="dob" />
+		<select name="genderCheck"  multiple="multiple" size="9">
+        	<option value="PUBLIC">PUBLIC</option>
+        	<option value="PRIVATE">PRIVATE</option>
+        </select>
 		</p>
 		<p>
 			Nationality : <input type="text" name="nationality" />
 		</p>
-		<p>
-			Web Site : <input type="text" name="website" />
-		</p>
-		<p>
-			Biography: <input type="text" name="biography" />
-		</p>
-		<p>
-			profilepic: <input type="text" name="profilepic" />
-		</p>
-		<p>
-			Address : 
-			<br>
-			Line1 : <input type="text" name="addressLine1" />
-		</p>
-		<p>
-			Line2: <input type="text" name="addressLine2" />
-		</p>
-		<p>
-			Line3: <input type="text" name="addressLine3"/>
-		</p>
-		<p>
-			City : <input type="text" name="city" />
-		</p>
-		<p>
-			Country: <input type="text" name="country" />
-		</p>
-		<p>
-			pincode : <input type="text" name="pincode" />
-		</p>
-		<p>
-			State : <input type="text" name="state" />
-		</p>
-	
+		
+		
+		
 		<p>
 		Interests :
 		<select name="interests"  multiple="multiple" size="9">
@@ -81,26 +75,33 @@
         	<option value="Science">Science</option>
       	</select>
       	</p>
+      	
+      	<select name="interestsCheck"  multiple="multiple" size="9">
+        	<option value="PUBLIC">PUBLIC</option>
+        	<option value="PRIVATE">PRIVATE</option>
+        </select>
 		
 		<p>
 		rlang : 
-		<select name="rLang" size="2" multiple="multiple">
+		<select name="rlang" size="2" multiple="multiple">
 	        <option value="HINDI">HINDI</option>
         	<option value="ENGLISH">ENGLISH</option>
         	<option value= "GUJARATI">GUJARATI</option>
         	<option value = "MARATHI">MARATHI</option>
       	</select>
 		</p>
+				
 		<p>
-		
-		wlang : 
-		<select name="wLang" size="2" multiple="multiple">
-        	<option value="HINDI">HINDI</option>
-        	<option value="ENGLISH">ENGLISH</option>
-        	<option value= "GUJARATI">GUJARATI</option>
-        	<option value = "MARATHI">MARATHI</option>
-      	</select>
+		<select name="languagesCheck"  multiple="multiple" size="9">
+        	<option value="PUBLIC">PUBLIC</option>
+        	<option value="PRIVATE">PRIVATE</option>
+        </select>
 		</p>
+		
+		<p>
+			<input type = "hidden" name="profile" value="basicDetails"/> 
+		</p>
+		
 		<!--  
 		<p>
 			UserBadges : <input type="text" name="userbadges" />

@@ -11,14 +11,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.Constants.VISIBILITY;
-import com.qpeka.db.UserFieldVisibility;
 import com.qpeka.db.conf.ResourceManager;
-import com.qpeka.db.dao.user.UserFieldVisibilityDao;
-import com.qpeka.db.exceptions.user.UserFieldVisibilityException;
+import com.qpeka.db.exceptions.QpekaException;
+import com.qpeka.db.handler.AbstractHandler;
 
+import com.qpeka.db.dao.user.UserInvitesDao;
+import com.qpeka.db.user.profile.UserInvites;
 
-public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
+public class UserInvitesHandler extends AbstractHandler implements
+		UserInvitesDao {
 
 	/**
 	 * The factory class for this DAO has two versions of the create() method -
@@ -29,15 +30,16 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	 */
 	protected java.sql.Connection userConn;
 
-	protected static final Logger logger = Logger.getLogger(UserFieldVisibilityHandler.class);
-	
-	public static UserFieldVisibilityHandler instance = null;
+	protected static final Logger logger = Logger
+			.getLogger(UserInvitesHandler.class);
+
+	public static UserInvitesHandler instance;
 
 	/**
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT visibilityid, userid, fieldname, status FROM "
+	protected final String SQL_SELECT = "SELECT inviteid, userid, type, inviteIdentifier, hashvalue, status FROM "
 			+ getTableName() + "";
 
 	/**
@@ -48,25 +50,27 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	/**
 	 * SQL INSERT statement for this table
 	 */
-	protected final String SQL_INSERT = "INSERT INTO " + getTableName()
-			+ " ( visibilityid, userid, fieldname, status ) VALUES ( ?, ?, ?, ? )";
+	protected final String SQL_INSERT = "INSERT INTO "
+			+ getTableName()
+			+ " ( inviteid, userid, type, inviteidentifier, hashvalue, status ) VALUES ( ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
-	protected final String SQL_UPDATE = "UPDATE " + getTableName()
-			+ " SET visibilityid = ?, fieldname = ?, status = ? WHERE visibilityid = ?";
+	protected final String SQL_UPDATE = "UPDATE "
+			+ getTableName()
+			+ " SET inviteid = ?, userid = ?, type = ?, inviteidentifier = ?, hashvalue = ?, status = ? WHERE inviteid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
 	 */
 	protected final String SQL_DELETE = "DELETE FROM " + getTableName()
-			+ " WHERE visibilityid = ?";
+			+ " WHERE inviteid = ?";
 
 	/**
-	 * Index of column visibilityid
+	 * Index of column inviteid
 	 */
-	protected static final int COLUMN_VISIBILITYID = 1;
+	protected static final int COLUMN_INVITEID = 1;
 
 	/**
 	 * Index of column userid
@@ -74,38 +78,41 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	protected static final int COLUMN_USERID = 2;
 
 	/**
-	 * Index of column fieldname
+	 * Index of column type
 	 */
-	protected static final int COLUMN_FIELDNAME = 3;
+	protected static final int COLUMN_TYPE = 3;
+
+	/**
+	 * Index of column inviteIdentifier
+	 */
+	protected static final int COLUMN_INVITEIDENTIFIER = 4;
+
+	/**
+	 * Index of column hashvalue
+	 */
+	protected static final int COLUMN_HASHVALUE = 5;
 
 	/**
 	 * Index of column status
 	 */
-	protected static final int COLUMN_STATUS = 4;
+	protected static final int COLUMN_STATUS = 6;
 
 	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 4;
+	protected static final int NUMBER_OF_COLUMNS = 6;
 
 	/**
-	 * Index of primary-key column visibilityid
+	 * Index of primary-key column inviteid
 	 */
-	protected static final int PK_COLUMN_VISIBILITYID = 1;
+	protected static final int PK_COLUMN_INVITEID = 1;
 
-	public UserFieldVisibilityHandler() {
+	public UserInvitesHandler() {
 		super();
 	}
 
-	public UserFieldVisibilityHandler(Connection userConn) {
-		super();
+	public UserInvitesHandler(final Connection userConn) {
 		this.userConn = userConn;
-	}
-
-	public UserFieldVisibilityHandler(Connection userConn, int maxRows) {
-		super();
-		this.userConn = userConn;
-		this.maxRows = maxRows;
 	}
 
 	/**
@@ -114,11 +121,15 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	 * @return String
 	 */
 	public String getTableName() {
-		return "qpeka.userfieldvisibility";
+		return "qpeka.userinvites";
 	}
 
+	/**
+	 * Inserts a new row in the userinvites table.
+	 */
 	@Override
-	public long insert(UserFieldVisibility userFieldVisibility) throws UserFieldVisibilityException {
+	public long insert(UserInvites userInvites) throws QpekaException {
+
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -135,18 +146,18 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			StringBuffer values = new StringBuffer();
 			sql.append("INSERT IGNORE INTO " + getTableName() + " (");
 			int modifiedCount = 0;
-			if (userFieldVisibility.isVisibilityidModified()) {
+			if (userInvites.isInviteidModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
 				}
 
-				sql.append("visibilityid");
+				sql.append("inviteid");
 				values.append("?");
 				modifiedCount++;
 			}
 
-			if (userFieldVisibility.isUseridModified()) {
+			if (userInvites.isUseridModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
@@ -157,26 +168,48 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 				modifiedCount++;
 			}
 
-			if (userFieldVisibility.isFieldNameModified()) {
+			if (userInvites.isTypeModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
 				}
 
-				sql.append("fieldname");
+				sql.append("type");
 				values.append("?");
 				modifiedCount++;
 			}
-			
-			if(userFieldVisibility.isStatusModified()) {
-				if(modifiedCount > 0) {
+
+			if (userInvites.isInviteidentifierModified()) {
+				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
 				}
-				
+
+				sql.append("inviteIdentifier");
+				values.append("?");
+				modifiedCount++;
+			}
+
+			if (userInvites.isHashvalueModified()) {
+				if (modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+
+				sql.append("hashvalue");
+				values.append("?");
+				modifiedCount++;
+			}
+
+			if (userInvites.isStatusModified()) {
+				if (modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+
 				sql.append("status");
 				values.append("?");
-				modifiedCount++;				
+				modifiedCount++;
 			}
 
 			if (modifiedCount == 0) {
@@ -187,27 +220,36 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			sql.append(") VALUES (");
 			sql.append(values);
 			sql.append(")");
-			stmt = conn.prepareStatement(sql.toString(),Statement.RETURN_GENERATED_KEYS);
+			stmt = conn.prepareStatement(sql.toString(),
+					Statement.RETURN_GENERATED_KEYS);
 			int index = 1;
-			if (userFieldVisibility.isVisibilityidModified()) {
-				stmt.setLong(index++, userFieldVisibility.getVisibilityid());
+			if (userInvites.isInviteidModified()) {
+				stmt.setLong(index++, userInvites.getInviteid());
 			}
 
-			if (userFieldVisibility.isUseridModified()) {
-				stmt.setLong(index++, userFieldVisibility.getUserid());
+			if (userInvites.isUseridModified()) {
+				stmt.setLong(index++, userInvites.getUserid());
 			}
 
-			if (userFieldVisibility.isFieldNameModified()) {
-				stmt.setString(index++, userFieldVisibility.getFieldName());
+			if (userInvites.isTypeModified()) {
+				stmt.setString(index++, userInvites.getType());
 			}
-			
-			if(userFieldVisibility.isStatusModified()) {
-				stmt.setString(index++, userFieldVisibility.getStatus().toString());
+
+			if (userInvites.isInviteidentifierModified()) {
+				stmt.setString(index++, userInvites.getInviteidentifier());
+			}
+
+			if (userInvites.isHashvalueModified()) {
+				stmt.setString(index++, userInvites.getHashvalue());
+			}
+
+			if (userInvites.isStatusModified()) {
+				stmt.setShort(index++, userInvites.getStatus());
 			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + sql.toString() + " with values: "
-						+ userFieldVisibility);
+						+ userInvites);
 			}
 
 			int rows = stmt.executeUpdate();
@@ -219,25 +261,25 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			// retrieve values from auto-increment columns
 			rs = stmt.getGeneratedKeys();
 			if (rs != null && rs.next()) {
-				userFieldVisibility.setVisibilityid(rs.getShort(1));
+				userInvites.setInviteid(rs.getInt(1));
 			}
-			
-			reset(userFieldVisibility);
-			return userFieldVisibility.getVisibilityid();
+
+			reset(userInvites);
+			return userInvites.getInviteid();
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
-			throw new UserFieldVisibilityException("Exception: " + _e.getMessage(), _e);
+			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
 			ResourceManager.close(stmt);
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
 	}
 
 	@Override
-	public short update(long visibilityid, UserFieldVisibility userFieldVisibility) throws UserFieldVisibilityException {
+	public short update(long inviteid, UserInvites userinvites)
+			throws QpekaException {
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -252,16 +294,16 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
 			boolean modified = false;
-			if (userFieldVisibility.isVisibilityidModified()) {
+			if (userinvites.isInviteidModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
 
-				sql.append("visibilityid=?");
+				sql.append("inviteid=?");
 				modified = true;
 			}
 
-			if (userFieldVisibility.isUseridModified()) {
+			if (userinvites.isUseridModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
@@ -270,22 +312,40 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 				modified = true;
 			}
 
-			if (userFieldVisibility.isFieldNameModified()) {
+			if (userinvites.isTypeModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
 
-				sql.append("fieldname=?");
+				sql.append("type=?");
 				modified = true;
 			}
-			
-			if(userFieldVisibility.isStatusModified()) {
-				if(modified) {
+
+			if (userinvites.isInviteidentifierModified()) {
+				if (modified) {
 					sql.append(", ");
 				}
-				
+
+				sql.append("inviteIdentifier=?");
+				modified = true;
+			}
+
+			if (userinvites.isHashvalueModified()) {
+				if (modified) {
+					sql.append(", ");
+				}
+
+				sql.append("hashvalue=?");
+				modified = true;
+			}
+
+			if (userinvites.isStatusModified()) {
+				if (modified) {
+					sql.append(", ");
+				}
+
 				sql.append("status=?");
-				modified = true;				
+				modified = true;
 			}
 
 			if (!modified) {
@@ -293,33 +353,41 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 				return -1;
 			}
 
-			sql.append(" WHERE visibilityid=?");
+			sql.append(" WHERE inviteid=?");
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + sql.toString() + " with values: "
-						+ userFieldVisibility);
+						+ userinvites);
 			}
 
 			stmt = conn.prepareStatement(sql.toString());
 			int index = 1;
-			if (userFieldVisibility.isVisibilityidModified()) {
-				stmt.setLong(index++, userFieldVisibility.getVisibilityid());
+			if (userinvites.isInviteidModified()) {
+				stmt.setLong(index++, userinvites.getInviteid());
 			}
 
-			if (userFieldVisibility.isUseridModified()) {
-				stmt.setLong(index++, userFieldVisibility.getUserid());
+			if (userinvites.isUseridModified()) {
+				stmt.setLong(index++, userinvites.getUserid());
 			}
 
-			if (userFieldVisibility.isFieldNameModified()) {
-				stmt.setString(index++, userFieldVisibility.getFieldName());
-			}
-			
-			if(userFieldVisibility.isStatusModified()) {
-				stmt.setString(index++, userFieldVisibility.getStatus().toString());
+			if (userinvites.isTypeModified()) {
+				stmt.setString(index++, userinvites.getType());
 			}
 
-			stmt.setLong(index++, visibilityid);
-			short rows = (short)stmt.executeUpdate();
-			reset(userFieldVisibility);
+			if (userinvites.isInviteidentifierModified()) {
+				stmt.setString(index++, userinvites.getInviteidentifier());
+			}
+
+			if (userinvites.isHashvalueModified()) {
+				stmt.setString(index++, userinvites.getHashvalue());
+			}
+
+			if (userinvites.isStatusModified()) {
+				stmt.setShort(index++, userinvites.getStatus());
+			}
+
+			stmt.setLong(index++, inviteid);
+			short rows = (short) stmt.executeUpdate();
+			reset(userinvites);
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
 				logger.debug(rows + " rows affected (" + (t2 - t1) + " ms)");
@@ -327,7 +395,7 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			return rows;
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
-			throw new UserFieldVisibilityException("Exception: " + _e.getMessage(), _e);
+			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
 			ResourceManager.close(stmt);
 			if (!isConnSupplied) {
@@ -335,10 +403,12 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			}
 
 		}
+
 	}
 
 	@Override
-	public void delete(long visibilityid) throws UserFieldVisibilityException {
+	public void delete(long inviteid) throws QpekaException {
+
 		long t1 = System.currentTimeMillis();
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
@@ -351,11 +421,12 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("Executing " + SQL_DELETE + " with PK: " + visibilityid);
+				logger.debug("Executing " + SQL_DELETE + " with PK: "
+						+ inviteid);
 			}
 
 			stmt = conn.prepareStatement(SQL_DELETE);
-			stmt.setLong(1, visibilityid);
+			stmt.setLong(1, inviteid);
 			int rows = stmt.executeUpdate();
 			long t2 = System.currentTimeMillis();
 			if (logger.isDebugEnabled()) {
@@ -364,7 +435,7 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
-			throw new UserFieldVisibilityException("Exception: " + _e.getMessage(), _e);
+			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
 			ResourceManager.close(stmt);
 			if (!isConnSupplied) {
@@ -372,48 +443,70 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			}
 
 		}
+
 	}
 
 	@Override
-	public UserFieldVisibility findByPrimaryKey(long visibilityid) throws UserFieldVisibilityException {
-		List<UserFieldVisibility> ret = findByDynamicSelect(SQL_SELECT + " WHERE visibilityid = ?",
-				Arrays.asList(new Object[] { new Long(visibilityid) }));
+	public UserInvites findByPrimaryKey(long inviteid) throws QpekaException {
+		List<UserInvites> ret = findByDynamicSelect(SQL_SELECT
+				+ " WHERE inviteid = ?",
+				Arrays.asList(new Object[] { new Long(inviteid) }));
 		return ret.size() == 0 ? null : ret.get(0);
 	}
 
 	@Override
-	public List<UserFieldVisibility> findAll() throws UserFieldVisibilityException {
-		return findByDynamicSelect(SQL_SELECT + " ORDER BY visibilityid", null);
+	public List<UserInvites> findAll() throws QpekaException {
+		return findByDynamicSelect(SQL_SELECT + " ORDER BY inviteid", null);
 	}
 
 	@Override
-	public List<UserFieldVisibility> findWhereVisibilityidEquals(long visibilityid) throws UserFieldVisibilityException {
+	public List<UserInvites> findWhereInviteidEquals(long inviteid)
+			throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE visibilityid = ? ORDER BY visibilityid",
-				Arrays.asList(new Object[] { new Long(visibilityid) }));
+				+ " WHERE inviteid = ? ORDER BY inviteid",
+				Arrays.asList(new Object[] { new Long(inviteid) }));
 	}
 
 	@Override
-	public List<UserFieldVisibility> findWhereUseridEquals(long userid) throws UserFieldVisibilityException {
-		return findByDynamicSelect(
-				SQL_SELECT + " WHERE userid = ? ORDER BY userid",
+	public List<UserInvites> findWhereUseridEquals(long userid)
+			throws QpekaException {
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE userid = ? ORDER BY userid",
 				Arrays.asList(new Object[] { userid }));
 	}
 
 	@Override
-	public List<UserFieldVisibility> findWhereFieldNameEquals(String fieldName)
-			throws UserFieldVisibilityException {
-		return findByDynamicSelect(SQL_SELECT
-				+ " WHERE fieldname = ? ORDER BY fieldname",
-				Arrays.asList(new Object[] { fieldName }));
+	public List<UserInvites> findWhereTypeEquals(String type)
+			throws QpekaException {
+		return findByDynamicSelect(
+				SQL_SELECT + " WHERE type = ? ORDER BY type",
+				Arrays.asList(new Object[] { type }));
+
 	}
-	
+
 	@Override
-	public List<UserFieldVisibility> findWhereStatusEquals(short status)
-			throws UserFieldVisibilityException {
+	public List<UserInvites> findWhereInviteIdentifierEquals(
+			String inviteIdentifier) throws QpekaException {
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE inviteIdentifier = ? ORDER BY inviteIdentifier",
+				Arrays.asList(new Object[] { inviteIdentifier }));
+	}
+
+	@Override
+	public List<UserInvites> findWhereHashvalueEquals(String hashvalue)
+			throws QpekaException {
+
+		return findByDynamicSelect(SQL_SELECT
+				+ " WHERE hashvalue = ? ORDER BY hashvalue",
+				Arrays.asList(new Object[] { hashvalue }));
+	}
+
+	@Override
+	public List<UserInvites> findWhereStatusEquals(short status)
+			throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE status = ? ORDER BY status",
-				Arrays.asList(new Object[] { status }));
+				Arrays.asList(new Object[] { new Short(status) }));
 	}
 
 	@Override
@@ -427,8 +520,8 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	}
 
 	@Override
-	public List<UserFieldVisibility> findByDynamicSelect(String sql, List<Object> sqlParams)
-			throws UserFieldVisibilityException {
+	public List<UserInvites> findByDynamicSelect(String sql,
+			List<Object> sqlParams) throws QpekaException {
 		// declare variables
 		final boolean isConnSupplied = (userConn != null);
 		Connection conn = null;
@@ -456,14 +549,12 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 					&& counter < sqlParams.size(); counter++) {
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
-
 			rs = stmt.executeQuery();
-
 			// fetch the results
 			return fetchMultiResults(rs);
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
-			throw new UserFieldVisibilityException("Exception: " + _e.getMessage(), _e);
+			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
 			ResourceManager.close(rs);
 			ResourceManager.close(stmt);
@@ -475,10 +566,9 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	}
 
 	@Override
-	public List<UserFieldVisibility> findByDynamicWhere(String sql, List<Object> sqlParams)
-			throws UserFieldVisibilityException {
+	public List<UserInvites> findByDynamicWhere(String sql,
+			List<Object> sqlParams) throws QpekaException {
 		// declare variables
-
 		final boolean isConnSupplied = (userConn != null);
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -491,6 +581,7 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL);
 			}
@@ -504,12 +595,14 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 					&& counter < sqlParams.size(); counter++) {
 				stmt.setObject(counter + 1, sqlParams.get(counter));
 			}
+
 			rs = stmt.executeQuery();
+
 			// fetch the results
 			return fetchMultiResults(rs);
 		} catch (Exception _e) {
 			logger.error("Exception: " + _e.getMessage(), _e);
-			throw new UserFieldVisibilityException("Exception: " + _e.getMessage(), _e);
+			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
 			ResourceManager.close(rs);
 			ResourceManager.close(stmt);
@@ -523,11 +616,11 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	/**
 	 * Fetches a single row from the result set
 	 */
-	protected UserFieldVisibility fetchSingleResult(ResultSet rs) throws SQLException {
+	protected UserInvites fetchSingleResult(ResultSet rs) throws SQLException {
 		if (rs.next()) {
-			UserFieldVisibility userFieldVisibility = new UserFieldVisibility();
-			populateUserFieldVisibility(userFieldVisibility, rs);
-			return userFieldVisibility;
+			UserInvites userinvites = new UserInvites();
+			populateUserInvites(userinvites, rs);
+			return userinvites;
 		} else {
 			return null;
 		}
@@ -537,12 +630,13 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	/**
 	 * Fetches multiple rows from the result set
 	 */
-	protected List<UserFieldVisibility> fetchMultiResults(ResultSet rs) throws SQLException {
-		List<UserFieldVisibility> resultList = new ArrayList<UserFieldVisibility>();
+	protected List<UserInvites> fetchMultiResults(ResultSet rs)
+			throws SQLException {
+		List<UserInvites> resultList = new ArrayList<UserInvites>();
 		while (rs.next()) {
-			UserFieldVisibility userFieldVisibility = new UserFieldVisibility();
-			populateUserFieldVisibility(userFieldVisibility, rs);
-			resultList.add(userFieldVisibility);
+			UserInvites userinvites = new UserInvites();
+			populateUserInvites(userinvites, rs);
+			resultList.add(userinvites);
 		}
 		return resultList;
 	}
@@ -550,30 +644,40 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 	/**
 	 * Populates a DTO with data from a ResultSet
 	 */
-	protected void populateUserFieldVisibility(UserFieldVisibility userFieldVisibility, ResultSet rs) throws SQLException {
-		userFieldVisibility.setVisibilityid(rs.getLong(COLUMN_VISIBILITYID));
-		userFieldVisibility.setUserid(rs.getLong(COLUMN_USERID));
-		userFieldVisibility.setFieldName(rs.getString(COLUMN_FIELDNAME));
-		userFieldVisibility.setStatus(VISIBILITY.valueOf(rs.getString(COLUMN_STATUS).toUpperCase()));
-		reset(userFieldVisibility);
+	protected void populateUserInvites(UserInvites userinvites, ResultSet rs)
+			throws SQLException {
+
+		userinvites.setInviteid(rs.getLong(COLUMN_INVITEID));
+		userinvites.setUserid(rs.getLong(COLUMN_USERID));
+		userinvites.setType(rs.getString(COLUMN_TYPE));
+		userinvites.setInviteidentifier(rs.getString(COLUMN_INVITEIDENTIFIER));
+		userinvites.setHashvalue(rs.getString(COLUMN_HASHVALUE));
+		userinvites.setStatus(rs.getShort(COLUMN_STATUS));
+
+		reset(userinvites);
 	}
 
 	/**
 	 * Resets the modified attributes in the DTO
 	 */
-	protected void reset(UserFieldVisibility userFieldVisibility) {
-		userFieldVisibility.setVisibilityidModified(false);
-		userFieldVisibility.setUseridModified(false);
-		userFieldVisibility.setFieldNameModified(false);
-		userFieldVisibility.setStatusModified(false);
-	}
-	
-	/**
-	 * Get UserHandler object instance
-	 * @return instance of UserHandler
-	 */
-	public static UserFieldVisibilityHandler getInstance() {
-		return (instance == null ? (instance = new UserFieldVisibilityHandler()) : instance);
-	}
-}
+	protected void reset(UserInvites userinvites) {
 
+		userinvites.setInviteidModified(false);
+		userinvites.setUseridModified(false);
+		userinvites.setTypeModified(false);
+		userinvites.setInviteidentifierModified(false);
+		userinvites.setHashalueModified(false);
+		userinvites.setStatusModified(false);
+	}
+
+	/**
+	 * Get UserInvitesHandler object instance
+	 * 
+	 * @return instance of UserInvitesHandler
+	 */
+	public static UserInvitesHandler getInstance() {
+		return (instance == null ? (instance = new UserInvitesHandler())
+				: instance);
+	}
+
+}

@@ -6,6 +6,14 @@ public class Constants {
 		DEFAULT, ACTIVE, PASSIVE, BLOCKED, DELETED
 	}
 	
+	public enum VISIBILITY {
+		DEFAULT, PUBLIC, PRIVATE
+	}
+
+	public enum INVITESTATUS {
+		NOTSENT, SENT, ACCEPTED, NOTACCEPTED
+	}
+	
 	public enum TYPE {
 		AUTHENTIC, QPEKAADMIN, QPEKAMANAGER
 	}
