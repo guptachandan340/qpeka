@@ -12,11 +12,13 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Multiset;
 import com.qpeka.db.Category;
+import com.qpeka.db.Constants.INVITESTATUS;
 import com.qpeka.db.Constants.VISIBILITY;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.exceptions.GenreException;
 import com.qpeka.db.exceptions.LanguagesException;
+import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.exceptions.user.AddressException;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.exceptions.user.UserFieldVisibilityException;
@@ -26,9 +28,11 @@ import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.CategoryHandler;
 import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.UserInvites;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.CategoryManager;
 import com.qpeka.managers.FilesManager;
+import com.qpeka.managers.user.UserInvitesManager;
 import com.qpeka.managers.user.UserManager;
 
 public class TestUser {
@@ -172,6 +176,24 @@ public class TestUser {
 		ok.put("okay", 1);
 		System.out.println(ok);*/
 		
+		/****************************** Test UserInviteSent *********************************/
 		
+		List<String> li = new ArrayList<String>();
+		li.add("$2a$10$A2OTK.17tp2ULFNuV8DQ0OjA7cX5cJXYiuSQX5n3YWv1hKdpps8Ey");
+		li.add("$2a$10$UheA8e/tThiTXP.oBsAeiuEPlNlA8br8.HoyAhn4.AWOGuiYhqXUu");
+		li.add("$2a$10$0XJpx8/ZuG6BYL4Do./96e0SIaUJ1qgpH5bWT5z9yWJ2WPP7OoO1a");
+		try {
+			System.out.println(UserInvitesManager.getInstance().setInviteSent(li));
+		} catch (QpekaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/***************************Test User Accaepted ******************************/
+		try {
+			System.out.println(UserInvitesManager.getInstance().setInviteAccepted("$2a$10$FHhyrBkws95Y6d6qhtmym.BeNXKgFO95NcWZIMMHbJDSoafjCwp42"));
+		} catch (QpekaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

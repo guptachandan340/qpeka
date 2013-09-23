@@ -7,11 +7,11 @@ public class Constants {
 	}
 	
 	public enum VISIBILITY {
-		DEFAULT, PUBLIC, PRIVATE
+		PRIVATE, PUBLIC
 	}
 
 	public enum INVITESTATUS {
-		NOTSENT, SENT, ACCEPTED, NOTACCEPTED
+		PENDING, SENT, ACCEPTED, REJECTED
 	}
 	
 	public enum TYPE {

@@ -1,7 +1,5 @@
 package com.qpeka.db;
 
-import com.qpeka.db.Constants.VISIBILITY;
-
 public class UserFieldVisibility {
 
 	public static final String VISIBILITYID = "visibilityid";
@@ -13,7 +11,9 @@ public class UserFieldVisibility {
 		private long visibilityid;
 		private long userid;
 		private String fieldName;
-		private VISIBILITY status = Constants.VISIBILITY.PRIVATE;
+		
+		/* status = 0 if visibility is private, status = 1 if visibility is public */
+		private short status = 0;
 		
 		// These attributes represents whether the above attributes has been
 		// modified since being read from the database.
@@ -31,7 +31,7 @@ public class UserFieldVisibility {
 			super();
 		}
 		
-		public UserFieldVisibility(long visibilityid, long userid, String fieldName, VISIBILITY status) {
+		public UserFieldVisibility(long visibilityid, long userid, String fieldName, short status) {
 			super();
 			this.setVisibilityid(visibilityid);
 			this.setUserid(userid);
@@ -74,11 +74,11 @@ public class UserFieldVisibility {
 			this.fieldNameModified = true;
 		}
 
-		public VISIBILITY getStatus() {
+		public short getStatus() {
 			return status;
 		}
 
-		public void setStatus(VISIBILITY status) {
+		public void setStatus(short status) {
 			this.status = status;
 			this.statusModified = true;
 		}
@@ -166,11 +166,9 @@ public class UserFieldVisibility {
 				return false;
 			}
 			
-			if (status == null ? _cast.status != status
-					: !status.equals(_cast.status)) {
+			if(status != _cast.status) {
 				return false;
-			}
-			
+			}			
 			
 			if (statusModified != _cast.statusModified) {
 				return false;
@@ -196,10 +194,7 @@ public class UserFieldVisibility {
 			}
 
 			_hashCode = 29 * _hashCode + (fieldNameModified ? 1 : 0);
-			
-			if (status != null) {
-				_hashCode = 29 * _hashCode + status.hashCode();
-			}
+			_hashCode = 29 * _hashCode + status;
 
 			_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
 			return _hashCode;

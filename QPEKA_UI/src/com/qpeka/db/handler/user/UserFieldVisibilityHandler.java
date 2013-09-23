@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.Constants.VISIBILITY;
 import com.qpeka.db.UserFieldVisibility;
 import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.UserFieldVisibilityDao;
@@ -202,7 +201,7 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			}
 			
 			if(userFieldVisibility.isStatusModified()) {
-				stmt.setString(index++, userFieldVisibility.getStatus().toString());
+				stmt.setShort(index++, userFieldVisibility.getStatus());
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -314,7 +313,7 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 			}
 			
 			if(userFieldVisibility.isStatusModified()) {
-				stmt.setString(index++, userFieldVisibility.getStatus().toString());
+				stmt.setShort(index++, userFieldVisibility.getStatus());
 			}
 
 			stmt.setLong(index++, visibilityid);
@@ -554,7 +553,7 @@ public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {
 		userFieldVisibility.setVisibilityid(rs.getLong(COLUMN_VISIBILITYID));
 		userFieldVisibility.setUserid(rs.getLong(COLUMN_USERID));
 		userFieldVisibility.setFieldName(rs.getString(COLUMN_FIELDNAME));
-		userFieldVisibility.setStatus(VISIBILITY.valueOf(rs.getString(COLUMN_STATUS).toUpperCase()));
+		userFieldVisibility.setStatus(rs.getShort(COLUMN_STATUS));
 		reset(userFieldVisibility);
 	}
 

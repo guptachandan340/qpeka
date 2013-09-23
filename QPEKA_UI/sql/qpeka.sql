@@ -208,7 +208,7 @@ CREATE TABLE `serviceresponse` (
   `name` varchar(64) NOT NULL DEFAULT 'ok',
   `message` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`errorid`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,7 +217,7 @@ CREATE TABLE `serviceresponse` (
 
 LOCK TABLES `serviceresponse` WRITE;
 /*!40000 ALTER TABLE `serviceresponse` DISABLE KEYS */;
-INSERT INTO `serviceresponse` VALUES (1,200,'Success','Success'),(2,64,'suspended','Account is suspended'),(3,34,'already registered','email already registered'),(4,215,'bad request','bad request'),(5,500,'internal server error','internal server error'),(6,84,'pen name already registered','pen name already registered'),(7,404,'wrong credentials','PenName/Email or password is incoorect');
+INSERT INTO `serviceresponse` VALUES (1,200,'Success','Success'),(2,64,'suspended','Account is suspended'),(3,34,'already registered','email already registered'),(4,215,'bad request','bad request'),(5,500,'internal server error','internal server error'),(6,84,'pen name already registered','pen name already registered'),(7,404,'wrong credentials','PenName/Email or password is incoorect'),(8,201,'invitation Sent','invitation sent'),(9,202,'invitation rejected','invitation rejected');
 /*!40000 ALTER TABLE `serviceresponse` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -382,7 +382,7 @@ CREATE TABLE `userfieldvisibility` (
   `visibilityid` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,
   `fieldname` varchar(20) NOT NULL,
-  `status` enum('public','private') DEFAULT 'private',
+  `status` tinyint(8) DEFAULT '0',
   PRIMARY KEY (`visibilityid`),
   KEY `userfieldvisibility_ibfk_1` (`userid`),
   CONSTRAINT `userfieldvisibility_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `userprofile` (`userid`)
@@ -435,9 +435,9 @@ CREATE TABLE `userinvites` (
   `inviteid` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,
   `type` varchar(25) NOT NULL DEFAULT 'NULL',
-  `inviteIdentifier` varchar(100) NOT NULL DEFAULT 'Null',
+  `inviteIdentifier` varchar(100) NOT NULL,
   `hashvalue` varchar(128) NOT NULL,
-  `status` enum('not sent','Sent but not accepted','accepted','not accepted') DEFAULT NULL,
+  `status` enum('pending','Sent','accepted','rejected') DEFAULT 'pending',
   PRIMARY KEY (`inviteid`),
   KEY `userid` (`userid`),
   CONSTRAINT `userinvites_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `userprofile` (`userid`)
@@ -606,4 +606,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-19 10:14:08
+-- Dump completed on 2013-09-23 20:49:56
