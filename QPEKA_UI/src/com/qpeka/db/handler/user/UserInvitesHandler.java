@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.qpeka.db.Constants.INVITESTATUS;
 import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.handler.AbstractHandler;
@@ -244,9 +245,9 @@ public class UserInvitesHandler extends AbstractHandler implements
 			}
 
 			if (userInvites.isStatusModified()) {
-				stmt.setShort(index++, userInvites.getStatus());
+				stmt.setString(index++, userInvites.getStatus().toString());
 			}
-
+		
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + sql.toString() + " with values: "
 						+ userInvites);
@@ -382,7 +383,7 @@ public class UserInvitesHandler extends AbstractHandler implements
 			}
 
 			if (userinvites.isStatusModified()) {
-				stmt.setShort(index++, userinvites.getStatus());
+				stmt.setString(index++, userinvites.getStatus().toString());
 			}
 
 			stmt.setLong(index++, inviteid);
@@ -502,11 +503,11 @@ public class UserInvitesHandler extends AbstractHandler implements
 	}
 
 	@Override
-	public List<UserInvites> findWhereStatusEquals(short status)
+	public List<UserInvites> findWhereStatusEquals(String status)
 			throws QpekaException {
 		return findByDynamicSelect(SQL_SELECT
 				+ " WHERE status = ? ORDER BY status",
-				Arrays.asList(new Object[] { new Short(status) }));
+				Arrays.asList(new Object[] { status }));
 	}
 
 	@Override
@@ -652,7 +653,7 @@ public class UserInvitesHandler extends AbstractHandler implements
 		userinvites.setType(rs.getString(COLUMN_TYPE));
 		userinvites.setInviteidentifier(rs.getString(COLUMN_INVITEIDENTIFIER));
 		userinvites.setHashvalue(rs.getString(COLUMN_HASHVALUE));
-		userinvites.setStatus(rs.getShort(COLUMN_STATUS));
+		userinvites.setStatus(INVITESTATUS.valueOf(rs.getString(COLUMN_STATUS).toUpperCase()));
 
 		reset(userinvites);
 	}

@@ -3,6 +3,7 @@ package com.qpeka.db.user.profile;
 import java.io.Serializable;
 
 import com.qpeka.db.Constants;
+import com.qpeka.db.Constants.INVITESTATUS;
 
 public class UserInvites implements Serializable {
 
@@ -27,7 +28,7 @@ public class UserInvites implements Serializable {
 	 * (invitation from accepted), 3 => Not acepted (Invitation from that user
 	 * has not been accepted));
 	 */
-	private short status = 0;
+	private INVITESTATUS status = INVITESTATUS.PENDING;
 	
 	private static UserInvites instance = null;
 	// These attributes represents whether the above attributes has been
@@ -50,7 +51,7 @@ public class UserInvites implements Serializable {
 		super();
 	}
 
-	public UserInvites(long inviteid, long userid, String type, String inviteidentifier, String hashvalue, short status) {
+	public UserInvites(long inviteid, long userid, String type, String inviteidentifier, String hashvalue, INVITESTATUS status) {
 		super();
 		this.setInviteid(inviteid);
 		this.userid = userid;
@@ -120,11 +121,11 @@ public class UserInvites implements Serializable {
 		this.hashvalueModified = true;
 	}
 	
-	public short getStatus() {
+	public INVITESTATUS getStatus() {
 		return status;
 	}
 
-	public void setStatus(short status) {
+	public void setStatus(INVITESTATUS status) {
 		this.status = status;
 		this.statusModified = true;
 	}
@@ -210,7 +211,9 @@ public class UserInvites implements Serializable {
 		}
 
 		_hashCode = 29 * _hashCode + (hashvalueModified ? 1 : 0);
-		_hashCode = 29 * _hashCode + status;
+		if (status != null) {
+			_hashCode = 29 * _hashCode + status.hashCode();
+		}
 		_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
 		
 		return (int) _hashCode;
@@ -275,7 +278,7 @@ public class UserInvites implements Serializable {
 			return false;
 		}
 
-		if (status != _cast.status) {
+		if (status == null ? _cast.status != status : !status.equals(_cast.hashvalue)) {
 			return false;
 		}
 
@@ -309,19 +312,19 @@ public class UserInvites implements Serializable {
 	 //TODO check this and verify whether perfect or not
 	 */
 	public boolean isInviteNotSent() {
-		return this.status == Constants.INVITESTATUS.NOTSENT.ordinal();
+		return this.status == Constants.INVITESTATUS.PENDING;
 	}
 
 	public boolean isInviteSent() {
-		return this.status == Constants.INVITESTATUS.SENT.ordinal();
+		return this.status == Constants.INVITESTATUS.SENT;
 	}
 
 	public boolean isInviteAccepted() {
-		return this.status == Constants.INVITESTATUS.ACCEPTED.ordinal();
+		return this.status == Constants.INVITESTATUS.ACCEPTED;
 	}
 	
 	public boolean isInviteNotAccepted() {
-		return this.status == Constants.INVITESTATUS.NOTACCEPTED.ordinal();
+		return this.status == Constants.INVITESTATUS.REJECTED;
 	}
 
 	
@@ -332,7 +335,7 @@ public class UserInvites implements Serializable {
 		System.out.println(u.hashCode());
 		System.out.println(u.toString());
 		
-		System.out.println(Constants.INVITESTATUS.NOTSENT.ordinal());
+		System.out.println(Constants.INVITESTATUS.NOTSENT);
 	}
 */
 	

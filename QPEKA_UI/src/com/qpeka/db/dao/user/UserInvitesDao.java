@@ -59,7 +59,7 @@ public interface UserInvitesDao {
 	/** 
 	 * Returns all rows from the userInvites table that match the criteria 'status = :status'.
 	 */
-	public List<UserInvites> findWhereStatusEquals(short status) throws QpekaException;
+	public List<UserInvites> findWhereStatusEquals(String status) throws QpekaException;
 
 	/** 
 	 * Sets the value of maxRows

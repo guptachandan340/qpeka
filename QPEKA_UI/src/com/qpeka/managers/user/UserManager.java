@@ -68,7 +68,6 @@ import com.qpeka.utils.Utils;
 
 public class UserManager {
 	private static UserManager instance = null;
-	UserHandler userHandler = new UserHandler();
 
 	public UserManager() {
 		super();
@@ -109,9 +108,7 @@ public class UserManager {
 		User user = User.getInstance();
 		// Create User Profile
 		UserProfile userProfile = UserProfile.getInstance();
-		if (userProfile.getName() == null) {
-			userProfile.setName(Name.getInstance());
-		}
+		userProfile.setName(Name.getInstance());
 		user.setCreated(System.currentTimeMillis() / 1000);
 		user.setLastaccess(0);
 		user.setLastlogin(0);
@@ -145,13 +142,13 @@ public class UserManager {
 				userProfile.setUserid(userid);
 				if (UserProfileHandler.getInstance().insert(userProfile) > 0) {
 					insertUserFieldVisibility(userid, "fullname",
-							VISIBILITY.PRIVATE);
+							(short)VISIBILITY.PRIVATE.ordinal());
 					insertUserFieldVisibility(userid, User.EMAIL,
-							VISIBILITY.PRIVATE);
+							(short)VISIBILITY.PRIVATE.ordinal());
 					insertUserFieldVisibility(userid, UserProfile.DOB,
-							VISIBILITY.PRIVATE);
+							(short)VISIBILITY.PRIVATE.ordinal());
 					insertUserFieldVisibility(userid, UserProfile.GENDER,
-							VISIBILITY.PRIVATE);
+							(short)VISIBILITY.PRIVATE.ordinal());
 
 					responseStatus = 200;
 					// store languages in user language table
@@ -1295,9 +1292,9 @@ public class UserManager {
 											.equalsIgnoreCase("fullnameCheck")) {
 										SetUserVisibility(
 												"fullname",
-												VISIBILITY
+												(short) VISIBILITY
 														.valueOf(userInfoValue
-																.toUpperCase()),
+																.toUpperCase()).ordinal(),
 												userid);
 									} else if (key.equalsIgnoreCase(User.EMAIL)) {
 										try {
@@ -1340,9 +1337,9 @@ public class UserManager {
 											.equalsIgnoreCase("emailCheck")) {
 										SetUserVisibility(
 												User.EMAIL,
-												VISIBILITY
+												(short) VISIBILITY
 														.valueOf(userInfoValue
-																.toUpperCase()),
+																.toUpperCase()).ordinal(),
 												userid);
 									} // update Date of Birth
 									else if (key
@@ -1361,9 +1358,9 @@ public class UserManager {
 									} else if (key.equalsIgnoreCase("dobCheck")) {
 										SetUserVisibility(
 												UserProfile.DOB,
-												VISIBILITY
+												(short) VISIBILITY
 														.valueOf(userInfoValue
-																.toUpperCase()),
+																.toUpperCase()).ordinal(),
 												userid);
 									}
 									// Update Gender
@@ -1376,9 +1373,9 @@ public class UserManager {
 											.equalsIgnoreCase("genderCheck")) {
 										SetUserVisibility(
 												UserProfile.GENDER,
-												VISIBILITY
+												(short) VISIBILITY
 														.valueOf(userInfoValue
-																.toUpperCase()),
+																.toUpperCase()).ordinal(),
 												userid);
 									}
 									// Set/Update nationality
@@ -1395,17 +1392,17 @@ public class UserManager {
 											.equalsIgnoreCase("interestsCheck")) {
 										SetUserVisibility(
 												UserProfile.INTERESTS,
-												VISIBILITY
+												(short) VISIBILITY
 														.valueOf(userInfoValue
-																.toUpperCase()),
+																.toUpperCase()).ordinal(),
 												userid);
 									} else if (key
 											.equalsIgnoreCase("languagesCheck")) {
 										SetUserVisibility(
 												Languages.LANGUAGE,
-												VISIBILITY
+												(short) VISIBILITY
 														.valueOf(userInfoValue
-																.toUpperCase()),
+																.toUpperCase()).ordinal(),
 												userid);
 									}
 								} // end of if(userInfovalue != null)
@@ -1453,7 +1450,7 @@ public class UserManager {
 											userInfoValue);
 
 									SetUserVisibility("Address",
-											VISIBILITY.PRIVATE, userid);
+											(short) VISIBILITY.PRIVATE.ordinal(), userid);
 								}
 								// Set/Update AddressLine2
 								else if (key
@@ -1657,7 +1654,7 @@ public class UserManager {
 
 	}
 
-	public void SetUserVisibility(String fieldName, VISIBILITY status,
+	public void SetUserVisibility(String fieldName, short status,
 			long userid) throws UserFieldVisibilityException {
 		UserFieldVisibility userFieldVisibility = UserFieldVisibility
 				.getInstance();
@@ -1688,7 +1685,7 @@ public class UserManager {
 	}
 
 	public void insertUserFieldVisibility(long userid, String fieldName,
-			VISIBILITY status) {
+			short status) {
 		UserFieldVisibility userFieldVisibility = UserFieldVisibility
 				.getInstance();
 		userFieldVisibility.setStatus(status);
@@ -1967,7 +1964,7 @@ public class UserManager {
 	 * 
 	 * @param args
 	 */
-	private String buildQuery(String field, int size) {
+	public String buildQuery(String field, int size) {
 		StringBuilder queryString = new StringBuilder();
 		queryString.append(field + " IN (?");
 		for (int i = 1; i < size; i++) {
