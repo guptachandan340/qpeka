@@ -22,20 +22,14 @@ public class WorkContentManager {
 	
 	private static WorkContentManager instance = null;
 	
-	private WorkContentManager()
-	{
-		
+	private WorkContentManager() {
 	}
 	
-	public static WorkContentManager getInstance()
-	{
-		if(instance == null)
-		{	
-			synchronized (WorkContentManager.class) {
-			
+	public static WorkContentManager getInstance() {
+		if(instance == null) {	
+			synchronized (WorkContentManager.class) {	
 				instance = new WorkContentManager();
 			}
-			
 		}
 		
 		return instance;
@@ -148,13 +142,11 @@ public class WorkContentManager {
 //		return returnObj;
 //	}
 //	
-	public List<UserComments> getBookComments(String bookId)
-	{
+	public List<UserComments> getBookComments(String bookId) {
 		return UserCommentHandler.getInstance().getCommentsGivenBook(bookId);
 	}
 	
-	public List<UserRating> getBookRatings(String bookId)
-	{
+	public List<UserRating> getBookRatings(String bookId) {
 		return UserRatingHandler.getInstance().getRatingGivenBook(bookId);
 	}
 	
@@ -164,14 +156,11 @@ public class WorkContentManager {
 			WORKTYPE type, int numPages,
 			JSONObject metaData, String description, LANGUAGES language,
 			boolean isPub, long dateOfPub, int edition, String isbn,
-			String publisherId)
-	{
-		try
-		{
+			String publisherId)	{
+		try	{
 			Work b = new Work("", title, authorId, coverPageFile, category, type, numPages, metaData, description, language, isPub);
 			
-			if(isPub)
-			{
+			if(isPub) {
 				if(publisherId != null && publisherId.length() > 0)
 					b.setPublisherId(publisherId);
 				if(dateOfPub > 0)

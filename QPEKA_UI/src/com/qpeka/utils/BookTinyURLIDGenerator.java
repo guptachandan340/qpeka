@@ -10,12 +10,10 @@ public class BookTinyURLIDGenerator {
 		"0","1","2","3","4","5","6","7","8","9"
 	};
 	
-	public static String generateBookTinyURLId()
-	{
+	public static String generateBookTinyURLId() {
 		StringBuffer buf = new StringBuffer(5);
 		Random r = new Random();
-		for(int i = 0; i < 5; i++)
-		{
+		for(int i = 0; i < 5; i++) {
 			buf.append(UNITS[r.nextInt(UNITS.length)]);
 		}
 		
@@ -23,9 +21,7 @@ public class BookTinyURLIDGenerator {
 	}
 	
 	public static void main(String[] args) {
-		
-		for(int i = 0; i < 20; i++ )
-		{
+		for(int i = 0; i < 20; i++ ) {
 			System.out.println(generateBookTinyURLId());
 		}
 	}
