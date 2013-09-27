@@ -11,10 +11,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.UserFieldVisibility;
 import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.UserFieldVisibilityDao;
 import com.qpeka.db.exceptions.user.UserFieldVisibilityException;
+import com.qpeka.db.user.profile.UserFieldVisibility;
 
 
 public class UserFieldVisibilityHandler implements UserFieldVisibilityDao {

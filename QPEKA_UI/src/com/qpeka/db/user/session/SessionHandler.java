@@ -135,7 +135,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
-			sql.append("INSERT INTO " + getTableName() + " (");
+			sql.append("INSERT IGNORE INTO " + getTableName() + " (");
 			int modifiedCount = 0;
 			if (session.isUseridModified()) {
 				if (modifiedCount > 0) {

@@ -2,10 +2,10 @@ package com.qpeka.db.dao.user;
 
 import java.util.List;
 
-import com.qpeka.db.UserFieldVisibility;
 import com.qpeka.db.exceptions.user.UserException;
 import com.qpeka.db.exceptions.user.UserFieldVisibilityException;
 import com.qpeka.db.user.User;
+import com.qpeka.db.user.profile.UserFieldVisibility;
 
 public interface UserFieldVisibilityDao {
 	/** 

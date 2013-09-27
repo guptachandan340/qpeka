@@ -342,7 +342,6 @@ public class CountryHandler extends AbstractHandler implements CountryDao {
 			if (!isConnSupplied) {
 				ResourceManager.close(conn);
 			}
-
 		}
 	}
 

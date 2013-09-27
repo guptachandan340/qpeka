@@ -7,23 +7,24 @@
 <body>
 	<form action="v0.1/user/editprofile" method="post">
 		<p>
+			sessionid: <input type="text" name="sessionid" />
+		</p>		<p>
 			id: <input type="text" name="userid" />
 		</p>
 		<p>
-		wlang : 
-		<select name="wlang" size="2" multiple="multiple">
-        	<option value="HINDI">HINDI</option>
-        	<option value="ENGLISH">ENGLISH</option>
-        	<option value= "GUJARATI">GUJARATI</option>
-        	<option value = "MARATHI">MARATHI</option>
-      	</select>
+			wlang : <select name="wlang" size="2" multiple="multiple">
+				<option value="HINDI">HINDI</option>
+				<option value="ENGLISH">ENGLISH</option>
+				<option value="GUJARATI">GUJARATI</option>
+				<option value="MARATHI">MARATHI</option>
+			</select>
 		</p>
-		
+
 		<p>
-			<input type = "hidden" name="profile" value="workPublish"/> 
+			<input type="hidden" name="profile" value="workPublish" />
 		</p>
 		<p>
-			<input type = "submit" name="save">
+			<input type="submit" name="save">
 		</p>
 	</form>
 </body>

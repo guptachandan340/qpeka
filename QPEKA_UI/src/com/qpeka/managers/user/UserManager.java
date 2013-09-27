@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 
 import com.qpeka.db.Category;
 import com.qpeka.db.Constants.GENDER;
-import com.qpeka.db.Constants.STATUS;
+import com.qpeka.db.Constants.USERSTATUS;
 import com.qpeka.db.Constants.TYPE;
 import com.qpeka.db.Constants.USERLEVEL;
 import com.qpeka.db.Constants.USERTYPE;
@@ -28,7 +28,6 @@ import com.qpeka.db.Constants.VISIBILITY;
 import com.qpeka.db.Files;
 import com.qpeka.db.Genre;
 import com.qpeka.db.Languages;
-import com.qpeka.db.UserFieldVisibility;
 import com.qpeka.db.exceptions.CategoryException;
 import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.FileException;
@@ -57,6 +56,7 @@ import com.qpeka.db.handler.user.UserSocialConnectionHandler;
 import com.qpeka.db.user.User;
 import com.qpeka.db.user.profile.Address;
 import com.qpeka.db.user.profile.Name;
+import com.qpeka.db.user.profile.UserFieldVisibility;
 import com.qpeka.db.user.profile.UserInterests;
 import com.qpeka.db.user.profile.UserLanguage;
 import com.qpeka.db.user.profile.UserProfile;
@@ -112,7 +112,7 @@ public class UserManager {
 		user.setCreated(System.currentTimeMillis() / 1000);
 		user.setLastaccess(0);
 		user.setLastlogin(0);
-		user.setStatus((short) STATUS.DEFAULT.ordinal());
+		user.setStatus((short) USERSTATUS.DEFAULT.ordinal());
 		user.setType((short) TYPE.AUTHENTIC.ordinal());
 
 		// registerUserInfo(formParams, user, userProfile);
@@ -384,9 +384,8 @@ public class UserManager {
 		Map<String, Object> userInfo = new HashMap<String, Object>();
 		List<UserFieldVisibility> userFieldVisibility = null;
 		List<UserProfile> userprofile = null;
-		if (UserProfile.getInstance().getName() == null) {
-			UserProfile.getInstance().setName(Name.getInstance());
-		}
+		UserProfile.getInstance().setName(Name.getInstance());
+		
 		try {
 			userprofile = UserProfileHandler.getInstance()
 					.findWhereUseridEquals(user.getUserid());
@@ -689,7 +688,7 @@ public class UserManager {
 
 	public Object deleteUser(long userid) throws UserException {
 		User user = User.getInstance();
-		user.setStatus((short) STATUS.DELETED.ordinal());
+		user.setStatus((short) USERSTATUS.DELETED.ordinal());
 		try {
 			UserHandler.getInstance().update(userid, user);
 			return ServiceResponseManager.getInstance()
