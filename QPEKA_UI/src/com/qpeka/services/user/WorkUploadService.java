@@ -1,8 +1,10 @@
 package com.qpeka.services.user;
 import java.io.File;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -10,7 +12,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.util.SystemOutLogger;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
 import com.qpeka.db.Constants.CATEGORY;
 import com.qpeka.db.Constants.LANGUAGES;
 import com.qpeka.db.Constants.WORKTYPE;
@@ -19,16 +24,20 @@ import com.qpeka.db.handler.user.PublisherHandler;
 import com.qpeka.db.user.profile.type.Publisher;
 import com.qpeka.epub.provider.EpubProcessorNew;
 import com.qpeka.managers.WorkContentManager;
+import com.qpeka.services.Response.ServiceResponseManager;
 import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.Utils;
 
 @Path("/user/work")
 public class WorkUploadService {
 
 	@POST
-	@Path("/fileprocess")
+	@Path("/upload")
 	@Consumes("application/x-www-form-urlencoded")
 	public Response workUpload(MultivaluedMap<String, String> formParams) {
 
+		Map<String, Object> sResponse = null;
+		String _id = null;
 		String response = "success";
 		String bookname = null;
 		String covername = null;
@@ -43,117 +52,92 @@ public class WorkUploadService {
 		int bookEdition = 0;
 		String publisherId = "";
 		String publisherName = "";
-		int pday = 0;
-		int pmonth = 0;
-		int pyear = 0;
+		Date publishdate = null;
 		String isbn = "";
 		String searchKey = "";
         Set<String> keySet = formParams.keySet();
-		Iterator<String> itr = keySet.iterator();
-		while (itr.hasNext()) {
-			String controlName = itr.next();
+		for (String controlName : keySet) {
 			List<String> listOfValue = formParams.get(controlName);
 			// gives values by taking keys.
-
 			for (String value : listOfValue) {
-
 				if (controlName.equalsIgnoreCase(Work.TITLE)) {
 					title = value;
-					System.out.println("title :" + title);
-
 				}
 
 				if (controlName.equalsIgnoreCase(Work.CATEGORY))
 					try {
-						bookCategory = CATEGORY.valueOf(value);
-						System.out.println("bookCategory :" + bookCategory);
-
+						bookCategory = CATEGORY.valueOf(value.toUpperCase());
 					} catch (Exception e) {
 						System.out.println("error bookcategory");
 					}
 
 				if (controlName.equalsIgnoreCase(Work.TYPE))
 					try {
-						type = WORKTYPE.valueOf(value);
-						System.out.println("worktype :" + type);
+						type = WORKTYPE.valueOf(value.toUpperCase());
 					} catch (Exception e) {
 						System.out.println("error bookcategory");
 					}
 
 				if (controlName.equalsIgnoreCase(Work.LANGUAGE))
 					try {
-						language = LANGUAGES.valueOf(value);
-						System.out.println("language :" + language);
+						language = LANGUAGES.valueOf(value.toUpperCase());
 					} catch (Exception e) {
 						System.out.println("error language");
 					}
 
 				if (value.equalsIgnoreCase(Work.DESCRIPTION)) {
 					bookDesc = value;
-					System.out.println("bookdesc :" + bookDesc);
 				}
 
 				if (controlName.equalsIgnoreCase(Work.AUTHORID)) {
 					authorId = value;
-					System.out.println("authorId :" + authorId);
 				}
 
 				if (controlName.equalsIgnoreCase(Work.ISPUBLISHED)) {
 					isPublished = Boolean.parseBoolean(value);
-					System.out.println("IsPublished :" + isPublished);
 				}
 
 				if (controlName.equalsIgnoreCase(Work.SEARCHKEY)) {
 					searchKey = value;
-					System.out.println("searchKey :" + searchKey);
 				}
 
-				if (controlName.equalsIgnoreCase(Work.EDITION)) {
+				if (controlName.equalsIgnoreCase(Work.EDITION) && !value.isEmpty()) {
 					bookEdition = Integer.parseInt(value);
-					System.out.println("BookEdition :" + bookEdition);
 				}
 
 				if (controlName.equalsIgnoreCase(Work.PUBLISHERID)) {
 					publisherId = value;
-					System.out.println("pblisheredid :" + publisherId);
 				}
 
-				if (controlName.equalsIgnoreCase("publisherName")) {
+				if (controlName.equalsIgnoreCase("publisherName") && !value.isEmpty()) {
 					publisherName = value;
-					System.out.println("publishername :" + publisherName);
 				}
 
-				if (controlName.equalsIgnoreCase("pday")) {
-					pday = Integer.parseInt(value);
-					System.out.println("pday :" + pday);
+				if(controlName.equalsIgnoreCase("publishdate") && !value.isEmpty()) {
+					try {
+						publishdate = (Date) Utils.getFormatedDate().parse(value);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-
-				if (controlName.equalsIgnoreCase("pmonth")) {
-					pmonth = Integer.parseInt(value);
-					System.out.println("pmonth :" + pmonth);
-				}
-
-				if (controlName.equalsIgnoreCase("pyear")) {
-					pyear = Integer.parseInt(value);
-					System.out.println("pyear :" + pyear);
+				else {
+					publishdate = new Date();
 				}
 
 				if (controlName.equalsIgnoreCase(Work.ISBN)) {
 					isbn = value;
-					System.out.println("ISBN :" + isbn);
 				}
 
 				if (controlName.equalsIgnoreCase("file")) {
 					bookname = value;
-					System.out.println("file :" + bookname);
 				}
 				if (controlName.equalsIgnoreCase("cover")) {
 					covername = value;
-					System.out.println("cover :" + covername);
 				}
 			} // forloop
 
-		}// while
+		}// for
 
 		try {
 			String pId = "";
@@ -164,16 +148,15 @@ public class WorkUploadService {
 				pId = publisherId;
 			}
 
-			String coverPageFile = SystemConfigHandler.getInstance()
-					.getBookCoverPageFolder() + "/" + title + ".jpg";
-			System.out.println("coverpagefile  :" + coverPageFile);
 			JSONObject metadata = new JSONObject();
 			metadata.put(Work.SEARCHKEY, searchKey);
 
-			String _id = WorkContentManager.getInstance().addWork("", title,
+			String coverPageFile = SystemConfigHandler.getInstance()
+					.getBookCoverPageFolder() + "/" + title + ".jpg";
+			_id = WorkContentManager.getInstance().addWork("", title,
 					authorId, coverPageFile, bookCategory, type, 0, metadata,
 					bookDesc, language, isPublished,
-					new Date(pyear, pmonth, pday).getTime(), bookEdition, isbn,
+					publishdate.getTime(), bookEdition, isbn,
 					pId);
 
 			File filePath = new File(SystemConfigHandler.getInstance()
@@ -200,8 +183,12 @@ public class WorkUploadService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		if(!_id.isEmpty()) {
+			sResponse = ServiceResponseManager.getInstance().readServiceResponse(200);
+		}
 
-		return Response.status(200).entity(response).build();
+		return Response.status(200).entity(new Gson().toJson(sResponse)).build();
 
 	}
 
