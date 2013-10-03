@@ -1,4 +1,4 @@
-package com.qpeka.db;
+package com.qpeka.db.user.profile;
 
 public class UserFieldVisibility {
 

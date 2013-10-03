@@ -2,12 +2,16 @@ package com.qpeka.db;
 
 public class Constants {
 
-	public enum STATUS {
+	public enum USERSTATUS {
 		DEFAULT, ACTIVE, PASSIVE, BLOCKED, DELETED
 	}
 	
 	public enum VISIBILITY {
 		PRIVATE, PUBLIC
+	}
+	
+	public enum SESSIONSTATUS {
+		ACTIVE, INACTIVE, EXPIRED, DESTROYED
 	}
 
 	public enum INVITESTATUS {

@@ -1,19 +1,22 @@
 <html>
 <body>
-	
+
 	<!-- 
 	userid ,usertype, pen name , fname, mname, lnmae, gender, dob, nationality, website, biography
 	profilepic , address , line1 ,line2 ,line3, city, country,pincode, state, intereset, rlang,
 	wlang, userbadges , userpoints,
 	 -->
-	
-	
+
+
 	<form action="v0.1/user/editprofile" method="post">
 		<p>
-			id: <input type="text" name="userid" />
-		</p>       		
+			sessionid: <input type="text" name="sessionid" />
+		</p>
 		<p>
-		    first name: <input type="text" name="firstName" />
+			id: <input type="text" name="userid" />
+		</p>
+		<p>
+			first name: <input type="text" name="firstName" />
 		</p>
 		<p>
 			middle name: <input type="text" name="middleName" />
@@ -21,87 +24,85 @@
 		<p>
 			last name: <input type="text" name="lastName" />
 		</p>
-		
-		<select name="fullnameCheck"  multiple="multiple" size="9">
-        	<option value="PUBLIC">PUBLIC</option>
-        	<option value="PRIVATE">PRIVATE</option>
-        </select>
-        
-        <p>
+
+		<select name="fullnameCheck" multiple="multiple" size="9">
+			<option value="PUBLIC">PUBLIC</option>
+			<option value="PRIVATE">PRIVATE</option>
+		</select>
+
+		<p>
 			Email : <input type="text" name="email" />
 		</p>
-		<select name="emailCheck"  multiple="multiple" size="9">
-        	<option value="PUBLIC">PUBLIC</option>
-        	<option value="PRIVATE">PRIVATE</option>
-        </select>
-        
-        <p>
+		<select name="emailCheck" multiple="multiple" size="9">
+			<option value="PUBLIC">PUBLIC</option>
+			<option value="PRIVATE">PRIVATE</option>
+		</select>
+
+		<p>
 			DOB : <input type="text" name="dob" />
 		</p>
-		
+
 		<p>
-		<select name="dobCheck"  multiple="multiple" size="9">
-        	<option value="PUBLIC">PUBLIC</option>
-        	<option value="PRIVATE">PRIVATE</option>
-        </select>
-        </p>
-		
+			<select name="dobCheck" multiple="multiple" size="9">
+				<option value="PUBLIC">PUBLIC</option>
+				<option value="PRIVATE">PRIVATE</option>
+			</select>
+		</p>
+
 		<p>
-			Gender :  <input type="text" name="gender" />
+			Gender : <input type="text" name="gender" />
 		</p>
 		<p>
-		<select name="genderCheck"  multiple="multiple" size="9">
-        	<option value="PUBLIC">PUBLIC</option>
-        	<option value="PRIVATE">PRIVATE</option>
-        </select>
+			<select name="genderCheck" multiple="multiple" size="9">
+				<option value="PUBLIC">PUBLIC</option>
+				<option value="PRIVATE">PRIVATE</option>
+			</select>
 		</p>
 		<p>
 			Nationality : <input type="text" name="nationality" />
 		</p>
-		
-		
-		
+
+
+
 		<p>
-		Interests :
-		<select name="interests"  multiple="multiple" size="9">
-        	<option value="Adult">Adult</option>
-        	<option value="Classic">Classic</option>
-        	<option value="Fantasy">Fantasy</option>
-        	<option value="Mistry">Mistry</option>
-        	<option value="Historical">Historical</option>
-        	<option value="Fiction">Fiction</option>
-        	<option value="Non-Fiction">Non-Fiction</option>
-        	<option value="Education">Education</option>
-        	<option value="Science">Science</option>
-      	</select>
-      	</p>
-      	
-      	<select name="interestsCheck"  multiple="multiple" size="9">
-        	<option value="PUBLIC">PUBLIC</option>
-        	<option value="PRIVATE">PRIVATE</option>
-        </select>
-		
-		<p>
-		rlang : 
-		<select name="rlang" size="2" multiple="multiple">
-	        <option value="HINDI">HINDI</option>
-        	<option value="ENGLISH">ENGLISH</option>
-        	<option value= "GUJARATI">GUJARATI</option>
-        	<option value = "MARATHI">MARATHI</option>
-      	</select>
+			Interests : <select name="interests" multiple="multiple" size="9">
+				<option value="Adult">Adult</option>
+				<option value="Classic">Classic</option>
+				<option value="Fantasy">Fantasy</option>
+				<option value="Mistry">Mistry</option>
+				<option value="Historical">Historical</option>
+				<option value="Fiction">Fiction</option>
+				<option value="Non-Fiction">Non-Fiction</option>
+				<option value="Education">Education</option>
+				<option value="Science">Science</option>
+			</select>
 		</p>
-				
+
+		<select name="interestsCheck" multiple="multiple" size="9">
+			<option value="PUBLIC">PUBLIC</option>
+			<option value="PRIVATE">PRIVATE</option>
+		</select>
+
 		<p>
-		<select name="languagesCheck"  multiple="multiple" size="9">
-        	<option value="PUBLIC">PUBLIC</option>
-        	<option value="PRIVATE">PRIVATE</option>
-        </select>
+			rlang : <select name="rlang" size="2" multiple="multiple">
+				<option value="HINDI">HINDI</option>
+				<option value="ENGLISH">ENGLISH</option>
+				<option value="GUJARATI">GUJARATI</option>
+				<option value="MARATHI">MARATHI</option>
+			</select>
 		</p>
-		
+
 		<p>
-			<input type = "hidden" name="profile" value="basicDetails"/> 
+			<select name="languagesCheck" multiple="multiple" size="9">
+				<option value="PUBLIC">PUBLIC</option>
+				<option value="PRIVATE">PRIVATE</option>
+			</select>
 		</p>
-		
+
+		<p>
+			<input type="hidden" name="profile" value="basicDetails" />
+		</p>
+
 		<!--  
 		<p>
 			UserBadges : <input type="text" name="userbadges" />
@@ -112,5 +113,5 @@
 		-->
 		<input type="submit" value="Edit Profile" />
 	</form>
- </body>
+</body>
 </html>

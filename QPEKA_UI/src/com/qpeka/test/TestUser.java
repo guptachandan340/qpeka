@@ -1,9 +1,17 @@
 package com.qpeka.test;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
+import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
@@ -32,8 +40,11 @@ import com.qpeka.db.user.profile.UserInvites;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.CategoryManager;
 import com.qpeka.managers.FilesManager;
+import com.qpeka.managers.SessionsManager;
 import com.qpeka.managers.user.UserInvitesManager;
 import com.qpeka.managers.user.UserManager;
+import com.qpeka.security.bcrypt.BCrypt;
+import com.sun.research.ws.wadl.Request;
 
 public class TestUser {
 
@@ -176,7 +187,7 @@ public class TestUser {
 		ok.put("okay", 1);
 		System.out.println(ok);*/
 		
-		/****************************** Test UserInviteSent *********************************/
+		/****************************** Test UserInviteSent *********************************//*
 		
 		List<String> li = new ArrayList<String>();
 		li.add("$2a$10$A2OTK.17tp2ULFNuV8DQ0OjA7cX5cJXYiuSQX5n3YWv1hKdpps8Ey");
@@ -188,12 +199,35 @@ public class TestUser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/***************************Test User Accaepted ******************************/
+		*//***************************Test User Accepted ******************************//*
 		try {
 			System.out.println(UserInvitesManager.getInstance().setInviteAccepted("$2a$10$FHhyrBkws95Y6d6qhtmym.BeNXKgFO95NcWZIMMHbJDSoafjCwp42"));
 		} catch (QpekaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
+		/***********************Test Nonce**********************************/
+		
+		/*
+			long l = System.currentTimeMillis();
+			byte b = (byte) l;
+			int a = b ^ 0xDE;
+			BCrypt.hashpw(Integer.toString(a),BCrypt.gensalt());
+			System.out.println(nonce);
+			rand = SecureRandom.getInstance("SHA1PRNG");
+			rand.nextBytes(nonce); 
+			System.out.println();		*/
+		
+		/*********************** Test hostname **************************/
+		
+		try {
+			System.out.println(InetAddress.getLocalHost().getHostName());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		SessionsManager.getInstance().createSession((long) 1 , "anki546.malani@gmail.com", "ankita");
+		
 	}
 }

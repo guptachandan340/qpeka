@@ -1,4 +1,4 @@
-package com.qpeka.db.dao;
+package com.qpeka.db.dao.user;
 
 import java.util.List;
 

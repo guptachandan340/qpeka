@@ -6,14 +6,15 @@
 </head>
 <body>
 
-<form action="v0.1/user/editprofile" method="post">
+	<form action="v0.1/user/editprofile" method="post">
+		<p>
+			sessionid: <input type="text" name="sessionid" />
+		</p>
 		<p>
 			id: <input type="text" name="userid" />
 		</p>
 		<p>
-		Address : 
-		<br>
-			Address id : <input type= "text" name="addressid">
+			Address : <br> Address id : <input type="text" name="addressid">
 		</p>
 		<p>
 			Line1 : <input type="text" name="addressLine1" />
@@ -22,7 +23,7 @@
 			Line2: <input type="text" name="addressLine2" />
 		</p>
 		<p>
-			Line3: <input type="text" name="addressLine3"/>
+			Line3: <input type="text" name="addressLine3" />
 		</p>
 		<p>
 			City : <input type="text" name="city" />
@@ -37,10 +38,10 @@
 			Country: <input type="text" name="country" />
 		</p>
 		<p>
-			<input type = "hidden" name="profile" value="address"/> 
+			<input type="hidden" name="profile" value="address" />
 		</p>
 		<p>
-				<input type = "submit" name="save">
+			<input type="submit" name="save">
 		</p>
 	</form>
 </body>

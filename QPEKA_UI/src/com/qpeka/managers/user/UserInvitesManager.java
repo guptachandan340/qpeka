@@ -43,25 +43,28 @@ public class UserInvitesManager {
 
 		for (String key : keySet) {
 			if (!key.equalsIgnoreCase("userid")) {
-				List<String> inviteInfo = inviteParams.get(key);
-				if (!inviteInfo.isEmpty() && inviteInfo != null) {
-					for (String inviteIdentifier : inviteInfo) {
-						userInvites.setInviteidentifier(inviteIdentifier);
-						userInvites.setType(key);
-						userInvites.setUserid(userid);
-						// Set hash value
-						hashvalue = BCrypt.hashpw(
-								(userid + key + inviteIdentifier),
-								BCrypt.gensalt());
-						userInvites.setHashvalue(hashvalue);
-						hashvalues.put(inviteIdentifier, hashvalue);
-						// Set status
-						userInvites.setStatus(INVITESTATUS.PENDING);
-						try {
-							UserInvitesHandler.getInstance()
-									.insert(userInvites);
-						} catch (QpekaException e) {
-							throw new QpekaException("UserInvites creation Exception : ");
+				if (!key.equalsIgnoreCase("sessionid")) {
+					List<String> inviteInfo = inviteParams.get(key);
+					if (!inviteInfo.isEmpty() && inviteInfo != null) {
+						for (String inviteIdentifier : inviteInfo) {
+							userInvites.setInviteidentifier(inviteIdentifier);
+							userInvites.setType(key);
+							userInvites.setUserid(userid);
+							// Set hash value
+							hashvalue = BCrypt.hashpw(
+									(userid + key + inviteIdentifier),
+									BCrypt.gensalt());
+							userInvites.setHashvalue(hashvalue);
+							hashvalues.put(inviteIdentifier, hashvalue);
+							// Set status
+							userInvites.setStatus(INVITESTATUS.PENDING);
+							try {
+								UserInvitesHandler.getInstance().insert(
+										userInvites);
+							} catch (QpekaException e) {
+								throw new QpekaException(
+										"UserInvites creation Exception : ");
+							}
 						}
 					}
 				}
@@ -76,9 +79,10 @@ public class UserInvitesManager {
 		}
 	}
 
-	/************************************ Send an Invitation  ******************************/
+	/************************************ Send an Invitation ******************************/
 
-	public Map<String, Object> setInviteSent(List<String> hashvalues) throws QpekaException {
+	public Map<String, Object> setInviteSent(List<String> hashvalues)
+			throws QpekaException {
 		List<Object> hashvalObj = new ArrayList<Object>();
 		for (String hash : hashvalues) {
 			hashvalObj.add(hash);
@@ -108,7 +112,8 @@ public class UserInvitesManager {
 
 	/********************************* Accept an Invitation *****************************/
 
-	public Map<String, Object> setInviteAccepted(String hashvalue) throws QpekaException {
+	public Map<String, Object> setInviteAccepted(String hashvalue)
+			throws QpekaException {
 		Map<String, Object> response = new HashMap<String, Object>();
 		try {
 			List<UserInvites> userInvitesList = UserInvitesHandler
@@ -117,9 +122,8 @@ public class UserInvitesManager {
 				// Set full name of user who has sent an invitation
 				long userid = userInvitesList.iterator().next().getUserid();
 				List<UserProfile> userProfile = UserProfileHandler
-						.getInstance().findWhereUseridEquals(
-								userid);
-				
+						.getInstance().findWhereUseridEquals(userid);
+
 				// Set fullname
 				Map<String, String> fullname = new HashMap<String, String>();
 				if (!userProfile.isEmpty() && userProfile != null) {
@@ -140,21 +144,26 @@ public class UserInvitesManager {
 					userInvitesObj.setStatus(INVITESTATUS.ACCEPTED);
 					UserInvitesHandler.getInstance().update(
 							userInvites.getInviteid(), userInvitesObj);
-					
-					// update status as rejected for all other users who has invited the same person
+
+					// update status as rejected for all other users who has
+					// invited the same person
 					List<Object> userObjList = new ArrayList<Object>();
 					userObjList.add(userid);
 					userObjList.add(userInvites.getInviteidentifier());
-					List<UserInvites> usrinvites = UserInvitesHandler.getInstance().findByDynamicWhere("userid NOT IN (?) AND inviteIdentifier IN (?)", userObjList);
+					List<UserInvites> usrinvites = UserInvitesHandler
+							.getInstance()
+							.findByDynamicWhere(
+									"userid NOT IN (?) AND inviteIdentifier IN (?)",
+									userObjList);
 					UserInvites inviteObj = UserInvites.getInstance();
-					if(!usrinvites.isEmpty() && usrinvites != null) {
-						for(UserInvites invites : usrinvites) {
+					if (!usrinvites.isEmpty() && usrinvites != null) {
+						for (UserInvites invites : usrinvites) {
 							inviteObj.setStatus(INVITESTATUS.REJECTED);
 							UserInvitesHandler.getInstance().update(
 									invites.getInviteid(), userInvitesObj);
 						}
 					}
-					
+
 					// Set response for on invitation sent
 					response.put("fullname", fullname);
 					response.put("type", userInvites.getType());
