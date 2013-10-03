@@ -1,18 +1,18 @@
 package com.qpeka.services.user;
+
 import java.io.File;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.util.SystemOutLogger;
+
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
@@ -25,10 +25,10 @@ import com.qpeka.db.user.profile.type.Publisher;
 import com.qpeka.epub.provider.EpubProcessorNew;
 import com.qpeka.managers.WorkContentManager;
 import com.qpeka.services.Response.ServiceResponseManager;
-import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.SystemResourceHandler;
 import com.qpeka.utils.Utils;
 
-@Path("/user/work")
+@Path("/user/works")
 public class WorkUploadService {
 
 	@POST
@@ -37,10 +37,10 @@ public class WorkUploadService {
 	public Response workUpload(MultivaluedMap<String, String> formParams) {
 
 		Map<String, Object> sResponse = null;
-		String _id = null;
-		String response = "success";
-		String bookname = null;
-		String covername = null;
+		String workid = null;
+		String workfileOriginName = null;
+		String workfile = null;
+		String coverpage = null;
 		// file upload part
 		String title = "";
 		String bookDesc = "";
@@ -48,6 +48,7 @@ public class WorkUploadService {
 		WORKTYPE type = WORKTYPE.BOOK;
 		LANGUAGES language = LANGUAGES.ENGLISH;
 		boolean isPublished = false;
+		boolean isWorkFile = false;
 		String authorId = "";
 		int bookEdition = 0;
 		String publisherId = "";
@@ -85,7 +86,7 @@ public class WorkUploadService {
 						System.out.println("error language");
 					}
 
-				if (value.equalsIgnoreCase(Work.DESCRIPTION)) {
+				if (controlName.equalsIgnoreCase(Work.DESCRIPTION)) {
 					bookDesc = value;
 				}
 
@@ -109,8 +110,11 @@ public class WorkUploadService {
 					publisherId = value;
 				}
 
-				if (controlName.equalsIgnoreCase("publisherName") && !value.isEmpty()) {
+				if (controlName.equalsIgnoreCase("publisher") && !value.isEmpty()) {
 					publisherName = value;
+					if (!isPublished) {
+						isPublished = true;
+					}
 				}
 
 				if(controlName.equalsIgnoreCase("publishdate") && !value.isEmpty()) {
@@ -129,11 +133,22 @@ public class WorkUploadService {
 					isbn = value;
 				}
 
-				if (controlName.equalsIgnoreCase("file")) {
-					bookname = value;
+				if(controlName.equalsIgnoreCase("workid")) {
+					workid = value;
+				}
+				
+				if(controlName.equalsIgnoreCase("workfileoriginname")) {
+					workfileOriginName = value;
+				}
+				
+				if (controlName.equalsIgnoreCase("workfile")) {
+					workfile = value;
+					if (!isWorkFile) {
+						isWorkFile = true;
+					}
 				}
 				if (controlName.equalsIgnoreCase("cover")) {
-					covername = value;
+					coverpage = value;
 				}
 			} // forloop
 
@@ -150,42 +165,51 @@ public class WorkUploadService {
 
 			JSONObject metadata = new JSONObject();
 			metadata.put(Work.SEARCHKEY, searchKey);
+			
 
-			String coverPageFile = SystemConfigHandler.getInstance()
-					.getBookCoverPageFolder() + "/" + title + ".jpg";
-			_id = WorkContentManager.getInstance().addWork("", title,
-					authorId, coverPageFile, bookCategory, type, 0, metadata,
-					bookDesc, language, isPublished,
-					publishdate.getTime(), bookEdition, isbn,
-					pId);
-
-			File filePath = new File(SystemConfigHandler.getInstance()
-					.getBookCoverPageFolder() + "/" + covername);
+			if(workid != null && !workid.isEmpty()) {
+				File filePath = new File(SystemResourceHandler.getInstance()
+						.getSrcBookFolder() + "/" + workfile);
+				if (filePath != null && filePath.exists()) {
+					if (filePath.getName().endsWith("epub")) {
+						EpubProcessorNew.processEpub(filePath.getAbsolutePath(),
+								SystemResourceHandler.getInstance()
+										.getSrcBookFolder() + "/" + workfile);
+					}
+				} else {
+					// TODO: Add handling here: send response
+				}
+				
+				workid = WorkContentManager.getInstance().updateWork(workid, isWorkFile, workfileOriginName, coverpage, workfile);
+			} else {
+				/*String coverPageFile = SystemResourceHandler.getInstance()
+						.getBookCoverPageFolder() + "/" + title + ".jpg";*/
+				workid = WorkContentManager.getInstance().addWork("", title,
+						authorId, "", bookCategory, type, 0, metadata,
+						bookDesc, language, isPublished,
+						publishdate.getTime(), bookEdition, isbn,
+						pId);
+			}
+			
+			/*File filePath = new File(SystemResourceHandler.getInstance()
+					.getBookCoverPageFolder() + "/" + coverpage);
 			if (filePath != null && filePath.exists()) {
-				File idedFile = new File(SystemConfigHandler.getInstance()
+				File idedFile = new File(SystemResourceHandler.getInstance()
 						.getBookCoverPageFolder() + "/" + _id + ".jpg");
 				FileUtils.copyFile(filePath, idedFile);
 			} else {
 				response = "coverpage dose not exists";
-			}
-			filePath = new File(SystemConfigHandler.getInstance()
-					.getSrcBookFolder() + "/" + bookname);
-			if (filePath != null && filePath.exists()) {
-				if (filePath.getName().endsWith("epub")) {
-					EpubProcessorNew.processEpub(filePath.getAbsolutePath(),
-							SystemConfigHandler.getInstance()
-									.getSrcBookFolder() + "/" + _id + ".epub");
-					
-				}
-			} else {
-				response = "file dose not exists";
-			}
+			}*/
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		if(!_id.isEmpty()) {
+		if(!workid.isEmpty()) {
 			sResponse = ServiceResponseManager.getInstance().readServiceResponse(200);
+			sResponse.put("workid", workid);
+		} else {
+			sResponse = ServiceResponseManager.getInstance().readServiceResponse(404);
 		}
 
 		return Response.status(200).entity(new Gson().toJson(sResponse)).build();

@@ -21,7 +21,7 @@ public class PublisherHandler {
 	
 	private PublisherHandler()
 	{
-		db = MongoAccessor.getInstance().getMongo().getDB("bookstore");
+		db = MongoAccessor.getInstance().getMongo().getDB("qpekalibrary");
 		if(!db.isAuthenticated())
 			db.authenticate("qpeka", new char[]{'q','p','e','k','a'});
 		publishers = db.getCollection("publishers");

@@ -11,9 +11,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.QpekaException;
 import com.qpeka.db.handler.AbstractHandler;
+import com.qpeka.utils.DBResourceHandler;
 
 public class ServiceResponseHandler extends AbstractHandler implements ServiceResponseDao{
 
@@ -127,8 +127,8 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 		ResultSet rs = null;
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
@@ -223,9 +223,9 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 	}
@@ -240,8 +240,8 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -323,9 +323,9 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 	}
@@ -340,8 +340,8 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: " + errorid);
@@ -359,9 +359,9 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new QpekaException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 	}
@@ -439,8 +439,8 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 
 				try {
 					// get the user-specified connection or get a connection from the
-					// ResourceManager
-					conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+					// DBResourceHandler
+					conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 					// construct the SQL statement
 					final String SQL = sql;
@@ -467,10 +467,10 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 					logger.error("Exception: " + _e.getMessage(), _e);
 					throw new QpekaException("Exception: " + _e.getMessage(), _e);
 				} finally {
-					ResourceManager.close(rs);
-					ResourceManager.close(stmt);
+					DBResourceHandler.close(rs);
+					DBResourceHandler.close(stmt);
 					if (!isConnSupplied) {
-						ResourceManager.close(conn);
+						DBResourceHandler.close(conn);
 					}
 				}
 		}
@@ -486,8 +486,8 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 
 				try {
 					// get the user-specified connection or get a connection from the
-					// ResourceManager
-					conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+					// DBResourceHandler
+					conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 					// construct the SQL statement
 					final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -514,10 +514,10 @@ public class ServiceResponseHandler extends AbstractHandler implements ServiceRe
 					logger.error("Exception: " + _e.getMessage(), _e);
 					throw new QpekaException("Exception: " + _e.getMessage(), _e);
 				} finally {
-					ResourceManager.close(rs);
-					ResourceManager.close(stmt);
+					DBResourceHandler.close(rs);
+					DBResourceHandler.close(stmt);
 					if (!isConnSupplied) {
-						ResourceManager.close(conn);
+						DBResourceHandler.close(conn);
 					}
 
 				}

@@ -109,7 +109,7 @@ public class WorkContentManager {
 //		else
 //			fileIndex = ((int)page/numPagesPerFile) + 1;
 //		
-//		String fileName = SystemConfigHandler.getInstance().getBookContentFolder() + "/" + b.get_id() + "/" + b.getTitle() + "-" + fileIndex;
+//		String fileName = SystemResourceHandler.getInstance().getBookContentFolder() + "/" + b.get_id() + "/" + b.getTitle() + "-" + fileIndex;
 //		FileReader fr = null;
 //		JSONObject returnObj = new JSONObject();
 //		
@@ -183,6 +183,18 @@ public class WorkContentManager {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public String updateWork(String workid, boolean isWorkFile, String workfileOriginName, String coverpage, String workfile) {
+		Work work = WorksHandler.getInstance().getWork(workid);
+		work.setWorkFile(isWorkFile);
+		work.setCoverPageFile(coverpage);
+		work.setWorkfile(workfile);
+		work.setWorkfileoriginname(workfileOriginName);
+		
+		WorksHandler.getInstance().updateWork(work);
+		
+		return workid;
 	}
 	
 	public static void main(String[] args) {

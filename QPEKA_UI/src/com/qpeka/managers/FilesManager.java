@@ -7,12 +7,12 @@ import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import com.qpeka.db.Constants.USERSTATUS;
+import com.qpeka.db.Constants.FILESTATUS;
 import com.qpeka.db.Files;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.FileException;
 import com.qpeka.db.handler.FilesHandler;
 import com.qpeka.services.Response.ServiceResponseManager;
+import com.qpeka.utils.SystemResourceHandler;
 
 public class FilesManager {
 	public static FilesManager instance = null;
@@ -66,7 +66,7 @@ public class FilesManager {
 	// Set file status to delete instead of deleting the files;
 	public Map<String, Object> SetFilesDeleted(long fileid) throws FileException {
 		Files files = Files.getInstance();
-		files.setStatus(USERSTATUS.DELETED.ordinal());
+		files.setStatus(FILESTATUS.DELETED.ordinal());
 		try {
 			return FilesHandler.getInstance().update(fileid, files) != -1 ? ServiceResponseManager
 					.getInstance().readServiceResponse(200)
@@ -134,7 +134,7 @@ public class FilesManager {
 	}
 	
 	private Files createFileFields(String filepath, Files files) {
-		File file = new File(ResourceManager.getQPEKA_IMAGES() + "/" + filepath); // Inbuilt File class usage
+		File file = new File(SystemResourceHandler.getInstance().getImageDir() + "/" + filepath); // Inbuilt File class usage
 		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
 		if (file.exists()) {
 			if (file.isFile()) {

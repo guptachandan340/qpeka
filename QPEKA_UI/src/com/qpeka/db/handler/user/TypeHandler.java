@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.log4j.Logger;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.TypeDao;
 import com.qpeka.db.exceptions.user.TypeException;
 import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.user.profile.Type;
+import com.qpeka.utils.DBResourceHandler;
 
 
 public class TypeHandler extends AbstractHandler implements TypeDao {
@@ -126,8 +126,8 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
@@ -226,9 +226,9 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new TypeException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -244,8 +244,8 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -327,9 +327,9 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new TypeException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -345,8 +345,8 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: " + typeid);
@@ -364,9 +364,9 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new TypeException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -435,8 +435,8 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = sql;
@@ -463,10 +463,10 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new TypeException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -483,8 +483,8 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -511,10 +511,10 @@ public class TypeHandler extends AbstractHandler implements TypeDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new TypeException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}

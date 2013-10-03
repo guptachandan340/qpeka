@@ -22,7 +22,7 @@ import com.qpeka.db.user.profile.Address;
 import com.qpeka.db.user.profile.Name;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.db.user.profile.type.Author;
-import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.SystemResourceHandler;
 import com.qpeka.utils.Utils;
 
 public class UserManager {
@@ -64,7 +64,7 @@ private static UserManager instance = null;
 		
 		String uID =  UserProfileHandler.getInstance().addUser(u);
 		
-		Utils.createImageFile(imageFile,SystemConfigHandler.getInstance().getUserCoverImg() + uID + ".jpg");
+		Utils.createImageFile(imageFile,SystemResourceHandler.getInstance().getUserCoverImg() + uID + ".jpg");
 		
 		//add the Image File here
 		return uID;
