@@ -31,6 +31,7 @@ import com.qpeka.db.exceptions.user.UserLanguageException;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.SessionHandler;
 import com.qpeka.db.user.User;
+import com.qpeka.db.user.profile.Name;
 import com.qpeka.managers.SessionsManager;
 import com.qpeka.managers.user.UserInvitesManager;
 import com.qpeka.managers.user.UserManager;
@@ -39,40 +40,59 @@ import com.qpeka.services.Response.ServiceResponseManager;
 @Path("user")
 public class UserService {
 
+	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/login")
 	public Response loginService(@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("isEmail") boolean isEmail,
+			@FormParam("sessionid") long sessionid,
 			@Context HttpServletRequest request) {
-
 		Map<String, Object> response = new HashMap<String, Object>();
 		try {
 			response = UserManager.getInstance().authenticateUser(username,
 					password, isEmail);
 		} catch (UserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UserProfileException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		if (response.get(User.PROFILEID) != null) {
-			long sessionid = 0;
-
-			// if(SessionsManager.getInstance().ActiveSessionExist(sessionid,
-			// Long.parseLong(response.get(User.PROFILEID).toString())))
-			sessionid = SessionsManager.getInstance().createSession(
-					Long.parseLong(response.get(User.PROFILEID).toString()),
-					username, password, request.getRemoteAddr());
 			if (sessionid > 0) {
-				response.put(Session.SESSIONID, sessionid);
+				if (SessionsManager.getInstance()
+						.ActiveSessionExist(
+								sessionid,
+								Long.parseLong(response.get(User.PROFILEID).toString()))) {
+					response.put(Session.SESSIONID, sessionid);
+				} else {
+					return Response.status(200).entity(new Gson().toJson(ServiceResponseManager.getInstance().readServiceResponse(415))).build();
+				}
+			} else {
+				Map<String, String> sessionobj = new HashMap<String, String>();
+				sessionobj.put(User.PROFILEID, response.get(User.PROFILEID).toString());
+				sessionobj.put("username", username);
+				sessionobj.put("password", password);
+				sessionobj.put("hostname", request.getRemoteAddr());
+				
+				// Retreive name from login response map
+				Map<String, Object> fullname = new HashMap<String, Object>();
+				fullname = (Map<String, Object>) response.get("name");
+				Map<String, Object> name = (Map<String, Object>) fullname.get("value");
+				sessionobj.put(Name.FIRSTNAME, name.get(Name.FIRSTNAME).toString());
+				sessionobj.put(Name.LASTNAME, name.get(Name.LASTNAME).toString());
+				
+				sessionid = SessionsManager.getInstance()
+						.createSession(sessionobj);
+				if (sessionid > 0) {
+					response.put(Session.SESSIONID, sessionid);
+				}
 			}
 		}
 		return Response.status(200).entity(new Gson().toJson(response)).build();
 	}
 
+	
 	@POST
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid,
@@ -119,9 +139,11 @@ public class UserService {
 				.build();
 	}
 
+	
 	@POST
 	@Path("/resetpwd")
 	public Response resetPwdService(@FormParam("authname") String authName) {
+		
 		boolean isEmail = false;
 		String changedPassword = null;
 		if (authName.indexOf("@") != -1) {
@@ -142,6 +164,7 @@ public class UserService {
 										.readServiceResponse(215))).build();
 	}
 
+	
 	@POST
 	@Path("/changepwd")
 	public Response changePwdService(@FormParam("userid") long userid,
@@ -155,8 +178,8 @@ public class UserService {
 				try {
 					response = UserManager.getInstance().changePassword(userid,
 							currentPassword, newPassword);
+					UserManager.getInstance().updateLastActivity(userid, false);
 				} catch (UserException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return Response.status(200).entity(new Gson().toJson(response))
@@ -176,14 +199,18 @@ public class UserService {
 			CountryException, UserInterestsException, GenreException,
 			UserLanguageException, LanguagesException,
 			UserFieldVisibilityException {
-
+		
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
 			try {
+				UserManager.getInstance().updateLastActivity(userid, false);
 				return Response
 						.status(200)
 						.entity(new Gson().toJson(UserManager.getInstance()
 								.getProfile(userid))).build();
 			} catch (UserProfileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UserException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -195,17 +222,22 @@ public class UserService {
 
 	}
 
+	/*
 	@POST
 	@Path("/viewownprofile")
 	public Response viewOwnProfileService(@FormParam("userid") long userid,
 			@FormParam("sessionid") long sessionid) {
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
 			try {
+				UserManager.getInstance().updateLastActivity(userid, false);
 				return Response
 						.status(200)
 						.entity(new Gson().toJson(UserManager.getInstance()
 								.viewOwnProfile(userid))).build();
 			} catch (UserProfileException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UserException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -223,6 +255,7 @@ public class UserService {
 
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
 			try {
+				UserManager.getInstance().updateLastActivity(userid, false);
 				return Response
 						.status(200)
 						.entity(new Gson().toJson(UserManager.getInstance()
@@ -262,6 +295,7 @@ public class UserService {
 					try {
 						sResponse = UserManager.getInstance().editProfile(
 								formParams);
+						UserManager.getInstance().updateLastActivity(userid, false);
 						if (!sResponse.isEmpty() && sResponse != null) {
 							return Response.status(200)
 									.entity(new Gson().toJson(sResponse))
@@ -288,6 +322,7 @@ public class UserService {
 	public Response verifyPasswordService(@FormParam("userid") long userid,
 			@FormParam("password") String password) {
 		try {
+			UserManager.getInstance().updateLastActivity(userid, false);
 			return Response
 					.status(200)
 					.entity(new Gson()
@@ -309,7 +344,8 @@ public class UserService {
 	public Response createuserInvites(
 			MultivaluedMap<String, String> inviteParams) throws QpekaException {
 		/* if (!inviteParams.isEmpty() && inviteParams != null) { */
-		long sessionid = 0;
+	
+	/*long sessionid = 0;
 		long userid = 0;
 		if (inviteParams.get("sessionid") != null
 				&& inviteParams.get("userid") != null) {
@@ -320,6 +356,7 @@ public class UserService {
 
 			if (SessionsManager.getInstance().ActiveSessionExist(sessionid,
 					userid)) {
+				UserManager.getInstance().updateLastActivity(userid, false);
 				return Response
 						.status(200)
 						.entity(new Gson().toJson(UserInvitesManager
@@ -331,7 +368,6 @@ public class UserService {
 				.status(200)
 				.entity(new Gson().toJson(ServiceResponseManager.getInstance()
 						.readServiceResponse(401))).build();
-
 	}
 
 	@POST
@@ -340,7 +376,7 @@ public class UserService {
 	public Response userInviteSent(MultivaluedMap<String, String> hashvalues)
 			throws QpekaException {
 		/* if (!hashvalues.isEmpty() && hashvalues != null) { */
-		long sessionid = 0;
+		/*long sessionid = 0;
 		long userid = 0;
 		if (hashvalues.get("sessionid") != null
 				&& hashvalues.get("userid") != null) {
@@ -350,6 +386,7 @@ public class UserService {
 
 			if (SessionsManager.getInstance().ActiveSessionExist(sessionid,
 					userid)) {
+				UserManager.getInstance().updateLastActivity(userid, false);
 				return Response
 						.status(200)
 						.entity(new Gson().toJson(UserInvitesManager
@@ -368,8 +405,9 @@ public class UserService {
 	public Response userInviteAccept(@FormParam("hashvalue") String hashvalues,
 			@FormParam("sessionid") long sessionid,
 			@FormParam("userid") long userid) throws QpekaException {
-
+		
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
+			UserManager.getInstance().updateLastActivity(userid, false);	
 			return Response
 					.status(200)
 					.entity(new Gson().toJson(UserInvitesManager.getInstance()
@@ -381,7 +419,12 @@ public class UserService {
 							.getInstance().readServiceResponse(401))).build();
 		}
 	}
-
+	
+	@POST
+	@Path("/sessionstate")
+	public Response SessionStateService(@FormParam("authname") String authName) {
+		return null;
+	}*/
 }
 
 // TODO WS for each param of edit profile

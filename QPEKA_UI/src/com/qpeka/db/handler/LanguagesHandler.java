@@ -36,7 +36,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT languageid, language, name, native, direction, enabled FROM "
+	protected final String SQL_SELECT = "SELECT languageid, language, script, native, direction, enabled FROM "
 			+ getTableName() + "";
 
 	/**
@@ -49,14 +49,14 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	 */
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
-			+ " ( languageid, language, name, native, direction, enabled ) VALUES ( ?, ?, ?, ?, ?, ? )";
+			+ " ( languageid, language, script, native, direction, enabled ) VALUES ( ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
-			+ " SET languageid = ?, language = ?, name = ?, native = ?, direction = ?, enabled = ? WHERE languageid = ?";
+			+ " SET languageid = ?, language = ?, script = ?, native = ?, direction = ?, enabled = ? WHERE languageid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -75,9 +75,9 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	protected static final int COLUMN_LANGUAGE = 2;
 
 	/**
-	 * Index of column name
+	 * Index of column script
 	 */
-	protected static final int COLUMN_NAME = 3;
+	protected static final int COLUMN_SCRIPT = 3;
 
 	/**
 	 * Index of column native
@@ -168,13 +168,13 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				modifiedCount++;
 			}
 
-			if (language.isNameModified()) {
+			if (language.isScriptModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
 				}
 
-				sql.append("name");
+				sql.append("script");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -231,8 +231,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				stmt.setString(index++, language.getLanguage());
 			}
 
-			if (language.isNameModified()) {
-				stmt.setString(index++, language.getName());
+			if (language.isScriptModified()) {
+				stmt.setString(index++, language.getScript());
 			}
 
 			if (language.isANativeModified()) {
@@ -313,12 +313,12 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				modified = true;
 			}
 
-			if (language.isNameModified()) {
+			if (language.isScriptModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
 
-				sql.append("name=?");
+				sql.append("script=?");
 				modified = true;
 			}
 
@@ -370,8 +370,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				stmt.setString(index++, language.getLanguage());
 			}
 
-			if (language.isNameModified()) {
-				stmt.setString(index++, language.getName());
+			if (language.isScriptModified()) {
+				stmt.setString(index++, language.getScript());
 			}
 
 			if (language.isANativeModified()) {
@@ -475,11 +475,11 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	}
 
 	@Override
-	public List<Languages> findWhereNameEquals(String name)
+	public List<Languages> findWhereScriptEquals(String script)
 			throws LanguagesException {
 		return findByDynamicSelect(
-				SQL_SELECT + " WHERE name = ? ORDER BY name",
-				Arrays.asList(new Object[] { name }));
+				SQL_SELECT + " WHERE script = ? ORDER BY script",
+				Arrays.asList(new Object[] { script }));
 	}
 
 	@Override
@@ -648,7 +648,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			throws SQLException {
 		language.setLanguageid(rs.getShort(COLUMN_LANGUAGEID));
 		language.setLanguage(rs.getString(COLUMN_LANGUAGE));
-		language.setName(rs.getString(COLUMN_NAME));
+		language.setScript(rs.getString(COLUMN_SCRIPT));
 		language.setANative(rs.getShort(COLUMN_A_NATIVE));
 		language.setDirection(rs.getShort(COLUMN_DIRECTION));
 		language.setEnabled(rs.getShort(COLUMN_ENABLED));
@@ -662,7 +662,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	protected void reset(Languages language) {
 		language.setLanguageidModified(false);
 		language.setLanguageModified(false);
-		language.setNameModified(false);
+		language.setScriptModified(false);
 		language.setANativeModified(false);
 		language.setDirectionModified(false);
 		language.setEnabledModified(false);

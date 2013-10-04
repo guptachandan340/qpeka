@@ -71,6 +71,12 @@ public interface SessionDao {
 	public List<Session> findWhereStatusEquals(short status) throws SessionException;
 
 	/**
+	 * Returns all rows from the sessions table that match the criteria 'hostname =
+	 * :hostname'.
+	 */
+	public List<Session> findWhereSessionobjEquals(String sessionobj) throws SessionException;
+	
+	/**
 	 * Sets the value of maxRows
 	 */
 	public void setMaxRows(int maxRows);
