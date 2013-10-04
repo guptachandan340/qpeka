@@ -18,8 +18,21 @@ import com.qpeka.managers.CategoryManager;
 @Path("/user/category")
 public class CategoryServices {
 
-	final Logger logger = Logger
-			.getLogger(CategoryServices.class);
+	final Logger logger = Logger.getLogger(CategoryServices.class);
+	
+	@GET
+	@Path("/readallgenre")
+	public Response retrieveGenreService() {
+		Set<String> category = CategoryManager.getInstance().readCategory();
+		if(!category.isEmpty() && category != null) {
+			return Response.status(200).entity(new Gson().toJson(category)).build();
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Empty Category");
+			}
+			return Response.status(200).entity(new Gson().toJson("")).build();
+		}
+	}
 	
 	@POST
 	@Path("/readcategorygenrebytype")

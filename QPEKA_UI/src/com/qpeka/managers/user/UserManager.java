@@ -84,26 +84,18 @@ public class UserManager {
 
 	/*
 	 * @param firstName
-	 * 
 	 * @param lastName
-	 * 
 	 * @param email
-	 * 
 	 * @param username
-	 * 
 	 * @param password
-	 * 
 	 * @param gender
-	 * 
 	 * @param dob
-	 * 
 	 * @param langugaes
 	 * 
 	 * @return
 	 */
 
-	public Map<String, Object> registerUser(
-			MultivaluedMap<String, String> formParams) throws UserException {
+	public Map<String, Object> registerUser(MultivaluedMap<String, String> formParams) throws UserException {
 		// Create User
 		User user = User.getInstance();
 		// Create User Profile
@@ -122,17 +114,14 @@ public class UserManager {
 				List<String> userInfo = formParams.get(key);
 				if (!userInfo.isEmpty()) {
 					for (String userInfoValue : userInfo) {
-						if (userInfoValue != null
-								&& !userInfoValue.equalsIgnoreCase("")) {
-							registerUserInfo(key, userInfoValue, user,
-									userProfile);
+						if (userInfoValue != null && !userInfoValue.equalsIgnoreCase("")) {
+							registerUserInfo(key, userInfoValue, user, userProfile);
 						}
 					}
 				}
 			}
 		}
-		user.setPenname(createPenName(userProfile.getName().getFirstname(),
-				userProfile.getName().getLastname(), user.getEmail()));
+		user.setPenname(createPenName(userProfile.getName().getFirstname(), userProfile.getName().getLastname(), user.getEmail()));
 		short responseStatus = 0;
 		try {
 			// Insert user to database;
@@ -141,15 +130,13 @@ public class UserManager {
 				responseStatus = 200;
 				userProfile.setUserid(userid);
 				if (UserProfileHandler.getInstance().insert(userProfile) > 0) {
-					insertUserFieldVisibility(userid, "fullname",
-							(short)VISIBILITY.PRIVATE.ordinal());
-					insertUserFieldVisibility(userid, User.EMAIL,
-							(short)VISIBILITY.PRIVATE.ordinal());
-					insertUserFieldVisibility(userid, UserProfile.DOB,
-							(short)VISIBILITY.PRIVATE.ordinal());
-					insertUserFieldVisibility(userid, UserProfile.GENDER,
-							(short)VISIBILITY.PRIVATE.ordinal());
-
+					insertUserFieldVisibility(userid, "name", (short) VISIBILITY.PRIVATE.ordinal());
+					insertUserFieldVisibility(userid, User.EMAIL, (short) VISIBILITY.PRIVATE.ordinal());
+					insertUserFieldVisibility(userid, UserProfile.DOB, (short) VISIBILITY.PRIVATE.ordinal());
+					insertUserFieldVisibility(userid, UserProfile.GENDER, (short) VISIBILITY.PRIVATE.ordinal());
+					insertUserFieldVisibility(userid, UserProfile.INTERESTS, (short) VISIBILITY.PRIVATE.ordinal());
+					insertUserFieldVisibility(userid, "languages", (short) VISIBILITY.PRIVATE.ordinal());
+					
 					responseStatus = 200;
 					// store languages in user language table
 					List<String> languages = formParams.get(Languages.LANGUAGE);
@@ -169,8 +156,7 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ServiceResponseManager.getInstance().readServiceResponse(
-				responseStatus);
+		return ServiceResponseManager.getInstance().readServiceResponse(responseStatus);
 	}// end of registeruser()
 
 	/**
@@ -333,12 +319,13 @@ public class UserManager {
 		short responseStatus = 0;
 		List<User> userList = null;
 		try {
-			userList = (!isEmail) ? UserHandler.getInstance()
-					.findWherePennameEquals(username) : UserHandler
-					.getInstance().findWhereEmailEquals(username);
+			if (!isEmail) {
+				userList = UserHandler.getInstance().findWherePennameEquals(username);
+			} else {
+				userList = UserHandler.getInstance().findWhereEmailEquals(username);
+			}
 		} catch (UserException _e) {
-			throw new UserException("User Authentication Exception: "
-					+ _e.getMessage(), _e);
+			throw new UserException("User Authentication Exception: " + _e.getMessage(), _e);
 		}
 
 		if (!userList.isEmpty() && userList != null) {
@@ -349,7 +336,7 @@ public class UserManager {
 						// Reason : We shouldn't let the user that we are
 						// tracking their lastaccess and lastlogin record.
 						updateLastActivity(user.getUserid(), true);
-						return createUserInfoMap(user,false);
+						return createUserInfoMap(user, false);
 					} else {
 						responseStatus = 215;
 					}
@@ -375,52 +362,43 @@ public class UserManager {
 	/**
 	 * creating UserInfoMap from user and userprofile data
 	 * 
-	 * visibilitySpecifier = true there if need to set visibility for each parameter
+	 * visibilitySpecifier = true there if need to set visibility for each
+	 * parameter
 	 * 
 	 * @throws UserProfileException
 	 */
-	public Map<String, Object> createUserInfoMap(User user,
-			boolean visibilitySpecifier) throws UserProfileException {
+	public Map<String, Object> createUserInfoMap(User user, boolean visibilitySpecifier) throws UserProfileException {
 		Map<String, Object> userInfo = new HashMap<String, Object>();
 		List<UserFieldVisibility> userFieldVisibility = null;
 		List<UserProfile> userprofile = null;
 		UserProfile.getInstance().setName(Name.getInstance());
 		
 		try {
-			userprofile = UserProfileHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-			userFieldVisibility = UserFieldVisibilityHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
+			userprofile = UserProfileHandler.getInstance().findWhereUseridEquals(user.getUserid());
+			userFieldVisibility = UserFieldVisibilityHandler.getInstance().findWhereUseridEquals(user.getUserid());
 		} catch (UserFieldVisibilityException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (UserProfileException e) {
-			throw new UserProfileException(
-					"Authentication Map generation Exception at findByUserid : "
-							+ e.getMessage(), e);
+			throw new UserProfileException("Authentication Map generation Exception at findByUserid : " + e.getMessage(), e);
 		}
 
 		if (user != null) {
 			userInfo.put((User.PROFILEID), user.getUserid());
 			// Set PenName
-			userInfo.put(User.PENNAME,
-					user.getPenname() != null ? user.getPenname() : "");
+			userInfo.put(User.PENNAME, user.getPenname() != null ? user.getPenname() : "");
 			// Set Email
 			Map<String, Object> emailMap = new HashMap<String, Object>();
-			emailMap.put("value", user.getEmail() != null ? user.getEmail() : "");
+			emailMap.put("value", user.getEmail() != null ? user.getEmail()	: "");
 
 			// TODO Set errorcode if obj or list is empty
 			if (!userprofile.isEmpty() && userprofile != null) {
 				for (UserProfile userProfile : userprofile) {
 					// get Fullname
 					Map<String, Object> fullname = new HashMap<String, Object>();
-					fullname.put(Name.FIRSTNAME, userProfile.getName()
-							.getFirstname());
-					fullname.put(Name.LASTNAME, userProfile.getName()
-							.getLastname());
-					fullname.put(Name.MIDDLENAME, (userProfile.getName()
-							.getMiddlename() != null ? userProfile.getName()
-							.getMiddlename() : ""));
+					fullname.put(Name.FIRSTNAME, userProfile.getName().getFirstname());
+					fullname.put(Name.LASTNAME, userProfile.getName().getLastname());
+					fullname.put(Name.MIDDLENAME, (userProfile.getName().getMiddlename() != null ? userProfile.getName().getMiddlename() : ""));
 					Map<String, Object> name = new HashMap<String, Object>();
 					name.put("value", fullname);
 
@@ -429,28 +407,18 @@ public class UserManager {
 					genderMap.put("value", userProfile.getGender());
 					// get profilepic
 					if (userProfile.getProfilepic() > 0) {
-						userInfo.put(UserProfile.PROFILEPIC,
-								retrieveProfilePic(userProfile.getProfilepic()));
+						userInfo.put(UserProfile.PROFILEPIC, retrieveProfilePic(userProfile.getProfilepic()));
 					}
-					
+
 					if (visibilitySpecifier) {
-						if (!userFieldVisibility.isEmpty()
-								&& userFieldVisibility != null) {
+						if (!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
 							for (UserFieldVisibility userVisibility : userFieldVisibility) {
-								if (userVisibility.getFieldName()
-										.equalsIgnoreCase("fullname")) {
-									name.put("visibility",
-											userVisibility.getStatus());
-									// nameList.add(fullname);
-								} else if (userVisibility.getFieldName()
-										.equalsIgnoreCase("gender")) {
-									genderMap.put("visibility",
-											userVisibility.getStatus());
-								} else if (userVisibility.getFieldName()
-										.equalsIgnoreCase("email")) {
-									
-									emailMap.put("visibility",
-											userVisibility.getStatus());
+								if (userVisibility.getFieldName().equalsIgnoreCase("name")) {
+									name.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+								} else if (userVisibility.getFieldName().equalsIgnoreCase("gender")) {
+									genderMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+								} else if (userVisibility.getFieldName().equalsIgnoreCase("email")) {
+									emailMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
 								}
 							}
 						}
@@ -464,89 +432,61 @@ public class UserManager {
 		return userInfo;
 	}
 
-	
-	/*public MultiValueMap<String, Object> createUserInfoMap(User user, boolean visibilitySpecifier)
-			throws UserProfileException {
-		MultiValueMap<String, Object> userInfo = new MultiValueMap<String, Object>();
-		List<UserFieldVisibility> userFieldVisibility = null;
-		List<UserProfile> userprofile = null;
-		if (UserProfile.getInstance().getName() == null) {
-			UserProfile.getInstance().setName(Name.getInstance());
-		}
-		try {
-			userFieldVisibility = UserFieldVisibilityHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-		} catch (UserFieldVisibilityException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			userprofile = UserProfileHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-		} catch (UserProfileException e) {
-			throw new UserProfileException(
-					"Authentication Map generation Exception at findByUserid : "
-							+ e.getMessage(), e);
-		}
-		if (user != null) {
-			userInfo.put((User.PROFILEID), user.getUserid());
-			// Set PenName
-			userInfo.put(User.PENNAME,
-					user.getPenname() != null ? user.getPenname() : "");
-			// Set Email
-			userInfo.put(User.EMAIL, user.getEmail() != null ? user.getEmail()
-					: "");
-		}
-		// TODO Set errorcode if obj or list is empty
-		if (!userprofile.isEmpty() && userprofile != null) {
-			for (UserProfile userProfile : userprofile) {
-				Map<String, Object> innermap = new HashMap<String, Object>();
-				List<Map<String, Object>> nameList = new ArrayList<Map<String,Object>>();
-				Map<String, Object> fullname = new HashMap<String, Object>();
-				// get first name
-				fullname.put(Name.FIRSTNAME, userProfile.getName()
-						.getFirstname());
-				// get Last Name
-				fullname.put(Name.LASTNAME, userProfile.getName().getLastname());
-				// Set MiddleName
-				fullname.put(Name.MIDDLENAME, (userProfile.getName()
-						.getMiddlename() != null ? userProfile.getName()
-						.getMiddlename() : ""));
-				
-				nameList.add(fullname);
-
-				if(visibilitySpecifier) {
-					if(!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
-						for(UserFieldVisibility userVisibility : userFieldVisibility) {
-							if(userVisibility.getFieldName().equalsIgnoreCase("name")) {
-								fullname.put("VISIBILITY", userVisibility.getStatus());
-								nameList.add(fullname);
-							} else if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
-								
-							} else if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
-								
-							} else if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
-								
-							} else if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
-								
-							}
-					}
-				}
-				//userInfo.put("name", );
-				
-				// get Gender
-				Map<String, Object> genderMap = new HashMap<String, Object>();
-				genderMap.put("SET", userProfile.getGender());
-				// get profilepic
-				if (userProfile.getProfilepic() > 0) {
-					userInfo.put(UserProfile.PROFILEPIC,
-							retrieveProfilePic(userProfile.getProfilepic()));
-				}
-			}
-		}
-		return userInfo;
-	}
-*/
+	/*
+	 * public MultiValueMap<String, Object> createUserInfoMap(User user, boolean
+	 * visibilitySpecifier) throws UserProfileException { MultiValueMap<String,
+	 * Object> userInfo = new MultiValueMap<String, Object>();
+	 * List<UserFieldVisibility> userFieldVisibility = null; List<UserProfile>
+	 * userprofile = null; if (UserProfile.getInstance().getName() == null) {
+	 * UserProfile.getInstance().setName(Name.getInstance()); } try {
+	 * userFieldVisibility = UserFieldVisibilityHandler.getInstance()
+	 * .findWhereUseridEquals(user.getUserid()); } catch
+	 * (UserFieldVisibilityException e1) { // TODO Auto-generated catch block
+	 * e1.printStackTrace(); } try { userprofile =
+	 * UserProfileHandler.getInstance()
+	 * .findWhereUseridEquals(user.getUserid()); } catch (UserProfileException
+	 * e) { throw new UserProfileException(
+	 * "Authentication Map generation Exception at findByUserid : " +
+	 * e.getMessage(), e); } if (user != null) { userInfo.put((User.PROFILEID),
+	 * user.getUserid()); // Set PenName userInfo.put(User.PENNAME,
+	 * user.getPenname() != null ? user.getPenname() : ""); // Set Email
+	 * userInfo.put(User.EMAIL, user.getEmail() != null ? user.getEmail() : "");
+	 * } // TODO Set errorcode if obj or list is empty if
+	 * (!userprofile.isEmpty() && userprofile != null) { for (UserProfile
+	 * userProfile : userprofile) { Map<String, Object> innermap = new
+	 * HashMap<String, Object>(); List<Map<String, Object>> nameList = new
+	 * ArrayList<Map<String,Object>>(); Map<String, Object> fullname = new
+	 * HashMap<String, Object>(); // get first name fullname.put(Name.FIRSTNAME,
+	 * userProfile.getName() .getFirstname()); // get Last Name
+	 * fullname.put(Name.LASTNAME, userProfile.getName().getLastname()); // Set
+	 * MiddleName fullname.put(Name.MIDDLENAME, (userProfile.getName()
+	 * .getMiddlename() != null ? userProfile.getName() .getMiddlename() : ""));
+	 * 
+	 * nameList.add(fullname);
+	 * 
+	 * if(visibilitySpecifier) { if(!userFieldVisibility.isEmpty() &&
+	 * userFieldVisibility != null) { for(UserFieldVisibility userVisibility :
+	 * userFieldVisibility) {
+	 * if(userVisibility.getFieldName().equalsIgnoreCase("name")) {
+	 * fullname.put("VISIBILITY", userVisibility.getStatus());
+	 * nameList.add(fullname); } else
+	 * if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
+	 * 
+	 * } else if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
+	 * 
+	 * } else if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
+	 * 
+	 * } else if(userVisibility.getFieldName().equalsIgnoreCase("gender")) {
+	 * 
+	 * } } } //userInfo.put("name", );
+	 * 
+	 * // get Gender Map<String, Object> genderMap = new HashMap<String,
+	 * Object>(); genderMap.put("SET", userProfile.getGender()); // get
+	 * profilepic if (userProfile.getProfilepic() > 0) {
+	 * userInfo.put(UserProfile.PROFILEPIC,
+	 * retrieveProfilePic(userProfile.getProfilepic())); } } } return userInfo;
+	 * }
+	 */
 	/**
 	 * Needed by Authenticate, getProfile and viewOwnProfile Module
 	 * (createInfoMap() and ViewOwnProfile()
@@ -559,15 +499,12 @@ public class UserManager {
 		String filePath = "";
 		List<Files> files = null;
 		try {
-			files = FilesHandler.getInstance()
-					.findWhereFileidEquals(profilepic);
+			files = FilesHandler.getInstance().findWhereFileidEquals(profilepic);
 			if (!files.isEmpty() && files != null) {
 				filePath = files.iterator().next().getFilepath();
 			}
 		} catch (FileException e) {
-			throw new UserProfileException(
-					" Map generation Exception at profilepic : "
-							+ e.getMessage(), e);
+			throw new UserProfileException(" Map generation Exception at profilepic : " + e.getMessage(), e);
 		}
 		return filePath;
 	}
@@ -611,8 +548,7 @@ public class UserManager {
 		try {
 			userList = UserHandler.getInstance().findWhereUseridEquals(userid);
 		} catch (UserException _e) {
-			throw new UserException("Verify password Exception: "
-					+ _e.getMessage(), _e);
+			throw new UserException("Verify password Exception: " + _e.getMessage(), _e);
 		}
 		if (!userList.isEmpty() && userList != null) {
 			for (User user : userList) {
@@ -639,14 +575,12 @@ public class UserManager {
 				UserHandler.getInstance().update(userid, user);
 				responseStatus = 200;
 			} catch (UserException _e) {
-				throw new UserException("Update User Password Exception: "
-						+ _e.getMessage(), _e);
+				throw new UserException("Update User Password Exception: " + _e.getMessage(), _e);
 			}
 		} else {
 			responseStatus = 215;
 		}
-		return ServiceResponseManager.getInstance().readServiceResponse(
-				responseStatus);
+		return ServiceResponseManager.getInstance().readServiceResponse(responseStatus);
 	}// end of changePassword()
 
 	/**
@@ -660,12 +594,9 @@ public class UserManager {
 		List<User> userList = null;
 		String newPassword = "";
 		try {
-			userList = (!isEmail) ? UserHandler.getInstance()
-					.findWherePennameEquals(authName) : UserHandler
-					.getInstance().findWhereEmailEquals(authName);
+			userList = (!isEmail) ? UserHandler.getInstance().findWherePennameEquals(authName) : UserHandler.getInstance().findWhereEmailEquals(authName);
 		} catch (UserException _e) {
-			throw new UserException("Reset user Password Exception: "
-					+ _e.getMessage(), _e);
+			throw new UserException("Reset user Password Exception: " + _e.getMessage(), _e);
 		}
 
 		if (!userList.isEmpty() && userList != null) {
@@ -691,8 +622,7 @@ public class UserManager {
 		user.setStatus((short) USERSTATUS.DELETED.ordinal());
 		try {
 			UserHandler.getInstance().update(userid, user);
-			return ServiceResponseManager.getInstance()
-					.readServiceResponse(200);
+			return ServiceResponseManager.getInstance().readServiceResponse(200);
 			// TODO Close the session and logout the user and redirecting to
 			// home page
 		} catch (UserException e) {
@@ -726,8 +656,7 @@ public class UserManager {
 			if (user != null) {
 				return createProfileInfoMap(user, true);
 			} else {
-				return ServiceResponseManager.getInstance()
-						.readServiceResponse(215);
+				return ServiceResponseManager.getInstance().readServiceResponse(215);
 			}
 		} catch (UserException _e) {
 			throw new UserProfileException("Get profile exception: "
@@ -747,37 +676,28 @@ public class UserManager {
 		MultiValueMap<String, Object> profileInfo = new MultiValueMap<String, Object>();
 		UserProfile userProfile;
 		try {
-			userProfile = UserProfileHandler.getInstance().findByPrimaryKey(
-					userid);
+			userProfile = UserProfileHandler.getInstance().findByPrimaryKey(userid);
 		} catch (UserProfileException e) {
 			throw new UserProfileException("View Own Profile Exception : ");
 		}
 		if (userProfile != null) {
 			// Set Full Name
-			profileInfo.put(Name.FIRSTNAME, userProfile.getName()
-					.getFirstname());
+			profileInfo.put(Name.FIRSTNAME, userProfile.getName().getFirstname());
 			// get Last Name
 			profileInfo.put(Name.LASTNAME, userProfile.getName().getLastname());
 			// Get MiddleName
-			profileInfo.put(Name.MIDDLENAME, (userProfile.getName()
-					.getMiddlename() != null ? userProfile.getName()
-					.getMiddlename() : ""));
+			profileInfo.put(Name.MIDDLENAME, (userProfile.getName().getMiddlename() != null ? userProfile.getName().getMiddlename() : ""));
 
 			// Set ProfilePic
 			if (userProfile.getProfilepic() > 0) {
-				profileInfo.put(UserProfile.PROFILEPIC,
-						retrieveProfilePic(userProfile.getProfilepic()));
+				profileInfo.put(UserProfile.PROFILEPIC, retrieveProfilePic(userProfile.getProfilepic()));
 			}
 			// Set Biography
-			profileInfo.put(
-					UserProfile.BIOGRAPHY,
-					userProfile.getBiography() != null ? userProfile
-							.getBiography() : "");
+			profileInfo.put(UserProfile.BIOGRAPHY, userProfile.getBiography() != null ? userProfile.getBiography() : "");
 			// TODO Set stats (earned points, read points)
 
 		} else {
-			return ServiceResponseManager.getInstance()
-					.readServiceResponse(215);
+			return ServiceResponseManager.getInstance().readServiceResponse(215);
 		}
 		return profileInfo;
 	}
@@ -785,10 +705,11 @@ public class UserManager {
 	/*
 	 * Create EditedInfo Map dob nationality website biography level tnc
 	 */
-	public Map<String, Object> createProfileInfoMap(User user, boolean visibilitySpecifier)
-			throws UserProfileException, AddressException, CountryException,
-			UserInterestsException, GenreException, UserLanguageException,
-			LanguagesException, UserFieldVisibilityException {
+	public Map<String, Object> createProfileInfoMap(User user,
+			boolean visibilitySpecifier) throws UserProfileException,
+			AddressException, CountryException, UserInterestsException,
+			GenreException, UserLanguageException, LanguagesException,
+			UserFieldVisibilityException {
 
 		Map<String, Object> userInfo = createUserInfoMap(user, true);
 		List<UserProfile> userprofile = null;
@@ -800,309 +721,192 @@ public class UserManager {
 			UserProfile.getInstance().setAddress(Address.getInstance());
 		}
 		try {
-			userprofile = UserProfileHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-			useraddress = AddressHandler.getInstance().findWhereUseridEquals(
-					user.getUserid());
-			userFieldVisibility = UserFieldVisibilityHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-			userSocialConnection = UserSocialConnectionHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
+			userprofile = UserProfileHandler.getInstance().findWhereUseridEquals(user.getUserid());
+			useraddress = AddressHandler.getInstance().findWhereUseridEquals(user.getUserid());
+			userFieldVisibility = UserFieldVisibilityHandler.getInstance().findWhereUseridEquals(user.getUserid());
+			userSocialConnection = UserSocialConnectionHandler.getInstance().findWhereUseridEquals(user.getUserid());
 		} catch (UserProfileException e) {
-			throw new UserProfileException(
-					"create Profile InfoMap UserProfile Exception : "
-							+ e.getMessage(), e);
+			throw new UserProfileException("create Profile InfoMap UserProfile Exception : " + e.getMessage(), e);
 		} catch (AddressException e) {
-			throw new AddressException(
-					"create Profile InfoMap Address Exception : "
-							+ e.getMessage(), e);
+			throw new AddressException("create Profile InfoMap Address Exception : " + e.getMessage(), e);
 		} catch (UserFieldVisibilityException e) {
-			throw new UserFieldVisibilityException(
-					"create Profile InfoMap UserFieldVisibility Exception : ");
+			throw new UserFieldVisibilityException("create Profile InfoMap UserFieldVisibility Exception : ");
 		} catch (QpekaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		if (!userprofile.isEmpty() && userprofile != null) {
-			//if (!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
-				for (UserProfile userProfile : userprofile) {
-					Map<String, Object> dobMap = new HashMap<String, Object>();
-					// Set DOB
-					dobMap.put("value", userProfile.getDob() != null ? Utils
-							.getFormatedDate().format(userProfile.getDob())
-							: "");
-					
-					// Set Nationality
-					Map<String, Object> nationalityMap = new HashMap<String, Object>();
-					nationalityMap.put(
-							"value",
-							userProfile.getNationality() > 0 ? getCountryIdentifiers(
-									userProfile.getNationality(), "countryid")
-									: "");
+			// if (!userFieldVisibility.isEmpty() && userFieldVisibility !=
+			// null) {
+			for (UserProfile userProfile : userprofile) {
+				Map<String, Object> dobMap = new HashMap<String, Object>();
+				// Set DOB
+				dobMap.put("value", userProfile.getDob() != null ? Utils.getFormatedDate().format(userProfile.getDob()) : "");
 
-					if (!useraddress.isEmpty() && useraddress != null) {
-						Map<String, Object> addressInfo = new HashMap<String, Object>();
-						for (Address userAddress : useraddress) {
-							// Set addressid
-							addressInfo.put(Address.ADDRESSID,
-									userAddress.getAddressid());
-							// Set Line1
-							addressInfo
-									.put(Address.ADDRESSLINE1,
-											userAddress.getAddressLine1() != null ? userAddress
-													.getAddressLine1() : "");
-							// Set line2
-							addressInfo
-									.put(Address.ADDRESSLINE2,
-											userAddress.getAddressLine2() != null ? userAddress
-													.getAddressLine2() : "");
-							// Set line3
-							addressInfo
-									.put(Address.ADDRESSLINE3,
-											userAddress.getAddressLine3() != null ? userAddress
-													.getAddressLine3() : "");
-							// Set City
-							addressInfo.put(
-									Address.CITY,
-									userAddress.getCity() != null ? userAddress
-											.getCity() : "");
-							// Set State
-							addressInfo
-									.put(Address.STATE,
-											userAddress.getState() != null ? userAddress
-													.getState() : "");
-							// Set country
-							addressInfo
-									.put(Address.COUNTRY,
-											userAddress.getCountry() > 0 ? getCountryIdentifiers(
-													userAddress.getCountry(),
-													"countryid") : "");
-							// Set pincode
-							addressInfo.put(
-									Address.PINCODE,
-									userAddress.getPincode() >= 0 ? userAddress
-											.getPincode() : "");
-							userInfo.put(UserProfile.ADDRESS, addressInfo);
-						}
+				// Set Nationality
+				Map<String, Object> nationalityMap = new HashMap<String, Object>();
+				nationalityMap.put("value", userProfile.getNationality() > 0 ? getCountryIdentifiers(userProfile.getNationality(), "countryid") : "");
+
+				if (!useraddress.isEmpty() && useraddress != null) {
+					Map<String, Object> addressInfo = new HashMap<String, Object>();
+					for (Address userAddress : useraddress) {
+						// Set addressid
+						addressInfo.put(Address.ADDRESSID, userAddress.getAddressid());
+						// Set Line1
+						addressInfo.put(Address.ADDRESSLINE1, userAddress.getAddressLine1() != null ? userAddress.getAddressLine1() : "");
+						// Set line2
+						addressInfo.put(Address.ADDRESSLINE2, userAddress.getAddressLine2() != null ? userAddress.getAddressLine2() : "");
+						// Set line3
+						addressInfo.put(Address.ADDRESSLINE3, userAddress.getAddressLine3() != null ? userAddress.getAddressLine3() : "");
+						// Set City
+						addressInfo.put(Address.CITY, userAddress.getCity() != null ? userAddress.getCity() : "");
+						// Set State
+						addressInfo.put(Address.STATE, userAddress.getState() != null ? userAddress.getState() : "");
+						// Set country
+						addressInfo.put(Address.COUNTRY, userAddress.getCountry() > 0 ? getCountryIdentifiers(userAddress.getCountry(), "countryid") : "");
+						// Set pincode
+						addressInfo.put(Address.PINCODE, userAddress.getPincode() >= 0 ? userAddress.getPincode() : "");
+						
+						// Save address
+						userInfo.put(UserProfile.ADDRESS, addressInfo);
 					}
-					
-					// Set biography
-					userInfo.put(
-							UserProfile.BIOGRAPHY,
-							userProfile.getBiography() != null ? userProfile
-									.getBiography() : "");
+				}
 
-					// Set Website
-					userInfo.put(
-							UserProfile.WEBSITE,
-							userProfile.getWebsite() != null ? userProfile
-									.getWebsite() : "");
-				
-					// Set UserInterests
-					Map<String, Object> interestsMap = new HashMap<String, Object>();
-					interestsMap.put("value", retrieveUserInterests(user.getUserid()));
-					
-					// Set RLang and WLang
-					Map<String, Object> languageMap = new HashMap<String, Object>();
-					languageMap.put("value", retieveUserLanguages(user.getUserid()));
-					
-					if (visibilitySpecifier) {
-						if (!userFieldVisibility.isEmpty()
-								&& userFieldVisibility != null) {
-							for (UserFieldVisibility userVisibility : userFieldVisibility) {
-								if (userVisibility.getFieldName()
-										.equalsIgnoreCase("dob")) {
-									dobMap.put("visibility",
-											userVisibility.getStatus());
-								} else if (userVisibility.getFieldName()
-										.equalsIgnoreCase("nationality")) {
-									nationalityMap.put("visibility",
-											userVisibility.getStatus());
-								} else if (userVisibility.getFieldName()
-										.equalsIgnoreCase("interests")) {
-									interestsMap.put("visibility",
-											userVisibility.getStatus());
-								} else if (userVisibility.getFieldName()
-										.equalsIgnoreCase("language")) {
-									languageMap.put("visibility",
-											userVisibility.getStatus());
-								}
+				// Set biography
+				userInfo.put(UserProfile.BIOGRAPHY, userProfile.getBiography() != null ? userProfile.getBiography() : "");
+
+				// Set Website
+				userInfo.put(UserProfile.WEBSITE, userProfile.getWebsite() != null ? userProfile.getWebsite() : "");
+
+				// Set UserInterests
+				Map<String, Object> interestsMap = new HashMap<String, Object>();
+				interestsMap.put("value", retrieveUserInterests(user.getUserid()));
+
+				// Set RLang and WLang
+				Map<String, Object> languageMap = new HashMap<String, Object>();
+				languageMap.put("value", retieveUserLanguages(user.getUserid()));
+
+				if (visibilitySpecifier) {
+					if (!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
+						for (UserFieldVisibility userVisibility : userFieldVisibility) {
+							if (userVisibility.getFieldName().equalsIgnoreCase("dob")) {
+								dobMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+							} else if (userVisibility.getFieldName().equalsIgnoreCase("nationality")) {
+								nationalityMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+							} else if (userVisibility.getFieldName().equalsIgnoreCase("interests")) {
+								interestsMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+							} else if (userVisibility.getFieldName().equalsIgnoreCase("languages")) {
+								languageMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
 							}
 						}
+					}
 					userInfo.put(UserProfile.DOB, dobMap);
 					userInfo.put(UserProfile.NATIONALITY, nationalityMap);
 					userInfo.put(UserProfile.INTERESTS, interestsMap);
 					userInfo.put(Languages.LANGUAGE, languageMap);
 				}
-				if (!userSocialConnection.isEmpty()
-						&& userSocialConnection != null) {
+				if (!userSocialConnection.isEmpty() && userSocialConnection != null) {
 					for (UserSocialConnection userSocialConn : userSocialConnection) {
-						userInfo.put(userSocialConn.getPlatform(),
-								userSocialConn.getSocialid());
+						userInfo.put(userSocialConn.getPlatform(), userSocialConn.getSocialid());
 					}
 				}
 			}
 		}
+		
 		return userInfo;
 	}
-	
-	/*public MultiValueMap<String, Object> createProfileInfoMap(User user)
-			throws UserProfileException, AddressException, CountryException,
-			UserInterestsException, GenreException, UserLanguageException,
-			LanguagesException, UserFieldVisibilityException {
 
-		MultiValueMap<String, Object> userInfo = createUserInfoMap(user, true);
-		List<UserProfile> userprofile = null;
-		List<Address> useraddress = null;
-		List<UserFieldVisibility> userFieldVisibility = null;
-		List<UserSocialConnection> userSocialConnection = null;
-
-		if (UserProfile.getInstance().getAddress() == null) {
-			UserProfile.getInstance().setAddress(Address.getInstance());
-		}
-		try {
-			userprofile = UserProfileHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-			useraddress = AddressHandler.getInstance().findWhereUseridEquals(
-					user.getUserid());
-			userFieldVisibility = UserFieldVisibilityHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-			userSocialConnection = UserSocialConnectionHandler.getInstance()
-					.findWhereUseridEquals(user.getUserid());
-		} catch (UserProfileException e) {
-			throw new UserProfileException(
-					"create Profile InfoMap UserProfile Exception : "
-							+ e.getMessage(), e);
-		} catch (AddressException e) {
-			throw new AddressException(
-					"create Profile InfoMap Address Exception : "
-							+ e.getMessage(), e);
-		} catch (UserFieldVisibilityException e) {
-			throw new UserFieldVisibilityException(
-					"create Profile InfoMap UserFieldVisibility Exception : ");
-		} catch (QpekaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		if (!userprofile.isEmpty() && userprofile != null) {
-			if (!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
-
-				for (UserProfile userProfile : userprofile) {
-					Map<String, Object> innerMap = new HashMap<String, Object>();
-					// Set DOB
-					innerMap.put("SET", userProfile.getDob() != null ? Utils
-							.getFormatedDate().format(userProfile.getDob())
-							: "");
-					for (UserFieldVisibility userVisibility : userFieldVisibility) {
-						if (userVisibility.getFieldName().equalsIgnoreCase(
-								"dob")) {
-							innerMap.put("VISIBILITY",
-									userVisibility.getStatus());
-						}
-					}
-					userInfo.put(UserProfile.DOB, innerMap);
-
-					// Set Nationality
-					userInfo.put(
-							UserProfile.NATIONALITY,
-							userProfile.getNationality() > 0 ? getCountryIdentifiers(
-									userProfile.getNationality(), "countryid")
-									: "");
-
-					if (!useraddress.isEmpty() && useraddress != null) {
-						Map<String, Object> addressInfo = new HashMap<String, Object>();
-						for (Address userAddress : useraddress) {
-							// Set addressid
-							addressInfo.put(Address.ADDRESSID,
-									userAddress.getAddressid());
-							// Set Line1
-							addressInfo
-									.put(Address.ADDRESSLINE1,
-											userAddress.getAddressLine1() != null ? userAddress
-													.getAddressLine1() : "");
-							// Set line2
-							addressInfo
-									.put(Address.ADDRESSLINE2,
-											userAddress.getAddressLine2() != null ? userAddress
-													.getAddressLine2() : "");
-							// Set line3
-							addressInfo
-									.put(Address.ADDRESSLINE3,
-											userAddress.getAddressLine3() != null ? userAddress
-													.getAddressLine3() : "");
-							// Set City
-							addressInfo.put(
-									Address.CITY,
-									userAddress.getCity() != null ? userAddress
-											.getCity() : "");
-							// Set State
-							addressInfo
-									.put(Address.STATE,
-											userAddress.getState() != null ? userAddress
-													.getState() : "");
-							// Set country
-							addressInfo
-									.put(Address.COUNTRY,
-											userAddress.getCountry() > 0 ? getCountryIdentifiers(
-													userAddress.getCountry(),
-													"countryid") : "");
-							// Set pincode
-							addressInfo.put(
-									Address.PINCODE,
-									userAddress.getPincode() >= 0 ? userAddress
-											.getPincode() : "");
-							innerMap.put("SET", addressInfo);
-							for (UserSocialConnection userSocialConn : userSocialConnection) {
-								if (userSocialConn.getPlatform()
-										.equalsIgnoreCase("address")) {
-									innerMap.put(UserProfile.ADDRESS,
-											userSocialConn.getSocialid());
-								}
-							}
-							userInfo.put(UserProfile.ADDRESS, innerMap);
-						}
-					}
-					// Set biography
-					userInfo.put(
-							UserProfile.BIOGRAPHY,
-							userProfile.getBiography() != null ? userProfile
-									.getBiography() : "");
-
-					// Set Website
-					userInfo.put(
-							UserProfile.WEBSITE,
-							userProfile.getWebsite() != null ? userProfile
-									.getWebsite() : "");
-					// Set UserInterests
-					userInfo.put(UserProfile.INTERESTS,
-							retrieveUserInterests(user.getUserid()));
-
-					// Set RLang and WLang
-					userInfo.put(Languages.LANGUAGE,
-							retieveUserLanguages(user.getUserid()));
-				}
-
-				
-				 * if (!userFieldVisibility.isEmpty() && userFieldVisibility !=
-				 * null) { for (UserFieldVisibility userVisibility :
-				 * userFieldVisibility) {
-				 * userInfo.put(userVisibility.getFieldName(),
-				 * userVisibility.getStatus()); } }
-				 
-
-				if (!userSocialConnection.isEmpty()
-						&& userSocialConnection != null) {
-					for (UserSocialConnection userSocialConn : userSocialConnection) {
-						userInfo.put(userSocialConn.getPlatform(),
-								userSocialConn.getSocialid());
-					}
-				}
-			}
-		}
-		return userInfo;
-	}*/
+	/*
+	 * public MultiValueMap<String, Object> createProfileInfoMap(User user)
+	 * throws UserProfileException, AddressException, CountryException,
+	 * UserInterestsException, GenreException, UserLanguageException,
+	 * LanguagesException, UserFieldVisibilityException {
+	 * 
+	 * MultiValueMap<String, Object> userInfo = createUserInfoMap(user, true);
+	 * List<UserProfile> userprofile = null; List<Address> useraddress = null;
+	 * List<UserFieldVisibility> userFieldVisibility = null;
+	 * List<UserSocialConnection> userSocialConnection = null;
+	 * 
+	 * if (UserProfile.getInstance().getAddress() == null) {
+	 * UserProfile.getInstance().setAddress(Address.getInstance()); } try {
+	 * userprofile = UserProfileHandler.getInstance()
+	 * .findWhereUseridEquals(user.getUserid()); useraddress =
+	 * AddressHandler.getInstance().findWhereUseridEquals( user.getUserid());
+	 * userFieldVisibility = UserFieldVisibilityHandler.getInstance()
+	 * .findWhereUseridEquals(user.getUserid()); userSocialConnection =
+	 * UserSocialConnectionHandler.getInstance()
+	 * .findWhereUseridEquals(user.getUserid()); } catch (UserProfileException
+	 * e) { throw new UserProfileException(
+	 * "create Profile InfoMap UserProfile Exception : " + e.getMessage(), e); }
+	 * catch (AddressException e) { throw new AddressException(
+	 * "create Profile InfoMap Address Exception : " + e.getMessage(), e); }
+	 * catch (UserFieldVisibilityException e) { throw new
+	 * UserFieldVisibilityException(
+	 * "create Profile InfoMap UserFieldVisibility Exception : "); } catch
+	 * (QpekaException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); }
+	 * 
+	 * if (!userprofile.isEmpty() && userprofile != null) { if
+	 * (!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
+	 * 
+	 * for (UserProfile userProfile : userprofile) { Map<String, Object>
+	 * innerMap = new HashMap<String, Object>(); // Set DOB innerMap.put("SET",
+	 * userProfile.getDob() != null ? Utils
+	 * .getFormatedDate().format(userProfile.getDob()) : ""); for
+	 * (UserFieldVisibility userVisibility : userFieldVisibility) { if
+	 * (userVisibility.getFieldName().equalsIgnoreCase( "dob")) {
+	 * innerMap.put("VISIBILITY", userVisibility.getStatus()); } }
+	 * userInfo.put(UserProfile.DOB, innerMap);
+	 * 
+	 * // Set Nationality userInfo.put( UserProfile.NATIONALITY,
+	 * userProfile.getNationality() > 0 ? getCountryIdentifiers(
+	 * userProfile.getNationality(), "countryid") : "");
+	 * 
+	 * if (!useraddress.isEmpty() && useraddress != null) { Map<String, Object>
+	 * addressInfo = new HashMap<String, Object>(); for (Address userAddress :
+	 * useraddress) { // Set addressid addressInfo.put(Address.ADDRESSID,
+	 * userAddress.getAddressid()); // Set Line1 addressInfo
+	 * .put(Address.ADDRESSLINE1, userAddress.getAddressLine1() != null ?
+	 * userAddress .getAddressLine1() : ""); // Set line2 addressInfo
+	 * .put(Address.ADDRESSLINE2, userAddress.getAddressLine2() != null ?
+	 * userAddress .getAddressLine2() : ""); // Set line3 addressInfo
+	 * .put(Address.ADDRESSLINE3, userAddress.getAddressLine3() != null ?
+	 * userAddress .getAddressLine3() : ""); // Set City addressInfo.put(
+	 * Address.CITY, userAddress.getCity() != null ? userAddress .getCity() :
+	 * ""); // Set State addressInfo .put(Address.STATE, userAddress.getState()
+	 * != null ? userAddress .getState() : ""); // Set country addressInfo
+	 * .put(Address.COUNTRY, userAddress.getCountry() > 0 ?
+	 * getCountryIdentifiers( userAddress.getCountry(), "countryid") : ""); //
+	 * Set pincode addressInfo.put( Address.PINCODE, userAddress.getPincode() >=
+	 * 0 ? userAddress .getPincode() : ""); innerMap.put("SET", addressInfo);
+	 * for (UserSocialConnection userSocialConn : userSocialConnection) { if
+	 * (userSocialConn.getPlatform() .equalsIgnoreCase("address")) {
+	 * innerMap.put(UserProfile.ADDRESS, userSocialConn.getSocialid()); } }
+	 * userInfo.put(UserProfile.ADDRESS, innerMap); } } // Set biography
+	 * userInfo.put( UserProfile.BIOGRAPHY, userProfile.getBiography() != null ?
+	 * userProfile .getBiography() : "");
+	 * 
+	 * // Set Website userInfo.put( UserProfile.WEBSITE,
+	 * userProfile.getWebsite() != null ? userProfile .getWebsite() : ""); //
+	 * Set UserInterests userInfo.put(UserProfile.INTERESTS,
+	 * retrieveUserInterests(user.getUserid()));
+	 * 
+	 * // Set RLang and WLang userInfo.put(Languages.LANGUAGE,
+	 * retieveUserLanguages(user.getUserid())); }
+	 * 
+	 * 
+	 * if (!userFieldVisibility.isEmpty() && userFieldVisibility != null) { for
+	 * (UserFieldVisibility userVisibility : userFieldVisibility) {
+	 * userInfo.put(userVisibility.getFieldName(), userVisibility.getStatus());
+	 * } }
+	 * 
+	 * 
+	 * if (!userSocialConnection.isEmpty() && userSocialConnection != null) {
+	 * for (UserSocialConnection userSocialConn : userSocialConnection) {
+	 * userInfo.put(userSocialConn.getPlatform(), userSocialConn.getSocialid());
+	 * } } } } return userInfo; }
+	 */
 
 	private Set<String> retieveUserLanguages(long userid)
 			throws UserLanguageException, LanguagesException {
@@ -1223,12 +1027,15 @@ public class UserManager {
 			NumberFormatException, CountryException, UserException,
 			UserFieldVisibilityException {
 		long userid = 0;
-		List<UserProfile> userList = null;
+//		List<UserProfile> userList = null;
 		List<String> formUserid = formParams.get(User.PROFILEID);
 		for (String value : formUserid) {
 			if (value != null && !value.equals("")) {
 				userid = Long.parseLong(value);
-				try {
+				if (userid > 0) {
+					return setEditedInfo(userid, formParams);
+				}
+				/*try {
 					userList = UserProfileHandler.getInstance()
 							.findWhereUseridEquals(userid);
 				} catch (UserProfileException e) {
@@ -1237,7 +1044,7 @@ public class UserManager {
 				}
 				if (!userList.isEmpty() && userList != null) {
 					return setEditedInfo(userid, formParams);
-				}
+				}*/
 			}
 		}
 		return null;
@@ -1253,156 +1060,82 @@ public class UserManager {
 		List<Map<String, Object>> serviceResponse = new ArrayList<Map<String, Object>>();
 		short responseStatus = 200;
 		if (userid != 0) {
-
 			userProfile.setUserid(userid);
 			long addressid = 0;
 
-			if (formParams.get("profile").iterator().next()
-					.equalsIgnoreCase("basicDetails")) {
+			if (formParams.get("profile").iterator().next().equalsIgnoreCase("basic")) {
 				Set<String> keySet = formParams.keySet();
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
 					if (!userInfo.isEmpty() && userInfo != null) {
-						if (!(key.equalsIgnoreCase(UserProfile.INTERESTS)
-								|| key.equalsIgnoreCase(UserProfile.RLANG))) {
+						if (!(key.equalsIgnoreCase(UserProfile.INTERESTS) || key.equalsIgnoreCase(UserProfile.RLANG))) {
 							for (String userInfoValue : userInfo) {
-								if (userInfoValue != null
-										&& !userInfoValue.equalsIgnoreCase("")) {
+								if (userInfoValue != null && !userInfoValue.equalsIgnoreCase("")) {
 									userProfile.setName(Name.getInstance());
 									// Update first name
 									if (key.equalsIgnoreCase(Name.FIRSTNAME)) {
-										userProfile.getName().setFirstname(
-												userInfoValue);
+										userProfile.getName().setFirstname(userInfoValue);
 									}
 									// Set/Update middle name
-									else if (key
-											.equalsIgnoreCase(Name.MIDDLENAME)) {
-										userProfile.getName().setMiddlename(
-												(userInfoValue));
+									else if (key.equalsIgnoreCase(Name.MIDDLENAME)) {
+										userProfile.getName().setMiddlename(userInfoValue);
 									}
 									// Update last name
-									else if (key
-											.equalsIgnoreCase(Name.LASTNAME)) {
-										userProfile.getName().setLastname(
-												userInfoValue);
+									else if (key.equalsIgnoreCase(Name.LASTNAME)) {
+										userProfile.getName().setLastname(userInfoValue);
 									}
-									// update/ Set visibility
-									else if (key
-											.equalsIgnoreCase("fullnameCheck")) {
-										SetUserVisibility(
-												"fullname",
-												(short) VISIBILITY
-														.valueOf(userInfoValue
-																.toUpperCase()).ordinal(),
-												userid);
-									} else if (key.equalsIgnoreCase(User.EMAIL)) {
+									// update/ Set name visibility
+									else if (key.equalsIgnoreCase("nameprivacy")) {
+										SetUserVisibility("name", (short) VISIBILITY.valueOf(userInfoValue.toUpperCase()).ordinal(), userid);
+									}
+									// update/set email
+									else if (key.equalsIgnoreCase(User.EMAIL)) {
 										try {
-											List<User> userList = UserHandler
-													.getInstance()
-													.findWhereUseridEquals(
-															userid);
+											List<User> userList = UserHandler.getInstance().findWhereUseridEquals(userid);
 											if (!userList.isEmpty()) {
-												if (!userInfoValue
-														.equals(userList
-																.iterator()
-																.next()
-																.getEmail())) {
-													if (!UserManager
-															.getInstance()
-															.userExists(
-																	userInfoValue,
-																	true)) {
+												if (!userInfoValue.equals(userList.iterator().next().getEmail())) {
+													if (!UserManager.getInstance().userExists(userInfoValue, true)) {
 														user.setEmail(userInfoValue);
-														UserHandler
-																.getInstance()
-																.update(userid,
-																		user);
+														UserHandler.getInstance().update(userid, user);
 													} else {
 														responseStatus = 34;
-														serviceResponse
-																.add(ServiceResponseManager
-																		.getInstance()
-																		.readServiceResponse(
-																				responseStatus));
+														serviceResponse.add(ServiceResponseManager.getInstance().readServiceResponse(responseStatus));
 													}
 												}
 											}
 										} catch (UserException e) {
-											throw new UserException(
-													"Email Creation Exception : ");
+											throw new UserException("Email Creation Exception : ");
 										}
 
-									} else if (key
-											.equalsIgnoreCase("emailCheck")) {
-										SetUserVisibility(
-												User.EMAIL,
-												(short) VISIBILITY
-														.valueOf(userInfoValue
-																.toUpperCase()).ordinal(),
-												userid);
+									} else if (key.equalsIgnoreCase("emailprivacy")) {
+										SetUserVisibility(User.EMAIL, (short) VISIBILITY.valueOf(userInfoValue.toUpperCase()).ordinal(), userid);
 									} // update Date of Birth
-									else if (key
-											.equalsIgnoreCase(UserProfile.DOB)) {
+									else if (key.equalsIgnoreCase(UserProfile.DOB)) {
 										try {
-											Date dateOfBirth = (Date) Utils
-													.getFormatedDate().parse(
-															userInfoValue);
+											Date dateOfBirth = (Date) Utils.getFormatedDate().parse(userInfoValue);
 											userProfile.setDob(dateOfBirth);
-											userProfile
-													.setAge(deriveAge(dateOfBirth));
+											userProfile.setAge(deriveAge(dateOfBirth));
 										} catch (ParseException e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();
 										}
-									} else if (key.equalsIgnoreCase("dobCheck")) {
-										SetUserVisibility(
-												UserProfile.DOB,
-												(short) VISIBILITY
-														.valueOf(userInfoValue
-																.toUpperCase()).ordinal(),
-												userid);
+									} else if (key.equalsIgnoreCase("dobprivacy")) {
+										SetUserVisibility(UserProfile.DOB, (short) VISIBILITY.valueOf(userInfoValue.toUpperCase()).ordinal(), userid);
 									}
 									// Update Gender
-									else if (key
-											.equalsIgnoreCase(UserProfile.GENDER)) {
-										userProfile.setGender(GENDER
-												.valueOf(userInfoValue
-														.toUpperCase()));
-									} else if (key
-											.equalsIgnoreCase("genderCheck")) {
-										SetUserVisibility(
-												UserProfile.GENDER,
-												(short) VISIBILITY
-														.valueOf(userInfoValue
-																.toUpperCase()).ordinal(),
-												userid);
+									else if (key.equalsIgnoreCase(UserProfile.GENDER)) {
+										userProfile.setGender(GENDER.valueOf(userInfoValue.toUpperCase()));
+									} else if (key.equalsIgnoreCase("genderprivacy")) {
+										SetUserVisibility(UserProfile.GENDER, (short) VISIBILITY.valueOf(userInfoValue.toUpperCase()).ordinal(), userid);
 									}
 									// Set/Update nationality
-									// Passing countryname to get country id
-									else if (key
-											.equalsIgnoreCase(UserProfile.NATIONALITY)) {
-										userProfile
-												.setNationality(Short
-														.parseShort(getCountryIdentifiers(
-																userInfoValue,
-																"countryName")
-																.toString()));
-									} else if (key
-											.equalsIgnoreCase("interestsCheck")) {
-										SetUserVisibility(
-												UserProfile.INTERESTS,
-												(short) VISIBILITY
-														.valueOf(userInfoValue
-																.toUpperCase()).ordinal(),
-												userid);
-									} else if (key
-											.equalsIgnoreCase("languagesCheck")) {
-										SetUserVisibility(
-												Languages.LANGUAGE,
-												(short) VISIBILITY
-														.valueOf(userInfoValue
-																.toUpperCase()).ordinal(),
-												userid);
+									// Passing country name to get country id
+									else if (key.equalsIgnoreCase(UserProfile.NATIONALITY)) {
+										userProfile.setNationality(Short.parseShort(getCountryIdentifiers(userInfoValue, "countryName").toString()));
+									} else if (key.equalsIgnoreCase("interestsprivacy")) {
+										SetUserVisibility(UserProfile.INTERESTS, (short) VISIBILITY.valueOf(userInfoValue.toUpperCase()).ordinal(), userid);
+									} else if (key.equalsIgnoreCase("languagesprivacy")) {
+										SetUserVisibility(Languages.LANGUAGE, (short) VISIBILITY.valueOf(userInfoValue.toUpperCase()).ordinal(), userid);
 									}
 								} // end of if(userInfovalue != null)
 							} // end of for loop
@@ -1426,17 +1159,14 @@ public class UserManager {
 				}
 			} // end of if(profile == basic details)
 
-			else if (formParams.get("profile").iterator().next()
-					.equalsIgnoreCase("address")) {
+			else if (formParams.get("profile").iterator().next().equalsIgnoreCase("address")) {
 				Set<String> keySet = formParams.keySet();
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
 					if (!userInfo.isEmpty() && userInfo != null) {
 
 						for (String userInfoValue : userInfo) {
-							if (userInfoValue != null
-									&& !userInfoValue.equalsIgnoreCase("")) {
-
+							if (userInfoValue != null && !userInfoValue.equalsIgnoreCase("")) {
 								userProfile.setAddress(Address.getInstance());
 
 								// Set address id
@@ -1445,28 +1175,23 @@ public class UserManager {
 								}
 								// Set/Update AddressLine1
 								if (key.equalsIgnoreCase(Address.ADDRESSLINE1)) {
-									userProfile.getAddress().setAddressLine1(
-											userInfoValue);
+									userProfile.getAddress().setAddressLine1(userInfoValue);
 
-									SetUserVisibility("Address",
-											(short) VISIBILITY.PRIVATE.ordinal(), userid);
+									SetUserVisibility("address", (short) VISIBILITY.PRIVATE.ordinal(), userid);
 								}
 								// Set/Update AddressLine2
 								else if (key
 										.equalsIgnoreCase(Address.ADDRESSLINE2)) {
-									userProfile.getAddress().setAddressLine2(
-											userInfoValue);
+									userProfile.getAddress().setAddressLine2(userInfoValue);
 								}
 								// Set/Update AddressLine3
 								else if (key
 										.equalsIgnoreCase(Address.ADDRESSLINE3)) {
-									userProfile.getAddress().setAddressLine3(
-											userInfoValue);
+									userProfile.getAddress().setAddressLine3(userInfoValue);
 								}
 								// Set/Update city
 								else if (key.equalsIgnoreCase(Address.CITY)) {
-									userProfile.getAddress().setCity(
-											userInfoValue);
+									userProfile.getAddress().setCity(userInfoValue);
 								}
 								// Set/Update pincode
 								else if (key.equalsIgnoreCase(Address.PINCODE)) {
@@ -1475,42 +1200,31 @@ public class UserManager {
 								}
 								// Set/Update state
 								else if (key.equalsIgnoreCase(Address.STATE)) {
-									userProfile.getAddress().setState(
-											userInfoValue);
+									userProfile.getAddress().setState(userInfoValue);
 								}
 								// Set/Update country
 								else if (key.equalsIgnoreCase(Address.COUNTRY)) {
-									userProfile
-											.getAddress()
-											.setCountry(
-													Short.parseShort(getCountryIdentifiers(
-															userInfoValue,
-															"countryName")
-															.toString()));
+									userProfile.getAddress().setCountry(Short.parseShort(getCountryIdentifiers(userInfoValue, "countryName").toString()));
 								}
 							}
 						}
 					}
 				}
-				updateUserAddress(userid, addressid,
-							userProfile.getAddress());
+				updateUserAddress(userid, addressid, userProfile.getAddress());
 			} // end of if(profile == address)
 
-			else if (formParams.get("profile").iterator().next()
-					.equalsIgnoreCase("social")) {
+			else if (formParams.get("profile").iterator().next().equalsIgnoreCase("social")) {
 				Set<String> keySet = formParams.keySet();
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
 					if (!userInfo.isEmpty() && userInfo != null) {
 
 						for (String userInfoValue : userInfo) {
-							if (userInfoValue != null
-									&& !userInfoValue.equalsIgnoreCase("")) {
+							if (userInfoValue != null && !userInfoValue.equalsIgnoreCase("")) {
 
 								// Set/Update profilepic
 								if (key.equalsIgnoreCase(UserProfile.PROFILEPIC)) {
-									long fileid = setProfilePic(userid,
-											userInfoValue);
+									long fileid = setProfilePic(userid, userInfoValue);
 									if (fileid > 0) {
 										userProfile.setProfilepic(fileid);
 									}
@@ -1518,69 +1232,51 @@ public class UserManager {
 								// Set/Update Pen Name
 								else if (key.equalsIgnoreCase(User.PENNAME)) {
 									try {
-										List<User> userList = UserHandler
-												.getInstance()
-												.findWhereUseridEquals(userid);
+										List<User> userList = UserHandler.getInstance().findWhereUseridEquals(userid);
 										if (!userList.isEmpty()) {
-											if (!userInfoValue.equals(userList
-													.iterator().next()
-													.getPenname())) {
-												if (!UserManager.getInstance()
-														.userExists(
-																userInfoValue,
-																false)) {
+											if (!userInfoValue.equals(userList.iterator().next().getPenname())) {
+												if (!UserManager.getInstance().userExists(userInfoValue, false)) {
 													user.setPenname(userInfoValue);
-													UserHandler.getInstance()
-															.update(userid,
-																	user);
+													UserHandler.getInstance().update(userid, user);
 												} else {
-													responseStatus = 84;
 													// Adding Service Error to
 													// List
-													serviceResponse
-															.add(ServiceResponseManager
-																	.getInstance()
-																	.readServiceResponse(
-																			responseStatus));
+													responseStatus = 84;
+													serviceResponse.add(ServiceResponseManager.getInstance().readServiceResponse(responseStatus));
 												}
 											}
 										}
 									} catch (UserException e) {
-										throw new UserException(
-												"PenName Creation Exception : ");
+										throw new UserException("PenName Creation Exception : ");
 									}
 
 								}
 								// Set/Update biography
-								else if (key
-										.equalsIgnoreCase(UserProfile.BIOGRAPHY)) {
+								else if (key.equalsIgnoreCase(UserProfile.BIOGRAPHY)) {
 									userProfile.setBiography(userInfoValue);
 								}
 								// Set/Update Website
-								else if (key
-										.equalsIgnoreCase(UserProfile.WEBSITE)) {
+								else if (key.equalsIgnoreCase(UserProfile.WEBSITE)) {
 									userProfile.setWebsite(userInfoValue);
 								} else if (key.equalsIgnoreCase("twitter")) {
-									setUserSocialConn(userid, userInfoValue,
-											"twitter");
+									setUserSocialConn(userid, userInfoValue, "twitter");
 								} else if (key.equalsIgnoreCase("facebook")) {
-									setUserSocialConn(userid, userInfoValue,
-											"facebook");
+									setUserSocialConn(userid, userInfoValue, "facebook");
 								}
 							} // end of if( userinfo != null)
 						} // end of for loop
 					}
 				}
 				try {
-					UserProfileHandler.getInstance().update(userid, userProfile);
+					UserProfileHandler.getInstance()
+							.update(userid, userProfile);
 				} catch (UserProfileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} // end of if(profile == social)
 
-			else if (formParams.get("profile").iterator().next()
-					.equalsIgnoreCase("workPublish")) {
+			else if (formParams.get("profile").iterator().next().equalsIgnoreCase("workPublish")) {
 				Set<String> keySet = formParams.keySet();
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
@@ -1594,11 +1290,11 @@ public class UserManager {
 								} // end of if(userinfovalue != null)
 							} // end of for loop
 						} // end if(key != wlang)
-							if (key.equalsIgnoreCase(UserProfile.WLANG)) {
-								// update WLang
-								updateUserLanguages(userid, "write", userInfo);
-							}
-						
+						if (key.equalsIgnoreCase(UserProfile.WLANG)) {
+							// update WLang
+							updateUserLanguages(userid, "write", userInfo);
+						}
+
 					}
 				}
 			} // end if( profile == work publish)
@@ -1608,7 +1304,7 @@ public class UserManager {
 			// userProfile.getUserpoints();
 			// User Level userProfile.getUserlevel();
 			// User Type userProfile.getUsertype();
-			
+
 		} // end if(userid > 0)
 		if (responseStatus == 200) {
 			serviceResponse.add(ServiceResponseManager.getInstance()
@@ -1617,10 +1313,15 @@ public class UserManager {
 		return serviceResponse;
 	}
 
+	/**
+	 * 
+	 * @param userid
+	 * @param userInfoValue
+	 * @param platform
+	 */
 	public void setUserSocialConn(long userid, String userInfoValue,
 			String platform) {
-		UserSocialConnection userSocialConnection = UserSocialConnection
-				.getInstance();
+		UserSocialConnection userSocialConnection = UserSocialConnection.getInstance();
 		userSocialConnection.setSocialid(userInfoValue);
 		List<Object> editedList = new ArrayList<Object>();
 
@@ -1635,15 +1336,11 @@ public class UserManager {
 								editedList);
 
 				if (!existingList.isEmpty() && existingList != null) {
-					UserSocialConnectionHandler.getInstance().update(
-							existingList.iterator().next()
-									.getUsersocialconnid(),
-							userSocialConnection);
+					UserSocialConnectionHandler.getInstance().update(existingList.iterator().next().getUsersocialconnid(), userSocialConnection);
 				} else {
 					userSocialConnection.setUserid(userid);
 					userSocialConnection.setPlatform(platform);
-					UserSocialConnectionHandler.getInstance().insert(
-							userSocialConnection);
+					UserSocialConnectionHandler.getInstance().insert(userSocialConnection);
 				}
 			} catch (QpekaException e) {
 				// TODO Auto-generated catch block
@@ -1653,10 +1350,9 @@ public class UserManager {
 
 	}
 
-	public void SetUserVisibility(String fieldName, short status,
-			long userid) throws UserFieldVisibilityException {
-		UserFieldVisibility userFieldVisibility = UserFieldVisibility
-				.getInstance();
+	public void SetUserVisibility(String fieldName, short status, long userid)
+			throws UserFieldVisibilityException {
+		UserFieldVisibility userFieldVisibility = UserFieldVisibility.getInstance();
 
 		List<Object> editedInfoList = new ArrayList<Object>();
 		List<UserFieldVisibility> existingUserVisibility = null;
@@ -1664,35 +1360,32 @@ public class UserManager {
 		editedInfoList.add(userid);
 		editedInfoList.add(fieldName);
 		try {
-			existingUserVisibility = UserFieldVisibilityHandler.getInstance()
-					.findByDynamicWhere("userid = ? AND fieldname = ?",
-							editedInfoList);
-			if (!existingUserVisibility.isEmpty()
-					&& existingUserVisibility != null) {
+			existingUserVisibility = UserFieldVisibilityHandler.getInstance().findByDynamicWhere("userid = ? AND fieldname = ?", editedInfoList);
+			if (!existingUserVisibility.isEmpty() && existingUserVisibility != null) {
 				userFieldVisibility.setStatus(status);
 
-				UserFieldVisibilityHandler.getInstance().update(
-						existingUserVisibility.iterator().next()
-								.getVisibilityid(), userFieldVisibility);
+				UserFieldVisibilityHandler.getInstance().update(existingUserVisibility.iterator().next().getVisibilityid(), userFieldVisibility);
 			} else {
 				insertUserFieldVisibility(userid, fieldName, status);
 			}
 		} catch (UserFieldVisibilityException e) {
-			throw new UserFieldVisibilityException(
-					"UserFieldVisibility Exception : ");
+			throw new UserFieldVisibilityException("UserFieldVisibility Exception : ");
 		}
 	}
 
-	public void insertUserFieldVisibility(long userid, String fieldName,
-			short status) {
-		UserFieldVisibility userFieldVisibility = UserFieldVisibility
-				.getInstance();
-		userFieldVisibility.setStatus(status);
+	/**
+	 * 
+	 * @param userid
+	 * @param fieldName
+	 * @param status
+	 */
+	public void insertUserFieldVisibility(long userid, String fieldName, short status) {
+		UserFieldVisibility userFieldVisibility = UserFieldVisibility.getInstance();
 		userFieldVisibility.setUserid(userid);
 		userFieldVisibility.setFieldName(fieldName);
+		userFieldVisibility.setStatus(status);
 		try {
-			UserFieldVisibilityHandler.getInstance()
-					.insert(userFieldVisibility);
+			UserFieldVisibilityHandler.getInstance().insert(userFieldVisibility);
 		} catch (UserFieldVisibilityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1999,12 +1692,10 @@ public class UserManager {
 		List<Object> preferencesObjList = new ArrayList<Object>();
 
 		preferencesObjList.add(convertCollectionToString(preferencesIt));
-		System.out.println(preferencesObjList);
 		Object profilePreferences = null;
 		try {
 			profilePreferences = abstractHandler.findByDynamicWhere(whereSql
 					+ " IN (?)", preferencesObjList);
-			System.out.println(profilePreferences);
 
 		} catch (QpekaException e) {
 			// TODO Auto-generated catch block

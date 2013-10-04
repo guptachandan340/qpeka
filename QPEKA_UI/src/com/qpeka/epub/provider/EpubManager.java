@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.SystemResourceHandler;
 
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
@@ -53,7 +53,7 @@ public class EpubManager {
 	{
 		try
 		{		
-			String file = SystemConfigHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
+			String file = SystemResourceHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
 			Book book = epubReader.readEpub(new FileInputStream(file));
 			StringBuffer buf = new StringBuffer();
 			logTableOfContents(book, book.getTableOfContents().getTocReferences(), 0, buf,id);
@@ -73,7 +73,7 @@ public class EpubManager {
 	public String getTitle(String id)
 	{
 		try {
-			String fileName = SystemConfigHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
+			String fileName = SystemResourceHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
 			Book book = epubReader.readEpub(new FileInputStream(fileName));
 			return book.getTitle();
 		} catch (FileNotFoundException e) {
@@ -89,7 +89,7 @@ public class EpubManager {
 	public String getContentGivenResourceId(String id , String resId)
 	{
 		try {
-			String fileName = SystemConfigHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
+			String fileName = SystemResourceHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
 			Book book = epubReader.readEpub(new FileInputStream(fileName));
 			for(Resource r : book.getTableOfContents().getAllUniqueResources())
 			{

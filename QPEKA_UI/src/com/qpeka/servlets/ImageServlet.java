@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.qpeka.db.book.store.tuples.Work;
 import com.qpeka.managers.WorkContentManager;
-import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.SystemResourceHandler;
 
 /**
  * Servlet implementation class ImageServlet
@@ -56,7 +56,7 @@ public class ImageServlet extends HttpServlet {
 				try
 				{
 					
-					File f = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+"/"+bookId+".jpg");
+					File f = new File(SystemResourceHandler.getInstance().getBookCoverPageFolder()+"/"+bookId+".jpg");
 					System.out.println("[FILE] value=" + f.getAbsolutePath());
 					BufferedImage bi = ImageIO.read(f);
 					out = response.getOutputStream();
@@ -89,9 +89,9 @@ public class ImageServlet extends HttpServlet {
 				try
 				{
 					
-					File f = new File(SystemConfigHandler.getInstance().getUserImageFolder()+"/"+uid+".jpg");
+					File f = new File(SystemResourceHandler.getInstance().getUserImageFolder()+"/"+uid+".jpg");
 					if(!f.exists())
-						f = new File(SystemConfigHandler.getInstance().getUserImageFolder()+"anon.jpg");
+						f = new File(SystemResourceHandler.getInstance().getUserImageFolder()+"anon.jpg");
 					System.out.println("[FILE] value=" + f.getAbsolutePath());
 					BufferedImage bi = ImageIO.read(f);
 					out = response.getOutputStream();

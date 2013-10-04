@@ -15,12 +15,12 @@ import org.apache.log4j.Logger;
 
 import com.qpeka.db.Constants;
 import com.qpeka.db.Constants.GENDER;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.user.UserProfileDao;
 import com.qpeka.db.exceptions.user.UserProfileException;
 import com.qpeka.db.handler.AbstractHandler;
 import com.qpeka.db.user.profile.Name;
 import com.qpeka.db.user.profile.UserProfile;
+import com.qpeka.utils.DBResourceHandler;
 
 public class UserProfileHandler extends AbstractHandler implements
 		UserProfileDao {
@@ -173,8 +173,8 @@ public class UserProfileHandler extends AbstractHandler implements
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
@@ -398,9 +398,9 @@ public class UserProfileHandler extends AbstractHandler implements
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserProfileException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -417,8 +417,8 @@ public class UserProfileHandler extends AbstractHandler implements
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -610,9 +610,9 @@ public class UserProfileHandler extends AbstractHandler implements
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserProfileException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 
@@ -628,8 +628,8 @@ public class UserProfileHandler extends AbstractHandler implements
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: " + userid);
@@ -647,9 +647,9 @@ public class UserProfileHandler extends AbstractHandler implements
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserProfileException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -807,8 +807,8 @@ public class UserProfileHandler extends AbstractHandler implements
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = sql;
@@ -835,10 +835,10 @@ public class UserProfileHandler extends AbstractHandler implements
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserProfileException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -855,8 +855,8 @@ public class UserProfileHandler extends AbstractHandler implements
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -883,10 +883,10 @@ public class UserProfileHandler extends AbstractHandler implements
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new UserProfileException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}

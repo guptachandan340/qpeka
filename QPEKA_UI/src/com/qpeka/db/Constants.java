@@ -45,6 +45,10 @@ public class Constants {
 	public enum USERLEVEL {
 		PREMIUM, FREE
 	}
+	
+	public enum FILESTATUS {
+		DEFAULT, DELETED
+	}
 
 	public enum WORKTYPE {
 		BOOK, SHORTSTORY, POEM, ARTICLE
