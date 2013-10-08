@@ -34,19 +34,5 @@ public class CountryServices {
 			return Response.status(200).entity(new Gson().toJson("")).build();
 		}
 	}
-
-	@POST
-	@Path("/setstatus")
-	public Response sessionService(@FormParam("state") String sessionState) {
-		if (sessionState != null) {
-			return Response
-					.status(200)
-					.entity(new Gson().toJson(SessionsManager.getInstance()
-							.setSessionStatus(sessionState))).build();
-		} else {
-			return Response.status(200)
-					.entity(new Gson().toJson("Please select any value"))
-					.build();
-		}
-	}
 }
+

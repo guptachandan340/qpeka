@@ -43,21 +43,16 @@ public class SessionsManager {
 				(userSession.get("username") + nonce + userSession
 						.get(User.PASSWORD)), BCrypt.gensalt()));
 		session.setHostname(userSession.get("hostname"));
-		System.out.println("/*************************** SESSION FOR NEW USER*******************/");
-		System.out.println("session ===> "+session);
 		
 		// Putting session in list so that it can become easy to identify it in sessionobj
 		List<String> sessionlist = new ArrayList<String>();
 		sessionlist.add(session.toString());
 		
 		Map<String, String> sessionobj = new HashMap<String, String>();
-		System.out.println("map before creation : "+sessionobj.toString());
 		sessionobj.put("Session", sessionlist.toString());
 		sessionobj.put(Name.FIRSTNAME, userSession.get(Name.FIRSTNAME));
 		sessionobj.put(Name.LASTNAME, userSession.get(Name.LASTNAME));
-		System.out.println("map after putting values"+sessionobj.toString());
 		session.setSessionobj(sessionobj.toString());
-		System.out.println("map after setting session values" + sessionobj.toString());
 
 		long sessionid = 0;
 		try {
@@ -80,7 +75,7 @@ public class SessionsManager {
 				session = SessionHandler.getInstance().findByDynamicWhere(
 						"sessionid = ? AND userid = ? AND status = ?",
 						readObjSession);
-				if (!session.isEmpty() && session != null) {
+				if (session != null && !session.isEmpty()) {
 					return true;
 				}
 			} catch (SessionException e1) {
@@ -101,14 +96,15 @@ public class SessionsManager {
 				for(Session userSession : session) {
 					user = UserHandler.getInstance().findWhereUseridEquals(userSession.getUserid());
 					if(!user.isEmpty()) {
-						for(User usr : user) {
+						for(User usr : user) { 
+							long currentTime = System.currentTimeMillis() / 1000;
 							Session session1 = Session.getInstance();
 							if(status.equalsIgnoreCase("inactive")) {
-								if(System.currentTimeMillis() >= (usr.getLastaccess()+1800)) {
+								if(currentTime >= (usr.getLastaccess()+1800)) {
 									session1.setStatus((short) SESSIONSTATUS.INACTIVE.ordinal());
 								} 
 							} else if(status.equalsIgnoreCase("expired")) {
-								if(System.currentTimeMillis() >= (usr.getLastaccess() + 86400)) {
+								if(currentTime >= (usr.getLastaccess()+86400)) {
 									session1.setStatus((short) SESSIONSTATUS.EXPIRED.ordinal());
 								}
 							}

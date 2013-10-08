@@ -1,6 +1,5 @@
 package com.qpeka.services.user;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,7 @@ import com.qpeka.managers.user.UserInvitesManager;
 import com.qpeka.managers.user.UserManager;
 import com.qpeka.services.Response.ServiceResponseManager;
 
+
 @Path("user")
 public class UserService {
 
@@ -46,7 +46,7 @@ public class UserService {
 	public Response loginService(@FormParam("username") String username,
 			@FormParam("password") String password,
 			@FormParam("isEmail") boolean isEmail,
-			@FormParam("sessionid") long sessionid,
+			@FormParam("tokenid") long sessionid,
 			@Context HttpServletRequest request) {
 		Map<String, Object> response = new HashMap<String, Object>();
 		try {
@@ -57,14 +57,23 @@ public class UserService {
 		} catch (UserProfileException e) {
 			e.printStackTrace();
 		}
-
+		
 		if (response.get(User.PROFILEID) != null) {
+			try {
+				UserManager.getInstance().updateLastActivity(Long.parseLong(response.get(User.PROFILEID).toString()), false);
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (sessionid > 0) {
 				if (SessionsManager.getInstance()
 						.ActiveSessionExist(
 								sessionid,
 								Long.parseLong(response.get(User.PROFILEID).toString()))) {
-					response.put(Session.SESSIONID, sessionid);
+					response.put("tokenid", sessionid);
 				} else {
 					return Response.status(200).entity(new Gson().toJson(ServiceResponseManager.getInstance().readServiceResponse(415))).build();
 				}
@@ -74,18 +83,17 @@ public class UserService {
 				sessionobj.put("username", username);
 				sessionobj.put("password", password);
 				sessionobj.put("hostname", request.getRemoteAddr());
-				
 				// Retreive name from login response map
 				Map<String, Object> fullname = new HashMap<String, Object>();
 				fullname = (Map<String, Object>) response.get("name");
-				Map<String, Object> name = (Map<String, Object>) fullname.get("value");
+				Map<String, Object> name = (Map<String, Object>) fullname.get("data");
 				sessionobj.put(Name.FIRSTNAME, name.get(Name.FIRSTNAME).toString());
 				sessionobj.put(Name.LASTNAME, name.get(Name.LASTNAME).toString());
 				
 				sessionid = SessionsManager.getInstance()
 						.createSession(sessionobj);
 				if (sessionid > 0) {
-					response.put(Session.SESSIONID, sessionid);
+					response.put("tokenid", sessionid);
 				}
 			}
 		}
@@ -96,7 +104,7 @@ public class UserService {
 	@POST
 	@Path("/logout")
 	public Response logoutService(@FormParam("userid") long userid,
-			@FormParam("sessionid") long sessionid) {
+			@FormParam("tokenid") long sessionid) {
 		try {
 			// No need to set response for updateLastActivity
 			// Reason : We shouldn't let the user that we are tracking their
@@ -114,7 +122,7 @@ public class UserService {
 			e.printStackTrace();
 		}
 		return Response.status(200)
-				.entity(new Gson().toJson("successfully logged out")).build();
+				.entity(new Gson().toJson(ServiceResponseManager.getInstance().readServiceResponse(74))).build();
 	}
 
 	@POST
@@ -143,25 +151,23 @@ public class UserService {
 	@POST
 	@Path("/resetpwd")
 	public Response resetPwdService(@FormParam("authname") String authName) {
-		
+		Map<String, Object> response = null;
 		boolean isEmail = false;
-		String changedPassword = null;
 		if (authName.indexOf("@") != -1) {
 			isEmail = true;
 		}
 		try {
-			changedPassword = UserManager.getInstance().resetPassword(authName,
+			response = UserManager.getInstance().resetPassword(authName,
 					isEmail);
 		} catch (UserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return Response
 				.status(200)
 				.entity(new Gson()
-						.toJson(changedPassword != null ? changedPassword
-								: ServiceResponseManager.getInstance()
-										.readServiceResponse(215))).build();
+						.toJson(response)).build();
 	}
 
 	
@@ -170,10 +176,10 @@ public class UserService {
 	public Response changePwdService(@FormParam("userid") long userid,
 			@FormParam("currentpassword") String currentPassword,
 			@FormParam("newpassword") String newPassword,
-			@FormParam("sessionid") long sessionid) {
+			@FormParam("tokenid") long sessionid) {
 
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
-			if (!newPassword.isEmpty() && newPassword != null) {
+			if (newPassword != null && !newPassword.isEmpty()) {
 				Map<String, Object> response = new HashMap<String, Object>();
 				try {
 					response = UserManager.getInstance().changePassword(userid,
@@ -195,7 +201,7 @@ public class UserService {
 	@POST
 	@Path("/getprofile")
 	public Response getProfileService(@FormParam("userid") long userid,
-			@FormParam("sessionid") long sessionid) throws AddressException,
+			@FormParam("tokenid") long sessionid) throws AddressException,
 			CountryException, UserInterestsException, GenreException,
 			UserLanguageException, LanguagesException,
 			UserFieldVisibilityException {
@@ -222,11 +228,10 @@ public class UserService {
 
 	}
 
-	/*
 	@POST
 	@Path("/viewownprofile")
 	public Response viewOwnProfileService(@FormParam("userid") long userid,
-			@FormParam("sessionid") long sessionid) {
+			@FormParam("tokenid") long sessionid) {
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
 			try {
 				UserManager.getInstance().updateLastActivity(userid, false);
@@ -251,7 +256,7 @@ public class UserService {
 	@POST
 	@Path("/deleteuser")
 	public Response deleteUserService(@FormParam("userid") long userid,
-			@FormParam("sessionid") long sessionid) {
+			@FormParam("tokenid") long sessionid) {
 
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
 			try {
@@ -274,29 +279,29 @@ public class UserService {
 	@POST
 	@Path("/editprofile")
 	@Consumes("application/x-www-form-urlencoded")
-	public Response editBasicSocialProfileService(
+	public Response editProfileService(
 			MultivaluedMap<String, String> formParams) throws FileException,
 			NumberFormatException, CountryException,
 			UserFieldVisibilityException {
 
-		if (!formParams.isEmpty() && formParams != null) {
+		if (formParams != null && !formParams.isEmpty()) {
 			long sessionid = 0;
 			long userid = 0;
-			if (formParams.get("sessionid") != null
+			if (formParams.get("tokenid") != null
 					&& formParams.get("userid") != null) {
-				sessionid = Long.parseLong(formParams.get("sessionid")
+				sessionid = Long.parseLong(formParams.get("tokenid")
 						.iterator().next());
 				userid = Long.parseLong(formParams.get("userid").iterator()
 						.next());
 
 				if (SessionsManager.getInstance().ActiveSessionExist(sessionid,
 						userid)) {
-					List<Map<String, Object>> sResponse = new ArrayList<Map<String, Object>>();
+					Map<String, Object> sResponse = null;
 					try {
 						sResponse = UserManager.getInstance().editProfile(
 								formParams);
 						UserManager.getInstance().updateLastActivity(userid, false);
-						if (!sResponse.isEmpty() && sResponse != null) {
+						if (sResponse != null && !sResponse.isEmpty()) {
 							return Response.status(200)
 									.entity(new Gson().toJson(sResponse))
 									.build();
@@ -320,7 +325,8 @@ public class UserService {
 	@POST
 	@Path("/verifypassword")
 	public Response verifyPasswordService(@FormParam("userid") long userid,
-			@FormParam("password") String password) {
+			@FormParam("password") String password, @FormParam("tokenid") long sessionid) {
+		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
 		try {
 			UserManager.getInstance().updateLastActivity(userid, false);
 			return Response
@@ -335,6 +341,7 @@ public class UserService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		}
 		return Response.status(200).entity(new Gson().toJson("")).build();
 	}
 
@@ -345,11 +352,11 @@ public class UserService {
 			MultivaluedMap<String, String> inviteParams) throws QpekaException {
 		/* if (!inviteParams.isEmpty() && inviteParams != null) { */
 	
-	/*long sessionid = 0;
+	long sessionid = 0;
 		long userid = 0;
-		if (inviteParams.get("sessionid") != null
+		if (inviteParams.get("tokenid") != null
 				&& inviteParams.get("userid") != null) {
-			sessionid = Long.parseLong(inviteParams.get("sessionid").iterator()
+			sessionid = Long.parseLong(inviteParams.get("tokenid").iterator()
 					.next());
 			userid = Long.parseLong(inviteParams.get("userid").iterator()
 					.next());
@@ -376,11 +383,11 @@ public class UserService {
 	public Response userInviteSent(MultivaluedMap<String, String> hashvalues)
 			throws QpekaException {
 		/* if (!hashvalues.isEmpty() && hashvalues != null) { */
-		/*long sessionid = 0;
+		long sessionid = 0;
 		long userid = 0;
-		if (hashvalues.get("sessionid") != null
+		if (hashvalues.get("tokenid") != null
 				&& hashvalues.get("userid") != null) {
-			sessionid = Long.parseLong(hashvalues.get("sessionid").iterator()
+			sessionid = Long.parseLong(hashvalues.get("tokenid").iterator()
 					.next());
 			userid = Long.parseLong(hashvalues.get("userid").iterator().next());
 
@@ -403,7 +410,7 @@ public class UserService {
 	@POST
 	@Path("/userinviteaccept")
 	public Response userInviteAccept(@FormParam("hashvalue") String hashvalues,
-			@FormParam("sessionid") long sessionid,
+			@FormParam("tokenid") long sessionid,
 			@FormParam("userid") long userid) throws QpekaException {
 		
 		if (SessionsManager.getInstance().ActiveSessionExist(sessionid, userid)) {
@@ -419,12 +426,6 @@ public class UserService {
 							.getInstance().readServiceResponse(401))).build();
 		}
 	}
-	
-	@POST
-	@Path("/sessionstate")
-	public Response SessionStateService(@FormParam("authname") String authName) {
-		return null;
-	}*/
 }
 
 // TODO WS for each param of edit profile

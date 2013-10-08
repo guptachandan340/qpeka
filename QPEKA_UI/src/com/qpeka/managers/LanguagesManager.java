@@ -1,7 +1,9 @@
 package com.qpeka.managers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +29,7 @@ public class LanguagesManager {
 	}
 
 	public Languages createLanguages(String language,
-			String script, String aNative, short direction, short enabled) {
+			String aNative, String script, short direction, short enabled) {
 		
 		// Find Country id
 		short countryid = 0;
@@ -39,8 +41,10 @@ public class LanguagesManager {
 			e1.printStackTrace();
 			//throw new CountryException("Get Country id Exception : ");
 		}
-		if(!country.isEmpty() && country != null) {
+		if(country != null && !country.isEmpty()) {
 			countryid = country.iterator().next().getCountryid();
+		} else {
+			countryid = 1;  // 1 => countryid for none
 		}
 		
 		// Set language Object
@@ -228,35 +232,54 @@ public class LanguagesManager {
 		return languages;
 	}
 	
-	public Set<String> retrieveLangugage() {
+	public Map<Short, Object> retrieveLangugage() {
 		List<Languages> existingLanguage = null;
-		Set<String> langName = new HashSet<String>();
-			try {
-				existingLanguage = LanguagesHandler.getInstance().findAll();
-				if(!existingLanguage.isEmpty() && existingLanguage != null) {
-					for(Languages language : existingLanguage) {
-						langName.add(language.getScript());	
+		Map<Short, Object> langName = new LinkedHashMap<Short, Object>();
+		try {
+			existingLanguage = LanguagesHandler.getInstance().findAll();
+			if (existingLanguage != null && !existingLanguage.isEmpty()) {
+				
+				for (Languages language : existingLanguage) {
+					Map<String, String> innerMap = new LinkedHashMap<String, String>();
+					
+					if (language.getEnabled() == 1) {
+						innerMap.put(Languages.LANGUAGE, language.getLanguage());
+						innerMap.put(Languages.SCRIPT, language.getScript());
+						if (language.getANative() != 1) {
+							List<Country> country = CountryHandler
+									.getInstance().findWhereCountryidEquals(
+											language.getANative());
+
+							if (country != null && !country.isEmpty()) {
+								innerMap.put(Languages.ANATIVE, country
+										.iterator().next().getIso3());
+							}
+						}
+						langName.put(language.getLanguageid(), innerMap);
 					}
-				} 
-			} catch (LanguagesException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				}
 			}
+		} catch (LanguagesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CountryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return langName;
 	}
-	
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		//System.out.println(languagesManager.deleteLanguages((short) 1));
-	/*	LanguagesManager.getInstance().createLanguages("Arabic", "Arabic",
-				"Saudi Arabia", (short)1, (short) 0);*/
+		System.out.println(LanguagesManager.getInstance().createLanguages(
+				"Norwegian", "", "Devanagari", (short) 0, (short) 0));
 	}
 
 	
-		
+
 		/*System.out.println(languagesManager.retrieveLangugage());
 		System.out.println(languagesManager.readLanguages((short) 6,
 				"languageid"));

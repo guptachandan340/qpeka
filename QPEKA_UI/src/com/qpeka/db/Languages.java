@@ -24,7 +24,7 @@ public class Languages implements Serializable {
 	//direction=>0 (left to right => LTR); direction=>1 (right to left => RTL)
 	private short direction;
 	
-	//enabled=>0 (enabled); enabled=>1 (disabled);
+	//enabled=>0 (disabled); enabled=>1 (enabled);
 	private short enabled;
 
 	// These attributes represents whether the above attributes has been
@@ -35,7 +35,7 @@ public class Languages implements Serializable {
 	protected boolean aNativeModified = false;
 	protected boolean directionModified = false;
 	protected boolean enabledModified = false;
-	public static Languages instance = null;
+	//public static Languages instance = null;
 	/*
 	 * Constructors
 	 */
@@ -65,7 +65,7 @@ public class Languages implements Serializable {
 	}
 	
 	public static Languages getInstance() {
-		return (instance == null ? (instance = new Languages()) : instance);
+		return new Languages(); // (instance == null ? (instance = new Languages()) : instance);
 	}
 	/*
 	 * Getters and setters for attributes

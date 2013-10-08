@@ -1,5 +1,6 @@
 package com.qpeka.services.user;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.GET;
@@ -19,7 +20,7 @@ public class LanguageServices {
 	@GET
 	@Path("/readlanguages")
 	public Response retrievingLanguageService() {
-		Set<String> languages = LanguagesManager.getInstance().retrieveLangugage();	
+		Map<Short, Object> languages = LanguagesManager.getInstance().retrieveLangugage();	
 
 		if (!languages.isEmpty() && languages != null) {
 			return Response.status(200).entity(new Gson().toJson(languages))

@@ -22,7 +22,7 @@ public class UserFieldVisibility {
 		protected boolean fieldNameModified = false;
 		protected boolean statusModified = false;
 		
-		public static UserFieldVisibility instance = null;
+		//public static UserFieldVisibility instance = null;
 	
 		/* CONSTRUCTORS
 		 */
@@ -40,7 +40,7 @@ public class UserFieldVisibility {
 		}
 		
 		public static UserFieldVisibility getInstance() {
-			return instance == null ? (instance = new UserFieldVisibility()) : instance;
+			return new UserFieldVisibility(); // instance == null ? (instance = new UserFieldVisibility()) : instance;
 		}
 		
 		/** Getter and Setter for Attributes

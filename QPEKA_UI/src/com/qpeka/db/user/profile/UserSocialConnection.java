@@ -28,7 +28,7 @@ public class UserSocialConnection implements Serializable{
 		protected boolean platformModified = false;
 		protected boolean socialidModified = false;
 		
-		public static UserSocialConnection instance = null;
+		//public static UserSocialConnection instance = null;
 		
 		/*
 		 * Constructors
@@ -50,7 +50,7 @@ public class UserSocialConnection implements Serializable{
 		 */
 
 		public static UserSocialConnection getInstance() {
-			return (instance == null ? (instance = new UserSocialConnection()) : instance);
+			return new UserSocialConnection(); // (instance == null ? (instance = new UserSocialConnection()) : instance);
 		}
 
 		public long getUsersocialconnid() {

@@ -106,6 +106,7 @@ public class FilesManager {
 				for (Files file : existingFiles) {
 					file.setStatus(status); // update status from enable to
 											// disable or vice versa
+					
 					try {
 						counter += FilesHandler.getInstance().update(fileid,
 								file);
@@ -143,6 +144,7 @@ public class FilesManager {
 				files.setExtension(setFileType(file.getName()));
 
 				files.setFilepath(filepath); // Set File Path
+				// File size is in bytes
 				files.setFilesize((int) (file.length()));
 				files.setFilemime(mimeTypesMap.getContentType(file));
 				files.setStatus(0);

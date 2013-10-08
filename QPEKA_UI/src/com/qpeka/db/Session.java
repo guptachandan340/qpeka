@@ -68,8 +68,7 @@ public class Session implements Serializable {
 	}
 
 	public static Session getInstance() {
-		return instance = new Session();
-		//return (instance == null ? instance = new Session() : instance);
+		return new Session(); // (instance == null ? instance = new Session() : instance);
 	}
 	
 	/*
@@ -137,11 +136,8 @@ public class Session implements Serializable {
 	public void setSessionobj(String sessionObj) {
 		if(this.sessionobj.length() == 0 || sessionObj.equalsIgnoreCase("null")) {
 			this.sessionobj.append(sessionObj);
-			//this.sessionobj.append(sessionObj);
 		} else {
 			this.sessionobj.delete(0, this.sessionobj.length());
-			System.out.println(sessionObj);
-			System.out.println(this.sessionobj);
 			//this.sessionobj.replace(0, this.sessionobj.length()-1, sessionObj);
 			this.sessionobj.append(sessionObj);
 		}
