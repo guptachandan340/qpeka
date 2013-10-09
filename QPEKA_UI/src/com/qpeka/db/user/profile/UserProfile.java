@@ -136,7 +136,7 @@ public class UserProfile implements Serializable {
 	 * null.
 	 */
 	protected boolean profilepicNull = true;
-	public static UserProfile instance = null;
+	//public static UserProfile instance = null;
 
 	// protected boolean bookmarksModified = false;
 
@@ -204,7 +204,7 @@ public class UserProfile implements Serializable {
 	}
 
 	public static UserProfile getInstance() {
-		return (instance == null ? (instance = new UserProfile()) : instance);
+		return new UserProfile(); //(instance == null ? (instance = new UserProfile()) : instance);
 	}
 
 	/*

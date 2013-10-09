@@ -40,6 +40,7 @@ import com.qpeka.db.user.profile.UserInvites;
 import com.qpeka.db.user.profile.UserProfile;
 import com.qpeka.managers.CategoryManager;
 import com.qpeka.managers.FilesManager;
+import com.qpeka.managers.LanguagesManager;
 import com.qpeka.managers.SessionsManager;
 import com.qpeka.managers.user.UserInvitesManager;
 import com.qpeka.managers.user.UserManager;
@@ -221,13 +222,13 @@ public class TestUser {
 		
 		/*********************** Test hostname **************************/
 		
-		try {
+		/*try {
+		 * 
 			System.out.println(InetAddress.getLocalHost().getHostName());
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		SessionsManager.getInstance().createSession((long) 1 , "anki546.malani@gmail.com", "ankita");
-		
+		SessionsManager.getInstance().createSession((long) 1 , "anki546.malani@gmail.com", "ankita","ankita");*/
 	}
 }

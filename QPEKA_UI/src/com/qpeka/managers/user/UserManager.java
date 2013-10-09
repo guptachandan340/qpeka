@@ -110,7 +110,7 @@ public class UserManager {
 		// registerUserInfo(formParams, user, userProfile);
 		Set<String> keySet = formParams.keySet();
 		for (String key : keySet) {
-			if (!key.equalsIgnoreCase(Languages.LANGUAGE)) {
+			if (!key.equalsIgnoreCase(Languages.LANGUAGEID)) {
 				List<String> userInfo = formParams.get(key);
 				if (!userInfo.isEmpty()) {
 					for (String userInfoValue : userInfo) {
@@ -139,9 +139,9 @@ public class UserManager {
 					
 					responseStatus = 200;
 					// store languages in user language table
-					List<String> languages = formParams.get(Languages.LANGUAGE);
-					if (!languages.isEmpty() && languages != null) {
-						updateUserLanguages(userid, "read", languages);
+					List<String> languageid = formParams.get(Languages.LANGUAGEID);
+					if (languageid != null && !languageid.isEmpty()) {
+						updateUserLanguages(userid, "read", languageid);
 					}
 				} else {
 					responseStatus = 215;
@@ -263,7 +263,7 @@ public class UserManager {
 								buildQuery("penname", penNameComb.size()),
 								penNameComb);
 
-				if (!penNameDbList.isEmpty() && penNameDbList != null) {
+				if (penNameDbList != null && !penNameDbList.isEmpty()) {
 					for (User userList : penNameDbList) {
 						// Use A - ( A AND B) i.e remove common elements
 						penNameComb.remove(userList.getPenname());
@@ -328,7 +328,7 @@ public class UserManager {
 			throw new UserException("User Authentication Exception: " + _e.getMessage(), _e);
 		}
 
-		if (!userList.isEmpty() && userList != null) {
+		if (userList != null && !userList.isEmpty()) {
 			for (User user : userList) {
 				if (user.getStatus() != 4 && user.getStatus() != 3) {
 					if (BCrypt.checkpw(password, user.getPassword())) {
@@ -389,8 +389,8 @@ public class UserManager {
 			userInfo.put(User.PENNAME, user.getPenname() != null ? user.getPenname() : "");
 			// Set Email
 			Map<String, Object> emailMap = new HashMap<String, Object>();
-			emailMap.put("value", user.getEmail() != null ? user.getEmail()	: "");
-
+			//userInfo.put(User.EMAIL, user.getEmail() != null ? user.getEmail() : "");
+			
 			// TODO Set errorcode if obj or list is empty
 			if (!userprofile.isEmpty() && userprofile != null) {
 				for (UserProfile userProfile : userprofile) {
@@ -400,32 +400,42 @@ public class UserManager {
 					fullname.put(Name.LASTNAME, userProfile.getName().getLastname());
 					fullname.put(Name.MIDDLENAME, (userProfile.getName().getMiddlename() != null ? userProfile.getName().getMiddlename() : ""));
 					Map<String, Object> name = new HashMap<String, Object>();
-					name.put("value", fullname);
-
+					
 					// get Gender
 					Map<String, Object> genderMap = new HashMap<String, Object>();
-					genderMap.put("value", userProfile.getGender());
-					// get profilepic
-					if (userProfile.getProfilepic() > 0) {
-						userInfo.put(UserProfile.PROFILEPIC, retrieveProfilePic(userProfile.getProfilepic()));
+						 
+					if(!visibilitySpecifier) {
+						userInfo.put(User.EMAIL, user.getEmail() != null ? user.getEmail() : "");
+						userInfo.put("name", fullname);
+						userInfo.put(UserProfile.GENDER, userProfile.getGender());
 					}
+					
+					//get profilepic 
+					userInfo.put(UserProfile.PROFILEPIC, (userProfile.getProfilepic() > 0) 
+							? retrieveProfilePic(userProfile.getProfilepic()) : "");
 
 					if (visibilitySpecifier) {
 						if (!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
 							for (UserFieldVisibility userVisibility : userFieldVisibility) {
 								if (userVisibility.getFieldName().equalsIgnoreCase("name")) {
+									name.put("data", fullname);
 									name.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+									userInfo.put("name", name);
 								} else if (userVisibility.getFieldName().equalsIgnoreCase("gender")) {
+									genderMap.put("data", userProfile.getGender());
 									genderMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+									userInfo.put(UserProfile.GENDER, genderMap);
 								} else if (userVisibility.getFieldName().equalsIgnoreCase("email")) {
+									emailMap.put("data", user.getEmail() != null ? user.getEmail()	: "");
 									emailMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
+									userInfo.put(User.EMAIL, emailMap);
 								}
 							}
 						}
 					}
-					userInfo.put("name", name);
-					userInfo.put(UserProfile.GENDER, genderMap);
-					userInfo.put(User.EMAIL, emailMap);
+					//userInfo.put("name", name);
+					//userInfo.put(UserProfile.GENDER, genderMap);
+					//userInfo.put(User.EMAIL, emailMap);
 				}
 			}
 		}
@@ -500,7 +510,7 @@ public class UserManager {
 		List<Files> files = null;
 		try {
 			files = FilesHandler.getInstance().findWhereFileidEquals(profilepic);
-			if (!files.isEmpty() && files != null) {
+			if (files != null && !files.isEmpty()) {
 				filePath = files.iterator().next().getFilepath();
 			}
 		} catch (FileException e) {
@@ -550,7 +560,7 @@ public class UserManager {
 		} catch (UserException _e) {
 			throw new UserException("Verify password Exception: " + _e.getMessage(), _e);
 		}
-		if (!userList.isEmpty() && userList != null) {
+		if (userList != null && !userList.isEmpty()) {
 			for (User user : userList) {
 				verifyresult = BCrypt.checkpw(password, user.getPassword());
 			}
@@ -589,8 +599,9 @@ public class UserManager {
 	 * 
 	 * @throws UserException
 	 */
-	public String resetPassword(String authName, boolean isEmail)
+	public Map<String, Object> resetPassword(String authName, boolean isEmail)
 			throws UserException {
+		short responseStatus = 200;
 		List<User> userList = null;
 		String newPassword = "";
 		try {
@@ -599,14 +610,17 @@ public class UserManager {
 			throw new UserException("Reset user Password Exception: " + _e.getMessage(), _e);
 		}
 
-		if (!userList.isEmpty() && userList != null) {
+		if (userList != null && !userList.isEmpty()) {
 			for (User user : userList) {
 				newPassword = RandomStringUtils.random(8, true, true);
 				user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
 				UserHandler.getInstance().update(user.getUserid(), user);
 			}
+		} else {
+			responseStatus = 204;
 		}
-		return newPassword;
+		//TODO Directly send an email to end user for changed password
+		return ServiceResponseManager.getInstance().readServiceResponse(responseStatus);
 	} // end of reset password()
 
 	/***************************** DELETE ACCOUNT MODULE ********************************/
@@ -736,19 +750,19 @@ public class UserManager {
 			e.printStackTrace();
 		}
 
-		if (!userprofile.isEmpty() && userprofile != null) {
+		if (userprofile != null && !userprofile.isEmpty()) {
 			// if (!userFieldVisibility.isEmpty() && userFieldVisibility !=
 			// null) {
 			for (UserProfile userProfile : userprofile) {
 				Map<String, Object> dobMap = new HashMap<String, Object>();
 				// Set DOB
-				dobMap.put("value", userProfile.getDob() != null ? Utils.getFormatedDate().format(userProfile.getDob()) : "");
+				dobMap.put("data", userProfile.getDob() != null ? Utils.getFormatedDate().format(userProfile.getDob()) : "");
 
 				// Set Nationality
 				Map<String, Object> nationalityMap = new HashMap<String, Object>();
-				nationalityMap.put("value", userProfile.getNationality() > 0 ? getCountryIdentifiers(userProfile.getNationality(), "countryid") : "");
+				nationalityMap.put("data", userProfile.getNationality() > 0 ? getCountryIdentifiers(userProfile.getNationality(), "countryid") : "");
 
-				if (!useraddress.isEmpty() && useraddress != null) {
+				if (useraddress != null && !useraddress.isEmpty()) {
 					Map<String, Object> addressInfo = new HashMap<String, Object>();
 					for (Address userAddress : useraddress) {
 						// Set addressid
@@ -781,14 +795,14 @@ public class UserManager {
 
 				// Set UserInterests
 				Map<String, Object> interestsMap = new HashMap<String, Object>();
-				interestsMap.put("value", retrieveUserInterests(user.getUserid()));
+				interestsMap.put("data", retrieveUserInterests(user.getUserid()));
 
 				// Set RLang and WLang
 				Map<String, Object> languageMap = new HashMap<String, Object>();
-				languageMap.put("value", retieveUserLanguages(user.getUserid()));
+				languageMap.put("data", retieveUserLanguages(user.getUserid()));
 
 				if (visibilitySpecifier) {
-					if (!userFieldVisibility.isEmpty() && userFieldVisibility != null) {
+					if (userFieldVisibility != null && !userFieldVisibility.isEmpty()) {
 						for (UserFieldVisibility userVisibility : userFieldVisibility) {
 							if (userVisibility.getFieldName().equalsIgnoreCase("dob")) {
 								dobMap.put("visibility", VISIBILITY.values()[userVisibility.getStatus()]);
@@ -806,7 +820,7 @@ public class UserManager {
 					userInfo.put(UserProfile.INTERESTS, interestsMap);
 					userInfo.put(Languages.LANGUAGE, languageMap);
 				}
-				if (!userSocialConnection.isEmpty() && userSocialConnection != null) {
+				if (userSocialConnection != null && !userSocialConnection.isEmpty()) {
 					for (UserSocialConnection userSocialConn : userSocialConnection) {
 						userInfo.put(userSocialConn.getPlatform(), userSocialConn.getSocialid());
 					}
@@ -915,7 +929,7 @@ public class UserManager {
 		try {
 			List<UserLanguage> userLanguages = UserLanguageHandler
 					.getInstance().findWhereUseridEquals(userid);
-			if (!userLanguages.isEmpty() && userLanguages != null) {
+			if (userLanguages != null && !userLanguages.isEmpty()) {
 				for (UserLanguage userLanguage : userLanguages) {
 					editedLanguages.add(userLanguage.getLanguageid());
 				}
@@ -925,7 +939,7 @@ public class UserManager {
 								buildQuery("languageid", userLanguages.size()),
 								editedLanguages);
 
-				if (!languages.isEmpty() && languages != null) {
+				if (languages != null && !languages.isEmpty()) {
 					for (Languages lang : languages) {
 						language.add(lang.getLanguage());
 					}
@@ -948,7 +962,7 @@ public class UserManager {
 			List<UserInterests> userInterests = UserInterestsHandler
 					.getInstance().findWhereUseridEquals(userid);
 			List<Object> editedGenre = new ArrayList<Object>();
-			if (!userInterests.isEmpty() && userInterests != null) {
+			if (userInterests != null && !userInterests.isEmpty()) {
 				for (UserInterests userinterests : userInterests) {
 					editedGenre.add(userinterests.getGenreid());
 				}
@@ -957,7 +971,7 @@ public class UserManager {
 								buildQuery("genreid", userInterests.size()),
 								editedGenre);
 
-				if (!genres.isEmpty() && genres != null) {
+				if (genres != null && !genres.isEmpty()) {
 					for (Genre genre : genres) {
 						// Add genre to the Set to remove duplicates
 						genreSet.add(genre.getGenre());
@@ -1022,7 +1036,7 @@ public class UserManager {
 
 	// TODO userlevel, usertype, status
 
-	public List<Map<String, Object>> editProfile(
+	public Map<String, Object> editProfile(
 			MultivaluedMap<String, String> formParams) throws FileException,
 			NumberFormatException, CountryException, UserException,
 			UserFieldVisibilityException {
@@ -1050,14 +1064,13 @@ public class UserManager {
 		return null;
 	}
 
-	public List<Map<String, Object>> setEditedInfo(long userid,
+	public Map<String, Object> setEditedInfo(long userid,
 			MultivaluedMap<String, String> formParams)
 			throws NumberFormatException, CountryException, UserException,
 			UserFieldVisibilityException {
 
 		User user = User.getInstance();
 		UserProfile userProfile = UserProfile.getInstance();
-		List<Map<String, Object>> serviceResponse = new ArrayList<Map<String, Object>>();
 		short responseStatus = 200;
 		if (userid != 0) {
 			userProfile.setUserid(userid);
@@ -1065,13 +1078,13 @@ public class UserManager {
 
 			if (formParams.get("profile").iterator().next().equalsIgnoreCase("basic")) {
 				Set<String> keySet = formParams.keySet();
+				userProfile.setName(Name.getInstance());
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
-					if (!userInfo.isEmpty() && userInfo != null) {
+					if (userInfo != null && !userInfo.isEmpty()) {
 						if (!(key.equalsIgnoreCase(UserProfile.INTERESTS) || key.equalsIgnoreCase(UserProfile.RLANG))) {
 							for (String userInfoValue : userInfo) {
 								if (userInfoValue != null && !userInfoValue.equalsIgnoreCase("")) {
-									userProfile.setName(Name.getInstance());
 									// Update first name
 									if (key.equalsIgnoreCase(Name.FIRSTNAME)) {
 										userProfile.getName().setFirstname(userInfoValue);
@@ -1099,7 +1112,6 @@ public class UserManager {
 														UserHandler.getInstance().update(userid, user);
 													} else {
 														responseStatus = 34;
-														serviceResponse.add(ServiceResponseManager.getInstance().readServiceResponse(responseStatus));
 													}
 												}
 											}
@@ -1161,13 +1173,12 @@ public class UserManager {
 
 			else if (formParams.get("profile").iterator().next().equalsIgnoreCase("address")) {
 				Set<String> keySet = formParams.keySet();
+				userProfile.setAddress(Address.getInstance());
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
-					if (!userInfo.isEmpty() && userInfo != null) {
-
+					if (userInfo != null && !userInfo.isEmpty()) {
 						for (String userInfoValue : userInfo) {
 							if (userInfoValue != null && !userInfoValue.equalsIgnoreCase("")) {
-								userProfile.setAddress(Address.getInstance());
 
 								// Set address id
 								if (key.equalsIgnoreCase(Address.ADDRESSID)) {
@@ -1176,7 +1187,6 @@ public class UserManager {
 								// Set/Update AddressLine1
 								if (key.equalsIgnoreCase(Address.ADDRESSLINE1)) {
 									userProfile.getAddress().setAddressLine1(userInfoValue);
-
 									SetUserVisibility("address", (short) VISIBILITY.PRIVATE.ordinal(), userid);
 								}
 								// Set/Update AddressLine2
@@ -1217,7 +1227,7 @@ public class UserManager {
 				Set<String> keySet = formParams.keySet();
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
-					if (!userInfo.isEmpty() && userInfo != null) {
+					if (userInfo != null && !userInfo.isEmpty()) {
 
 						for (String userInfoValue : userInfo) {
 							if (userInfoValue != null && !userInfoValue.equalsIgnoreCase("")) {
@@ -1242,7 +1252,6 @@ public class UserManager {
 													// Adding Service Error to
 													// List
 													responseStatus = 84;
-													serviceResponse.add(ServiceResponseManager.getInstance().readServiceResponse(responseStatus));
 												}
 											}
 										}
@@ -1280,7 +1289,7 @@ public class UserManager {
 				Set<String> keySet = formParams.keySet();
 				for (String key : keySet) {
 					List<String> userInfo = formParams.get(key);
-					if (!userInfo.isEmpty() && userInfo != null) {
+					if (userInfo != null && !userInfo.isEmpty()) {
 
 						if (!key.equalsIgnoreCase(UserProfile.WLANG)) {
 							for (String userInfoValue : userInfo) {
@@ -1306,11 +1315,9 @@ public class UserManager {
 			// User Type userProfile.getUsertype();
 
 		} // end if(userid > 0)
-		if (responseStatus == 200) {
-			serviceResponse.add(ServiceResponseManager.getInstance()
-					.readServiceResponse(200));
-		}
-		return serviceResponse;
+
+		return ServiceResponseManager.getInstance()
+				.readServiceResponse(responseStatus);
 	}
 
 	/**
@@ -1328,14 +1335,14 @@ public class UserManager {
 		editedList.add(userid);
 		editedList.add(platform);
 
-		if (!editedList.isEmpty() && editedList != null) {
+		if (editedList != null && !editedList.isEmpty()) {
 			List<UserSocialConnection> existingList = null;
 			try {
 				existingList = UserSocialConnectionHandler.getInstance()
 						.findByDynamicWhere("userid = ? AND platform = ?",
 								editedList);
 
-				if (!existingList.isEmpty() && existingList != null) {
+				if (existingList != null && !existingList.isEmpty()) {
 					UserSocialConnectionHandler.getInstance().update(existingList.iterator().next().getUsersocialconnid(), userSocialConnection);
 				} else {
 					userSocialConnection.setUserid(userid);
@@ -1361,7 +1368,7 @@ public class UserManager {
 		editedInfoList.add(fieldName);
 		try {
 			existingUserVisibility = UserFieldVisibilityHandler.getInstance().findByDynamicWhere("userid = ? AND fieldname = ?", editedInfoList);
-			if (!existingUserVisibility.isEmpty() && existingUserVisibility != null) {
+			if (existingUserVisibility != null && !existingUserVisibility.isEmpty()) {
 				userFieldVisibility.setStatus(status);
 
 				UserFieldVisibilityHandler.getInstance().update(existingUserVisibility.iterator().next().getVisibilityid(), userFieldVisibility);
@@ -1425,11 +1432,13 @@ public class UserManager {
 	 */
 	public void updateUserAddress(long userid, long addressid, Address address) {
 		address.setTimestamp(System.currentTimeMillis() / 1000L);
+		System.out.println(address);
 		try {
 			if (addressid > 0) {
 				AddressHandler.getInstance().update(addressid, address);
 			} else {
 				address.setUserid(userid);
+				System.out.println(address);
 				AddressHandler.getInstance().insert(address);
 			}
 		} catch (AddressException e) {
@@ -1456,7 +1465,7 @@ public class UserManager {
 					buildQuery("category", userInfo.size()), editedInfoList);
 
 			// Constructing unique category set
-			if (!categories.isEmpty() && categories != null) {
+			if (categories != null && !categories.isEmpty()) {
 				for (Category category : categories) {
 					categoryidList.add(category.getCategoryid());
 				}
@@ -1468,7 +1477,7 @@ public class UserManager {
 										categoryidList));
 			}
 
-			if (!genreDbSet.isEmpty() && genreDbSet != null) {
+			if (genreDbSet != null && !genreDbSet.isEmpty()) {
 				UserInterests userInterests = UserInterests.getInstance();
 				for (Genre genre : genreDbSet) {
 					userInterests.setUserid(userid);
@@ -1498,40 +1507,56 @@ public class UserManager {
 	 */
 	public void updateUserLanguages(long userid, String languageType,
 			List<String> userInfo) {
-		List<Object> editedLanguages = new ArrayList<Object>();
-		List<Languages> languageList = new ArrayList<Languages>();
-		for (String lang : userInfo) {
-			editedLanguages.add(lang.toLowerCase());
-		}
-		try {
-			languageList = LanguagesHandler.getInstance().findByDynamicWhere(
-					buildQuery("language", userInfo.size()), editedLanguages);
 
-			if (!languageList.isEmpty() && languageList != null) {
-				UserLanguage userlang = UserLanguage.getInstance();
-				for (Languages lang : languageList) {
-					if (lang.getLanguageid() > 0) {
+		/*
+		 * Commented code is due to the consideration that incoming value is
+		 * language not languageid
+		 * 
+		 * List<Object> editedLanguages = new ArrayList<Object>();
+		 * List<Languages> languageList = new ArrayList<Languages>(); for (short
+		 * lang : userInfo) { editedLanguages.add(lang);
+		 * //editedLanguages.add(lang.toLowerCase()); }
+		 */
+
+		try {
+			/*
+			 * languageList = LanguagesHandler.getInstance().findByDynamicWhere(
+			 * buildQuery("language", userInfo.size()), editedLanguages);
+			 * 
+			 * if (languageList != null && !languageList.isEmpty()) {
+			 * UserLanguage userlang = UserLanguage.getInstance(); for
+			 * (Languages lang : languageList) {
+			 */
+			
+			UserLanguage userlang = UserLanguage.getInstance();
+			for (String lang : userInfo) {
+				if (!lang.equalsIgnoreCase("") && lang != null) {
+					short langid = Short.parseShort(lang);
+					if (langid > 0) {
+						// if (lang.getLanguageid() > 0) {
 						userlang.setUserid(userid);
 						userlang.setType(languageType);
-						userlang.setLanguageid(lang.getLanguageid());
+						userlang.setLanguageid(langid);
+						// userlang.setLanguageid(lang.getLanguageid());
 						userlang = UserLanguageHandler.getInstance().insert(
 								userlang);
 					}
 				}
-				/*
-				 * if (userlang != null) { return (new
-				 * HashSet<Languages>(languageList)); }
-				 */
-			} else {
-				// TODO if no languages exists in database then ?
 			}
+			/*
+			 * if (userlang != null) { return (new
+			 * HashSet<Languages>(languageList)); }
+			 */
+			/*
+			 * } else { // TODO if no languages exists in database then ? }
+			 */
 		} catch (UserLanguageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (LanguagesException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		}/*
+		 * catch (LanguagesException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
 	}
 
 	/***************************** POINTS AND LEVEL MODULE ********************************/

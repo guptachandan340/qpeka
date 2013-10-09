@@ -8,24 +8,24 @@
 	 -->
 
 
-	<form action="v0.1/user/editprofile" method="post">
+	<form action="v0.2/user/editprofile" method="post">
 		<p>
-			sessionid: <input type="text" name="sessionid" />
+			sessionid: <input type="text" name="tokenid" />
 		</p>
 		<p>
 			id: <input type="text" name="userid" />
 		</p>
 		<p>
-			first name: <input type="text" name="firstName" />
+			first name: <input type="text" name="firstname" />
 		</p>
 		<p>
-			middle name: <input type="text" name="middleName" />
+			middle name: <input type="text" name="middlename" />
 		</p>
 		<p>
-			last name: <input type="text" name="lastName" />
+			last name: <input type="text" name="lastname" />
 		</p>
 
-		<select name="fullnameCheck" multiple="multiple" size="9">
+		<select name="nameprivacy" multiple="multiple" size="9">
 			<option value="PUBLIC">PUBLIC</option>
 			<option value="PRIVATE">PRIVATE</option>
 		</select>
@@ -33,7 +33,7 @@
 		<p>
 			Email : <input type="text" name="email" />
 		</p>
-		<select name="emailCheck" multiple="multiple" size="9">
+		<select name="emailprivacy" multiple="multiple" size="9">
 			<option value="PUBLIC">PUBLIC</option>
 			<option value="PRIVATE">PRIVATE</option>
 		</select>
@@ -43,7 +43,7 @@
 		</p>
 
 		<p>
-			<select name="dobCheck" multiple="multiple" size="9">
+			<select name="dobprivacy" multiple="multiple" size="9">
 				<option value="PUBLIC">PUBLIC</option>
 				<option value="PRIVATE">PRIVATE</option>
 			</select>
@@ -53,7 +53,7 @@
 			Gender : <input type="text" name="gender" />
 		</p>
 		<p>
-			<select name="genderCheck" multiple="multiple" size="9">
+			<select name="genderprivacy" multiple="multiple" size="9">
 				<option value="PUBLIC">PUBLIC</option>
 				<option value="PRIVATE">PRIVATE</option>
 			</select>
@@ -78,29 +78,30 @@
 			</select>
 		</p>
 
-		<select name="interestsCheck" multiple="multiple" size="9">
+		<select name="interestsprivacy" multiple="multiple" size="9">
 			<option value="PUBLIC">PUBLIC</option>
 			<option value="PRIVATE">PRIVATE</option>
 		</select>
 
 		<p>
 			rlang : <select name="rlang" size="2" multiple="multiple">
-				<option value="HINDI">HINDI</option>
-				<option value="ENGLISH">ENGLISH</option>
-				<option value="GUJARATI">GUJARATI</option>
-				<option value="MARATHI">MARATHI</option>
+			<option value="131">HINDI</option>
+			<option value="69">ENGLISH (INDIA)</option>
+			<option value="70">ENGLISH (ETHIOPIA)</option>
+			<option value="126">GUJARATI</option>
+			<option value="193">MARATHI</option>
 			</select>
 		</p>
 
 		<p>
-			<select name="languagesCheck" multiple="multiple" size="9">
+			<select name="languagesprivacy" multiple="multiple" size="9">
 				<option value="PUBLIC">PUBLIC</option>
 				<option value="PRIVATE">PRIVATE</option>
 			</select>
 		</p>
 
 		<p>
-			<input type="hidden" name="profile" value="basicDetails" />
+			<input type="hidden" name="profile" value="basic" />
 		</p>
 
 		<!--  

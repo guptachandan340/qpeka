@@ -11,7 +11,7 @@ public class UserInterests {
 	protected boolean useridModified = false;
 	protected boolean genreidModified = false;
 	
-	public static UserInterests instance = null;
+	//public static UserInterests instance = null;
 	
 	public UserInterests() {
 		super();
@@ -118,7 +118,7 @@ public class UserInterests {
 	 * @return user interest object
 	 */
 	public static UserInterests getInstance() {
-		return ((instance == null) ? (instance = new UserInterests()) : instance);
+		return new UserInterests(); // ((instance == null) ? (instance = new UserInterests()) : instance);
 	}
 
 	/**

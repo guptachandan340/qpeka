@@ -30,7 +30,8 @@ public class UserInvites implements Serializable {
 	 */
 	private INVITESTATUS status = INVITESTATUS.PENDING;
 	
-	private static UserInvites instance = null;
+	//private static UserInvites instance = null;
+	
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
 	protected boolean inviteidModified = false;
@@ -41,7 +42,7 @@ public class UserInvites implements Serializable {
 	protected boolean statusModified = false;
 
 	public static UserInvites getInstance() {
-		return (instance == null ? (instance = new UserInvites()) : instance);
+		return new UserInvites(); // (instance == null ? (instance = new UserInvites()) : instance);
 	}
 
 	/*

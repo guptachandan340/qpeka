@@ -33,7 +33,7 @@ public class Name implements Serializable {
 	protected boolean middlenameModified = false;
 	protected boolean lastnameModified = false;
 	
-	public static Name instance = null;
+	//public static Name instance = null;
 
 	/*
 	 * Constructors
@@ -54,7 +54,7 @@ public class Name implements Serializable {
 	 */
 
 	public static Name getInstance() {
-		return (instance == null ? (instance = new Name()) : instance);
+		return new Name(); //(instance == null ? (instance = new Name()) : instance);
 	}
 
 	public String getFirstname() {

@@ -160,7 +160,7 @@ public Set<Object> readCategoryDistictType() {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	if(!existingCatgory.isEmpty() && existingCatgory != null) {
+	if(existingCatgory != null && !existingCatgory.isEmpty()) {
 		for(Category category : existingCatgory) {
 			distictCategorySet.add(category.getType());
 		}
@@ -192,7 +192,7 @@ public List<Category> readCategory(short categoryid) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (!categories.isEmpty() && categories != null) {
+			if (categories != null && !categories.isEmpty()) {
 				for (Category category : categories) {
 					uniqueSet.add(category.getCategory());
 				}

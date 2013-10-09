@@ -10,7 +10,7 @@ public class Languages implements Serializable {
 	private static final long serialVersionUID = -5817098627344661453L;
 	public static final String LANGUAGEID = "languageid";
 	public static final String LANGUAGE = "languages";
-	public static final String NAME = "name";
+	public static final String SCRIPT = "script";
 	public static final String ANATIVE = "anative";
 	public static final String DIRECTION = "direction";
 	public static final String ENABLED = "enabled";
@@ -18,20 +18,24 @@ public class Languages implements Serializable {
 	// These attributes maps to the columns of the languages table.
 	private short languageid;
 	private String language;
-	private String name;
+	private String script;
 	private short aNative;
+	
+	//direction=>0 (left to right => LTR); direction=>1 (right to left => RTL)
 	private short direction;
+	
+	//enabled=>0 (disabled); enabled=>1 (enabled);
 	private short enabled;
 
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
 	protected boolean languageidModified = false;
 	protected boolean languageModified = false;
-	protected boolean nameModified = false;
+	protected boolean scriptModified = false;
 	protected boolean aNativeModified = false;
 	protected boolean directionModified = false;
 	protected boolean enabledModified = false;
-	public static Languages instance = null;
+	//public static Languages instance = null;
 	/*
 	 * Constructors
 	 */
@@ -39,12 +43,12 @@ public class Languages implements Serializable {
 		super();
 	}
 
-	public Languages(short languageid, String language, String name,
+	public Languages(short languageid, String language, String script,
 			short aNative, short direction, short enabled) {
 		super();
 		this.languageid = languageid;
 		this.language = language;
-		this.name = name;
+		this.script = script;
 		this.aNative = aNative;
 		this.direction = direction;
 		this.enabled = enabled;
@@ -54,14 +58,14 @@ public class Languages implements Serializable {
 			short direction, short enabled) {
 		super();
 		this.language = language;
-		this.name = name;
+		this.script = name;
 		this.aNative = aNative;
 		this.direction = direction;
 		this.enabled = enabled;
 	}
 	
 	public static Languages getInstance() {
-		return (instance == null ? (instance = new Languages()) : instance);
+		return new Languages(); // (instance == null ? (instance = new Languages()) : instance);
 	}
 	/*
 	 * Getters and setters for attributes
@@ -84,13 +88,13 @@ public class Languages implements Serializable {
 		this.languageModified = true;
 	}
 
-	public String getName() {
-		return name;
+	public String getScript() {
+		return script;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-		this.nameModified = true;
+	public void setScript(String script) {
+		this.script = script;
+		this.scriptModified = true;
 	}
 
 	public short getANative() {
@@ -139,12 +143,12 @@ public class Languages implements Serializable {
 		this.languageModified = languageModified;
 	}
 
-	public boolean isNameModified() {
-		return nameModified;
+	public boolean isScriptModified() {
+		return scriptModified;
 	}
 
-	public void setNameModified(boolean nameModified) {
-		this.nameModified = nameModified;
+	public void setScriptModified(boolean scriptModified) {
+		this.scriptModified = scriptModified;
 	}
 
 	public boolean isANativeModified() {
@@ -208,11 +212,11 @@ public class Languages implements Serializable {
 			return false;
 		}
 
-		if (name == null ? _cast.name != name : !name.equals(_cast.name)) {
+		if (script == null ? _cast.script != script : !script.equals(_cast.script)) {
 			return false;
 		}
 
-		if (nameModified != _cast.nameModified) {
+		if (scriptModified != _cast.scriptModified) {
 			return false;
 		}
 
@@ -257,11 +261,11 @@ public class Languages implements Serializable {
 		}
 
 		_hashCode = 29 * _hashCode + (languageModified ? 1 : 0);
-		if (name != null) {
-			_hashCode = 29 * _hashCode + name.hashCode();
+		if (script != null) {
+			_hashCode = 29 * _hashCode + script.hashCode();
 		}
 
-		_hashCode = 29 * _hashCode + (nameModified ? 1 : 0);
+		_hashCode = 29 * _hashCode + (scriptModified ? 1 : 0);
 
 		_hashCode = 29 * _hashCode + (aNativeModified ? 1 : 0);
 		_hashCode = 29 * _hashCode + direction;
@@ -281,7 +285,7 @@ public class Languages implements Serializable {
 		ret.append("Languages: ");
 		ret.append(LANGUAGEID + "=" + languageid);
 		ret.append(", " + LANGUAGE + "=" + language);
-		ret.append(", " + NAME + "=" + name);
+		ret.append(", " + SCRIPT + "=" + script);
 		ret.append(", " + ANATIVE + "=" + aNative);
 		ret.append(", " + DIRECTION + "=" + direction);
 		ret.append(", " + ENABLED + "=" + enabled);

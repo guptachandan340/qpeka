@@ -5,13 +5,15 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<form action="v0.2/user/verifyemailexist" method="post">
+	<form action="v0.2/user/session/sessionstate" method="post">
 		<p>
-			Email Id : <input type="text" name="email" />
+			session state :
+			<select name="sessionstate">
+				<option name="inactive">INACTIVE</option>
+				<option name="expired">EXPIRED</option>
+			</select>
 		</p>
-		<p>
-			<input type="submit" value="verify email" />
-		</p>
+		<input type="submit" value="Set Session State">
 	</form>
 </body>
 </html>

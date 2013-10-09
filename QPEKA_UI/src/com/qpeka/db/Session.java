@@ -9,13 +9,14 @@ public class Session implements Serializable {
 	 */
 	private static final long serialVersionUID = -76887559770927038L;
 
-	public static Session instance =null;
+	public static Session instance = null;
 	public static final String SESSIONID = "sessionid";
 	public static final String USERID = "userid";
 	public static final String HOSTNAME = "hostname";
 	public static final String CREATED = "created";
 	public static final String SESSION = "session";
 	public static final String STATUS = "status";
+	public static final String SESSIONOBJ = "sessionobj";
 	
 	// These attributes maps to the columns of the sessions table.
 	private long sessionid;
@@ -26,6 +27,7 @@ public class Session implements Serializable {
 	
 	// status => 0 if active, status => 1 if inactive, status => 2 if expired, status => 3 destroyed
 	private short status;
+	private StringBuilder sessionobj = new StringBuilder(""); 
 
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
@@ -35,6 +37,7 @@ public class Session implements Serializable {
 	protected boolean createdModified = false;
 	protected boolean sessionModified = false;
 	protected boolean statusModified = false;
+	protected boolean sessionobjModified = false;
 	
 	/*
 	 * Constructors
@@ -45,7 +48,7 @@ public class Session implements Serializable {
 	}
 
 	public Session(long sessionid, long userid, String hostname, long created,
-			String session, short status) {
+			String session, short status, StringBuilder sessionobj) {
 		super();
 		this.sessionid = sessionid;
 		this.userid = userid;
@@ -53,6 +56,7 @@ public class Session implements Serializable {
 		this.created = created;
 		this.session = session;
 		this.status = status;
+		this.sessionobj = sessionobj;
 	}
 
 	public Session(long sessionid, long userid, String session, String hostname) {
@@ -64,11 +68,13 @@ public class Session implements Serializable {
 	}
 
 	public static Session getInstance() {
-		return (instance == null ? instance = new Session() : instance);
+		return new Session(); // (instance == null ? instance = new Session() : instance);
 	}
+	
 	/*
 	 * Getters and setters for attributes
 	 */
+	
 	public long getSessionid() {
 		return sessionid;
 	}
@@ -123,6 +129,21 @@ public class Session implements Serializable {
 		this.statusModified = true;
 	}
 	
+	public StringBuilder getSessionobj() {
+		return sessionobj;
+	}
+	
+	public void setSessionobj(String sessionObj) {
+		if(this.sessionobj.length() == 0 || sessionObj.equalsIgnoreCase("null")) {
+			this.sessionobj.append(sessionObj);
+		} else {
+			this.sessionobj.delete(0, this.sessionobj.length());
+			//this.sessionobj.replace(0, this.sessionobj.length()-1, sessionObj);
+			this.sessionobj.append(sessionObj);
+		}
+		this.sessionobjModified = true;
+	}
+	
 	/*
 	 * Getters and setters for attribute modified status
 	 */
@@ -174,6 +195,13 @@ public class Session implements Serializable {
 		this.statusModified = statusModified;
 	}
 
+	public boolean isSessionobjModified() {
+		return sessionobjModified;
+	}
+
+	public void setSessionobjModified(boolean sessionobjModified) {
+		this.sessionobjModified = sessionobjModified;
+	}
 	
 	/**
 	 * Method 'equals'
@@ -240,9 +268,14 @@ public class Session implements Serializable {
 			return false;
 		}
 		
-		if(sessionModified != _cast.sessionModified) {
+		if(sessionobjModified != _cast.sessionobjModified) {
 			return false;
-		}		
+		}
+
+		if (sessionobj == null ? _cast.sessionobj != sessionobj : !sessionobj.equals( _cast.sessionobj )) {
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -273,6 +306,11 @@ public class Session implements Serializable {
 		
 		_hashCode = 29 * _hashCode + status;
 		_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
+		if (sessionobj != null) {
+			_hashCode = 29 * _hashCode + sessionobj.hashCode();
+		}
+		
+		_hashCode = 29 * _hashCode + (sessionobjModified ? 1 : 0);
 		
 		return _hashCode;
 	}
@@ -292,6 +330,7 @@ public class Session implements Serializable {
 		ret.append( ", created=" + created );
 		ret.append( ", session=" + session );
 		ret.append( ", status=" +status);
+		ret.append(", sessionobj=" +sessionobj);
 		return ret.toString();
 	}
 }

@@ -1,5 +1,6 @@
 package com.qpeka.db.handler;
 
+import java.awt.image.DataBufferShort;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,9 +12,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import com.qpeka.db.Session;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.SessionDao;
 import com.qpeka.db.exceptions.user.SessionException;
+import com.qpeka.utils.DBResourceHandler;
 
 public class SessionHandler extends AbstractHandler implements SessionDao {
 
@@ -35,7 +36,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT sessionid, userid, hostname, created, session, status FROM "
+	protected final String SQL_SELECT = "SELECT sessionid, userid, hostname, created, session, status, sessionobj FROM "
 			+ getTableName() + "";
 
 	/**
@@ -49,14 +50,14 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 	 */
 	protected final String SQL_INSERT = "INSERT IGNORE INTO "
 			+ getTableName()
-			+ " ( sessionid, userid, hostname, created, session, status ) VALUES ( ?, ?, ?, ?, ?, ? )";
+			+ " ( sessionid, userid, hostname, created, session, status, sessionobj ) VALUES ( ?, ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
-			+ " SET sessionid = ?, userid = ?, hostname = ?, created = ?, session = ?, status = ? WHERE sessionid = ?";
+			+ " SET sessionid = ?, userid = ?, hostname = ?, created = ?, session = ?, status = ?, sessionobj = ? WHERE sessionid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -93,11 +94,16 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 	 * index of column status
 	 */
 	protected static final int COLUMN_STATUS = 6;
+	
+	/**
+	 * index of column sessionobj
+	 */
+	protected static final int COLUMN_SESSIONOBJ = 7;
 
 	/**
 	 * Number of columns
 	 */
-	protected static final int NUMBER_OF_COLUMNS = 6;
+	protected static final int NUMBER_OF_COLUMNS = 7;
 
 	/**
 	 * Index of primary-key column sessionid
@@ -141,7 +147,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		try {
 		// get the user-specified connection or get a connection from the
 		// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
 			sql.append("INSERT IGNORE INTO " + getTableName() + " (");
@@ -211,6 +217,17 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 				values.append("?");
 				modifiedCount++;
 			}
+			
+			if(session.isSessionobjModified()) {
+				if(modifiedCount > 0) {
+					sql.append(", ");
+					values.append(", ");
+				}
+				
+				sql.append("sessionobj");
+				values.append("?");
+				modifiedCount++;
+			} 
 
 			if (modifiedCount == 0) {
 				// Nothing to insert
@@ -246,6 +263,10 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			if (session.isStatusModified()) {
 				stmt.setShort(index++, session.getStatus());
 			}
+			
+			if(session.isSessionobjModified()) {
+				stmt.setString(index++, session.getSessionobj().toString());
+			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + sql.toString() + "with values: "
@@ -270,9 +291,9 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -290,7 +311,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -348,6 +369,15 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 				sql.append("status=?");
 				modified = true;
 			}
+			
+			if(session.isSessionobjModified()) {
+				if(modified) {
+					sql.append(", ");
+				}
+				
+				sql.append("sessionobj=?");
+				modified = true;
+			}
 
 			if (!modified) {
 				// nothing to update
@@ -386,6 +416,10 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 				stmt.setShort(index++, session.getStatus());
 			}
 			
+			if(session.isSessionobjModified()) {
+				stmt.setString(index++, session.getSessionobj().toString());
+			}
+			
 			stmt.setLong(index++, sessionid);
 			short rows = (short) stmt.executeUpdate();
 			reset(session);
@@ -398,9 +432,9 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 	}
@@ -416,7 +450,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: "
@@ -435,9 +469,9 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 	}
@@ -497,6 +531,12 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		return findByDynamicSelect(SQL_SELECT + " WHERE status = ?",
 				Arrays.asList(new Object[] { new Short(status) }));
 	}
+	
+	@Override
+	public List<Session> findWhereSessionobjEquals(String sessionobj)
+			throws SessionException {
+		return findByDynamicSelect(SQL_SELECT + " WHERE sessionobj = ?", Arrays.asList(new Object[] { new String(sessionobj) }));
+	}
 
 	@Override
 	public void setMaxRows(int maxRows) {
@@ -520,7 +560,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = sql;
@@ -547,10 +587,10 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 	}
@@ -567,7 +607,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		try {
 			// get the user-specified connection or get a connection from the
 			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -592,10 +632,10 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -612,7 +652,6 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		} else {
 			return null;
 		}
-
 	}
 
 	/**
@@ -625,7 +664,6 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			populateSession(session, rs);
 			resultList.add(session);
 		}
-
 		return resultList;
 	}
 
@@ -640,6 +678,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		session.setCreated(rs.getLong(COLUMN_CREATED));
 		session.setSession(rs.getString(COLUMN_SESSION));
 		session.setStatus(rs.getShort(COLUMN_STATUS));
+		session.setSessionobj(rs.getString(COLUMN_SESSIONOBJ));
 		reset(session);
 	}
 
@@ -653,6 +692,7 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 		session.setcreatedModified(false);
 		session.setSessionModified(false);
 		session.setStatusModified(false);
+		session.setSessionobjModified(false);
 	}
 
 	/**
@@ -663,5 +703,4 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 	public static SessionHandler getInstance() {
 		return (instance == null ? instance = new SessionHandler() : instance);
 	}
-
 }

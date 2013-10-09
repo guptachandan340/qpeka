@@ -45,7 +45,7 @@ public class Address implements Serializable {
 	protected boolean pincodeModified = false;
 	protected boolean timestampModified = false;
 	
-	public static Address instance = null;
+	//public static Address instance = null;
 	
 
 	/*
@@ -98,7 +98,7 @@ public class Address implements Serializable {
 	}
 
 	public static Address getInstance() {
-		return (instance == null ? (instance = new Address()) : instance);
+		return new Address(); // (instance == null ? (instance = new Address()) : instance);
 	}
 	/*
 	 * Getters and setters for attributes

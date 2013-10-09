@@ -1,6 +1,5 @@
 package com.qpeka.db.user.profile;
 
-import com.qpeka.db.Constants.USERTYPE;
 
 public class UserBadges {
 
@@ -13,7 +12,7 @@ public class UserBadges {
 	protected boolean useridModified = false;
 	protected boolean badgeidModified = false;
 	
-	public static UserBadges instance = null;
+	//public static UserBadges instance = null;
 
 	public UserBadges() {
 		super();
@@ -117,7 +116,7 @@ public class UserBadges {
 	 * @return
 	 */
 	public static UserBadges getInstance() {
-		return ((instance == null) ? (instance = new UserBadges()) : instance);
+		return new UserBadges(); // ((instance == null) ? (instance = new UserBadges()) : instance);
 	}
 
 	/**
