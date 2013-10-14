@@ -1,23 +1,18 @@
 package com.qpeka.managers;
 
 import java.io.File;
-
 import java.util.ArrayList;
-
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import com.qpeka.db.Constants.STATUS;
+import com.qpeka.db.Constants.FILESTATUS;
 import com.qpeka.db.Files;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.FileException;
-
 import com.qpeka.db.handler.FilesHandler;
 import com.qpeka.services.Response.ServiceResponseManager;
+import com.qpeka.utils.SystemResourceHandler;
 
 public class FilesManager {
 	public static FilesManager instance = null;
@@ -71,7 +66,7 @@ public class FilesManager {
 	// Set file status to delete instead of deleting the files;
 	public Map<String, Object> SetFilesDeleted(long fileid) throws FileException {
 		Files files = Files.getInstance();
-		files.setStatus(STATUS.DELETED.ordinal());
+		files.setStatus(FILESTATUS.DELETED.ordinal());
 		try {
 			return FilesHandler.getInstance().update(fileid, files) != -1 ? ServiceResponseManager
 					.getInstance().readServiceResponse(200)
@@ -111,6 +106,7 @@ public class FilesManager {
 				for (Files file : existingFiles) {
 					file.setStatus(status); // update status from enable to
 											// disable or vice versa
+					
 					try {
 						counter += FilesHandler.getInstance().update(fileid,
 								file);
@@ -139,16 +135,16 @@ public class FilesManager {
 	}
 	
 	private Files createFileFields(String filepath, Files files) {
-		File file = new File(ResourceManager.getQPEKA_IMAGES()+filepath); // Inbuilt File class usage
+		File file = new File(SystemResourceHandler.getInstance().getImageDir() + "/" + filepath); // Inbuilt File class usage
 		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
 		if (file.exists()) {
 			if (file.isFile()) {
-				files.setFilename(file.getName().substring(0,
-						(file.getName().lastIndexOf("."))));
+				files.setFilename(file.getName());
 				//files.setFiletype(filetype);
 				files.setExtension(setFileType(file.getName()));
 
 				files.setFilepath(filepath); // Set File Path
+				// File size is in bytes
 				files.setFilesize((int) (file.length()));
 				files.setFilemime(mimeTypesMap.getContentType(file));
 				files.setStatus(0);
@@ -156,6 +152,7 @@ public class FilesManager {
 			}
 		return files;
 		} else {
+			System.out.println("not available");
 			return null;
 		}
 	}
@@ -278,9 +275,9 @@ public class FilesManager {
 		return existingFiles;
 	}
 
-	/* reading all fileds of file through userId and filetype */
+	/*reading all fileds of file through userId and filetype */
 	
-	/*public List<Files> readFiles(long userId, String filetype,String filesAttribute) {
+	public List<Files> readFiles(long userId, String filetype,String filesAttribute) {
 		List<Files> existingFiles = null;
 		List<Object> readFilesobj = new ArrayList<Object>();
 		readFilesobj.add(userId);
@@ -297,9 +294,8 @@ public class FilesManager {
 		}
 		return existingFiles;
 	}
-*/
 	
-	public Map<String, Map.Entry<String, String>> readFiles(long userId, String filetype,
+/*	public Map<String, Map.Entry<String, String>> readFiles(long userId, String filetype,
 			String filesAttribute) {
 		List<Files> existingFiles = null;
 		List<Object> readFilesobj = new ArrayList<Object>();
@@ -316,10 +312,11 @@ public class FilesManager {
 			}
 		}
 		return retrieveFiles(existingFiles);
-	}
+	}*/
 
 	// Function for retrieving selected fields of file object 
 	
+	/*
 	public Map<String, Map.Entry<String, String>> retrieveFiles(
 			List<Files> existingFiles) {
 		Map<String, Map.Entry<String, String>> outerMap = new HashMap<String, Map.Entry<String, String>>();
@@ -336,16 +333,16 @@ public class FilesManager {
 		}
 		return outerMap;
 	}
-
+*/
 	/**
 	 * @param args
 	 */
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println(FilesManager.getInstance().readFiles((long)1, "profilepic", Files.FILETYPE));
+		//System.out.println(FilesManager.getInstance().readFiles((long)1, "profilepic", Files.FILETYPE));
 		//FilesManager.getInstance().deleteFiles(6);
-		//System.out.println(FilesManager.getInstance().InsertFiles((long)1,"profilepic","/home/ankita/Downloads/Ankit final resume.docx"));
+		//System.out.println(FilesManager.getInstance().createFiles((long)1,"profilepic","30733d8.jpg"));
 		//System.out.println(FilesManager.getInstance().readFiles("deb", "filetype"));
 		//System.out.println(FilesManager.getInstance().readFiles(6, "mp3", Files.FILETYPE));
 	   // Map<String, Object> updateMap = new HashMap<String, Object>();

@@ -1,4 +1,4 @@
-package com.qpeka.db;
+package com.qpeka.db.user.profile;
 
 public class UserFieldVisibility {
 
@@ -11,7 +11,9 @@ public class UserFieldVisibility {
 		private long visibilityid;
 		private long userid;
 		private String fieldName;
-		private short status = 1;
+		
+		/* status = 0 if visibility is private, status = 1 if visibility is public */
+		private short status = 0;
 		
 		// These attributes represents whether the above attributes has been
 		// modified since being read from the database.
@@ -20,7 +22,7 @@ public class UserFieldVisibility {
 		protected boolean fieldNameModified = false;
 		protected boolean statusModified = false;
 		
-		public static UserFieldVisibility instance = null;
+		//public static UserFieldVisibility instance = null;
 	
 		/* CONSTRUCTORS
 		 */
@@ -29,7 +31,7 @@ public class UserFieldVisibility {
 			super();
 		}
 		
-		public UserFieldVisibility(long visibilityid, long userid, String fieldName, Short status) {
+		public UserFieldVisibility(long visibilityid, long userid, String fieldName, short status) {
 			super();
 			this.setVisibilityid(visibilityid);
 			this.setUserid(userid);
@@ -38,7 +40,7 @@ public class UserFieldVisibility {
 		}
 		
 		public static UserFieldVisibility getInstance() {
-			return instance == null ? (instance = new UserFieldVisibility()) : instance;
+			return new UserFieldVisibility(); // instance == null ? (instance = new UserFieldVisibility()) : instance;
 		}
 		
 		/** Getter and Setter for Attributes
@@ -81,7 +83,8 @@ public class UserFieldVisibility {
 			this.statusModified = true;
 		}
 		
-		/** Getter and Setter for Attributes modified
+		/*
+		 * * Getter and Setter for Attributes modified
 		 */
 		
 		public boolean isVisibilityidModified() {
@@ -163,9 +166,9 @@ public class UserFieldVisibility {
 				return false;
 			}
 			
-			if (status != _cast.status) {
+			if(status != _cast.status) {
 				return false;
-			}
+			}			
 			
 			if (statusModified != _cast.statusModified) {
 				return false;
@@ -191,10 +194,9 @@ public class UserFieldVisibility {
 			}
 
 			_hashCode = 29 * _hashCode + (fieldNameModified ? 1 : 0);
-			
-			_hashCode = (29 * _hashCode + status);
-			_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
+			_hashCode = 29 * _hashCode + status;
 
+			_hashCode = 29 * _hashCode + (statusModified ? 1 : 0);
 			return _hashCode;
 		}
 

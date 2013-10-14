@@ -12,9 +12,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Badges;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.BadgesDao;
 import com.qpeka.db.exceptions.BadgesException;
+import com.qpeka.utils.DBResourceHandler;
 
 public class BadgesHandler extends AbstractHandler implements BadgesDao {
 
@@ -135,8 +135,8 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
@@ -251,9 +251,9 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new BadgesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -269,8 +269,8 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -365,9 +365,9 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new BadgesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 		
@@ -383,8 +383,8 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: " + badgeid);
@@ -402,9 +402,9 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new BadgesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -500,8 +500,8 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = sql;
@@ -528,10 +528,10 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new BadgesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -548,8 +548,8 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -576,10 +576,10 @@ public class BadgesHandler extends AbstractHandler implements BadgesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new BadgesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}

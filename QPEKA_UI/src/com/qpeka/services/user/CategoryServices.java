@@ -18,12 +18,25 @@ import com.qpeka.managers.CategoryManager;
 @Path("/user/category")
 public class CategoryServices {
 
-	final Logger logger = Logger
-			.getLogger(CategoryServices.class);
+	final Logger logger = Logger.getLogger(CategoryServices.class);
+	
+	@GET
+	@Path("/readallgenre")
+	public Response retrieveGenreService() {
+		Set<String> category = CategoryManager.getInstance().readCategory();
+		if(!category.isEmpty() && category != null) {
+			return Response.status(200).entity(new Gson().toJson(category)).build();
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Empty Category");
+			}
+			return Response.status(200).entity(new Gson().toJson("")).build();
+		}
+	}
 	
 	@POST
-	@Path("/readcategorybytype")
-	public Response retrievingCategoryService(@FormParam("categorytype") String categoryType) {
+	@Path("/readcategorygenrebytype")
+	public Response retrievingCategoryGenreService(@FormParam("categorytype") String categoryType) {
 		Map<String, Object> category = CategoryManager
 				.getInstance().readCategory(categoryType, Category.TYPE);
 		if(!category.isEmpty() && category != null) {
@@ -37,9 +50,24 @@ public class CategoryServices {
 	}
 	
 	@GET
-	@Path("/readAllcategory")
+	@Path("/readuniquecategorytype")
 	public Response readAllCategoryService() {
-		Set<String> category = CategoryManager.getInstance().readCategory();
+		Set<Object> category = CategoryManager.getInstance().readCategoryDistictType();
+		if(!category.isEmpty() && category != null) {
+			return Response.status(200).entity(new Gson().toJson(category)).build();
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Empty Category");
+			}
+			return Response.status(200).entity(new Gson().toJson("")).build();
+		}
+	}	
+	
+	@POST
+	@Path("/readcategorybytype")
+	public Response retrievingCategoryService(@FormParam("categorytype") String categoryType) {
+		Set<String> category= CategoryManager
+				.getInstance().readOnlyFromCategory(categoryType, Category.TYPE);
 		if(!category.isEmpty() && category != null) {
 			return Response.status(200).entity(new Gson().toJson(category)).build();
 		} else {

@@ -5,16 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class SystemConfigHandler 
-{
-	private static SystemConfigHandler instance = new SystemConfigHandler();
+public class SystemResourceHandler {
+	private static SystemResourceHandler instance = new SystemResourceHandler();
 	private Properties props = new Properties();
 	
-	private SystemConfigHandler()
-	{
-		try 
-		{
-			InputStream fis = SystemConfigHandler.class.getClassLoader().getResourceAsStream("system.properties");
+	private SystemResourceHandler() {
+		try {
+			InputStream fis = SystemResourceHandler.class.getClassLoader().getResourceAsStream("system.properties");
 			props.load(fis);
 			
 		} catch (FileNotFoundException e) {
@@ -26,75 +23,64 @@ public class SystemConfigHandler
 		}
 	}
 	
-	public static SystemConfigHandler getInstance()
-	{
-		if(instance == null)
-		{
+	public static SystemResourceHandler getInstance() {
+		if(instance == null) {
 			synchronized (instance) {
-				
-				if(instance == null)
-				{
-					instance = new SystemConfigHandler();
+				if(instance == null) {
+					instance = new SystemResourceHandler();
 				}
 			}
 		}
 		
 		return instance;
 	}
-	///var/lib/openshift/6d134eafb7434f86981aed6dcbc101cb/jbossews-1.0/data/books/content/
-	public String getBookContentFolder()
-	{
+	
+	public String getBookContentFolder() {
 		return props.getProperty(SystemConstants.BOOKCONTENTFOLDER);
 	}
 	
-	public String getBookCoverPageFolder()
-	{
+	public String getBookCoverPageFolder() {
 		return props.getProperty(SystemConstants.BOOKCOVERPAGEFOLDER);
 	}
 	
-	public String getUserImageFolder()
-	{
+	public String getUserImageFolder() {
 		return props.getProperty(SystemConstants.USERIMAGEFOLDER);
 	}
 	
 	
-	public String getImageServerURL()
-	{
+	public String getImageServerURL() {
 		return props.getProperty(SystemConstants.IMAGESERVERURL);
 	}
 	
-	public String getBaseTinyURL()
-	{
+	public String getBaseTinyURL() {
 		return props.getProperty(SystemConstants.BASETINYURL);
 	}
 	
-	public String getSrcBookFolder()
-	{
+	public String getSrcBookFolder() {
 		return props.getProperty(SystemConstants.SRCBOOKFOLDER);
 	}
 	
-	public String getUserCoverImg()
-	{
+	public String getUserCoverImg() {
 		return props.getProperty(SystemConstants.USERCOVERIMGFILE);
 	}
 	
-	public String getServerSalt()
-	{
+	public String getServerSalt() {
 		return props.getProperty(SystemConstants.SERVERSALT);
 	}
 	
-	public String getHost()
-	{
+	public String getHost() {
 		return props.getProperty("host");
 	}
 	
-	public String getSenderEmail()
-	{
+	public String getSenderEmail() {
 		return props.getProperty(SystemConstants.SENDEREMAIL);
 	}
 	
-	public String getPassword()
-	{
+	public String getPassword() {
 		return props.getProperty(SystemConstants.PASSWORD);
+	}
+	
+	public String getImageDir() {
+		return props.getProperty(SystemConstants.IMAGEDIR);
 	}
 }

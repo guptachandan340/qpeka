@@ -43,9 +43,9 @@ public interface LanguagesDao {
 	public List<Languages> findWhereLanguageEquals(String language) throws LanguagesException;
 
 	/** 
-	 * Returns all rows from the languages table that match the criteria 'name = :name'.
+	 * Returns all rows from the languages table that match the criteria 'script = :script'.
 	 */
-	public List<Languages> findWhereNameEquals(String name) throws LanguagesException;
+	public List<Languages> findWhereScriptEquals(String script) throws LanguagesException;
 
 	/** 
 	 * Returns all rows from the languages table that match the criteria 'native = :aNative'.

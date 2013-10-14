@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class UserPoints implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6494086252399597078L;
 	public static final String USERID = "userid";
 	public static final String TYPE = "type";
 	public static final String POINTS = "points";
@@ -15,6 +19,7 @@ public class UserPoints implements Serializable {
 	protected boolean useridModified = false;
 	protected boolean typeModified = false;
 	protected boolean pointsModified = false;
+	//public static UserPoints instance = null;
 	
 	public UserPoints() {
 		super();
@@ -27,6 +32,10 @@ public class UserPoints implements Serializable {
 		this.points = points;
 	}
 
+	public static UserPoints getInstance() {
+		return new UserPoints(); //(instance == null ? instance = new UserPoints() : instance);
+	}
+	
 	public long getUserid() {
 		return userid;
 	}

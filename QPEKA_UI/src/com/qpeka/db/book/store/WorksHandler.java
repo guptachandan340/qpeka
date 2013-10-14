@@ -1,14 +1,12 @@
 package com.qpeka.db.book.store;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bson.types.ObjectId;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -16,16 +14,10 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
-import com.qpeka.db.Constants;
-import com.qpeka.db.Constants.AUTHOR;
 import com.qpeka.db.Constants.CATEGORY;
-import com.qpeka.db.Constants.GENDER;
-import com.qpeka.db.Constants.LANGUAGES;
+import com.qpeka.db.Constants.TYPE;
 import com.qpeka.db.Constants.WORKTYPE;
 import com.qpeka.db.book.store.tuples.Work;
-import com.qpeka.db.handler.user.AuthorHandler;
-import com.qpeka.db.user.profile.Name;
-import com.qpeka.db.user.profile.type.Author;
 
 /*
  * 1) Primary key testing
@@ -44,7 +36,7 @@ public class WorksHandler {
 
 	private WorksHandler()
 	{
-		db = MongoAccessor.getInstance().getMongo().getDB("bookstore");
+		db = MongoAccessor.getInstance().getMongo().getDB("qpekalibrary");
 		if(!db.isAuthenticated())
 			db.authenticate("qpeka", new char[]{'q','p','e','k','a'});
 		works = db.getCollection("works");
@@ -60,56 +52,60 @@ public class WorksHandler {
 		return instance;
 	}
 	
-	public String addWork(Work book)
-	{
+	public String addWork(Work book) {
 		long start = System.currentTimeMillis();
 		BasicDBObject dObj = (BasicDBObject)book.toDBObject(true);
 		WriteResult result = works.insert(dObj, WriteConcern.SAFE);
-		ObjectId id =  dObj.getObjectId("_id");
+//		ObjectId id =  dObj.getObjectId("_id");
 		logger.log(Level.INFO, "time(addBook) = " + (System.currentTimeMillis() - start));
-		return id.toString();
+		return dObj.getObjectId("_id").toString(); //id.toString();
 	}
 	
-	public void updateWork(Work work)
-	{
+	public void updateWork(Work work) {
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.ID, new ObjectId(work.get_id()));
 		
 		works.update(q, new BasicDBObject("$set" , work.toDBObject(true)), true, false, WriteConcern.SAFE);
 	}
 	
-	public Work getWork(String id)
-	{
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Work getWork(String id) {
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.ID, new ObjectId(id));
 		
-		
 		DBCursor cursor = works.find(q);
-		
-        try 
-        {
-            if(cursor.hasNext()) 
-            {
+        try {
+            if(cursor.hasNext()) {
                 BasicDBObject dObj = (BasicDBObject)cursor.next();
                 Work book = Work.getBookfromDBObject(dObj);
+                
                 return book;
             }
-            else
+            else {
             	return null;
+            }
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
         finally {
             cursor.close();
         }
-
 	}
 	
-	public List<Work> getWorksByCategory(CATEGORY category, int start, int end)
-	{
+	/**
+	 * 
+	 * @param category
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Work> getWorksByCategory(CATEGORY category, int start, int end) {
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
@@ -121,18 +117,15 @@ public class WorksHandler {
 		else
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
 		
-        try 
-        {
-        	 while(cursor.hasNext()) 
-             {
+        try {
+        	 while(cursor.hasNext()) {
                  BasicDBObject dObj = (BasicDBObject)cursor.next();
                  Work book = Work.getBookfromDBObject(dObj);
                  listToReturn.add(book);
              }
              return listToReturn;
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return listToReturn;
 		}
@@ -142,8 +135,14 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByType(WORKTYPE type, int start, int end)
-	{
+	/**
+	 * 
+	 * @param type
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Work> getWorksByType(WORKTYPE type, int start, int end) {
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
@@ -155,18 +154,15 @@ public class WorksHandler {
 		else
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
 		
-        try 
-        {
-        	 while(cursor.hasNext()) 
-             {
+        try {
+        	 while(cursor.hasNext()) {
                  BasicDBObject dObj = (BasicDBObject)cursor.next();
                  Work book = Work.getBookfromDBObject(dObj);
                  listToReturn.add(book);
              }
              return listToReturn;
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return listToReturn;
 		}
@@ -176,8 +172,15 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByTypeCategory(WORKTYPE type, CATEGORY cat, int start, int end)
-	{
+	/**
+	 * 
+	 * @param type
+	 * @param cat
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Work> getWorksByTypeCategory(WORKTYPE type, CATEGORY cat, int start, int end) {
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
@@ -185,22 +188,21 @@ public class WorksHandler {
 		q.put(Work.CATEGORY, cat.toString());
 		
 		DBCursor cursor = null;
-		if(start > -1 && end > -1 && end >= start)
+		if(start > -1 && end > -1 && end >= start) {
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
-		else
+		}
+		else {
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
-        try 
-        {
-        	 while(cursor.hasNext()) 
-             {
+		}
+        try {
+        	 while(cursor.hasNext()) {
                  BasicDBObject dObj = (BasicDBObject)cursor.next();
                  Work book = Work.getBookfromDBObject(dObj);
                  listToReturn.add(book);
              }
              return listToReturn;
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return listToReturn;
 		}
@@ -210,18 +212,20 @@ public class WorksHandler {
 
 	}
 	
-	public Work getWorkOfTheDayByType(WORKTYPE type)
-	{
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public Work getWorkOfTheDayByType(TYPE type) {
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.TYPE, type.toString());
 		
 		BasicDBObject cursor = (BasicDBObject)works.findOne(q);
 		
-        try 
-        {
-        	 if(cursor != null) 
-             {
+        try {
+        	 if(cursor != null) {
                  Work book = Work.getBookfromDBObject(cursor);
                  return book; 
              }
@@ -229,8 +233,7 @@ public class WorksHandler {
         	 return null;
             
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -240,18 +243,20 @@ public class WorksHandler {
 
 	}
 	
-	public Work getFeauredWorkByType(WORKTYPE type)
-	{
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public Work getFeauredWorkByType(WORKTYPE type) {
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.TYPE, type.toString());
 		
 		BasicDBObject cursor = (BasicDBObject)works.findOne(q);
 		
-        try 
-        {
-        	 if(cursor != null) 
-             {
+        try {
+        	 if(cursor != null) {
                  Work book = Work.getBookfromDBObject(cursor);
                  return book; 
              }
@@ -259,8 +264,7 @@ public class WorksHandler {
         	 return null;
             
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -270,30 +274,35 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByTitle(String title, int start, int end)
-	{
+	/**
+	 * 
+	 * @param title
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Work> getWorksByTitle(String title, int start, int end) {
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.TITLE, "/"+title+"/");
 		
 		DBCursor cursor = null;
-		if(start > -1 && end > -1 && end >= start)
+		if(start > -1 && end > -1 && end >= start) {
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
-		else
+		}
+		else {
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
-        try 
-        {
-        	 while(cursor.hasNext()) 
-             {
+		}
+        try {
+        	 while(cursor.hasNext()) {
                  BasicDBObject dObj = (BasicDBObject)cursor.next();
                  Work book = Work.getBookfromDBObject(dObj);
                  listToReturn.add(book);
              }
              return listToReturn;
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return listToReturn;
 		}
@@ -303,31 +312,36 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getWorksByCriteria(String criteria, int start, int end)
-	{
+	/**
+	 * 
+	 * @param criteria
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Work> getWorksByCriteria(String criteria, int start, int end) {
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
 		q.put(Work.CATEGORY, "/"+criteria+"/");
 		
 		DBCursor cursor = null;
-		if(start > -1 && end > -1 && end >= start)
+		if(start > -1 && end > -1 && end >= start) {
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1)).skip(start).limit(end-start);
-		else
+		}
+		else {
 			cursor = works.find(q).sort(new BasicDBObject(Work.TITLE,1));
+		}
         
-		try 
-        {
-        	 while(cursor.hasNext()) 
-             {
+		try {
+        	 while(cursor.hasNext()) {
                  BasicDBObject dObj = (BasicDBObject)cursor.next();
                  Work book = Work.getBookfromDBObject(dObj);
                  listToReturn.add(book);
              }
              return listToReturn;
         } 
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 			return listToReturn;
 		}
@@ -337,8 +351,14 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getBooksByDescription(String description, int start, int end)
-	{
+	/**
+	 * 
+	 * @param description
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Work> getWorksByDescription(String description, int start, int end) {
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
@@ -371,8 +391,14 @@ public class WorksHandler {
 
 	}
 	
-	public List<Work> getBooksByMetaKey(String query, int start, int end)
-	{
+	/**
+	 * 
+	 * @param query
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Work> getWorksByMetaKey(String query, int start, int end) {
 		List<Work> listToReturn = new ArrayList<Work>();
 		
 		BasicDBObject q = new BasicDBObject();
@@ -405,6 +431,13 @@ public class WorksHandler {
 
 	}
 	
+	/**
+	 * 
+	 * @param authorId
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public List<Work> getWorksByAuthorId(String authorId, int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
@@ -440,6 +473,11 @@ public class WorksHandler {
 
 	}
 	
+	/**
+	 * 
+	 * @param aurthorIds
+	 * @return
+	 */
 	public List<Work> getWorksByAuthorIds(List<String> aurthorIds)
 	{
 		List<Work> books = new ArrayList<Work>();
@@ -455,6 +493,12 @@ public class WorksHandler {
 		
 	}
 	
+	/**
+	 * 
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public List<Work> getAllBooks(int start, int end)
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
@@ -487,6 +531,10 @@ public class WorksHandler {
 
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public List<Work> getFirstFiveBooks()
 	{
 		List<Work> listToReturn = new ArrayList<Work>();
@@ -515,14 +563,19 @@ public class WorksHandler {
 
 	}
 	
+	/**
+	 * 
+	 * @param criteria
+	 * @return
+	 */
 	public List<Work> getWorksSpecificCriteriaHierarchy(String criteria)
 	{
 		List<Work> books = new ArrayList<Work>();
 		
 		books.addAll(getWorksByTitle(criteria, -1,-1));
 		books.addAll(getWorksByCriteria(criteria,-1,-1));
-		books.addAll(getBooksByMetaKey(criteria,-1,-1));
-		books.addAll(getBooksByDescription(criteria,-1,-1));
+		books.addAll(getWorksByMetaKey(criteria,-1,-1));
+		books.addAll(getWorksByDescription(criteria,-1,-1));
 		
 		return books;
 	}

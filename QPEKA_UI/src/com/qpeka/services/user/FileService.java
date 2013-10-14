@@ -1,5 +1,6 @@
 package com.qpeka.services.user;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,7 +24,7 @@ public class FileService {
 	// pass userObject instead of userId
 	@Path("/readbyuserfiles")
 	public Response retrievingFileService(@FormParam("userid") long userid, @FormParam("FileType") String filetype) {
-		Map<String, Entry<String, String>> files = FilesManager.getInstance()
+		List<Files> files = FilesManager.getInstance()
 				.readFiles(userid, filetype, Files.FILETYPE);
 	
 		if(!files.isEmpty() && files != null) {

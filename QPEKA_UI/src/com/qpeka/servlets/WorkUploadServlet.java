@@ -29,7 +29,7 @@ import com.qpeka.db.handler.user.PublisherHandler;
 import com.qpeka.db.user.profile.type.Publisher;
 import com.qpeka.epub.provider.EpubProcessorNew;
 import com.qpeka.managers.WorkContentManager;
-import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.SystemResourceHandler;
 public class WorkUploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    
@@ -97,13 +97,13 @@ public class WorkUploadServlet extends HttpServlet {
 	                        String root = "";
 	                        if(fieldName.equalsIgnoreCase("file"))
 	                        {
-	                        	root = SystemConfigHandler.getInstance().getSrcBookFolder();
+	                        	root = SystemResourceHandler.getInstance().getSrcBookFolder();
 	                        	bookContentFile = fileName;
 	                        	System.out.println( "boocontentfile" +bookContentFile);
 	                         }
 	                        else if(fieldName.equalsIgnoreCase("cover"))
 	                        {
-	                        	root = SystemConfigHandler.getInstance().getBookCoverPageFolder();
+	                        	root = SystemResourceHandler.getInstance().getBookCoverPageFolder();
 	                        	coverPage = fileName;
 	                        	System.out.println("coverpage" +coverPage);
 	                        }
@@ -229,7 +229,7 @@ public class WorkUploadServlet extends HttpServlet {
         		pId = publisherId;
         	}
         	
-        	String coverPageFile = SystemConfigHandler.getInstance().getBookCoverPageFolder()+"/"+title+".jpg";
+        	String coverPageFile = SystemResourceHandler.getInstance().getBookCoverPageFolder()+"/"+title+".jpg";
         	System.out.println("coverpagefile  :"+coverPageFile);
         	JSONObject metadata =  new JSONObject();
         	metadata.put(Work.SEARCHKEY, searchKey);
@@ -241,39 +241,39 @@ public class WorkUploadServlet extends HttpServlet {
         	System.out.println(_id);
 //        	int numPages = 0;			
 //        	if(fileName.endsWith(".doc"))
-//        		numPages = BookConverterUtils.convertDOCToQPEKA(SystemConfigHandler.getInstance().getBookContentFolder(),SystemConfigHandler.getInstance().getSrcBookFolder()+fileName, title);
+//        		numPages = BookConverterUtils.convertDOCToQPEKA(SystemResourceHandler.getInstance().getBookContentFolder(),SystemResourceHandler.getInstance().getSrcBookFolder()+fileName, title);
 //			else if(fileName.endsWith(".docx"))
-//				BookConverterUtils.convertFromDOCXToQPEKA(SystemConfigHandler.getInstance().getBookContentFolder(), SystemConfigHandler.getInstance().getSrcBookFolder()+fileName, title);
+//				BookConverterUtils.convertFromDOCXToQPEKA(SystemResourceHandler.getInstance().getBookContentFolder(), SystemResourceHandler.getInstance().getSrcBookFolder()+fileName, title);
         	//Rename files accordingly here
         	
-        	File cvr = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+ "/"+coverPage);
+        	File cvr = new File(SystemResourceHandler.getInstance().getBookCoverPageFolder()+ "/"+coverPage);
         	if(cvr != null && cvr.exists())
         	{      
-        		File idedFile = new File(SystemConfigHandler.getInstance().getBookCoverPageFolder()+ "/"+_id+".jpg");
+        		File idedFile = new File(SystemResourceHandler.getInstance().getBookCoverPageFolder()+ "/"+_id+".jpg");
         		FileUtils.copyFile(cvr, idedFile);	
         		cvr.delete();
         	}
         	
-        	cvr = new File(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile);
+        	cvr = new File(SystemResourceHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile);
         	System.out.println("[MANOJ] File = " + cvr.getName());
         	if(cvr != null && cvr.exists())
         	{
         		if(cvr.getName().endsWith("epub"))
         		{
      
-	        		EpubProcessorNew.processEpub(SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile,
-	        				SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+	        		EpubProcessorNew.processEpub(SystemResourceHandler.getInstance().getSrcBookFolder()+ "/"+bookContentFile,
+	        				SystemResourceHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
 	        		System.out.println("epub process");
         		}
         		else if(cvr.getName().endsWith("doc")) // handle DocCase
         		{
         			String src = FileConverterUtils.convertDocToEpub(cvr,title,language.toString());
-        			EpubProcessorNew.processEpub(src, SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+        			EpubProcessorNew.processEpub(src, SystemResourceHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
         		}
         		else if(cvr.getName().endsWith("docx")) // handle DocCase
         		{
         			String src = FileConverterUtils.convertDocxToEpub(cvr,title,language.toString());
-        			EpubProcessorNew.processEpub(src, SystemConfigHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
+        			EpubProcessorNew.processEpub(src, SystemResourceHandler.getInstance().getSrcBookFolder()+ "/"+_id+".epub");
         		}
         		
         		//Encrypt and save the file

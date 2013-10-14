@@ -57,7 +57,9 @@ public class User implements Serializable {
 	 */
 	private String timezone = "";
 	// private String language = "";
-	private static User instance = null;
+	
+	//private static User instance = null;
+	
 	// These attributes represents whether the above attributes has been
 	// modified since being read from the database.
 	protected boolean useridModified = false;
@@ -73,7 +75,7 @@ public class User implements Serializable {
 
 	// protected boolean languageModified = false;
 	public static User getInstance() {
-		return (instance == null ? (instance = new User()) : instance);
+		return new User(); // (instance == null ? (instance = new User()) : instance);
 	}
 	/*
 	 * Constructors

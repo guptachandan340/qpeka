@@ -24,7 +24,7 @@
 
      <servlet-mapping>
            <servlet-name>qpekaservices</servlet-name>
-           <url-pattern>/v0.1/*</url-pattern>
+           <url-pattern>/v0.2/*</url-pattern>
      </servlet-mapping>    
 <!-- 
 	<filter>
@@ -204,7 +204,7 @@
 	</error-page> --> 
 
 	<welcome-file-list>
-		<welcome-file>fileprocess.html</welcome-file>
+		<welcome-file>index.html</welcome-file>
 	<!--<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>

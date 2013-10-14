@@ -12,9 +12,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Category;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.CategoryDao;
 import com.qpeka.db.exceptions.CategoryException;
+import com.qpeka.utils.DBResourceHandler;
 
 public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
@@ -123,8 +123,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
@@ -209,9 +209,9 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -228,8 +228,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -297,9 +297,9 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -315,8 +315,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: "
@@ -335,9 +335,9 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 	}
@@ -400,8 +400,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = sql;
@@ -428,10 +428,10 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -445,9 +445,9 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;		
 		// get the user-specified connection or get a connection from the
-		// ResourceManager
+		// DBResourceHandler
 		try {
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 			
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -473,10 +473,10 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		logger.error("Exception: " + _e.getMessage(), _e);
 		throw new CategoryException("Exception: " + _e.getMessage(), _e);
 	} finally {
-		ResourceManager.close(rs);
-		ResourceManager.close(stmt);
+		DBResourceHandler.close(rs);
+		DBResourceHandler.close(stmt);
 		if (!isConnSupplied) {
-			ResourceManager.close(conn);
+			DBResourceHandler.close(conn);
 		}
 	}
 	}
@@ -493,8 +493,8 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 		sqlParams.add(4);
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 		    final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -527,10 +527,10 @@ public class CategoryHandler extends AbstractHandler implements CategoryDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new CategoryException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 		}
 */

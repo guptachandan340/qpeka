@@ -21,7 +21,7 @@ public class Category implements Serializable {
 		protected boolean typeModified = false;
 		protected boolean categoryModified = false;
 		
-		public static Category instance = null;
+		//public static Category instance = null;
 		/*
 		 * Constructors
 		 */
@@ -44,7 +44,7 @@ public class Category implements Serializable {
 		}
 
 		public static Category getInstance() {
-			return (instance == null ? (instance = new Category()) : instance);
+			return new Category(); // (instance == null ? (instance = new Category()) : instance);
 		}
 		
 		/*

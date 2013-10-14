@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Badges implements Serializable {
 
-	public static Badges instance =null;
+	//public static Badges instance =null;
 	public static final String BADGEID = "badgeid";
 	public static final String TYPEID = "typeid";
 	public static final String BADGE = "badge";
@@ -52,7 +52,7 @@ public class Badges implements Serializable {
 	}
 
 	public static Badges getInstance() {
-		return (instance == null ? instance = new Badges() : instance);
+		return new Badges(); // (instance == null ? instance = new Badges() : instance);
 	}
 	/*
 	 * Getters and setters for attributes

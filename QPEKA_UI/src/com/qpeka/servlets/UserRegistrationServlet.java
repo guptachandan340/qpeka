@@ -39,7 +39,7 @@ import com.qpeka.db.book.store.tuples.User;
 import com.qpeka.db.book.store.tuples.UserAuth;
 import com.qpeka.managers.SessionManager;
 import com.qpeka.managers.UserManager;
-import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.SystemResourceHandler;
 import com.qpeka.utils.Utils;
 
 /**
@@ -129,13 +129,13 @@ public class UserRegistrationServlet extends HttpServlet {
 				
 				SessionManager.getInstance().addSession(id, sess);
 				
-				response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/myProfile.jsp?uid="+id);
+				response.sendRedirect("http://"+SystemResourceHandler.getInstance().getHost()+"/QpekaWeb/myProfile.jsp?uid="+id);
 				return;
 
 			}
 			else
 			{
-				response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/home.jsp?error=true");
+				response.sendRedirect("http://"+SystemResourceHandler.getInstance().getHost()+"/QpekaWeb/home.jsp?error=true");
 				
 			
 	        	return;
@@ -346,7 +346,7 @@ public class UserRegistrationServlet extends HttpServlet {
 		request.getSession().setAttribute("uname", username);
 		
 		//request.getRequestDispatcher("/myProfile.jsp?uid="+uid).forward(request, response);
-		response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/myProfile.jsp?uid="+uid);
+		response.sendRedirect("http://"+SystemResourceHandler.getInstance().getHost()+"/QpekaWeb/myProfile.jsp?uid="+uid);
 		//http://localhost:8080/QpekaWeb/myProfile.jsp?uid=5152878c86adc1fd5ad43dc5
 		
 	}
@@ -359,7 +359,7 @@ public class UserRegistrationServlet extends HttpServlet {
 			{
 				System.out.println("INVALID EMAIL");
 				try {
-					response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/landing.jsp?error=invalid_email");
+					response.sendRedirect("http://"+SystemResourceHandler.getInstance().getHost()+"/QpekaWeb/landing.jsp?error=invalid_email");
 					return;
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -386,7 +386,7 @@ public class UserRegistrationServlet extends HttpServlet {
             OutputStream os = null;
             if(fi != null)
 				try {
-					File f = new File(SystemConfigHandler.getInstance().getSrcBookFolder()+uid);
+					File f = new File(SystemResourceHandler.getInstance().getSrcBookFolder()+uid);
 					if(!f.exists())
 						f.createNewFile();
 					
@@ -407,10 +407,10 @@ public class UserRegistrationServlet extends HttpServlet {
 				}
             
 		try {
-			response.sendRedirect("http://"+SystemConfigHandler.getInstance().getHost()+"/QpekaWeb/landing.jsp?msg=success");
+			response.sendRedirect("http://"+SystemResourceHandler.getInstance().getHost()+"/QpekaWeb/landing.jsp?msg=success");
 			System.out.println("BEFORE EMAIL");
-			Utils.sendMailViaGodaddy(SystemConfigHandler.getInstance().getSenderEmail(), SystemConfigHandler.getInstance().getPassword(), email, firstName, Utils.getWelcomeMailText(firstName));
-			Utils.sendMailViaGodaddy(SystemConfigHandler.getInstance().getSenderEmail(), SystemConfigHandler.getInstance().getPassword(), email, firstName,Utils.getWorkUploadText(firstName));
+			Utils.sendMailViaGodaddy(SystemResourceHandler.getInstance().getSenderEmail(), SystemResourceHandler.getInstance().getPassword(), email, firstName, Utils.getWelcomeMailText(firstName));
+			Utils.sendMailViaGodaddy(SystemResourceHandler.getInstance().getSenderEmail(), SystemResourceHandler.getInstance().getPassword(), email, firstName,Utils.getWorkUploadText(firstName));
 			
 			System.out.println("AFTER EMAIL");
 		} catch (IOException e) {

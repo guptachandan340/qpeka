@@ -1,164 +1,163 @@
 <html>
 <body>
-<form action="v0.1/user/work/fileprocess" method="post" >
-					  <fieldset>
-					    <legend>Upload Work</legend>
-					    <div>
-							    <label>Title</label>
-							    <div>
-							      <input type="text" name="title" id="title" placeholder="Title">		
-							    </div>
-							     
-							  </div>
-							 
-							  <div>
-							    <label>Author id</label>
-							     <input type="hidden" name="authorId" id="authorId" value="5550">
-							    </div>
-							  </div>
-							 <!-- <div>
+	<form action="v0.2/user/work/fileprocess" method="post">
+		<fieldset>
+			<legend>Upload Work</legend>
+			<div>
+				<label>Title</label>
+				<div>
+					<input type="text" name="title" id="title" placeholder="Title">
+				</div>
+
+			</div>
+
+			<div>
+				<label>Author id</label> <input type="hidden" name="authorId"
+					id="authorId" value="5550">
+			</div>
+			</div>
+			<!-- <div>
 							    <label>Pen Name</label>
 							    <div>
 							      <input type="text" name="pName" id="pName" placeholder="Pen Name">
 							    </div>
 							  </div> -->
-							  <div>
-							    <label>Description</label>
-							     <div>
-								  <textarea rows="5" cols="20" name="description" placeholder="Description"></textarea>
-								 </div>
-							  </div>
-							  <div>
-							    <label>Language</label>
-							     <div class="controls">
-								    <select id="language" name="language">
-								    		
-								    			<option value="ENGLISH">english</option>
-								    		
-											
-								    </select>
-								 </div>
-							  </div>
-							  <div>
-							    <label>Type of Work</label>
-							     <div>
-								    <select id="type" name="type">
-								
-								    			<option value="BOOK">book</option>
-								    	
-											
-								    </select>
-								 </div>
-							  </div>
-							  <div>
-							    <label>Category</label>
-							     <div>
-								    <select id="category" name="category">
-										 
-								    			<option value="CHILDREN">CHILDREN</option>
-								    	
-								    </select>
-								 </div>
-							  </div>
-							 <!-- <div>
+			<div>
+				<label>Description</label>
+				<div>
+					<textarea rows="5" cols="20" name="description"
+						placeholder="Description"></textarea>
+				</div>
+			</div>
+			<div>
+				<label>Language</label>
+				<div class="controls">
+					<select id="language" name="language">
+
+						<option value="ENGLISH">english</option>
+
+
+					</select>
+				</div>
+			</div>
+			<div>
+				<label>Type of Work</label>
+				<div>
+					<select id="type" name="type">
+
+						<option value="BOOK">book</option>
+
+
+					</select>
+				</div>
+			</div>
+			<div>
+				<label>Category</label>
+				<div>
+					<select id="category" name="category">
+
+						<option value="CHILDREN">CHILDREN</option>
+
+					</select>
+				</div>
+			</div>
+			<!-- <div>
 							    <label>Award</label>
 							    <div class="controls">
 							      <input type="text" name="award" placeholder="Award">
 							    </div>
 							  </div> -->
-							 <!-- <div>
+			<!-- <div>
 							    <label>Location</label>
 							    <div>
 							      <input type="text" id="location" name="location" placeholder="Location">
 							    </div>
 							  </div> -->
-							  <!--<div>
+			<!--<div>
 							    <label>Characters</label>
 							     <div class="controls">
 								  <textarea rows="5" cols="20" id="characters" name="characters" class="span4" placeholder="Characters"></textarea>
 								 </div>
 							  </div> -->
-							  <div>
-							    <label>Published?</label>
-							     <div>
-								    <select name="ispublished">
-										  <option value="true">Yes</option>
-										  <option value="false">No</option>										 
-								    </select>
-								 </div>
-							  </div>
+			<div>
+				<label>Published?</label>
+				<div>
+					<select name="ispublished">
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</div>
+			</div>
 
-							  <div>
-							    <label>Publisher</label>
-							    <div class="controls">
-							      <input type="text" name="publisherName" placeholder="Publisher">
-							    </div>
-							  </div>
-                               <div>
-							    <label>Publisherid</label>
-							    <div class="controls">
-							      <input type="text" name="publisherid" placeholder="Publisher">
-							    </div>
-							  </div>
-							  <div>
-							    <label>ISBN</label>
-							    <div class="controls">
-							      <input type="text" name="isbn" placeholder="ISBN">
-							    </div>
-							  </div>
-							  <div class="control-group">
-							    <label>Date of Publication</label>
-							     <div class="controls">
-								     <select name="pyear" >
-								     	 
-										  <option value="1913">1913</option>
-                                                                           
-										 								 
-								    </select >
-								    <select name="pmonth">
-										  <option value="0">January</option>
-										  <option value="1">February</option>
-										  <option value="2">March</option>
-										  <option value="3">April</option>
-										  <option value="4">May</option>
-										  <option value="5">June</option>
-										  <option value="6">July</option>
-										  <option value="7">August</option>
-										  <option value="8">September</option>
-										  <option value="9">October</option>
-										  <option value="10">November</option>
-										  <option value="11">December</option>								 
-								    </select>
-								    <select id="pday" name="pday" class="span1">
-								    	  
-										  	<option value="5">5</option>									 
-																 
-								    </select>
-								 </div>
-							  </div>
-							  <div class="control-group">
-							    <label>Edition</label>
-							    <div class="controls">
-							      <input type="text"  name="edition" placeholder="Edition">
-							    </div>
-							  </div>							  
-							  
-							  <div>
-							    <label>Upload File</label>
-							    <div>
-							      <input type="text" name="file" placeholder="File to Upload">
-							    </div>
-							  </div>
-							  <div>
-							    <label>Cover Image</label>
-							    <div class="controls">
-							      <input type="text" name="cover" placeholder="Cover Page to Upload">
-							    </div>
-							  </div>
-	              		<div >
-			            	<button type="submit">Submit</button>
-	        			</div>
-					  </fieldset>
-					</form>
- </body>
- </html>
+			<div>
+				<label>Publisher</label>
+				<div class="controls">
+					<input type="text" name="publisherName" placeholder="Publisher">
+				</div>
+			</div>
+			<div>
+				<label>Publisherid</label>
+				<div class="controls">
+					<input type="text" name="publisherid" placeholder="Publisher">
+				</div>
+			</div>
+			<div>
+				<label>ISBN</label>
+				<div class="controls">
+					<input type="text" name="isbn" placeholder="ISBN">
+				</div>
+			</div>
+			<div class="control-group">
+				<label>Date of Publication</label>
+				<div class="controls">
+					<select name="pyear">
+
+						<option value="1913">1913</option>
+
+
+					</select> <select name="pmonth">
+						<option value="0">January</option>
+						<option value="1">February</option>
+						<option value="2">March</option>
+						<option value="3">April</option>
+						<option value="4">May</option>
+						<option value="5">June</option>
+						<option value="6">July</option>
+						<option value="7">August</option>
+						<option value="8">September</option>
+						<option value="9">October</option>
+						<option value="10">November</option>
+						<option value="11">December</option>
+					</select> <select id="pday" name="pday" class="span1">
+
+						<option value="5">5</option>
+
+					</select>
+				</div>
+			</div>
+			<div class="control-group">
+				<label>Edition</label>
+				<div class="controls">
+					<input type="text" name="edition" placeholder="Edition">
+				</div>
+			</div>
+
+			<div>
+				<label>Upload File</label>
+				<div>
+					<input type="text" name="file" placeholder="File to Upload">
+				</div>
+			</div>
+			<div>
+				<label>Cover Image</label>
+				<div class="controls">
+					<input type="text" name="cover" placeholder="Cover Page to Upload">
+				</div>
+			</div>
+			<div>
+				<button type="submit">Submit</button>
+			</div>
+		</fieldset>
+	</form>
+</body>
+</html>
