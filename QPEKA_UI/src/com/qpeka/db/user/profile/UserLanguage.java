@@ -21,7 +21,7 @@ public class UserLanguage implements Serializable {
 	protected boolean languageidModified = false;
 	protected boolean typeModified = false;
 	
-	public static UserLanguage instance = null;
+	//public static UserLanguage instance = null;
 
 	public UserLanguage() {
 		super();
@@ -166,6 +166,6 @@ public class UserLanguage implements Serializable {
 	}
 	
 	public static UserLanguage getInstance() {
-		return ((instance == null) ? (new UserLanguage()) : instance);
+		return new UserLanguage(); // ((instance == null) ? (new UserLanguage()) : instance);
 	}
 }

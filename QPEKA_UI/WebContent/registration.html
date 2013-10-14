@@ -1,7 +1,7 @@
 <html>
 <body>
-	<h1>JAX-RS @ REGISTERATION FROM</h1>
- 	<form action="v0.1/user/signup" method="post">
+	<h1>JAX-RS @ REGISTRATION FROM</h1>
+	<form action="v0.2/user/signup" method="post">
 		<p>
 			First Name : <input type="text" name="firstname" />
 		</p>
@@ -20,23 +20,24 @@
 		<p>
 			DOB : <input type="text" name="dob" />
 		</p>
-		
+
 		<select name="type" size="2">
-       		 <option value="QPEKAADMIN">QPEKAADMIN</option>
-       		 <option value="QPEKAMANAGER">QPEKAMANAGER</option>
-      </select>
+			<option value="QPEKAADMIN">QPEKAADMIN</option>
+			<option value="QPEKAMANAGER">QPEKAMANAGER</option>
 		
-		<select name="language" size="4" multiple="multiple">
-        <option value="HINDI">HINDI</option>
-        <option value="ENGLISH">ENGLISH</option>
-        <option value="GUJARATI">GUJARATI</option>
-        <option value="MARATHI">MARATHI</option>
-      </select>
-      	<p>
+		</select> <select name="languageid" size="4" multiple="multiple">
+			<option value="131">HINDI</option>
+			<option value="69">ENGLISH (INDIA)</option>
+			<option value="70">ENGLISH (ETHIOPIA)</option>
+			<option value="126">GUJARATI</option>
+			<option value="193">MARATHI</option>
+		</select>
+
+		<p>
 			Terms and Conditions : <input type="text" name="tnc" />
 		</p>
 		<input type="submit" value="Register User" />
 	</form>
- 
+
 </body>
 </html>

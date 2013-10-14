@@ -27,7 +27,7 @@ public class Genre implements Serializable {
 	protected boolean categoryidModified = false;
 	protected boolean genreModified = false;
 	protected boolean pointsModified = false;
-	public static Genre instance = null;
+	//public static Genre instance = null;
 	/*
 	 * Constructors
 	 */
@@ -51,7 +51,7 @@ public class Genre implements Serializable {
 	}
 
 	public static Genre getInstance() {
-		return (instance == null ? (instance = new Genre()) : instance);
+		return new Genre(); // (instance == null ? (instance = new Genre()) : instance);
 	}
 	
 	/*
@@ -215,7 +215,7 @@ public class Genre implements Serializable {
 	public String toString()
 	{
 		StringBuffer ret = new StringBuffer();
-		ret.append( "Category: " );
+		ret.append( "Genre: " );
 		ret.append(GENREID + "=" + genreid);
 		ret.append(", " + CATEGORYID + "=" + categoryid );
 		ret.append( ", " + GENRE + "=" + genre );

@@ -12,9 +12,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.qpeka.db.Languages;
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.dao.LanguagesDao;
 import com.qpeka.db.exceptions.LanguagesException;
+import com.qpeka.utils.DBResourceHandler;
 
 public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
@@ -36,7 +36,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	 * All finder methods in this class use this SELECT constant to build their
 	 * queries
 	 */
-	protected final String SQL_SELECT = "SELECT languageid, language, name, native, direction, enabled FROM "
+	protected final String SQL_SELECT = "SELECT languageid, language, script, native, direction, enabled FROM "
 			+ getTableName() + "";
 
 	/**
@@ -49,14 +49,14 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	 */
 	protected final String SQL_INSERT = "INSERT INTO "
 			+ getTableName()
-			+ " ( languageid, language, name, native, direction, enabled ) VALUES ( ?, ?, ?, ?, ?, ? )";
+			+ " ( languageid, language, script, native, direction, enabled ) VALUES ( ?, ?, ?, ?, ?, ? )";
 
 	/**
 	 * SQL UPDATE statement for this table
 	 */
 	protected final String SQL_UPDATE = "UPDATE "
 			+ getTableName()
-			+ " SET languageid = ?, language = ?, name = ?, native = ?, direction = ?, enabled = ? WHERE languageid = ?";
+			+ " SET languageid = ?, language = ?, script = ?, native = ?, direction = ?, enabled = ? WHERE languageid = ?";
 
 	/**
 	 * SQL DELETE statement for this table
@@ -75,9 +75,9 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	protected static final int COLUMN_LANGUAGE = 2;
 
 	/**
-	 * Index of column name
+	 * Index of column script
 	 */
-	protected static final int COLUMN_NAME = 3;
+	protected static final int COLUMN_SCRIPT = 3;
 
 	/**
 	 * Index of column native
@@ -139,8 +139,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
@@ -168,13 +168,13 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				modifiedCount++;
 			}
 
-			if (language.isNameModified()) {
+			if (language.isScriptModified()) {
 				if (modifiedCount > 0) {
 					sql.append(", ");
 					values.append(", ");
 				}
 
-				sql.append("name");
+				sql.append("script");
 				values.append("?");
 				modifiedCount++;
 			}
@@ -231,8 +231,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				stmt.setString(index++, language.getLanguage());
 			}
 
-			if (language.isNameModified()) {
-				stmt.setString(index++, language.getName());
+			if (language.isScriptModified()) {
+				stmt.setString(index++, language.getScript());
 			}
 
 			if (language.isANativeModified()) {
@@ -270,9 +270,9 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new LanguagesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -289,8 +289,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -313,12 +313,12 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				modified = true;
 			}
 
-			if (language.isNameModified()) {
+			if (language.isScriptModified()) {
 				if (modified) {
 					sql.append(", ");
 				}
 
-				sql.append("name=?");
+				sql.append("script=?");
 				modified = true;
 			}
 
@@ -370,8 +370,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 				stmt.setString(index++, language.getLanguage());
 			}
 
-			if (language.isNameModified()) {
-				stmt.setString(index++, language.getName());
+			if (language.isScriptModified()) {
+				stmt.setString(index++, language.getScript());
 			}
 
 			if (language.isANativeModified()) {
@@ -398,9 +398,9 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new LanguagesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 			
 		}
@@ -416,8 +416,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: "
@@ -436,9 +436,9 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new LanguagesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -475,11 +475,11 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	}
 
 	@Override
-	public List<Languages> findWhereNameEquals(String name)
+	public List<Languages> findWhereScriptEquals(String script)
 			throws LanguagesException {
 		return findByDynamicSelect(
-				SQL_SELECT + " WHERE name = ? ORDER BY name",
-				Arrays.asList(new Object[] { name }));
+				SQL_SELECT + " WHERE script = ? ORDER BY script",
+				Arrays.asList(new Object[] { script }));
 	}
 
 	@Override
@@ -527,8 +527,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = sql;
@@ -555,10 +555,10 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new LanguagesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -575,8 +575,8 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -603,10 +603,10 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new LanguagesException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -648,7 +648,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 			throws SQLException {
 		language.setLanguageid(rs.getShort(COLUMN_LANGUAGEID));
 		language.setLanguage(rs.getString(COLUMN_LANGUAGE));
-		language.setName(rs.getString(COLUMN_NAME));
+		language.setScript(rs.getString(COLUMN_SCRIPT));
 		language.setANative(rs.getShort(COLUMN_A_NATIVE));
 		language.setDirection(rs.getShort(COLUMN_DIRECTION));
 		language.setEnabled(rs.getShort(COLUMN_ENABLED));
@@ -662,7 +662,7 @@ public class LanguagesHandler extends AbstractHandler implements LanguagesDao {
 	protected void reset(Languages language) {
 		language.setLanguageidModified(false);
 		language.setLanguageModified(false);
-		language.setNameModified(false);
+		language.setScriptModified(false);
 		language.setANativeModified(false);
 		language.setDirectionModified(false);
 		language.setEnabledModified(false);

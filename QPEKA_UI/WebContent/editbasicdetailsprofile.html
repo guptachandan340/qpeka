@@ -1,0 +1,118 @@
+<html>
+<body>
+
+	<!-- 
+	userid ,usertype, pen name , fname, mname, lnmae, gender, dob, nationality, website, biography
+	profilepic , address , line1 ,line2 ,line3, city, country,pincode, state, intereset, rlang,
+	wlang, userbadges , userpoints,
+	 -->
+
+
+	<form action="v0.2/user/editprofile" method="post">
+		<p>
+			sessionid: <input type="text" name="tokenid" />
+		</p>
+		<p>
+			id: <input type="text" name="userid" />
+		</p>
+		<p>
+			first name: <input type="text" name="firstname" />
+		</p>
+		<p>
+			middle name: <input type="text" name="middlename" />
+		</p>
+		<p>
+			last name: <input type="text" name="lastname" />
+		</p>
+
+		<select name="nameprivacy" multiple="multiple" size="9">
+			<option value="PUBLIC">PUBLIC</option>
+			<option value="PRIVATE">PRIVATE</option>
+		</select>
+
+		<p>
+			Email : <input type="text" name="email" />
+		</p>
+		<select name="emailprivacy" multiple="multiple" size="9">
+			<option value="PUBLIC">PUBLIC</option>
+			<option value="PRIVATE">PRIVATE</option>
+		</select>
+
+		<p>
+			DOB : <input type="text" name="dob" />
+		</p>
+
+		<p>
+			<select name="dobprivacy" multiple="multiple" size="9">
+				<option value="PUBLIC">PUBLIC</option>
+				<option value="PRIVATE">PRIVATE</option>
+			</select>
+		</p>
+
+		<p>
+			Gender : <input type="text" name="gender" />
+		</p>
+		<p>
+			<select name="genderprivacy" multiple="multiple" size="9">
+				<option value="PUBLIC">PUBLIC</option>
+				<option value="PRIVATE">PRIVATE</option>
+			</select>
+		</p>
+		<p>
+			Nationality : <input type="text" name="nationality" />
+		</p>
+
+
+
+		<p>
+			Interests : <select name="interests" multiple="multiple" size="9">
+				<option value="Adult">Adult</option>
+				<option value="Classic">Classic</option>
+				<option value="Fantasy">Fantasy</option>
+				<option value="Mistry">Mistry</option>
+				<option value="Historical">Historical</option>
+				<option value="Fiction">Fiction</option>
+				<option value="Non-Fiction">Non-Fiction</option>
+				<option value="Education">Education</option>
+				<option value="Science">Science</option>
+			</select>
+		</p>
+
+		<select name="interestsprivacy" multiple="multiple" size="9">
+			<option value="PUBLIC">PUBLIC</option>
+			<option value="PRIVATE">PRIVATE</option>
+		</select>
+
+		<p>
+			rlang : <select name="rlang" size="2" multiple="multiple">
+			<option value="131">HINDI</option>
+			<option value="69">ENGLISH (INDIA)</option>
+			<option value="70">ENGLISH (ETHIOPIA)</option>
+			<option value="126">GUJARATI</option>
+			<option value="193">MARATHI</option>
+			</select>
+		</p>
+
+		<p>
+			<select name="languagesprivacy" multiple="multiple" size="9">
+				<option value="PUBLIC">PUBLIC</option>
+				<option value="PRIVATE">PRIVATE</option>
+			</select>
+		</p>
+
+		<p>
+			<input type="hidden" name="profile" value="basic" />
+		</p>
+
+		<!--  
+		<p>
+			UserBadges : <input type="text" name="userbadges" />
+		</p>
+		<p>
+			UserPoints : <input type="text" name="userpoints" />
+		</p>
+		-->
+		<input type="submit" value="Edit Profile" />
+	</form>
+</body>
+</html>

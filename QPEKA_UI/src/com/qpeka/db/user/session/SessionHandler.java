@@ -10,9 +10,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.qpeka.db.conf.ResourceManager;
 import com.qpeka.db.exceptions.user.SessionException;
 import com.qpeka.db.handler.AbstractHandler;
+import com.qpeka.utils.DBResourceHandler;
 
 public class SessionHandler extends AbstractHandler implements SessionDao {
 
@@ -130,12 +130,12 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			StringBuffer values = new StringBuffer();
-			sql.append("INSERT INTO " + getTableName() + " (");
+			sql.append("INSERT IGNORE INTO " + getTableName() + " (");
 			int modifiedCount = 0;
 			if (session.isUseridModified()) {
 				if (modifiedCount > 0) {
@@ -245,9 +245,9 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -264,8 +264,8 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			StringBuffer sql = new StringBuffer();
 			sql.append("UPDATE " + getTableName() + " SET ");
@@ -360,9 +360,9 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -378,8 +378,8 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Executing " + SQL_DELETE + " with PK: "
@@ -398,9 +398,9 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -486,8 +486,8 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = sql;
@@ -514,10 +514,10 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}
@@ -534,8 +534,8 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 
 		try {
 			// get the user-specified connection or get a connection from the
-			// ResourceManager
-			conn = isConnSupplied ? userConn : ResourceManager.getConnection();
+			// DBResourceHandler
+			conn = isConnSupplied ? userConn : DBResourceHandler.getConnection();
 
 			// construct the SQL statement
 			final String SQL = SQL_SELECT + " WHERE " + sql;
@@ -562,10 +562,10 @@ public class SessionHandler extends AbstractHandler implements SessionDao {
 			logger.error("Exception: " + _e.getMessage(), _e);
 			throw new SessionException("Exception: " + _e.getMessage(), _e);
 		} finally {
-			ResourceManager.close(rs);
-			ResourceManager.close(stmt);
+			DBResourceHandler.close(rs);
+			DBResourceHandler.close(stmt);
 			if (!isConnSupplied) {
-				ResourceManager.close(conn);
+				DBResourceHandler.close(conn);
 			}
 
 		}

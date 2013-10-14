@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%-- <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%> --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -27,8 +27,8 @@ function createUserObject(){
  -->
 </head>
 <body>
-<form action="v0.1/user/changepwd" method="post" id = "my_form">
-       
+	<form action="v0.1/user/changepwd" method="post" id="my_form">
+
 		<p>
 			Current Password : <input type="text" name="currentpassword" />
 		</p>
@@ -39,12 +39,12 @@ function createUserObject(){
 			UserId : <input type="text" name="userid" />
 		</p>
 		<p>
-		<input type = "submit" value="submit" >
-		</p> 
-		<p>
-		<input type="hidden"  name = "userObject" value="hello"> 
+			<input type="submit" value="submit">
 		</p>
-		</form>
+		<p>
+			<input type="hidden" name="userObject" value="hello">
+		</p>
+	</form>
 </body>
 
 

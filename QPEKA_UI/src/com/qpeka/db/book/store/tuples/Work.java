@@ -41,7 +41,6 @@ public class Work {
 	public static final String ID ="_id";
 	public static final String TITLE ="title";
 	public static final String AUTHORID ="authorId";
-	public static final String COVERPAGEFILE ="coverPageFile";
 	public static final String CATEGORY ="category";
 	public static final String TYPE ="type";
 	public static final String NUMPAGES ="numPages";
@@ -49,6 +48,10 @@ public class Work {
 	public static final String LANGUAGE ="language"; 
 	public static final String ISPUBLISHED ="ispublished"; 
 	public static final String METADATA ="metaData";
+	public static final String COVERPAGEFILE ="coverPageFile";
+	public static final String WORKFILE = "workfile";
+	public static final String WORKFILEORIGINNAME = "workfileoriginname";
+	public static final String ISWORKFILE = "isworkfile";
 	
 	public static final String ISBN ="isbn"; 
 	public static final String DATEOFPUBLICATION ="dateofpublication"; 
@@ -61,6 +64,8 @@ public class Work {
 	private String title = "";
 	private String authorId = "";
 	private String coverPageFile = "";
+	private String workfile = "";
+	private String workfileoriginname = "";
 	private CATEGORY category = com.qpeka.db.Constants.CATEGORY.CHILDREN;
 	private WORKTYPE type = Constants.WORKTYPE.BOOK;
 	private int numPages = 0;
@@ -68,6 +73,7 @@ public class Work {
 	private String description = "";
 	private LANGUAGES language = LANGUAGES.ENGLISH;
 	private boolean isPub = true; 
+	private boolean isWorkFile = false;
 	
 	private long dateOfPub = -1;
 	private int edition = 0;
@@ -75,8 +81,7 @@ public class Work {
 	private String publisherId = "";
 	
 
-	public Work()
-	{
+	public Work() {
 		
 	}
 
@@ -242,69 +247,134 @@ public class Work {
 		this.metaData = metaData;
 	}
 	
+	public boolean isWorkFile() {
+		return isWorkFile;
+	}
+
+	public void setWorkFile(boolean isWorkFile) {
+		this.isWorkFile = isWorkFile;
+	}
+
+	public String getWorkfile() {
+		return workfile;
+	}
+
+	public void setWorkfile(String workfile) {
+		this.workfile = workfile;
+	}
+
+	public String getWorkfileoriginname() {
+		return workfileoriginname;
+	}
+
+	public void setWorkfileoriginname(String workfileoriginname) {
+		this.workfileoriginname = workfileoriginname;
+	}
+
 	public DBObject toDBObject(boolean insert)
 	{
 		BasicDBObject dbObj = new BasicDBObject();
-		if(!insert)
+		if(!insert) {
 			dbObj.put(ID, new ObjectId(_id));
+		}
 		
 		dbObj.put(TITLE, title);
 		dbObj.put(AUTHORID, authorId);//new ObjectId(authorId));
-		dbObj.put(COVERPAGEFILE, coverPageFile);
 		dbObj.put(EDITION, edition);
 		dbObj.put(CATEGORY, category.toString());
 		dbObj.put(TYPE, type.toString());
 		dbObj.put(NUMPAGES, numPages);
 		dbObj.put(LANGUAGE, language.toString());
+		dbObj.put(ISWORKFILE, isWorkFile);
 		dbObj.put(ISPUBLISHED, isPub);
 		dbObj.put(DESCRIPTION, description);
 		dbObj.put(METADATA, metaData.toString());
 		
-		if(isPub)
-		{
-			if(publisherId != null && publisherId.length() > 0)
+		if(isWorkFile) {
+			if(coverPageFile != null && coverPageFile.length() > 0) {
+				dbObj.put(COVERPAGEFILE, coverPageFile);
+			}
+			
+			if(workfileoriginname != null && workfileoriginname.length() > 0) {
+				dbObj.put(WORKFILEORIGINNAME, workfileoriginname);
+			}
+			
+			if(workfile != null && workfile.length() > 0) {
+				dbObj.put(WORKFILE, workfile);
+			}
+		}
+		
+		if(isPub) {
+			if(publisherId != null && publisherId.length() > 0) {
 				dbObj.put(PUBLISHERID, publisherId);
-			if(dateOfPub > 0)
+			}
+			
+			if(dateOfPub > 0) {
 				dbObj.put(DATEOFPUBLICATION, dateOfPub);
-			if(isbn != null && isbn.length() > 0)
+			}
+			
+			if(isbn != null && isbn.length() > 0) {
 				dbObj.put(ISBN, isbn);
-			if(edition > -1)
+			}
+			
+			if(edition > -1) {
 				dbObj.put(EDITION, edition);
+			}
 		}
 		
 		return dbObj;
 	}
 	
-	public static Work getBookfromDBObject(BasicDBObject obj)
-	{
-		try 
-		{
-			com.qpeka.db.Constants.CATEGORY c = com.qpeka.db.Constants.CATEGORY.valueOf(obj.getString(CATEGORY));
-			WORKTYPE t = Constants.WORKTYPE.valueOf(obj.getString(TYPE));
-			Work w = new  Work(obj.getString(ID),obj.getString(TITLE),obj.getString(AUTHORID),obj.getString(COVERPAGEFILE),
-					c ,t , obj.getInt(NUMPAGES),new JSONObject(obj.getString(METADATA)), obj.getString(DESCRIPTION),LANGUAGES.valueOf(obj.getString(LANGUAGE)),
+	public static Work getBookfromDBObject(BasicDBObject obj) {
+		try {
+			com.qpeka.db.Constants.CATEGORY workcategory = com.qpeka.db.Constants.CATEGORY.valueOf(obj.getString(CATEGORY));
+			WORKTYPE worktype = Constants.WORKTYPE.valueOf(obj.getString(TYPE));
+			Work work = new  Work(obj.getString(ID),obj.getString(TITLE),obj.getString(AUTHORID),obj.getString(COVERPAGEFILE), 
+					workcategory, worktype, obj.getInt(NUMPAGES),new JSONObject(obj.getString(METADATA)), 
+					obj.getString(DESCRIPTION),LANGUAGES.valueOf(obj.getString(LANGUAGE)),
 					obj.getBoolean(ISPUBLISHED));
 			
-			if(w.isPub())
-			{
+			if(work.isPub()) {
 				String pub = obj.getString(PUBLISHERID);
-				if(pub != null && pub.length() > 0)
-					w.setPublisherId(pub);
+				if(pub != null && pub.length() > 0) {
+					work.setPublisherId(pub);
+				}
 					
 				String isbn = obj.getString(ISBN);
-				if(pub != null && pub.length() > 0)
-					w.setIsbn(isbn);
+				if(pub != null && pub.length() > 0) {
+					work.setIsbn(isbn);
+				}
 				
 				int edition = obj.getInt(EDITION);
-				if(edition > -1)
-					w.setEdition(edition);
+				if(edition > -1) {
+					work.setEdition(edition);
+				}
 				
 				long dop = obj.getLong(DATEOFPUBLICATION);
-				if(dop > 0)
-					w.setDateOfPub(dop);
+				if(dop > 0) {
+					work.setDateOfPub(dop);
+				}
 			}
+			
+			if(obj.getBoolean(ISWORKFILE)) {
+				work.setWorkFile(obj.getBoolean(ISWORKFILE));
+				String workfile = obj.getString(WORKFILE);
+				if(workfile != null && workfile.length() > 0) {
+					work.setWorkfile(workfile);
+				}
 				
-			return w;
+				String coverpage = obj.getString(COVERPAGEFILE);
+				if(coverpage != null && coverpage.length() > 0) {
+					work.setCoverPageFile(coverpage);
+				}
+				
+				String workfileOriginName = obj.getString(WORKFILEORIGINNAME);
+				if(workfileOriginName != null && workfileOriginName.length() > 0) {
+					work.setWorkfileoriginname(workfileOriginName);
+				}
+			}
+			
+			return work;
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

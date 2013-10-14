@@ -13,4 +13,11 @@ public class SystemConstants {
 	public static final String SENDEREMAIL = "senderEmail";
 	public static final String PASSWORD = "password";
 	
+	public static final String IMAGEDIR = "imagedir";
+	
+	// DB constants
+	public static final String DBDRIVER = "db_driver";
+	public static final String DBURL = "db_url";
+	public static final String DBUSER = "db_user";
+	public static final String DBPASSWORD = "db_password";
 }

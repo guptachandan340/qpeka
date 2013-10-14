@@ -20,7 +20,7 @@ import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubReader;
 
-import com.qpeka.utils.SystemConfigHandler;
+import com.qpeka.utils.SystemResourceHandler;
 
 /**
  * Servlet implementation class ContentProviderServlet
@@ -57,7 +57,7 @@ public class ContentProviderServlet extends HttpServlet {
 			if(fileparam != null && fileparam.length() > 0 )
 				file = fileparam;
 			else
-				file = SystemConfigHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
+				file = SystemResourceHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
 			Book book = epubReader.readEpub(new FileInputStream(file));
 			Writer w = response.getWriter();
 			
@@ -73,7 +73,7 @@ public class ContentProviderServlet extends HttpServlet {
 			if(fileparam != null && fileparam.length() > 0 )
 				file = fileparam;
 			else
-				file = SystemConfigHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
+				file = SystemResourceHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
 			Book book = epubReader.readEpub(new FileInputStream(file));
 			
 			Writer w = response.getWriter();
@@ -103,7 +103,7 @@ public class ContentProviderServlet extends HttpServlet {
 			if(fileparam != null && fileparam.length() > 0 )
 				file = fileparam;
 			else
-				file = SystemConfigHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
+				file = SystemResourceHandler.getInstance().getSrcBookFolder()+"/"+id+".epub";
 			Book book = epubReader.readEpub(new FileInputStream(file));
 			
 			Writer w = response.getWriter();

@@ -3,13 +3,18 @@ package com.qpeka.managers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.qpeka.db.Country;
 import com.qpeka.db.Languages;
+import com.qpeka.db.exceptions.CountryException;
 import com.qpeka.db.exceptions.LanguagesException;
+import com.qpeka.db.handler.CountryHandler;
 import com.qpeka.db.handler.LanguagesHandler;
+import com.qpeka.security.bcrypt.BCrypt;
 
 
 public class LanguagesManager {
@@ -24,14 +29,32 @@ public class LanguagesManager {
 	}
 
 	public Languages createLanguages(String language,
-			String name, short aNative, short direction, short enabled) {
+			String aNative, String script, short direction, short enabled) {
 		
+		// Find Country id
+		short countryid = 0;
 		Languages languages = Languages.getInstance();
+		List<Country> country = null;
+		try {
+			country = CountryHandler.getInstance().findWhereShortnameEquals(aNative);
+		} catch (CountryException e1) {
+			e1.printStackTrace();
+			//throw new CountryException("Get Country id Exception : ");
+		}
+		if(country != null && !country.isEmpty()) {
+			countryid = country.iterator().next().getCountryid();
+		} else {
+			countryid = 1;  // 1 => countryid for none
+		}
+		
+		// Set language Object
 		languages.setLanguage(language);
-		languages.setName(name);
-		languages.setANative(aNative);
+		languages.setScript(script);
+		languages.setANative(countryid);
 		languages.setDirection(direction);
 		languages.setEnabled(enabled);
+		
+		// Insert into Database
 		try {
 			LanguagesHandler.getInstance().insert(languages);
 		} catch (LanguagesException e) {
@@ -70,8 +93,8 @@ public class LanguagesManager {
 								Languages.LANGUAGE).toString());
 					}
 
-					if (updatelanguageMap.get(Languages.NAME) != null) {
-						languages.setName(updatelanguageMap.get(Languages.NAME)
+					if (updatelanguageMap.get(Languages.SCRIPT) != null) {
+						languages.setScript(updatelanguageMap.get(Languages.SCRIPT)
 								.toString());
 					}
 
@@ -167,9 +190,9 @@ public class LanguagesManager {
 		} 
 		
 		// To read Languages from Name Field
-		else if (languageAttributeString.equalsIgnoreCase(Languages.NAME)) {
+		else if (languageAttributeString.equalsIgnoreCase(Languages.SCRIPT)) {
 			try {
-				language = LanguagesHandler.getInstance().findWhereNameEquals(languageAttribute);
+				language = LanguagesHandler.getInstance().findWhereScriptEquals(languageAttribute);
 				
 			} catch (LanguagesException e) {
 				// TODO Auto-generated catch block
@@ -209,36 +232,55 @@ public class LanguagesManager {
 		return languages;
 	}
 	
-	public Set<String> retrieveLangugage() {
+	public Map<Short, Object> retrieveLangugage() {
 		List<Languages> existingLanguage = null;
-		Set<String> langName = new HashSet<String>();
-			try {
-				existingLanguage = LanguagesHandler.getInstance().findAll();
-				if(!existingLanguage.isEmpty() && existingLanguage != null) {
-					for(Languages language : existingLanguage) {
-						langName.add(language.getName());	
+		Map<Short, Object> langName = new LinkedHashMap<Short, Object>();
+		try {
+			existingLanguage = LanguagesHandler.getInstance().findAll();
+			if (existingLanguage != null && !existingLanguage.isEmpty()) {
+				
+				for (Languages language : existingLanguage) {
+					Map<String, String> innerMap = new LinkedHashMap<String, String>();
+					
+					if (language.getEnabled() == 1) {
+						innerMap.put(Languages.LANGUAGE, language.getLanguage());
+						innerMap.put(Languages.SCRIPT, language.getScript());
+						if (language.getANative() != 1) {
+							List<Country> country = CountryHandler
+									.getInstance().findWhereCountryidEquals(
+											language.getANative());
+
+							if (country != null && !country.isEmpty()) {
+								innerMap.put(Languages.ANATIVE, country
+										.iterator().next().getIso3());
+							}
+						}
+						langName.put(language.getLanguageid(), innerMap);
 					}
-				} 
-			} catch (LanguagesException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				}
 			}
+		} catch (LanguagesException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CountryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return langName;
 	}
-	
 
 	/**
 	 * @param args
 	 */
+	public static void main(String[] args) {
+		//System.out.println(languagesManager.deleteLanguages((short) 1));
+		System.out.println(LanguagesManager.getInstance().createLanguages(
+				"Norwegian", "", "Devanagari", (short) 0, (short) 0));
+	}
+
 	
 
-	/*public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		LanguagesManager languagesManager = new LanguagesManager();
-		System.out.println(languagesManager.deleteLanguages((short) 1));
-		System.out.println(languagesManager.createLanguages("GUJARATI", "GUJARATI",
-				(short)6, (short)0, (short) 0));
-		System.out.println(languagesManager.retrieveLangugage());
+		/*System.out.println(languagesManager.retrieveLangugage());
 		System.out.println(languagesManager.readLanguages((short) 6,
 				"languageid"));
 		System.out
@@ -256,6 +298,6 @@ public class LanguagesManager {
 		update.put("direction", (short) 1);
 		update.put("enabled", (short) 0);
 		System.out.println(languagesManager.updateLanguages(update));
-		
-	}*/
+	}*/	
+	
 }

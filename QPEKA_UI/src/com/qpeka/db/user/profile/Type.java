@@ -25,7 +25,7 @@ public class Type implements Serializable {
 	protected boolean typeModified = false;
 	protected boolean typenameModified = false;
 	protected boolean typeidentifierModified = false;
-	public static Type instance = null;
+	// public static Type instance = null;
 	/*
 	 * Constructors
 	 */
@@ -48,7 +48,7 @@ public class Type implements Serializable {
 	}
 
 	public static Type getInstance() {
-		return(instance == null ? instance = new Type() : instance);
+		return new Type(); // (instance == null ? instance = new Type() : instance);
 	}
 	
 	/*

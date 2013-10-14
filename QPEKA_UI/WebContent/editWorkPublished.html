@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="v0.2/user/editprofile" method="post">
+		<p>
+			sessionid: <input type="text" name="tokenid" />
+		</p>		<p>
+			id: <input type="text" name="userid" />
+		</p>
+		<p>
+			wlang : <select name="wlang" size="2" multiple="multiple">
+			<option value="131">HINDI</option>
+			<option value="69">ENGLISH (INDIA)</option>
+			<option value="70">ENGLISH (ETHIOPIA)</option>
+			<option value="126">GUJARATI</option>
+			<option value="193">MARATHI</option>
+			</select>
+		</p>
+
+		<p>
+			<input type="hidden" name="profile" value="workPublish" />
+		</p>
+		<p>
+			<input type="submit" name="save">
+		</p>
+	</form>
+</body>
+</html>
